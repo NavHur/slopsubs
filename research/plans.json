@@ -1,0 +1,1976 @@
+[
+  {
+    "vendor": "Anthropic",
+    "planId": "claude-pro",
+    "label": "Claude Pro",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": 17,
+    "harnesses": [
+      "Claude Code (CLI, IDE, desktop, web)",
+      "Claude apps"
+    ],
+    "models": [
+      "Claude Opus",
+      "Claude Sonnet",
+      "Claude Haiku",
+      "Claude Fable (via paid usage credits only)"
+    ],
+    "limits": "\"Every plan has usage limits that reset on a rolling five-hour session window, and paid plans add weekly limits on top.\" \"Pro gives you at least 5x more usage per 5-hour session than Free.\" \"Your activity across Claude on web, desktop, mobile, and Claude Code all draws from the same pool.\"",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://claude.com/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://code.claude.com/docs/en/legal-and-compliance",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual: $200 billed up front ($17/mo). Claude Code docs say OAuth is 'designed to support ordinary use of Claude Code and other native Anthropic applications', and 'Anthropic does not permit third-party developers to offer Claude.ai login into their own applications, or to route requests through Free, Pro, or Max plan credentials'. Usage credits (overage) are available on paid plans. The pricing page shows Fable as 'Usage credits' for Pro, meaning it isn't covered by the included allowance."
+  },
+  {
+    "vendor": "Anthropic",
+    "planId": "claude-max-5x",
+    "label": "Claude Max 5x",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Claude Code (CLI, IDE, desktop, web)",
+      "Claude apps"
+    ],
+    "models": [
+      "Claude Opus",
+      "Claude Sonnet",
+      "Claude Haiku",
+      "Claude Fable (capped at 50% of weekly limits)"
+    ],
+    "limits": "\"Max gives you 5x or 20x more usage per 5-hour session than Pro.\" Help center: \"five times the Pro plan's per-session usage allowance\"; \"Your session-based usage limit will reset every five hours.\" \"Max plans also have a weekly usage limit that applies across all models.\" Fable: \"50% of weekly limits*\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://claude.com/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://support.claude.com/en/articles/11049741-what-is-the-max-plan",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://code.claude.com/docs/en/legal-and-compliance",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Billed monthly only. Includes $100/month in Claude Platform API credits (pricing page: '$100 to $200/month in API credits'; table: Max 5x $100/month). Account for these in value calculations: API credits can be spent from any harness via an API key. Mobile pricing may differ. Same third-party OAuth restriction as Pro."
+  },
+  {
+    "vendor": "Anthropic",
+    "planId": "claude-max-20x",
+    "label": "Claude Max 20x",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Claude Code (CLI, IDE, desktop, web)",
+      "Claude apps"
+    ],
+    "models": [
+      "Claude Opus",
+      "Claude Sonnet",
+      "Claude Haiku",
+      "Claude Fable (capped at 50% of weekly limits)"
+    ],
+    "limits": "Help center: \"20 times the Pro plan's per-session usage allowance\"; \"Your session-based usage limit will reset every five hours.\" \"Max plans also have a weekly usage limit that applies across all models.\" Fable: \"50% of weekly limits*\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://support.claude.com/en/articles/11049741-what-is-the-max-plan",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://claude.com/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "The pricing page shows only 'From $100' for Max. The $200 figure comes from the help center article ('Updated this week'). Includes $200/month in Claude Platform API credits per the pricing table. Monthly billing only. No newer individual tier above Max 20x was found. Mythos appears in site nav but isn't listed in any plan's model table."
+  },
+  {
+    "vendor": "OpenAI",
+    "planId": "chatgpt-go",
+    "label": "ChatGPT Go",
+    "monthlyPriceUsd": 8,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "ChatGPT desktop app (Codex local chats)"
+    ],
+    "models": [
+      "GPT-6 Luna (Standard speed)"
+    ],
+    "limits": "\"GPT-6 Luna at Standard speed in the desktop app, subject to rollout\"; \"Use Codex for lightweight coding tasks.\" No numeric limits published.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "No Codex CLI or IDE extension: the feature table lists those for Plus and above. Sign in with ChatGPT plan usage is documented for 'eligible ChatGPT Plus and Pro subscribers' only, so Go probably can't power third-party harnesses."
+  },
+  {
+    "vendor": "OpenAI",
+    "planId": "chatgpt-plus",
+    "label": "ChatGPT Plus",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Codex CLI",
+      "Codex IDE extension",
+      "ChatGPT desktop app (Codex/Work)",
+      "Codex cloud (web, iOS)",
+      "Codex SDK / codex exec",
+      "OpenCode",
+      "Pi",
+      "OpenClaw",
+      "T3",
+      "Amp Code",
+      "Kilo Code",
+      "Warp",
+      "Devin",
+      "Hermes Agent",
+      "Conductor"
+    ],
+    "models": [
+      "GPT-6.1 Sol",
+      "GPT-6 Sol",
+      "GPT-6 Luna",
+      "GPT-6 Astra"
+    ],
+    "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://learn.chatgpt.com/codex/sign-in-with-chatgpt",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Third-party use is officially supported through 'Sign in with ChatGPT': 'eligible ChatGPT Plus and Pro subscribers can also choose to use their ChatGPT plan for AI requests'. The listed open-source integrations are OpenClaw, OpenCode, Pi and T3. App usage 'counts toward your existing plan limits', and per-app weekly caps can be set. The pricing page table marks GPT-6 Astra as available on Plus; the model list on the plan card names only GPT-6.1 Sol and GPT-6 Luna. GPT-5.5 retired from ChatGPT-sign-in Codex on 2026-10-14. Overage via ChatGPT credits. No annual price could be verified (chatgpt.com/pricing returns 403 to scripted fetches)."
+  },
+  {
+    "vendor": "OpenAI",
+    "planId": "chatgpt-pro-100",
+    "label": "ChatGPT Pro 100",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Codex CLI",
+      "Codex IDE extension",
+      "ChatGPT desktop app (Codex/Work)",
+      "Codex cloud (web, iOS)",
+      "Codex SDK / codex exec",
+      "OpenCode",
+      "Pi",
+      "OpenClaw",
+      "T3",
+      "Amp Code",
+      "Kilo Code",
+      "Warp",
+      "Devin",
+      "Hermes Agent",
+      "Conductor"
+    ],
+    "models": [
+      "GPT-6.1 Sol",
+      "GPT-6 Sol",
+      "GPT-6 Luna",
+      "GPT-6 Astra",
+      "Pro models (ChatGPT)"
+    ],
+    "limits": "\"Pro plans currently have no five-hour limit.\" Help center: \"Pro 200 includes more usage than Pro 100.\" Weekly limits apply. At launch (2026-04-09) OpenAI said: \"Pro $100 unlocks 5x higher usage than Plus\" (secondary report of the launch statement).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://techcrunch.com/2026/04/09/chatgpt-pro-plan-100-month-codex/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Price is primary. The 5x-Plus multiplier is from the April 2026 launch coverage (secondary), and the current help center doesn't restate it. The help center was read via the r.jina.ai reader because help.openai.com returns 403 to direct fetches. The help center says 'Pro use is subject to our Terms of Use. Sharing account credentials, reselling access and automatically extracting data are prohibited.'"
+  },
+  {
+    "vendor": "OpenAI",
+    "planId": "chatgpt-pro-200",
+    "label": "ChatGPT Pro 200",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Codex CLI",
+      "Codex IDE extension",
+      "ChatGPT desktop app (Codex/Work)",
+      "Codex cloud (web, iOS)",
+      "Codex SDK / codex exec",
+      "OpenCode",
+      "Pi",
+      "OpenClaw",
+      "T3",
+      "Amp Code",
+      "Kilo Code",
+      "Warp",
+      "Devin",
+      "Hermes Agent",
+      "Conductor"
+    ],
+    "models": [
+      "GPT-6.1 Sol",
+      "GPT-6 Sol",
+      "GPT-6 Luna",
+      "GPT-6 Astra",
+      "Pro models (ChatGPT)"
+    ],
+    "limits": "\"Pro plans currently have no five-hour limit.\" \"Pro 200 includes more usage than Pro 100.\" \"New subscriptions that aren't eligible for grandfathering include a lower usage allowance than previously offered with Pro 200.\"",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Allowance was cut on 2026-09-29. Subscribers active between 2026-09-22 and 2026-09-29 keep the old allowance (previously advertised as 20x Plus) through 2026-10-29. Secondary sources describe the new allowance as roughly half the old value, but OpenAI publishes no multiplier. Treat the multiplier as unknown."
+  },
+  {
+    "vendor": "OpenAI",
+    "planId": "chatgpt-pro-500",
+    "label": "ChatGPT Pro 500",
+    "monthlyPriceUsd": 500,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Codex CLI",
+      "Codex IDE extension",
+      "ChatGPT desktop app (Codex/Work)",
+      "Codex cloud (web, iOS)",
+      "Codex SDK / codex exec",
+      "OpenCode",
+      "Pi",
+      "OpenClaw",
+      "T3",
+      "Amp Code",
+      "Kilo Code",
+      "Warp",
+      "Devin",
+      "Hermes Agent",
+      "Conductor"
+    ],
+    "models": [
+      "GPT-6.1 Sol",
+      "GPT-6 Sol",
+      "GPT-6 Luna",
+      "GPT-6 Astra",
+      "GPT-6 Astra Ultrafast",
+      "GPT-6.1 Sol Ultrafast",
+      "Pro models (ChatGPT)"
+    ],
+    "limits": "\"Pro 500 offers the highest included usage of the three plans.\" \"Pro plans currently have no five-hour limit.\" Ultrafast \"uses your plan's included usage first at 8x the Standard rate for the selected model, then draws from your credit balance at 6x the Standard credit rate\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Launched 2026-09-29. No usage multiplier relative to Plus is published."
+  },
+  {
+    "vendor": "Google",
+    "planId": "google-ai-pro",
+    "label": "Google AI Pro",
+    "monthlyPriceUsd": 19.99,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "models": [
+      "Gemini 4 Argon",
+      "Gemini 3.1 Pro",
+      "Gemini 3.8 Flash"
+    ],
+    "limits": "\"Get 4x higher usage access than Free\"; Antigravity: \"Entry rate limits to agent model in Google Antigravity\"; Antigravity docs: \"A high, generous quota, refreshed every five hours until the weekly limit is reached\" / \"A higher weekly rate limit\"; overage via purchased AI credits \"consumed at standard Gemini Enterprise consumption pricing\". No numeric quota published.",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://gemini.google/subscriptions/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://antigravity.google/docs/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://geminicli.com/docs/resources/quota-and-pricing/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://winbuzzer.com/2026/02/23/google-bans-ai-subscribers-openclaw-no-refunds-xcxwbn/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Price is primary (gemini.google). Gemini CLI: banner says 'Unpaid tier and Google One users: Gemini CLI was replaced by Antigravity CLI on June 18th, 2026', but the body of the same page still lists the old quota of 1,500 requests/day for AI Pro (stale). thirdPartyHarnessAllowed=false is based on secondary reports: from Feb 2026, Pro/Ultra accounts were suspended for routing Antigravity OAuth through OpenCode/OpenClaw. No official ToS clause was quoted. Antigravity docs list BYOK as unsupported. Annual price not verified. Includes $10/mo Google Cloud credits."
+  },
+  {
+    "vendor": "Google",
+    "planId": "google-ai-ultra-5x",
+    "label": "Google AI Ultra (5x)",
+    "monthlyPriceUsd": 99.99,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "models": [
+      "Gemini 4 Argon",
+      "Gemini 3.1 Pro",
+      "Gemini 3.8 Flash",
+      "third-party Model Garden models in Antigravity (e.g. Claude Sonnet)"
+    ],
+    "limits": "\"$99.99 / month: 5x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 5x: Higher rate limits to agent model in Google Antigravity\"; docs: \"The highest, most generous quota, refreshed every five hours\" / \"The highest weekly rate limits\" / \"Access to third-party models\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://gemini.google/subscriptions/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://support.google.com/googleone/answer/16286513?hl=en",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://antigravity.google/docs/plans",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Google One help: 'you get 5x or 20x usage quota in Gemini and Google Antigravity compared to the Google AI Pro plan'; 'Each product has its own AI usage limits.' Secondary sources say Ultra 5x launched 2026-05-19. Includes $40/mo Cloud credits (stated for Ultra). Third-party harness: same OAuth-ban caveat as Pro."
+  },
+  {
+    "vendor": "Google",
+    "planId": "google-ai-ultra-20x",
+    "label": "Google AI Ultra (20x)",
+    "monthlyPriceUsd": 199.99,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "models": [
+      "Gemini 4 Argon",
+      "Gemini 3.1 Pro",
+      "Gemini 3.8 Flash",
+      "third-party Model Garden models in Antigravity (e.g. Claude Sonnet)"
+    ],
+    "limits": "\"$199.99 / month: 20x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 20x: Highest rate limits to agent model in Google Antigravity\"; refreshed every five hours up to weekly limit.",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://gemini.google/subscriptions/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://support.google.com/googleone/answer/16286513?hl=en",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Secondary sources say the price dropped from $249.99 to $199.99 on 2026-05-19. Gemini CLI's stale table says 2,000 req/day for Ultra. Same third-party caveat as Pro."
+  },
+  {
+    "vendor": "SpaceXSI (xAI) / Cursor / X",
+    "planId": "x-subscription-plus",
+    "label": "The X Subscription Plus",
+    "monthlyPriceUsd": 8,
+    "annualMonthlyPriceUsd": 6.67,
+    "harnesses": [
+      "Cursor (Agent, CLI)",
+      "Grok Build",
+      "Grok apps"
+    ],
+    "models": [
+      "Grok 4.7",
+      "Grok 4.6",
+      "Grok 4.5",
+      "Composer 2.5"
+    ],
+    "limits": "Usage \"Basic\"; \"Shared AI usage pool\"; \"Your allowance refreshes weekly\"; Cursor models \"at fixed settings: Fast is off, effort is medium, and Grok 4.7 uses the 256k context window\".",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://cursor.com/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://cursor.com/docs/account/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $80/yr per Cursor docs. 'Only Grok models are available on this plan.' No Auto, Cloud Agents, third-party models, or own API keys. Grok API access is included but 'billed separately at standard model rates and doesn't draw from your plan's usage pool', so the pool can't be used in third-party harnesses through the API. Also bundles X Premium social features."
+  },
+  {
+    "vendor": "SpaceXSI (xAI) / Cursor / X",
+    "planId": "x-subscription-premium",
+    "label": "The X Subscription Premium",
+    "monthlyPriceUsd": 30,
+    "annualMonthlyPriceUsd": 25,
+    "harnesses": [
+      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
+      "Grok Build",
+      "Grok Bot",
+      "Grok apps"
+    ],
+    "models": [
+      "Grok 4.7",
+      "Grok 4.6",
+      "Grok 4.5",
+      "Composer 2.5",
+      "third-party models (Claude, GPT, Gemini) at API list price from prepaid credit, not included"
+    ],
+    "limits": "\"4x more usage compared to Plus\"; weekly shared pool across Cursor and Grok; \"Third-party models at API list price\".",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://cursor.com/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://cursor.com/docs/account/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://forum.cursor.com/t/introducing-the-x-subscription/174450",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $300/yr. Announced 2026-10-12 (forum). Secondary sources (Engadget etc.) say Premium bundles the former SuperGrok + Cursor Pro + X Premium+. Grok API is billed separately."
+  },
+  {
+    "vendor": "SpaceXSI (xAI) / Cursor / X",
+    "planId": "x-subscription-super",
+    "label": "The X Subscription Super",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": 83.33,
+    "harnesses": [
+      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
+      "Grok Build",
+      "Grok Bot",
+      "Grok apps"
+    ],
+    "models": [
+      "Grok 4.7",
+      "Grok 4.6",
+      "Grok 4.5",
+      "Composer 2.5",
+      "third-party models at API list price (not included)"
+    ],
+    "limits": "\"15x more usage compared to Plus\"; \"Priority model access at peak times\"; weekly shared pool.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://cursor.com/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://cursor.com/docs/account/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $1,000/yr."
+  },
+  {
+    "vendor": "SpaceXSI (xAI) / Cursor / X",
+    "planId": "x-subscription-ultra",
+    "label": "The X Subscription Ultra",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": 166.67,
+    "harnesses": [
+      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
+      "Grok Build",
+      "Grok Bot",
+      "Grok apps"
+    ],
+    "models": [
+      "Grok 4.7",
+      "Grok 4.6",
+      "Grok 4.5",
+      "Composer 2.5",
+      "third-party models at API list price (not included)"
+    ],
+    "limits": "\"50x more usage compared to Plus\"; \"Earliest access to all products & models\"; weekly shared pool.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://cursor.com/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://cursor.com/docs/account/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $2,000/yr. Engadget reportedly says 20x for Ultra; the vendor page says 50x."
+  },
+  {
+    "vendor": "Cursor (legacy)",
+    "planId": "cursor-pro-legacy",
+    "label": "Cursor Pro (legacy)",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Cursor (IDE, CLI, Cloud Agents)"
+    ],
+    "models": [
+      "Grok 4.7/4.6/4.5",
+      "Composer 2.5",
+      "third-party models via 'Other Models' pool at API price"
+    ],
+    "limits": "\"Two monthly pools: Cursor Models and Other Models\"; Other Models pool is \"drawn down at each model's API price\". Dollar amounts not stated.",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://cursor.com/docs/account/pricing/legacy-cursor-plans",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Closed to new customers: 'New customers start on The X Subscription.' Existing subscribers keep it. Included pool dollar amounts are not on the page."
+  },
+  {
+    "vendor": "Cursor (legacy)",
+    "planId": "cursor-pro-plus-legacy",
+    "label": "Cursor Pro+ (legacy)",
+    "monthlyPriceUsd": 60,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Cursor (IDE, CLI, Cloud Agents)"
+    ],
+    "models": [
+      "Grok 4.7/4.6/4.5",
+      "Composer 2.5",
+      "third-party models via Other Models pool"
+    ],
+    "limits": "\"Pro+ and Ultra include more of each pool than Pro.\"",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://cursor.com/docs/account/pricing/legacy-cursor-plans",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Closed to new customers."
+  },
+  {
+    "vendor": "Cursor (legacy)",
+    "planId": "cursor-ultra-legacy",
+    "label": "Cursor Ultra (legacy)",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Cursor (IDE, CLI, Cloud Agents)"
+    ],
+    "models": [
+      "Grok 4.7/4.6/4.5",
+      "Composer 2.5",
+      "third-party models via Other Models pool"
+    ],
+    "limits": "\"Pro+ and Ultra include more of each pool than Pro.\"",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://cursor.com/docs/account/pricing/legacy-cursor-plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://forum.cursor.com/t/introducing-the-x-subscription/174450",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Staff on the forum: Ultra 'is no longer available for new signups.'"
+  },
+  {
+    "vendor": "xAI (legacy)",
+    "planId": "supergrok-legacy",
+    "label": "SuperGrok (legacy)",
+    "monthlyPriceUsd": 30,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Grok apps",
+      "Grok Build"
+    ],
+    "models": [
+      "Grok 4.x"
+    ],
+    "limits": "Not verified.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://costbench.com/software/ai-chatbots/grok/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.engadget.com/2284943/x-subscription-bundles-premium-grok-cursor/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "x.ai and grok.com blocked or client-rendered, so not verified from a primary source. Secondary reports: SuperGrok $30, SuperGrok Plus $100, SuperGrok Heavy ~$300; closed to new sign-ups since 2026-10-12, with existing subscribers keeping their plans. Consider leaving it out of the comparison."
+  },
+  {
+    "vendor": "GitHub",
+    "planId": "copilot-pro",
+    "label": "GitHub Copilot Pro",
+    "monthlyPriceUsd": 10,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Copilot in VS Code / Visual Studio / JetBrains / Eclipse / Xcode / Neovim / Zed",
+      "Copilot CLI",
+      "Copilot cloud agent (PRs)",
+      "Copilot code review",
+      "OpenCode"
+    ],
+    "models": [
+      "Multi-vendor: Claude (Haiku/Sonnet/Opus/Fable), GPT-5.x/6.x, Gemini 3.x/4 Argon, Grok 4.x, Kimi K2.7 Code/K3, MAI-Code-1.1-Flash; availability varies by plan"
+    ],
+    "limits": "\"Every plan includes a monthly allowance: 1 AI credit = $0.01 USD.\" Pro: Base 1,000 + flex 500 = 1,500 credits/month ($15). \"Flex allotments may change over time.\" \"Code completions and next edit suggestions don't use credits.\"",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://github.com/features/copilot/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.github.com/en/copilot/get-started/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://github.blog/changelog/2026-01-16-github-copilot-now-supports-opencode/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://github.blog/changelog/2026-04-20-changes-to-github-copilot-plans-for-individuals/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Usage-based since 2026-06-01: credits are drawn at per-model rates, so this behaves like a ~1.5x prepaid credit, not a rate window. OpenCode is officially supported for paid plans (changelog 2026-01-16). Third-party agents (Claude, Codex) inside Copilot need Pro+ or higher. New signups for Pro/Pro+/Max were paused on 2026-04-20 and still paused per the 2026-06-01 changelog; current signup status wasn't verified. Per the April changelog, Opus was removed from Pro. Annual price not shown on current pages."
+  },
+  {
+    "vendor": "GitHub",
+    "planId": "copilot-pro-plus",
+    "label": "GitHub Copilot Pro+",
+    "monthlyPriceUsd": 39,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Copilot in IDEs",
+      "Copilot CLI",
+      "Copilot cloud agent (PRs)",
+      "Copilot code review",
+      "Third-party agents in Copilot: Claude, Codex (preview)",
+      "OpenCode"
+    ],
+    "models": [
+      "Multi-vendor incl. Claude Opus/Fable, GPT-6.x, Gemini 4 Argon, Grok 4.x, Kimi K3"
+    ],
+    "limits": "Base 3,900 + flex 3,100 = 7,000 AI credits/month ($70). \"1 AI credit = $0.01 USD.\" \"Flex allotments may change over time.\"",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://github.com/features/copilot/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.github.com/en/copilot/get-started/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://github.blog/changelog/2026-01-16-github-copilot-now-supports-opencode/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Credit plan worth ~1.8x its price at list model rates. Signups may still be paused (see Pro)."
+  },
+  {
+    "vendor": "GitHub",
+    "planId": "copilot-max",
+    "label": "GitHub Copilot Max",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Copilot in IDEs",
+      "Copilot CLI",
+      "Copilot cloud agent (PRs)",
+      "Copilot code review",
+      "Third-party agents in Copilot: Claude, Codex (preview)",
+      "OpenCode"
+    ],
+    "models": [
+      "Multi-vendor; priority access to premium models"
+    ],
+    "limits": "Base 10,000 + flex 10,000 = 20,000 AI credits/month ($200). \"built for heavy Copilot usage, including sustained agent-driven workflows\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://github.com/features/copilot/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.github.com/en/copilot/get-started/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://github.blog/changelog/2026-06-01-updates-to-github-copilot-billing-and-plans/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Announced 2026-06-01 as an upgrade for existing subscribers. OpenCode support is stated for 'paid Copilot subscriptions (Pro, Pro+, Business, Enterprise)' as of January, before Max existed, so Max is assumed to be covered."
+  },
+  {
+    "vendor": "Anomaly (OpenCode)",
+    "planId": "opencode-go",
+    "label": "OpenCode Go",
+    "monthlyPriceUsd": 10,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "OpenCode",
+      "any agent (\"Use with any agent\")"
+    ],
+    "models": [
+      "Kimi K3",
+      "Kimi K2.7 Code",
+      "Gemini 4 Argon",
+      "MiniMax M3",
+      "Qwen3.7 Plus",
+      "GLM-5.3-Flash",
+      "MiMo-V2.6-Flash",
+      "DeepSeek V4.1 Flash",
+      "Claude Haiku 5.5",
+      "GPT 6 Luna",
+      "Step 5 Preview",
+      "others (29 total)"
+    ],
+    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\", e.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K2.7 Code 1,350 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 34,670 / $80.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://opencode.ai/go",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Monthly usage is expressed in dollars per model at roughly 1.5-8x the subscription price. Limited-time 2x/4x promos on some models."
+  },
+  {
+    "vendor": "Anomaly (OpenCode)",
+    "planId": "opencode-go-plus",
+    "label": "OpenCode Go Plus",
+    "monthlyPriceUsd": 40,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "OpenCode",
+      "any agent"
+    ],
+    "models": [
+      "same as Go"
+    ],
+    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K2.7 Code 4,050 / $180; DeepSeek V4.1 Flash 69,330 / $160.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://opencode.ai/go",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": ""
+  },
+  {
+    "vendor": "Zhipu / Z.ai",
+    "planId": "zai-glm-coding-lite",
+    "label": "GLM Coding Plan Lite",
+    "monthlyPriceUsd": 18,
+    "annualMonthlyPriceUsd": 12.6,
+    "harnesses": [
+      "ZCode",
+      "Claude Code",
+      "Claude for IDE",
+      "Codex",
+      "OpenCode",
+      "Pi",
+      "Cursor",
+      "Cline",
+      "TRAE",
+      "Qoder",
+      "Droid",
+      "Kilo Code",
+      "Roo Code",
+      "Crush",
+      "Goose",
+      "Eigent",
+      "AutoClaw",
+      "OpenClaw",
+      "Hermes Agent"
+    ],
+    "models": [
+      "GLM-5.3",
+      "GLM-5.3-Flash"
+    ],
+    "limits": "Each plan is subject to both a 5-hour usage limit and a weekly usage limit. Lite: 2,000 5-hour credits, 10,000 weekly credits. 5-hour credits: dynamically refreshed; credit quota resets 5 hours after consumption. Weekly credits: activated upon subscription; resets every 7 days. During off-peak hours, model usage is charged at 50% of the standard credit rate (peak: Mon–Fri 14:00–18:00 UTC+8). Est. 48–104M GLM-5.3 tokens/week depending on cache hit rate.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://docs.z.ai/devpack/overview",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.z.ai/devpack/faq",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.z.ai/devpack/usage-policy",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.z.ai/devpack/tool/others.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.z.ai/devpack/notice/usage-revision",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://vibecoding.app/blog/zhipu-ai-glm-coding-plan-review",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "The $18 monthly price is primary (docs: 'Starting at just 18 USD per month'). The $12.60/mo annual figure is secondary: 30% yearly discount, 20% quarterly ($14.40). z.ai/subscribe renders prices client-side, so it couldn't be scraped. Since 2026-07-30 the plan bills in credits instead of prompts. FAQ: 'strictly limited to use within officially supported tools and products', with a list of about 20 tools including Claude Code, Codex, and OpenCode. Third-party use is fine within that list and forbidden outside it. ZCode and AutoClaw consume 1.5x usage. Plan quota can't be used for general API calls; from 2026-10-16 coding-plan API keys are separate keys. No refunds."
+  },
+  {
+    "vendor": "Zhipu / Z.ai",
+    "planId": "zai-glm-coding-pro",
+    "label": "GLM Coding Plan Pro",
+    "monthlyPriceUsd": 80,
+    "annualMonthlyPriceUsd": 56,
+    "harnesses": [
+      "ZCode",
+      "Claude Code",
+      "Claude for IDE",
+      "Codex",
+      "OpenCode",
+      "Pi",
+      "Cursor",
+      "Cline",
+      "TRAE",
+      "Qoder",
+      "Droid",
+      "Kilo Code",
+      "Roo Code",
+      "Crush",
+      "Goose",
+      "Eigent",
+      "AutoClaw",
+      "OpenClaw",
+      "Hermes Agent"
+    ],
+    "models": [
+      "GLM-5.3",
+      "GLM-5.3-Flash"
+    ],
+    "limits": "Pro: 12,000 5-hour credits, 60,000 weekly credits (same reset and off-peak rules as Lite). Est. 290–627M GLM-5.3 tokens/week.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://docs.z.ai/devpack/overview",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://vibecoding.app/blog/zhipu-ai-glm-coding-plan-review",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.digitalapplied.com/blog/glm-coding-plan-worth-it-2026-value-analysis",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "Credit limits are primary. The $80 price is secondary: the official 2026-04-21 Legacy Plan Migration Notice still shows $72 for the old prompt-based plan, and third parties report the live subscribe page shows $80 for the credit plan. Annual $56/mo is secondary. Supported-tools-only restriction as for Lite."
+  },
+  {
+    "vendor": "Zhipu / Z.ai",
+    "planId": "zai-glm-coding-max",
+    "label": "GLM Coding Plan Max",
+    "monthlyPriceUsd": 168,
+    "annualMonthlyPriceUsd": 117.6,
+    "harnesses": [
+      "ZCode",
+      "Claude Code",
+      "Claude for IDE",
+      "Codex",
+      "OpenCode",
+      "Pi",
+      "Cursor",
+      "Cline",
+      "TRAE",
+      "Qoder",
+      "Droid",
+      "Kilo Code",
+      "Roo Code",
+      "Crush",
+      "Goose",
+      "Eigent",
+      "AutoClaw",
+      "OpenClaw",
+      "Hermes Agent"
+    ],
+    "models": [
+      "GLM-5.3",
+      "GLM-5.3-Flash"
+    ],
+    "limits": "Max: 28,000 5-hour credits, 140,000 weekly credits. Est. 676–1,463M GLM-5.3 tokens/week.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://docs.z.ai/devpack/overview",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://vibecoding.app/blog/zhipu-ai-glm-coding-plan-review",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "The $168 price is secondary; the legacy prompt plan was $160 per the official migration notice. Credit limits are primary."
+  },
+  {
+    "vendor": "Moonshot AI (Kimi)",
+    "planId": "kimi-plus",
+    "label": "Kimi Plus (membership incl. Kimi Code)",
+    "monthlyPriceUsd": 19,
+    "annualMonthlyPriceUsd": 15,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "JetBrains/Zed via ACP",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key (OpenAI- and Anthropic-compatible)"
+    ],
+    "models": [
+      "Kimi K3 (k3, k3-256k; 1M context needs Pro+)",
+      "K2.8 Preview (kimi-for-coding)"
+    ],
+    "limits": "New plans with Kimi Code access (Plus and higher) have a rolling 5-hour usage limit and no weekly limit... Exhausting the monthly shared credit pool also affects Kimi Code. Both monthly and annual subscriptions refresh credits monthly, with no rollover.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://www.kimi.ai/help/membership/membership-pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.kimi.com/code/docs/en/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.kimi.com/code/docs/en/kimi-code/membership.html",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Help center prices were captured 2026-10-12: $19/mo, or $180/yr ($15/mo). The credit pool is shared with Kimi web features (Work, Deep Research, slides, Claw). The docs say: 'Please maintain the tool's real identity identifier... Tampering with the client identifier (User-Agent) is considered a violation.' Legacy tiers (Moderato and others) keep weekly limits. China CNY plans (Go ¥49 with no coding, Plus ¥99, Pro ¥199, Max ¥699) are secondary only and not included. Extra Usage is pay-as-you-go near API rates."
+  },
+  {
+    "vendor": "Moonshot AI (Kimi)",
+    "planId": "kimi-pro",
+    "label": "Kimi Pro",
+    "monthlyPriceUsd": 39,
+    "annualMonthlyPriceUsd": 31,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key"
+    ],
+    "models": [
+      "Kimi K3 (up to 1M context)",
+      "K2.8 Preview",
+      "K2.7 Code HighSpeed (kimi-for-coding-highspeed)"
+    ],
+    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit, monthly shared credit pool ('More credits, Goal Mode, and a dedicated Kimi Claw').",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://www.kimi.ai/help/membership/membership-pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.kimi.com/code/docs/en/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "$372/yr. Secondary sources say plan cards show credits as 2x Plus. Same User-Agent rule as Plus."
+  },
+  {
+    "vendor": "Moonshot AI (Kimi)",
+    "planId": "kimi-max",
+    "label": "Kimi Max",
+    "monthlyPriceUsd": 99,
+    "annualMonthlyPriceUsd": 79,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key"
+    ],
+    "models": [
+      "Kimi K3 (1M)",
+      "K2.8 Preview",
+      "K2.7 Code HighSpeed"
+    ],
+    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit, monthly shared credit pool ('More credits and higher Agent task concurrency').",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://www.kimi.ai/help/membership/membership-pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "$948/yr. Secondary sources say 5x Plus credits."
+  },
+  {
+    "vendor": "Moonshot AI (Kimi)",
+    "planId": "kimi-ultra",
+    "label": "Kimi Ultra",
+    "monthlyPriceUsd": 199,
+    "annualMonthlyPriceUsd": 159,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key"
+    ],
+    "models": [
+      "Kimi K3 (1M)",
+      "K2.8 Preview",
+      "K2.7 Code HighSpeed"
+    ],
+    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit; 'The largest credit pool among these international plans.'",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://www.kimi.ai/help/membership/membership-pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "$1,908/yr. Secondary sources say 10x Plus credits."
+  },
+  {
+    "vendor": "Xiaomi MiMo",
+    "planId": "mimo-token-lite",
+    "label": "MiMo Token Plan Lite",
+    "monthlyPriceUsd": 6,
+    "annualMonthlyPriceUsd": 5.28,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code",
+      "third-party via OpenAI/Anthropic-compatible endpoint"
+    ],
+    "models": [
+      "mimo-v2.6-pro",
+      "mimo-v2.6-flash",
+      "mimo-v2.5-pro (retires 2026-10-21)",
+      "mimo-v2.5 (retires 2026-10-21)",
+      "mimo-v2.5-asr",
+      "mimo-v2.5-tts"
+    ],
+    "limits": "Fixed Monthly Quota: 4.1 billion Credits. 'Using mimo-v2.6-flash as the baseline, it can execute approximately 200 rounds of medium-to-complex tasks.' v2.6-pro: 300 credits/input token (cache miss), 2.5 cached, 600 output. 'When the monthly total quota of your plan is used up, the system will suspend the service.' Off-peak (00:00–08:00 Beijing) 0.8x.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://mimo.mi.com/static/docs/tokenplan/Token%20Plan/subscription.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://mimo.mi.com/static/docs/quick-start/faq/token-plan/Plans&Pricing.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "¥39/mo. Annual: $63.36/yr (¥411.84). Monthly quota only, with no 5-hour or weekly window in the docs. 12% first-purchase discount. No refunds. Xiaomi documents integrations for several third-party tools and I found no supported-tools-only clause, but I didn't read the full ToS."
+  },
+  {
+    "vendor": "Xiaomi MiMo",
+    "planId": "mimo-token-standard",
+    "label": "MiMo Token Plan Standard",
+    "monthlyPriceUsd": 16,
+    "annualMonthlyPriceUsd": 14.08,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code"
+    ],
+    "models": [
+      "mimo-v2.6-pro",
+      "mimo-v2.6-flash",
+      "mimo-v2.5-asr",
+      "mimo-v2.5-tts"
+    ],
+    "limits": "Fixed Monthly Quota: 11 billion Credits (~1,600 rounds of medium-to-complex tasks on v2.6-flash).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "¥99/mo; $168.96/yr (¥1,045.44)."
+  },
+  {
+    "vendor": "Xiaomi MiMo",
+    "planId": "mimo-token-pro",
+    "label": "MiMo Token Plan Pro",
+    "monthlyPriceUsd": 50,
+    "annualMonthlyPriceUsd": 44,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code"
+    ],
+    "models": [
+      "mimo-v2.6-pro",
+      "mimo-v2.6-flash",
+      "mimo-v2.5-asr",
+      "mimo-v2.5-tts"
+    ],
+    "limits": "Fixed Monthly Quota: 38 billion Credits (~5,600 rounds on v2.6-flash).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "¥329/mo; $528/yr (¥3,474.24)."
+  },
+  {
+    "vendor": "Xiaomi MiMo",
+    "planId": "mimo-token-max",
+    "label": "MiMo Token Plan Max",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": 88,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code"
+    ],
+    "models": [
+      "mimo-v2.6-pro",
+      "mimo-v2.6-flash",
+      "mimo-v2.5-asr",
+      "mimo-v2.5-tts"
+    ],
+    "limits": "Fixed Monthly Quota: 82 billion Credits (~12,800 rounds on v2.6-flash).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "¥659/mo; $1,056/yr (¥6,959.04)."
+  },
+  {
+    "vendor": "MiniMax",
+    "planId": "minimax-m-plan-go",
+    "label": "MiniMax M Plan Go",
+    "monthlyPriceUsd": 22,
+    "annualMonthlyPriceUsd": 18.33,
+    "harnesses": [
+      "MiniMax Code",
+      "Claude Code",
+      "Codex",
+      "Cursor",
+      "OpenCode",
+      "Pi",
+      "Hermes Agent",
+      "OpenClaw",
+      "other tools via Subscription Key"
+    ],
+    "models": [
+      "MiniMax M3.1 Flash Preview",
+      "image and audio models"
+    ],
+    "limits": "Usage relative to Go: 1x (baseline). Text, image, audio: 'Subject to a 5-hour window and a weekly window.' 'Both windows start with your first use: the 5-hour window lasts 5 hours, and the weekly window lasts 7 days.' No absolute numbers published.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/intro",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/faq.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/usage-rules.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/monthly-offer.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "$22/mo regular price comes from the launch-offer doc, whose 50% first-month offer ran 'through October 14'. Annual: 'pay for 10 months and get 2 months free', so $220/yr = $18.33/mo by my calculation. M Plan replaced Token Plan (Plus/Max/Ultra, now closed to new buyers). Separate Subscription Key; pay-as-you-go keys aren't interchangeable."
+  },
+  {
+    "vendor": "MiniMax",
+    "planId": "minimax-m-plan-explore",
+    "label": "MiniMax M Plan Explore",
+    "monthlyPriceUsd": 55,
+    "annualMonthlyPriceUsd": 45.83,
+    "harnesses": [
+      "MiniMax Code",
+      "Claude Code",
+      "Codex",
+      "Cursor",
+      "OpenCode",
+      "Pi",
+      "Hermes Agent",
+      "OpenClaw"
+    ],
+    "models": [
+      "MiniMax M3.1 Flash Preview",
+      "H3 video",
+      "image and audio models"
+    ],
+    "limits": "3x Go usage; 5-hour + weekly windows (video weekly only).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/faq.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/monthly-offer.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual figure derived from the 10-for-12 months rule."
+  },
+  {
+    "vendor": "MiniMax",
+    "planId": "minimax-m-plan-build",
+    "label": "MiniMax M Plan Build",
+    "monthlyPriceUsd": 132,
+    "annualMonthlyPriceUsd": 110,
+    "harnesses": [
+      "MiniMax Code",
+      "Claude Code",
+      "Codex",
+      "Cursor",
+      "OpenCode",
+      "Pi",
+      "Hermes Agent",
+      "OpenClaw"
+    ],
+    "models": [
+      "MiniMax M3.1 Flash Preview",
+      "H3 video",
+      "image and audio models"
+    ],
+    "limits": "7.5x Go usage; 5-hour + weekly windows.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/faq.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/monthly-offer.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual figure derived."
+  },
+  {
+    "vendor": "Alibaba Cloud (Model Studio)",
+    "planId": "alibaba-coding-plan-pro",
+    "label": "Model Studio Coding Plan Pro",
+    "monthlyPriceUsd": 50,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Claude Code",
+      "OpenCode",
+      "Cursor",
+      "Codex",
+      "Qwen Code",
+      "Cline",
+      "Kilo CLI",
+      "Qoder",
+      "Lingma",
+      "OpenClaw",
+      "Hermes Agent",
+      "QwenPaw",
+      "Cherry Studio",
+      "Chatbox",
+      "WorkBuddy"
+    ],
+    "models": [
+      "qwen3.7-plus",
+      "qwen3.6-plus",
+      "qwen3.5-plus",
+      "kimi-k2.5",
+      "glm-5",
+      "MiniMax-M2.5"
+    ],
+    "limits": "Up to 6,000 requests per 5 hours; Up to 45,000 requests per week; Up to 90,000 requests per month. 'Each query consumes quota based on the number of model calls. Simple tasks typically use 5–10 calls, while complex tasks may use 10–30 or more.' 5-hour quota rolls; weekly resets Monday 00:00 UTC+8; monthly on renewal date.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://www.alibabacloud.com/help/en/model-studio/coding-plan",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "International page (updated Oct 11, 2026). 'Limited availability: Slots are limited... restocked daily.' Lite was closed to new buyers on 2026-03-20. Terms: 'for interactive use in programming tools... Do not use the plan's API key for automated scripts, application backends, or other non-interactive scenarios.' Non-refundable. No annual price shown."
+  },
+  {
+    "vendor": "ByteDance Volcengine (Ark)",
+    "planId": "volcengine-ark-coding-lite",
+    "label": "Ark Coding Plan Lite",
+    "monthlyPriceUsd": 5.6,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Claude Code",
+      "Codex CLI",
+      "Cursor",
+      "TRAE",
+      "OpenCode",
+      "Kilo",
+      "OpenClaw",
+      "Hermes Agent"
+    ],
+    "models": [
+      "Doubao-Seed-Evolving",
+      "DeepSeek-V4.1-Flash",
+      "GLM-5.3 series",
+      "Kimi-K3",
+      "Kimi-K2.8-Preview",
+      "MiniMax",
+      "Auto mode"
+    ],
+    "limits": "About 1,200 requests per 5 hours, about 9,000 per week, about 18,000 per subscription month (Volcengine articles). 5-hour window counted from first request; weekly resets Monday 00:00; monthly from purchase date.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://www.volcengine.com/activity/codingplan",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.volcengine.com/article/37156",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://codingplan.org/plans/volcengine",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "The official page loads prices dynamically ('价格查询中'); it only states '限时 9.9 元起'. The ¥40/mo list price is secondary. USD is my conversion at about 7.1 CNY/USD. Promo: first two months at 25% of list (¥9.9) until 2026-11-08 (secondary). China region only. Volcengine articles say quota works only in supported coding tools and API use outside them may be treated as abuse."
+  },
+  {
+    "vendor": "ByteDance Volcengine (Ark)",
+    "planId": "volcengine-ark-coding-pro",
+    "label": "Ark Coding Plan Pro",
+    "monthlyPriceUsd": 28.2,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Claude Code",
+      "Codex CLI",
+      "Cursor",
+      "TRAE",
+      "OpenCode",
+      "Kilo",
+      "OpenClaw",
+      "Hermes Agent"
+    ],
+    "models": [
+      "Doubao-Seed-Evolving",
+      "DeepSeek-V4.1-Flash",
+      "GLM-5.3 series",
+      "Kimi-K3",
+      "Kimi-K2.8-Preview",
+      "MiniMax",
+      "Auto mode"
+    ],
+    "limits": "'5 倍于 Lite 套餐的用量' (official page); about 6,000 per 5 hours, 45,000 per week, 90,000 per month (Volcengine articles).",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://www.volcengine.com/activity/codingplan",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.volcengine.com/article/37156",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "¥200/mo list (secondary) at about 7.1 CNY/USD; promo ¥49.9 for the first two months."
+  },
+  {
+    "vendor": "Tencent Cloud",
+    "planId": "tencent-coding-plan-lite",
+    "label": "Tencent Cloud Coding Plan Lite",
+    "monthlyPriceUsd": 5.6,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Claude Code",
+      "OpenCode",
+      "others (unverified)"
+    ],
+    "models": [
+      "Tencent HY 2.0",
+      "GLM-5",
+      "Kimi-K2.5",
+      "MiniMax-M2.5"
+    ],
+    "limits": "Reportedly 1,200 requests/5h, 9,000/week, 18,000/month (conflicting third-party figures of ~750/5h exist).",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://coding-plan.org/plans/tencentcloud",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.huangxiaolong.net/read/3322.html",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "unverified",
+    "notes": "Reportedly ¥40/mo list (¥7.9 first month), Pro ¥200/mo. One aggregator reported both tiers sold out on 2026-08-26. No primary source checked."
+  },
+  {
+    "vendor": "Cognition (Devin Desktop, formerly Windsurf)",
+    "planId": "devin-pro",
+    "label": "Devin Pro (Windsurf/Devin Desktop)",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Devin Desktop (ex-Windsurf)",
+      "Devin CLI",
+      "Devin Cloud"
+    ],
+    "models": [
+      "OpenAI, Claude, Gemini, SpaceXAI frontier models",
+      "SWE-2",
+      "open models (e.g. Kimi K2.5)"
+    ],
+    "limits": "\"Increased quotas\"; \"Each paid plan comes with a usage allowance that refreshes automatically on a daily and weekly basis\"; \"Purchase extra usage at API pricing\"; concurrent sessions \"Up to 10\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://windsurf.com/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "windsurf.com/pricing now serves Devin's pricing page. The 'Free SWE-2 ... through October 16, 2026' promo has expired. No numeric quotas published. thirdPartyHarnessAllowed=false is inferred: the quota only applies inside Cognition's products."
+  },
+  {
+    "vendor": "Cognition (Devin Desktop, formerly Windsurf)",
+    "planId": "devin-max",
+    "label": "Devin Max",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Devin Desktop",
+      "Devin CLI",
+      "Devin Cloud"
+    ],
+    "models": [
+      "same as Pro"
+    ],
+    "limits": "\"Significantly higher quotas\"; concurrent sessions \"Unlimited\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://windsurf.com/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "No multiplier published."
+  },
+  {
+    "vendor": "Factory",
+    "planId": "factory-pro",
+    "label": "Factory Pro (Droid)",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Droid CLI",
+      "Droid Desktop",
+      "Droid SDK",
+      "cloud background agents"
+    ],
+    "models": [
+      "GPT-5 family, Claude Opus/Sonnet, Gemini, and others (per vendor)",
+      "Droid Core open-weight pool"
+    ],
+    "limits": "\"three rolling windows, 5-hour, 7-day, and 30-day. Each runs independently.\"; \"Droid Core: free open-weight model pool with separate Rate Limits after Standard Usage runs out.\"; \"BYOK is free up to an allowance on all Individual plans.\"",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://factory.ai/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.factory.com/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Token amounts are not published. Per-model multipliers are on the models page (not fetched)."
+  },
+  {
+    "vendor": "Factory",
+    "planId": "factory-plus",
+    "label": "Factory Plus",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Droid CLI",
+      "Droid Desktop",
+      "Droid SDK",
+      "Droid Computers"
+    ],
+    "models": [
+      "as Pro"
+    ],
+    "limits": "\"Expanded rolling rate limits\"; \"~5x the usage of Pro\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://factory.ai/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": ""
+  },
+  {
+    "vendor": "Factory",
+    "planId": "factory-max",
+    "label": "Factory Max",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Droid CLI",
+      "Droid Desktop",
+      "Droid SDK",
+      "Droid Computers"
+    ],
+    "models": [
+      "as Pro"
+    ],
+    "limits": "\"Expanded rolling rate limits\"; \"~10x the usage of Pro\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://factory.ai/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": ""
+  },
+  {
+    "vendor": "Mistral",
+    "planId": "mistral-pro",
+    "label": "Mistral Pro (Vibe / Le Chat)",
+    "monthlyPriceUsd": 14.99,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Vibe CLI",
+      "Vibe for IDE (VS Code, JetBrains)",
+      "Vibe web",
+      "remote coding agents"
+    ],
+    "models": [
+      "Devstral",
+      "Mistral models"
+    ],
+    "limits": "\"All-day coding in the CLI, IDE, or on web.\"; \"Subject to fair usage limits and Mistral's Terms of Service.\"; includes \"$25.5 /mo in API credits\" (card attribution uncertain, see notes).",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://mistral.ai/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "$14.99 confirmed by FAQ ('Verified students can get Mistral Pro for $5.99 / month (normally $14.99)'), excluding tax. The page has a Pro/Education toggle. $25.5 vs $15 API credits: which card each belongs to is inferred from order only. The API credits would be usable from any harness, but the Vibe allowance itself is fair-use."
+  },
+  {
+    "vendor": "Ollama",
+    "planId": "ollama-pro",
+    "label": "Ollama Pro (Cloud)",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": 16.67,
+    "harnesses": [
+      "any harness via Ollama API (Claude Code, Codex, OpenCode, etc.)"
+    ],
+    "models": [
+      "cloud open models: GLM-5.3, Kimi K3, Kimi K2.7 Code, DeepSeek V4/4.1, MiniMax M3, gpt-oss, Qwen, Mistral Large 4, etc."
+    ],
+    "limits": "\"$60 of usage credits per month\"; \"Access to larger pro models\"; \"Run multiple models concurrently\"; resets monthly, no rollover; off-peak pricing outside 12:00-18:00 UTC weekdays.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://ollama.com/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $200/yr. This is a credit plan ($3 of credit per $1), not a rate-window plan. thirdPartyHarnessAllowed=true because it's API-based; Ollama's harness launcher integrations are known from secondary sources, not this page."
+  },
+  {
+    "vendor": "Ollama",
+    "planId": "ollama-max",
+    "label": "Ollama Max (Cloud)",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via Ollama API"
+    ],
+    "models": [
+      "as Pro, plus early access to newest models"
+    ],
+    "limits": "\"$300 of usage credits per month\"; \"10 concurrent requests\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://ollama.com/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "No annual price shown for Max."
+  },
+  {
+    "vendor": "Synthetic",
+    "planId": "synthetic-go",
+    "label": "Synthetic Go",
+    "monthlyPriceUsd": 9,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via API key"
+    ],
+    "models": [
+      "gpt-oss-120b",
+      "GLM-4.7-Flash",
+      "GLM-5.3",
+      "GLM-5.3-Flash",
+      "DeepSeek-V4.1-Flash",
+      "Kimi-K3",
+      "Qwen3.8-27B",
+      "Nemotron-3-Super"
+    ],
+    "limits": "\"Credits regenerate over the week and apply at discounted model rates.\"; \"Allows extra usage at API pricing\"; \"1 Usage Reset/month\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://synthetic.new/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Weekly credit amounts per tier are not captured. The page's tokens/mo table doesn't say which tier it's for. API compatibility with Claude Code/OpenCode isn't stated on the page (known from secondary sources)."
+  },
+  {
+    "vendor": "Synthetic",
+    "planId": "synthetic-standard",
+    "label": "Synthetic Standard",
+    "monthlyPriceUsd": 30,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via API key"
+    ],
+    "models": [
+      "as Go"
+    ],
+    "limits": "\"Larger limits for more demanding projects\"; weekly regenerating credits.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://synthetic.new/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": ""
+  },
+  {
+    "vendor": "Synthetic",
+    "planId": "synthetic-big",
+    "label": "Synthetic Big",
+    "monthlyPriceUsd": 90,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via API key"
+    ],
+    "models": [
+      "as Go"
+    ],
+    "limits": "\"Biggest limits for the biggest projects\"; Fast mode \"uses 2× as much of your rate limit\"; Infinite mode \"never count against your rate limit\" (DeepSeek V4.1 Flash only).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://synthetic.new/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": ""
+  },
+  {
+    "vendor": "Chutes",
+    "planId": "chutes-plus",
+    "label": "Chutes Plus",
+    "monthlyPriceUsd": 10,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via OpenAI-compatible API"
+    ],
+    "models": [
+      "open models on TEE: Kimi K3/K2.6, GLM-5.x, DeepSeek V4 Flash, Qwen3.x, etc."
+    ],
+    "limits": "\"Bundled daily quota\"; \"6% off PAYG rates beyond the quota\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://chutes.ai/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Daily request quota size is not on the pricing page ('View plan limits' link not fetched)."
+  },
+  {
+    "vendor": "Chutes",
+    "planId": "chutes-pro",
+    "label": "Chutes Pro",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via OpenAI-compatible API"
+    ],
+    "models": [
+      "as Plus"
+    ],
+    "limits": "\"Larger daily quota\"; \"10% off PAYG rates beyond the quota\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://chutes.ai/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Quota size unverified."
+  },
+  {
+    "vendor": "JetBrains",
+    "planId": "jetbrains-ai-pro",
+    "label": "JetBrains AI Pro",
+    "monthlyPriceUsd": 10,
+    "annualMonthlyPriceUsd": 8.33,
+    "harnesses": [
+      "JetBrains IDEs (AI Assistant, Junie)"
+    ],
+    "models": [
+      "JetBrains-hosted cloud models (multi-vendor)"
+    ],
+    "limits": "\"10 AI credits per 30-days\"; \"Each AI credit equals $1 USD\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Credit plan priced at par ($1 = 1 credit), so no subsidy relative to API. Annual $100/yr is from secondary sources. ACP agents and BYOK don't need a subscription."
+  },
+  {
+    "vendor": "JetBrains",
+    "planId": "jetbrains-ai-ultimate",
+    "label": "JetBrains AI Ultimate",
+    "monthlyPriceUsd": 30,
+    "annualMonthlyPriceUsd": 25,
+    "harnesses": [
+      "JetBrains IDEs (AI Assistant, Junie)"
+    ],
+    "models": [
+      "JetBrains-hosted cloud models"
+    ],
+    "limits": "\"35 AI credits per 30-days\" (includes \"a small bonus\").",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $300/yr is from secondary sources."
+  },
+  {
+    "vendor": "Warp",
+    "planId": "warp-build",
+    "label": "Warp Build",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Warp Terminal agent",
+      "Warp Agent CLI",
+      "Warp cloud agents"
+    ],
+    "models": [
+      "frontier and open models from OpenAI, Anthropic, z.ai, and more"
+    ],
+    "limits": "\"$20 of agent usage included each month at API rates\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://www.warp.dev/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Credit at API rates (1:1), so no subsidy. An annual toggle exists but the price wasn't captured."
+  },
+  {
+    "vendor": "Warp",
+    "planId": "warp-max",
+    "label": "Warp Max",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Warp Terminal agent",
+      "Warp Agent CLI",
+      "Warp cloud agents"
+    ],
+    "models": [
+      "as Build"
+    ],
+    "limits": "\"$200 of agent usage included each month (10× Build)\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://www.warp.dev/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "1:1 credit."
+  }
+]
