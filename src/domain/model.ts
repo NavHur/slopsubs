@@ -90,6 +90,8 @@ const Plan = z.object({
 	sourceUrl: z.url(),
 	reportedCap: ReportedCap.nullable(),
 	publishedAllowance: PublishedAllowance.nullable(),
+	/** Highest effort the plan serves for a family, where below its maximum. */
+	maxEffortByFamily: z.record(z.string(), Effort),
 });
 export type Plan = z.infer<typeof Plan>;
 export const Plans = z.array(Plan);

@@ -57,6 +57,9 @@ function blendedPrice(input: number, output: number): number {
 	return (3 * input + output) / 4;
 }
 
+/** Max effort on Muse Spark is only served by Meta's own API. */
+const OPENCODE_MAX_EFFORT = { "muse-spark-1-3": "xhigh" } as const;
+
 const PUBLISHED_ALLOWANCES: Record<string, 0 | 1> = {
 	"opencode-go": 0,
 	"opencode-go-plus": 1,
@@ -248,6 +251,7 @@ const plans = Plans.parse(
 				sourceUrl: p.sources[0].url,
 				reportedCap: REPORTED_CAPS[p.planId] ?? null,
 				publishedAllowance: publishedAllowance(p.planId),
+				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
 			};
 		}),
 );

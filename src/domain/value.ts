@@ -1,11 +1,12 @@
-import type {
-	BenchmarkPoint,
-	FamilyId,
-	LimitSample,
-	Plan,
-	PublishedAllowance,
-	ReportedCap,
-	UsageProfile,
+import {
+	type BenchmarkPoint,
+	EFFORTS,
+	type FamilyId,
+	type LimitSample,
+	type Plan,
+	type PublishedAllowance,
+	type ReportedCap,
+	type UsageProfile,
 } from "./model";
 
 const WEEKS_PER_MONTH = 52 / 12;
@@ -117,6 +118,14 @@ function isPlottable(point: BenchmarkPoint): point is PlottableBenchmark {
 	return point.intelligence !== null && point.costPerTaskUsd !== null;
 }
 
+/** Drops efforts above the highest one the plan serves for the family. */
+function servedBy(plan: Plan, family: FamilyId) {
+	const max = plan.maxEffortByFamily[family];
+	if (!max) return () => true;
+	return (point: BenchmarkPoint) =>
+		EFFORTS.indexOf(point.effort) <= EFFORTS.indexOf(max);
+}
+
 function seriesFor(
 	points: readonly PlottableBenchmark[],
 	family: FamilyId,
@@ -169,7 +178,8 @@ export function valuePoints({
 			.flatMap((family) => {
 				const usd = apiUsdPerMonth(capacity, family);
 				if (usd === null) return [];
-				return seriesFor(plottable, family, {
+				const served = plottable.filter(servedBy(plan, family));
+				return seriesFor(served, family, {
 					kind: "plan",
 					plan,
 					valueMultiple: valueMultiple({ plan, apiUsdPerMonth: usd, profile }),

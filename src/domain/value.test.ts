@@ -28,6 +28,7 @@ const plan: Plan = {
 	sourceUrl: "https://example.com/pricing",
 	reportedCap: null,
 	publishedAllowance: null,
+	maxEffortByFamily: {},
 };
 
 function sample(start: number, end: number, apiUsd: number): LimitSample {
@@ -182,6 +183,22 @@ describe("valuePoints", () => {
 			showApi: false,
 		});
 		expect(points).toEqual([]);
+	});
+
+	it("plots only the efforts a plan serves", () => {
+		const points = valuePoints({
+			benchmarks,
+			families: [opus],
+			plans: [{ ...plan, maxEffortByFamily: { [opus]: "low" } }],
+			samples: [sample(0, 10, 120)],
+			profile: maxed,
+			showApi: true,
+		});
+		expect(points.map((p) => [p.seriesId, p.benchmark.effort])).toEqual([
+			[`${opus}@api`, "low"],
+			[`${opus}@api`, "max"],
+			[`${opus}@${maxPlan}`, "low"],
+		]);
 	});
 
 	it("values each family by its own published allowance", () => {
