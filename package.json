@@ -16,7 +16,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "import-benchmarks": "node scripts/import-benchmarks.ts",
-    "measure": "node scripts/measure.ts"
+    "measure": "node scripts/measure.ts",
+    "build-plans": "node scripts/build-plans.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
