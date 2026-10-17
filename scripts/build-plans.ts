@@ -1,4 +1,5 @@
-// Builds src/data/plans.json from research/plans.json, keeping the plans
+// Builds src/data/plans.json (and the trimmed chart-benchmarks.json the site
+// ships) from research/plans.json, keeping the plans
 // that meter usage in windows (the ones a weekly-cap measurement can value)
 // and mapping their models onto benchmarked families.
 // Credit-based plans (Copilot, Ollama, JetBrains, Warp) are left out: their
@@ -99,9 +100,10 @@ async function readJson(path: string): Promise<unknown> {
 const research = z
 	.array(ResearchPlan)
 	.parse(await readJson("research/plans.json"));
-const { models } = BenchmarkDataset.parse(
+const dataset = BenchmarkDataset.parse(
 	await readJson("src/data/benchmarks.json"),
 );
+const { models } = dataset;
 const benchmarked = new Set<string>(models.map((m) => m.family));
 
 const missing = Object.keys(PLAN_FAMILIES).filter(
@@ -143,4 +145,14 @@ await writeFile(
 	new URL("src/data/plans.json", ROOT),
 	`${JSON.stringify(plans, null, 2)}\n`,
 );
-console.log(`Wrote ${plans.length} plans`);
+
+// The site ships only the benchmark points some plan covers.
+const covered = new Set<string>(plans.flatMap((p) => p.families));
+const chartModels = models.filter((m) => covered.has(m.family));
+await writeFile(
+	new URL("src/data/chart-benchmarks.json", ROOT),
+	`${JSON.stringify({ ...dataset, models: chartModels })}\n`,
+);
+console.log(
+	`Wrote ${plans.length} plans and ${chartModels.length} chart benchmark points`,
+);

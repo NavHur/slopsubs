@@ -1,5 +1,5 @@
 import { BenchmarkDataset, LimitSamples, Plans } from "#/domain/model";
-import benchmarksJson from "./benchmarks.json";
+import benchmarksJson from "./chart-benchmarks.json";
 import plansJson from "./plans.json";
 import samplesJson from "./samples.json";
 

@@ -1,6 +1,8 @@
 allowBuilds:
   esbuild: true
   lightningcss: true
+  sharp: false
+  workerd: true
 minimumReleaseAgeExclude:
   - '@tanstack/react-router@1.170.45'
   - '@tanstack/react-start-client@1.168.43'

@@ -17,7 +17,8 @@
     "typecheck": "tsc --noEmit",
     "import-benchmarks": "node scripts/import-benchmarks.ts",
     "measure": "node scripts/measure.ts",
-    "build-plans": "node scripts/build-plans.ts"
+    "build-plans": "node scripts/build-plans.ts",
+    "deploy": "pnpm build && wrangler deploy"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -39,12 +40,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
-    "vitest": "^5.0.5"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "lightningcss"
-    ]
+    "vitest": "^5.0.5",
+    "wrangler": "4.101.0"
   }
 }
