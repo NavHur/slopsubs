@@ -24,6 +24,23 @@ function PlanValue({ plan, profile }: { plan: Plan; profile: UsageProfile }) {
 	);
 }
 
+function isMeasured(plan: Plan): boolean {
+	return planCapacity(plan.id, samples).kind === "measured";
+}
+
+function PlanPrice({ plan }: { plan: Plan }) {
+	const estimate = plan.confidence === "primary" ? "" : "*";
+	return (
+		<span
+			className="text-[11px] text-subtle"
+			title={estimate && `Price from ${plan.confidence} sources`}
+		>
+			${plan.monthlyPriceUsd}
+			{estimate}
+		</span>
+	);
+}
+
 export function PlanList({
 	plans,
 	selected,
@@ -35,7 +52,8 @@ export function PlanList({
 	profile: UsageProfile;
 	onToggle: (plan: PlanId) => void;
 }) {
-	const byVendor = Map.groupBy(plans, (p) => p.vendor);
+	const measured = plans.filter(isMeasured);
+	const unmeasured = plans.filter((p) => !isMeasured(p));
 	return (
 		<section aria-labelledby="plans-heading">
 			<div className="mb-2 flex items-baseline justify-between">
@@ -46,11 +64,17 @@ export function PlanList({
 					value at {Math.round(profile.weeklyCapShare * 100)}% of cap
 				</span>
 			</div>
-			{[...byVendor].map(([vendor, vendorPlans]) => (
+			{measured.length === 0 && (
+				<p className="mb-3 text-[12px] leading-5 text-muted">
+					No plan measured yet. Record <code>/usage</code> marks with{" "}
+					<code>pnpm measure</code> to plot one.
+				</p>
+			)}
+			{[...Map.groupBy(measured, (p) => p.vendor)].map(([vendor, group]) => (
 				<div key={vendor} className="mb-3">
 					<h3 className="mb-1 text-[12px] font-medium text-subtle">{vendor}</h3>
 					<ul>
-						{vendorPlans.map((plan) => (
+						{group.map((plan) => (
 							<li key={plan.id}>
 								<label className="flex cursor-pointer items-center gap-2 py-1 text-[13px] hover:text-fg">
 									<input
@@ -66,9 +90,7 @@ export function PlanList({
 									>
 										{plan.label}
 									</span>
-									<span className="text-[11px] text-subtle">
-										${plan.monthlyPriceUsd}
-									</span>
+									<PlanPrice plan={plan} />
 									<span className="ml-auto">
 										<PlanValue plan={plan} profile={profile} />
 									</span>
@@ -78,7 +100,36 @@ export function PlanList({
 					</ul>
 				</div>
 			))}
+			{unmeasured.length > 0 && <UnmeasuredPlans plans={unmeasured} />}
 		</section>
+	);
+}
+
+function UnmeasuredPlans({ plans }: { plans: readonly Plan[] }) {
+	return (
+		<details className="group text-[13px]">
+			<summary className="cursor-pointer py-1 text-muted hover:text-fg">
+				Not yet measured ({plans.length})
+			</summary>
+			<ul className="mt-1">
+				{plans.map((plan) => (
+					<li key={plan.id} className="flex items-center gap-2 py-0.5">
+						<a
+							href={plan.sourceUrl}
+							target="_blank"
+							rel="noreferrer"
+							title={plan.limits}
+							className="truncate text-muted hover:text-fg"
+						>
+							{plan.label}
+						</a>
+						<span className="ml-auto">
+							<PlanPrice plan={plan} />
+						</span>
+					</li>
+				))}
+			</ul>
+		</details>
 	);
 }
 

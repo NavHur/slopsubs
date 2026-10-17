@@ -41,7 +41,7 @@ export function selectedPlans(view: ViewSearch): PlanId[] {
 export function selectedFamilies(view: ViewSearch): FamilyId[] {
 	return view.families
 		? COVERED_FAMILIES.filter((f) => view.families?.includes(f))
-		: COVERED_FAMILIES;
+		: COVERED_FAMILIES.filter((f) => FRONTIER.includes(f));
 }
 
 export function toggled<T>(list: readonly T[], item: T): T[] {
