@@ -24,7 +24,8 @@
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
       "basis": "A twentieth of Theo's Max 20x figure (Max 20x is 20x Pro)"
-    }
+    },
+    "publishedAllowance": null
   },
   {
     "id": "claude-max-5x",
@@ -52,7 +53,8 @@
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
       "basis": "A quarter of Theo's Max 20x figure (Max 5x vs 20x of Pro)"
-    }
+    },
+    "publishedAllowance": null
   },
   {
     "id": "claude-max-20x",
@@ -80,7 +82,8 @@
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
       "basis": "Theo: $200 in, $8,000 a month of API-priced inference out"
-    }
+    },
+    "publishedAllowance": null
   },
   {
     "id": "chatgpt-plus",
@@ -120,7 +123,8 @@
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
       "basis": "A tenth of Theo's Pro 200 figure (Pro 200 is now 10x Plus)"
-    }
+    },
+    "publishedAllowance": null
   },
   {
     "id": "chatgpt-pro-100",
@@ -160,7 +164,8 @@
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
       "basis": "5x Theo's Plus figure (OpenAI launched Pro 100 at 5x Plus)"
-    }
+    },
+    "publishedAllowance": null
   },
   {
     "id": "chatgpt-pro-200",
@@ -200,7 +205,8 @@
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1037s",
       "basis": "Theo measured $573.86 of API-priced usage in one weekly cap"
-    }
+    },
+    "publishedAllowance": null
   },
   {
     "id": "chatgpt-pro-500",
@@ -240,7 +246,8 @@
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
       "basis": "2.5x Theo's Pro 200 figure (Pro 500 is 25x Plus, Pro 200 10x)"
-    }
+    },
+    "publishedAllowance": null
   },
   {
     "id": "opencode-go",
@@ -256,21 +263,48 @@
       "kimi-k3",
       "kimi-k2-7-code",
       "gemini-4-argon",
+      "step-5-preview",
       "minimax-m3",
-      "qwen3-7-plus",
-      "glm-5-3-flash",
-      "mimo-v2-6-flash",
-      "deepseek-v4-1-flash",
       "claude-haiku-5-5",
       "gpt-6-luna",
-      "step-5-preview"
+      "qwen3-7-plus",
+      "qwen3-8-max",
+      "glm-5-3",
+      "glm-5-3-flash",
+      "mimo-v2-6-pro",
+      "mimo-v2-6-flash",
+      "deepseek-v4-1-flash",
+      "deepseek-v4-pro",
+      "grok-4-7"
     ],
     "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\", e.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K2.7 Code 1,350 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 34,670 / $80.",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
     "sourceUrl": "https://opencode.ai/go",
-    "reportedCap": null
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "kimi-k3": 15,
+        "kimi-k2-7-code": 60,
+        "gemini-4-argon": 15,
+        "step-5-preview": 15,
+        "minimax-m3": 60,
+        "claude-haiku-5-5": 15,
+        "gpt-6-luna": 15,
+        "qwen3-7-plus": 60,
+        "qwen3-8-max": 15,
+        "glm-5-3": 15,
+        "glm-5-3-flash": 60,
+        "mimo-v2-6-pro": 15,
+        "mimo-v2-6-flash": 60,
+        "deepseek-v4-1-flash": 80,
+        "deepseek-v4-pro": 15,
+        "grok-4-7": 15
+      },
+      "url": "https://opencode.ai/docs/go#usage-limits",
+      "basis": "OpenCode's published monthly usage for each model"
+    }
   },
   {
     "id": "opencode-go-plus",
@@ -286,20 +320,47 @@
       "kimi-k3",
       "kimi-k2-7-code",
       "gemini-4-argon",
+      "step-5-preview",
       "minimax-m3",
-      "qwen3-7-plus",
-      "glm-5-3-flash",
-      "mimo-v2-6-flash",
-      "deepseek-v4-1-flash",
       "claude-haiku-5-5",
       "gpt-6-luna",
-      "step-5-preview"
+      "qwen3-7-plus",
+      "qwen3-8-max",
+      "glm-5-3",
+      "glm-5-3-flash",
+      "mimo-v2-6-pro",
+      "mimo-v2-6-flash",
+      "deepseek-v4-1-flash",
+      "deepseek-v4-pro",
+      "grok-4-7"
     ],
     "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K2.7 Code 4,050 / $180; DeepSeek V4.1 Flash 69,330 / $160.",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
     "sourceUrl": "https://opencode.ai/go",
-    "reportedCap": null
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "kimi-k3": 60,
+        "kimi-k2-7-code": 180,
+        "gemini-4-argon": 60,
+        "step-5-preview": 60,
+        "minimax-m3": 180,
+        "claude-haiku-5-5": 60,
+        "gpt-6-luna": 60,
+        "qwen3-7-plus": 180,
+        "qwen3-8-max": 60,
+        "glm-5-3": 120,
+        "glm-5-3-flash": 180,
+        "mimo-v2-6-pro": 60,
+        "mimo-v2-6-flash": 120,
+        "deepseek-v4-1-flash": 160,
+        "deepseek-v4-pro": 60,
+        "grok-4-7": 60
+      },
+      "url": "https://opencode.ai/docs/go#usage-limits",
+      "basis": "OpenCode's published monthly usage for each model"
+    }
   }
 ]

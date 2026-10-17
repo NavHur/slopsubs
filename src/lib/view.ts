@@ -32,8 +32,8 @@ function rank(family: FamilyId): number {
 	return index === -1 ? FRONTIER.length : index;
 }
 
-/** The $200 tier of each harness: the plans people compare first. */
-const DEFAULT_PLANS = ["claude-max-20x", "chatgpt-pro-200"];
+/** The plans people compare first: each harness's headline tier. */
+const DEFAULT_PLANS = ["claude-max-20x", "chatgpt-pro-200", "opencode-go"];
 
 export function selectedPlans(view: ViewSearch): PlanId[] {
 	const chosen = view.plans ?? DEFAULT_PLANS;

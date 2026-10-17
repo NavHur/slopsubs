@@ -3,6 +3,7 @@ import type {
 	FamilyId,
 	LimitSample,
 	Plan,
+	PublishedAllowance,
 	ReportedCap,
 	UsageProfile,
 } from "./model";
@@ -13,6 +14,7 @@ const FULL_GAUGE_PERCENT = 100;
 export type PlanCapacity =
 	| { kind: "unmeasured" }
 	| { kind: "reported"; weeklyCapApiUsd: number; report: ReportedCap }
+	| { kind: "published"; allowance: PublishedAllowance }
 	| {
 			kind: "measured";
 			/** API-equivalent spend that fills the weekly cap once. */
@@ -22,15 +24,16 @@ export type PlanCapacity =
 	  };
 
 /**
- * Extrapolates the weekly cap from every sample recorded for the plan,
- * falling back to a published figure while there are none.
+ * Extrapolates the weekly cap from every sample recorded for the plan. Without
+ * samples, falls back to the vendor's published allowance, then to a figure
+ * someone else reported.
  */
 export function planCapacity(
 	plan: Plan,
 	samples: readonly LimitSample[],
 ): PlanCapacity {
 	const own = samples.filter((s) => s.plan === plan.id);
-	if (own.length === 0) return reportedCapacity(plan.reportedCap);
+	if (own.length === 0) return unsampledCapacity(plan);
 	const apiUsd = own.reduce((sum, s) => sum + s.apiUsd, 0);
 	const gauge = own.reduce(
 		(sum, s) => sum + (s.endUsedPercent - s.startUsedPercent),
@@ -44,28 +47,49 @@ export function planCapacity(
 	};
 }
 
-function reportedCapacity(report: ReportedCap | null): PlanCapacity {
+function unsampledCapacity(plan: Plan): PlanCapacity {
+	if (plan.publishedAllowance) {
+		return { kind: "published", allowance: plan.publishedAllowance };
+	}
+	const report = plan.reportedCap;
 	return report
 		? { kind: "reported", weeklyCapApiUsd: report.weeklyCapApiUsd, report }
 		: { kind: "unmeasured" };
 }
 
 /**
+ * API-priced usage a plan allows per month when spent on one family, or null
+ * when the plan's capacity is unknown or doesn't cover the family.
+ */
+export function apiUsdPerMonth(
+	capacity: PlanCapacity,
+	family: FamilyId,
+): number | null {
+	switch (capacity.kind) {
+		case "unmeasured":
+			return null;
+		case "published":
+			return capacity.allowance.apiUsdPerMonthByFamily[family] ?? null;
+		default:
+			return capacity.weeklyCapApiUsd * WEEKS_PER_MONTH;
+	}
+}
+
+/**
  * API-equivalent dollars a subscriber gets per dollar of subscription, given
- * how much of what the plan offers (weekly cap plus bundled API credit) they
- * use. Below 1, paying per token is cheaper.
+ * how much of what the plan offers (monthly usage plus bundled API credit)
+ * they use. Below 1, paying per token is cheaper.
  */
 export function valueMultiple({
 	plan,
-	weeklyCapApiUsd,
+	apiUsdPerMonth,
 	profile,
 }: {
 	plan: Plan;
-	weeklyCapApiUsd: number;
+	apiUsdPerMonth: number;
 	profile: UsageProfile;
 }): number {
-	const availableApiUsdPerMonth =
-		weeklyCapApiUsd * WEEKS_PER_MONTH + plan.includedApiCreditUsd;
+	const availableApiUsdPerMonth = apiUsdPerMonth + plan.includedApiCreditUsd;
 	return (
 		(availableApiUsdPerMonth * profile.weeklyCapShare) / plan.monthlyPriceUsd
 	);
@@ -140,21 +164,17 @@ export function valuePoints({
 		: [];
 	const subscribed = plans.flatMap((plan) => {
 		const capacity = planCapacity(plan, samples);
-		if (capacity.kind === "unmeasured") return [];
-		const multiple = valueMultiple({
-			plan,
-			weeklyCapApiUsd: capacity.weeklyCapApiUsd,
-			profile,
-		});
 		return plan.families
 			.filter((f) => families.includes(f))
-			.flatMap((f) =>
-				seriesFor(plottable, f, {
+			.flatMap((family) => {
+				const usd = apiUsdPerMonth(capacity, family);
+				if (usd === null) return [];
+				return seriesFor(plottable, family, {
 					kind: "plan",
 					plan,
-					valueMultiple: multiple,
-				}),
-			);
+					valueMultiple: valueMultiple({ plan, apiUsdPerMonth: usd, profile }),
+				});
+			});
 	});
 	return [...api, ...subscribed];
 }

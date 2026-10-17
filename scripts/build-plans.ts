@@ -10,6 +10,7 @@ import { z } from "zod";
 import {
 	BenchmarkDataset,
 	Plans,
+	type PublishedAllowance,
 	type ReportedCap,
 } from "../src/domain/model.ts";
 
@@ -17,20 +18,50 @@ const ROOT = new URL("..", import.meta.url);
 
 const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-luna"];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
-// The benchmarked subset of OpenCode Go's lineup (opencode.ai/go, 2026-10-17).
-const OPENCODE_GO = [
-	"kimi-k3",
-	"kimi-k2-7-code",
-	"gemini-4-argon",
-	"minimax-m3",
-	"qwen3-7-plus",
-	"glm-5-3-flash",
-	"mimo-v2-6-flash",
-	"deepseek-v4-1-flash",
-	"claude-haiku-5-5",
-	"gpt-6-luna",
-	"step-5-preview",
-];
+// Monthly usage by model on OpenCode Go and Go Plus (opencode.ai/docs/go,
+// 2026-10-17), for the benchmarked part of its lineup, without limited-time
+// promos. Go bills at list prices, so these are API-equivalent dollars; the
+// exception is Gemini 4 Argon, billed at twice its list price.
+const OPENCODE_DOCS = "https://opencode.ai/docs/go#usage-limits";
+const ARGON_LIST_RATIO = 10 / 20;
+const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
+	"kimi-k3": [15, 60],
+	"kimi-k2-7-code": [60, 180],
+	"gemini-4-argon": [30 * ARGON_LIST_RATIO, 120 * ARGON_LIST_RATIO],
+	"step-5-preview": [15, 60],
+	"minimax-m3": [60, 180],
+	"claude-haiku-5-5": [15, 60],
+	"gpt-6-luna": [15, 60],
+	"qwen3-7-plus": [60, 180],
+	"qwen3-8-max": [15, 60],
+	"glm-5-3": [15, 120],
+	"glm-5-3-flash": [60, 180],
+	"mimo-v2-6-pro": [15, 60],
+	"mimo-v2-6-flash": [60, 120],
+	// At peak prices, which match the list; off-peak usage goes twice as far.
+	"deepseek-v4-1-flash": [80, 160],
+	"deepseek-v4-pro": [15, 60],
+	"grok-4-7": [15, 60],
+};
+const OPENCODE_GO = Object.keys(OPENCODE_GO_USD);
+
+function openCodeAllowance(tier: 0 | 1): PublishedAllowance {
+	return {
+		apiUsdPerMonthByFamily: Object.fromEntries(
+			Object.entries(OPENCODE_GO_USD).map(([family, usd]) => [
+				family,
+				usd[tier],
+			]),
+		),
+		url: OPENCODE_DOCS,
+		basis: "OpenCode's published monthly usage for each model",
+	};
+}
+
+const PUBLISHED_ALLOWANCES: Record<string, PublishedAllowance> = {
+	"opencode-go": openCodeAllowance(0),
+	"opencode-go-plus": openCodeAllowance(1),
+};
 
 /** Plans are grouped by the harness people buy them for. */
 const VENDORS: Record<string, string> = {
@@ -186,6 +217,7 @@ const plans = Plans.parse(
 				confidence: p.confidence,
 				sourceUrl: p.sources[0].url,
 				reportedCap: REPORTED_CAPS[p.planId] ?? null,
+				publishedAllowance: PUBLISHED_ALLOWANCES[p.planId] ?? null,
 			};
 		}),
 );

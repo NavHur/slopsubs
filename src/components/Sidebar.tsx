@@ -1,42 +1,59 @@
 import { samples } from "#/data";
 import type { FamilyId, Plan, PlanId, UsageProfile } from "#/domain/model";
-import { planCapacity, valueMultiple } from "#/domain/value";
+import {
+	apiUsdPerMonth,
+	type PlanCapacity,
+	planCapacity,
+	valueMultiple,
+} from "#/domain/value";
 import { familyColor, familyName } from "#/lib/families";
 import { formatMultiple } from "#/lib/format";
+
+/** "12×", or "1.5–6×" when the multiple differs by model. */
+function multipleText(
+	plan: Plan,
+	capacity: PlanCapacity,
+	profile: UsageProfile,
+): string {
+	const multiples = plan.families
+		.map((family) => apiUsdPerMonth(capacity, family))
+		.filter((usd) => usd !== null)
+		.map((usd) => valueMultiple({ plan, apiUsdPerMonth: usd, profile }));
+	const low = Math.min(...multiples);
+	const high = Math.max(...multiples);
+	if (formatMultiple(low) === formatMultiple(high)) return formatMultiple(low);
+	return `${formatMultiple(low).replace("×", "")}–${formatMultiple(high)}`;
+}
 
 function PlanValue({ plan, profile }: { plan: Plan; profile: UsageProfile }) {
 	const capacity = planCapacity(plan, samples);
 	if (capacity.kind === "unmeasured") {
 		return <span className="text-[11px] text-subtle">unmeasured</span>;
 	}
-	const multiple = formatMultiple(
-		valueMultiple({
-			plan,
-			weeklyCapApiUsd: capacity.weeklyCapApiUsd,
-			profile,
-		}),
-	);
-	if (capacity.kind === "reported") {
+	const text = multipleText(plan, capacity, profile);
+	if (capacity.kind === "measured") {
 		return (
-			<a
-				href={capacity.report.url}
-				target="_blank"
-				rel="noreferrer"
-				onClick={(event) => event.stopPropagation()}
-				className="tabular-nums text-[12px] text-muted underline decoration-dotted underline-offset-2 hover:text-fg"
-				title={`${capacity.report.basis}. Not measured yet.`}
+			<span
+				className="whitespace-nowrap tabular-nums text-[12px] text-fg"
+				title={`${capacity.sampleCount} samples, ${capacity.gaugePercentObserved.toFixed(0)}% of the weekly gauge observed`}
 			>
-				{multiple}
-			</a>
+				{text}
+			</span>
 		);
 	}
+	const source =
+		capacity.kind === "published" ? capacity.allowance : capacity.report;
 	return (
-		<span
-			className="tabular-nums text-[12px] text-fg"
-			title={`${capacity.sampleCount} samples, ${capacity.gaugePercentObserved.toFixed(0)}% of the weekly gauge observed`}
+		<a
+			href={source.url}
+			target="_blank"
+			rel="noreferrer"
+			onClick={(event) => event.stopPropagation()}
+			className="whitespace-nowrap tabular-nums text-[12px] text-muted underline decoration-dotted underline-offset-2 hover:text-fg"
+			title={`${source.basis}. Not measured yet.`}
 		>
-			{multiple}
-		</span>
+			{text}
+		</a>
 	);
 }
 

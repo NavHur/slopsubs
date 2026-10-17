@@ -62,6 +62,17 @@ const ReportedCap = z.object({
 });
 export type ReportedCap = z.infer<typeof ReportedCap>;
 
+/**
+ * A vendor's own statement of how much API-priced usage each model gets per
+ * month, for plans whose allowance differs by model.
+ */
+const PublishedAllowance = z.object({
+	apiUsdPerMonthByFamily: z.record(z.string(), Usd.positive()),
+	url: z.url(),
+	basis: z.string(),
+});
+export type PublishedAllowance = z.infer<typeof PublishedAllowance>;
+
 /** A flat-rate subscription usable for agentic coding. */
 const Plan = z.object({
 	id: PlanId,
@@ -78,6 +89,7 @@ const Plan = z.object({
 	confidence: z.enum(["primary", "secondary", "unverified"]),
 	sourceUrl: z.url(),
 	reportedCap: ReportedCap.nullable(),
+	publishedAllowance: PublishedAllowance.nullable(),
 });
 export type Plan = z.infer<typeof Plan>;
 export const Plans = z.array(Plan);

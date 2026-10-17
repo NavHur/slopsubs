@@ -27,6 +27,7 @@ const plan: Plan = {
 	confidence: "primary",
 	sourceUrl: "https://example.com/pricing",
 	reportedCap: null,
+	publishedAllowance: null,
 };
 
 function sample(start: number, end: number, apiUsd: number): LimitSample {
@@ -84,6 +85,17 @@ describe("planCapacity", () => {
 		});
 	});
 
+	it("prefers a vendor's published allowance over a reported cap", () => {
+		const publishedAllowance = {
+			apiUsdPerMonthByFamily: { [opus]: 60 },
+			url: "https://example.com/limits",
+			basis: "monthly usage by model",
+		};
+		expect(
+			planCapacity({ ...plan, reportedCap, publishedAllowance }, []),
+		).toEqual({ kind: "published", allowance: publishedAllowance });
+	});
+
 	it("prefers samples over a reported cap", () => {
 		expect(
 			planCapacity({ ...plan, reportedCap }, [sample(10, 20, 100)]),
@@ -104,13 +116,13 @@ describe("planCapacity", () => {
 });
 
 describe("valueMultiple", () => {
-	it("scales with the share of the weekly cap used", () => {
-		const weeklyCapApiUsd = 1200;
-		const full = valueMultiple({ plan, weeklyCapApiUsd, profile: maxed });
-		expect(full).toBeCloseTo((1200 * 52) / 12 / 200);
-		expect(
-			valueMultiple({ plan, weeklyCapApiUsd, profile: light }),
-		).toBeCloseTo(full * 0.2);
+	it("scales with the share of the monthly usage used", () => {
+		const apiUsdPerMonth = 5200;
+		const full = valueMultiple({ plan, apiUsdPerMonth, profile: maxed });
+		expect(full).toBeCloseTo(5200 / 200);
+		expect(valueMultiple({ plan, apiUsdPerMonth, profile: light })).toBeCloseTo(
+			full * 0.2,
+		);
 	});
 
 	it("counts bundled API credit at the same usage share", () => {
@@ -118,10 +130,10 @@ describe("valueMultiple", () => {
 		expect(
 			valueMultiple({
 				plan: withCredit,
-				weeklyCapApiUsd: 1200,
+				apiUsdPerMonth: 5200,
 				profile: light,
 			}),
-		).toBeCloseTo((((1200 * 52) / 12 + 200) * 0.2) / 200);
+		).toBeCloseTo(((5200 + 200) * 0.2) / 200);
 	});
 });
 
@@ -170,5 +182,41 @@ describe("valuePoints", () => {
 			showApi: false,
 		});
 		expect(points).toEqual([]);
+	});
+
+	it("values each family by its own published allowance", () => {
+		const haiku = "claude-haiku-5-5" as FamilyId;
+		const goPlan: Plan = {
+			...plan,
+			monthlyPriceUsd: 10,
+			families: [opus, haiku],
+			publishedAllowance: {
+				apiUsdPerMonthByFamily: { [opus]: 15, [haiku]: 60 },
+				url: "https://example.com/limits",
+				basis: "monthly usage by model",
+			},
+		};
+		const points = valuePoints({
+			benchmarks: [
+				...benchmarks,
+				{ ...benchmark("max", 8), family: haiku, id: "haiku-max" },
+			],
+			families: [opus, haiku],
+			plans: [goPlan],
+			samples: [],
+			profile: maxed,
+			showApi: false,
+		});
+		expect(
+			points.map((p) => [
+				p.benchmark.family,
+				p.benchmark.effort,
+				p.costPerTaskUsd,
+			]),
+		).toEqual([
+			[opus, "low", 2 / 1.5],
+			[opus, "max", 8 / 1.5],
+			[haiku, "max", 8 / 6],
+		]);
 	});
 });
