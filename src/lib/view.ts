@@ -40,10 +40,15 @@ export function selectedPlans(view: ViewSearch): PlanId[] {
 	return plans.filter((p) => chosen.includes(p.id)).map((p) => p.id);
 }
 
+/** Popular models shown by default alongside the frontier. */
+const DEFAULT_EXTRA_FAMILIES: string[] = ["muse-spark-1-3"];
+
 export function selectedFamilies(view: ViewSearch): FamilyId[] {
 	return view.families
 		? COVERED_FAMILIES.filter((f) => view.families?.includes(f))
-		: COVERED_FAMILIES.filter((f) => FRONTIER.includes(f));
+		: COVERED_FAMILIES.filter(
+				(f) => FRONTIER.includes(f) || DEFAULT_EXTRA_FAMILIES.includes(f),
+			);
 }
 
 export function toggled<T>(list: readonly T[], item: T): T[] {

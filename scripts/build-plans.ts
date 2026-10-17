@@ -20,16 +20,16 @@ const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-luna"];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 // Monthly usage by model on OpenCode Go and Go Plus (opencode.ai/docs/go,
 // 2026-10-17), for the benchmarked part of its lineup, without limited-time
-// promos. Go bills at list prices, so these are API-equivalent dollars; the
-// exception is Gemini 4 Argon, billed at twice its list price.
+// promos. The dollars are at Go's token prices, which match list prices
+// except where GO_OFF_LIST_PRICES says otherwise.
 const OPENCODE_DOCS = "https://opencode.ai/docs/go#usage-limits";
-const ARGON_LIST_RATIO = 10 / 20;
 const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	"kimi-k3": [15, 60],
 	"kimi-k2-7-code": [60, 180],
-	"gemini-4-argon": [30 * ARGON_LIST_RATIO, 120 * ARGON_LIST_RATIO],
+	"gemini-4-argon": [30, 120],
 	"step-5-preview": [15, 60],
 	"minimax-m3": [60, 180],
+	"muse-spark-1-3": [60, 120],
 	"claude-haiku-5-5": [15, 60],
 	"gpt-6-luna": [15, 60],
 	"qwen3-7-plus": [60, 180],
@@ -45,22 +45,21 @@ const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 };
 const OPENCODE_GO = Object.keys(OPENCODE_GO_USD);
 
-function openCodeAllowance(tier: 0 | 1): PublishedAllowance {
-	return {
-		apiUsdPerMonthByFamily: Object.fromEntries(
-			Object.entries(OPENCODE_GO_USD).map(([family, usd]) => [
-				family,
-				usd[tier],
-			]),
-		),
-		url: OPENCODE_DOCS,
-		basis: "OpenCode's published monthly usage for each model",
-	};
+/** Go's [input, output] $/MTok where it differs from the list price. */
+const GO_OFF_LIST_PRICES: Record<string, [input: number, output: number]> = {
+	"gemini-4-argon": [4, 20],
+	// The Contributor variant, billed far below Meta's list price.
+	"muse-spark-1-3": [0.1, 0.2],
+};
+
+/** Artificial Analysis's blend: three input tokens per output token. */
+function blendedPrice(input: number, output: number): number {
+	return (3 * input + output) / 4;
 }
 
-const PUBLISHED_ALLOWANCES: Record<string, PublishedAllowance> = {
-	"opencode-go": openCodeAllowance(0),
-	"opencode-go-plus": openCodeAllowance(1),
+const PUBLISHED_ALLOWANCES: Record<string, 0 | 1> = {
+	"opencode-go": 0,
+	"opencode-go-plus": 1,
 };
 
 /** Plans are grouped by the harness people buy them for. */
@@ -191,6 +190,37 @@ const missing = Object.keys(PLAN_FAMILIES).filter(
 if (missing.length)
 	throw new Error(`Plans not in research: ${missing.join(", ")}`);
 
+/** Converts a Go-priced dollar allowance into list-priced (API) dollars. */
+function listPricedUsd(family: string, goUsd: number): number {
+	const goPrice = GO_OFF_LIST_PRICES[family];
+	if (!goPrice) return goUsd;
+	const list = models.find(
+		(m) => m.family === family && m.inputPricePerMTokUsd !== null,
+	);
+	if (!list?.inputPricePerMTokUsd || !list.outputPricePerMTokUsd)
+		throw new Error(`${family}: no list price to convert Go's allowance`);
+	return (
+		goUsd *
+		(blendedPrice(list.inputPricePerMTokUsd, list.outputPricePerMTokUsd) /
+			blendedPrice(...goPrice))
+	);
+}
+
+function publishedAllowance(planId: string): PublishedAllowance | null {
+	const tier = PUBLISHED_ALLOWANCES[planId];
+	if (tier === undefined) return null;
+	return {
+		apiUsdPerMonthByFamily: Object.fromEntries(
+			Object.entries(OPENCODE_GO_USD).map(([family, usd]) => [
+				family,
+				listPricedUsd(family, usd[tier]),
+			]),
+		),
+		url: OPENCODE_DOCS,
+		basis: "OpenCode's published monthly usage for each model, at list prices",
+	};
+}
+
 const plans = Plans.parse(
 	research
 		.filter((p) => p.planId in PLAN_FAMILIES)
@@ -217,7 +247,7 @@ const plans = Plans.parse(
 				confidence: p.confidence,
 				sourceUrl: p.sources[0].url,
 				reportedCap: REPORTED_CAPS[p.planId] ?? null,
-				publishedAllowance: PUBLISHED_ALLOWANCES[p.planId] ?? null,
+				publishedAllowance: publishedAllowance(p.planId),
 			};
 		}),
 );
