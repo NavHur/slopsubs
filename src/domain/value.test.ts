@@ -22,6 +22,10 @@ const plan: Plan = {
 	harnesses: ["Claude Code"],
 	families: [opus],
 	limits: "weekly cap",
+	includedApiCreditUsd: 0,
+	thirdPartyHarnessAllowed: false,
+	confidence: "primary",
+	sourceUrl: "https://example.com/pricing",
 };
 
 function sample(start: number, end: number, apiUsd: number): LimitSample {
@@ -37,7 +41,10 @@ function sample(start: number, end: number, apiUsd: number): LimitSample {
 	};
 }
 
-function benchmark(effort: "low" | "max", order: number): BenchmarkPoint {
+function benchmark(
+	effort: "none" | "low" | "max",
+	order: number,
+): BenchmarkPoint {
 	return {
 		id: `${opus}-${effort}`,
 		family: opus,
@@ -83,6 +90,17 @@ describe("valueMultiple", () => {
 			valueMultiple({ plan, weeklyCapApiUsd, profile: light }),
 		).toBeCloseTo(full * 0.2);
 	});
+
+	it("counts bundled API credit at the same usage share", () => {
+		const withCredit = { ...plan, includedApiCreditUsd: 200 };
+		expect(
+			valueMultiple({
+				plan: withCredit,
+				weeklyCapApiUsd: 1200,
+				profile: light,
+			}),
+		).toBeCloseTo((((1200 * 52) / 12 + 200) * 0.2) / 200);
+	});
 });
 
 describe("valuePoints", () => {
@@ -106,6 +124,18 @@ describe("valuePoints", () => {
 			[`${opus}@${maxPlan}`, "low", 2 / multiple],
 			[`${opus}@${maxPlan}`, "max", 8 / multiple],
 		]);
+	});
+
+	it("drops the non-reasoning variant when reasoning efforts exist", () => {
+		const points = valuePoints({
+			benchmarks: [benchmark("none", 0), ...benchmarks],
+			families: [opus],
+			plans: [],
+			samples: [],
+			profile: maxed,
+			showApi: true,
+		});
+		expect(points.map((p) => p.benchmark.effort)).toEqual(["low", "max"]);
 	});
 
 	it("omits plans that have not been measured", () => {

@@ -42,7 +42,8 @@ export function planCapacity(
 
 /**
  * API-equivalent dollars a subscriber gets per dollar of subscription, given
- * how much of the weekly cap they use. Below 1, paying per token is cheaper.
+ * how much of what the plan offers (weekly cap plus bundled API credit) they
+ * use. Below 1, paying per token is cheaper.
  */
 export function valueMultiple({
 	plan,
@@ -53,9 +54,11 @@ export function valueMultiple({
 	weeklyCapApiUsd: number;
 	profile: UsageProfile;
 }): number {
-	const usedApiUsdPerMonth =
-		weeklyCapApiUsd * WEEKS_PER_MONTH * profile.weeklyCapShare;
-	return usedApiUsdPerMonth / plan.monthlyPriceUsd;
+	const availableApiUsdPerMonth =
+		weeklyCapApiUsd * WEEKS_PER_MONTH + plan.includedApiCreditUsd;
+	return (
+		(availableApiUsdPerMonth * profile.weeklyCapShare) / plan.monthlyPriceUsd
+	);
 }
 
 export type Pricing =
@@ -88,8 +91,10 @@ function seriesFor(
 	const divisor = pricing.kind === "plan" ? pricing.valueMultiple : 1;
 	const seriesId =
 		pricing.kind === "plan" ? `${family}@${pricing.plan.id}` : `${family}@api`;
-	return points
-		.filter((p) => p.family === family)
+	const own = points.filter((p) => p.family === family);
+	// A family's non-reasoning variant is a different mode, not its lowest effort.
+	const reasoning = own.filter((p) => p.effort !== "none");
+	return (reasoning.length > 0 ? reasoning : own)
 		.sort((a, b) => a.effortOrder - b.effortOrder)
 		.map((benchmark) => ({
 			seriesId,

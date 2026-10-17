@@ -61,6 +61,11 @@ const Plan = z.object({
 	harnesses: z.array(z.string()).min(1),
 	families: z.array(FamilyId).min(1),
 	limits: z.string(),
+	/** Pay-per-token credit bundled with the plan, usable from any harness. */
+	includedApiCreditUsd: Usd,
+	thirdPartyHarnessAllowed: z.union([z.boolean(), z.literal("unclear")]),
+	confidence: z.enum(["primary", "secondary", "unverified"]),
+	sourceUrl: z.url(),
 });
 export type Plan = z.infer<typeof Plan>;
 export const Plans = z.array(Plan);
