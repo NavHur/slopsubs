@@ -3,7 +3,7 @@ import type {
 	FamilyId,
 	LimitSample,
 	Plan,
-	PlanId,
+	ReportedCap,
 	UsageProfile,
 } from "./model";
 
@@ -12,6 +12,7 @@ const FULL_GAUGE_PERCENT = 100;
 
 export type PlanCapacity =
 	| { kind: "unmeasured" }
+	| { kind: "reported"; weeklyCapApiUsd: number; report: ReportedCap }
 	| {
 			kind: "measured";
 			/** API-equivalent spend that fills the weekly cap once. */
@@ -20,13 +21,16 @@ export type PlanCapacity =
 			gaugePercentObserved: number;
 	  };
 
-/** Extrapolates the weekly cap from every sample recorded for the plan. */
+/**
+ * Extrapolates the weekly cap from every sample recorded for the plan,
+ * falling back to a published figure while there are none.
+ */
 export function planCapacity(
-	plan: PlanId,
+	plan: Plan,
 	samples: readonly LimitSample[],
 ): PlanCapacity {
-	const own = samples.filter((s) => s.plan === plan);
-	if (own.length === 0) return { kind: "unmeasured" };
+	const own = samples.filter((s) => s.plan === plan.id);
+	if (own.length === 0) return reportedCapacity(plan.reportedCap);
 	const apiUsd = own.reduce((sum, s) => sum + s.apiUsd, 0);
 	const gauge = own.reduce(
 		(sum, s) => sum + (s.endUsedPercent - s.startUsedPercent),
@@ -38,6 +42,12 @@ export function planCapacity(
 		sampleCount: own.length,
 		gaugePercentObserved: gauge,
 	};
+}
+
+function reportedCapacity(report: ReportedCap | null): PlanCapacity {
+	return report
+		? { kind: "reported", weeklyCapApiUsd: report.weeklyCapApiUsd, report }
+		: { kind: "unmeasured" };
 }
 
 /**
@@ -107,7 +117,7 @@ function seriesFor(
 
 /**
  * Every plotted point: each selected family at API prices, and again under
- * each selected, measured plan that covers it at that plan's effective cost.
+ * each selected plan with a known cap that covers it at that plan's effective cost.
  */
 export function valuePoints({
 	benchmarks,
@@ -129,7 +139,7 @@ export function valuePoints({
 		? families.flatMap((f) => seriesFor(plottable, f, { kind: "api" }))
 		: [];
 	const subscribed = plans.flatMap((plan) => {
-		const capacity = planCapacity(plan.id, samples);
+		const capacity = planCapacity(plan, samples);
 		if (capacity.kind === "unmeasured") return [];
 		const multiple = valueMultiple({
 			plan,

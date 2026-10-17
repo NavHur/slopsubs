@@ -32,10 +32,12 @@ function rank(family: FamilyId): number {
 	return index === -1 ? FRONTIER.length : index;
 }
 
+/** The $200 tier of each harness: the plans people compare first. */
+const DEFAULT_PLANS = ["claude-max-20x", "chatgpt-pro-200"];
+
 export function selectedPlans(view: ViewSearch): PlanId[] {
-	return view.plans
-		? plans.filter((p) => view.plans?.includes(p.id)).map((p) => p.id)
-		: plans.map((p) => p.id);
+	const chosen = view.plans ?? DEFAULT_PLANS;
+	return plans.filter((p) => chosen.includes(p.id)).map((p) => p.id);
 }
 
 export function selectedFamilies(view: ViewSearch): FamilyId[] {

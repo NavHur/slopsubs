@@ -18,7 +18,13 @@
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
-    "sourceUrl": "https://claude.com/pricing"
+    "sourceUrl": "https://claude.com/pricing",
+    "reportedCap": {
+      "weeklyCapApiUsd": 92.3076923076923,
+      "by": "Theo",
+      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
+      "basis": "A twentieth of Theo's Max 20x figure (Max 20x is 20x Pro)"
+    }
   },
   {
     "id": "claude-max-5x",
@@ -40,7 +46,13 @@
     "includedApiCreditUsd": 100,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
-    "sourceUrl": "https://claude.com/pricing"
+    "sourceUrl": "https://claude.com/pricing",
+    "reportedCap": {
+      "weeklyCapApiUsd": 461.53846153846155,
+      "by": "Theo",
+      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
+      "basis": "A quarter of Theo's Max 20x figure (Max 5x vs 20x of Pro)"
+    }
   },
   {
     "id": "claude-max-20x",
@@ -62,7 +74,13 @@
     "includedApiCreditUsd": 200,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
-    "sourceUrl": "https://support.claude.com/en/articles/11049741-what-is-the-max-plan"
+    "sourceUrl": "https://support.claude.com/en/articles/11049741-what-is-the-max-plan",
+    "reportedCap": {
+      "weeklyCapApiUsd": 1846.1538461538462,
+      "by": "Theo",
+      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
+      "basis": "Theo: $200 in, $8,000 a month of API-priced inference out"
+    }
   },
   {
     "id": "chatgpt-plus",
@@ -96,7 +114,13 @@
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
-    "sourceUrl": "https://learn.chatgpt.com/docs/pricing"
+    "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
+    "reportedCap": {
+      "weeklyCapApiUsd": 57.386,
+      "by": "Theo",
+      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
+      "basis": "A tenth of Theo's Pro 200 figure (Pro 200 is now 10x Plus)"
+    }
   },
   {
     "id": "chatgpt-pro-100",
@@ -130,7 +154,13 @@
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
-    "sourceUrl": "https://learn.chatgpt.com/docs/pricing"
+    "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
+    "reportedCap": {
+      "weeklyCapApiUsd": 286.93,
+      "by": "Theo",
+      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
+      "basis": "5x Theo's Plus figure (OpenAI launched Pro 100 at 5x Plus)"
+    }
   },
   {
     "id": "chatgpt-pro-200",
@@ -164,7 +194,13 @@
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
-    "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans"
+    "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
+    "reportedCap": {
+      "weeklyCapApiUsd": 573.86,
+      "by": "Theo",
+      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1037s",
+      "basis": "Theo measured $573.86 of API-priced usage in one weekly cap"
+    }
   },
   {
     "id": "chatgpt-pro-500",
@@ -198,7 +234,13 @@
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
-    "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans"
+    "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
+    "reportedCap": {
+      "weeklyCapApiUsd": 1434.65,
+      "by": "Theo",
+      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
+      "basis": "2.5x Theo's Pro 200 figure (Pro 500 is 25x Plus, Pro 200 10x)"
+    }
   },
   {
     "id": "opencode-go",
@@ -227,7 +269,8 @@
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
-    "sourceUrl": "https://opencode.ai/go"
+    "sourceUrl": "https://opencode.ai/go",
+    "reportedCap": null
   },
   {
     "id": "opencode-go-plus",
@@ -256,6 +299,7 @@
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
-    "sourceUrl": "https://opencode.ai/go"
+    "sourceUrl": "https://opencode.ai/go",
+    "reportedCap": null
   }
 ]

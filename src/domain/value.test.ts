@@ -26,6 +26,7 @@ const plan: Plan = {
 	thirdPartyHarnessAllowed: false,
 	confidence: "primary",
 	sourceUrl: "https://example.com/pricing",
+	reportedCap: null,
 };
 
 function sample(start: number, end: number, apiUsd: number): LimitSample {
@@ -64,12 +65,33 @@ function benchmark(
 }
 
 describe("planCapacity", () => {
+	const reportedCap = {
+		weeklyCapApiUsd: 1800,
+		by: "Theo",
+		url: "https://example.com/video",
+		basis: "$8,000 a month",
+	};
+
 	it("is unmeasured without samples", () => {
-		expect(planCapacity(maxPlan, [])).toEqual({ kind: "unmeasured" });
+		expect(planCapacity(plan, [])).toEqual({ kind: "unmeasured" });
+	});
+
+	it("falls back to a reported cap without samples", () => {
+		expect(planCapacity({ ...plan, reportedCap }, [])).toEqual({
+			kind: "reported",
+			weeklyCapApiUsd: 1800,
+			report: reportedCap,
+		});
+	});
+
+	it("prefers samples over a reported cap", () => {
+		expect(
+			planCapacity({ ...plan, reportedCap }, [sample(10, 20, 100)]),
+		).toMatchObject({ kind: "measured", weeklyCapApiUsd: 1000 });
 	});
 
 	it("extrapolates pooled samples to a full weekly gauge", () => {
-		const capacity = planCapacity(maxPlan, [
+		const capacity = planCapacity(plan, [
 			sample(10, 20, 150),
 			sample(40, 50, 50),
 		]);

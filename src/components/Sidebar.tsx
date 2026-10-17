@@ -5,27 +5,43 @@ import { familyColor, familyName } from "#/lib/families";
 import { formatMultiple } from "#/lib/format";
 
 function PlanValue({ plan, profile }: { plan: Plan; profile: UsageProfile }) {
-	const capacity = planCapacity(plan.id, samples);
+	const capacity = planCapacity(plan, samples);
 	if (capacity.kind === "unmeasured") {
 		return <span className="text-[11px] text-subtle">unmeasured</span>;
 	}
-	const multiple = valueMultiple({
-		plan,
-		weeklyCapApiUsd: capacity.weeklyCapApiUsd,
-		profile,
-	});
+	const multiple = formatMultiple(
+		valueMultiple({
+			plan,
+			weeklyCapApiUsd: capacity.weeklyCapApiUsd,
+			profile,
+		}),
+	);
+	if (capacity.kind === "reported") {
+		return (
+			<a
+				href={capacity.report.url}
+				target="_blank"
+				rel="noreferrer"
+				onClick={(event) => event.stopPropagation()}
+				className="tabular-nums text-[12px] text-muted underline decoration-dotted underline-offset-2 hover:text-fg"
+				title={`${capacity.report.basis}. Not measured yet.`}
+			>
+				{multiple}
+			</a>
+		);
+	}
 	return (
 		<span
 			className="tabular-nums text-[12px] text-fg"
 			title={`${capacity.sampleCount} samples, ${capacity.gaugePercentObserved.toFixed(0)}% of the weekly gauge observed`}
 		>
-			{formatMultiple(multiple)}
+			{multiple}
 		</span>
 	);
 }
 
-function isMeasured(plan: Plan): boolean {
-	return planCapacity(plan.id, samples).kind === "measured";
+function hasCap(plan: Plan): boolean {
+	return planCapacity(plan, samples).kind !== "unmeasured";
 }
 
 function PlanPrice({ plan }: { plan: Plan }) {
@@ -52,8 +68,8 @@ export function PlanList({
 	profile: UsageProfile;
 	onToggle: (plan: PlanId) => void;
 }) {
-	const measured = plans.filter(isMeasured);
-	const unmeasured = plans.filter((p) => !isMeasured(p));
+	const valued = plans.filter(hasCap);
+	const unmeasured = plans.filter((p) => !hasCap(p));
 	return (
 		<section aria-labelledby="plans-heading">
 			<div className="mb-2 flex items-baseline justify-between">
@@ -64,13 +80,13 @@ export function PlanList({
 					value at {Math.round(profile.weeklyCapShare * 100)}% of cap
 				</span>
 			</div>
-			{measured.length === 0 && (
+			{valued.length === 0 && (
 				<p className="mb-3 text-[12px] leading-5 text-muted">
 					No plan measured yet. Record <code>/usage</code> marks with{" "}
 					<code>pnpm measure</code> to plot one.
 				</p>
 			)}
-			{[...Map.groupBy(measured, (p) => p.vendor)].map(([vendor, group]) => (
+			{[...Map.groupBy(valued, (p) => p.vendor)].map(([vendor, group]) => (
 				<div key={vendor} className="mb-3">
 					<h3 className="mb-1 text-[12px] font-medium text-subtle">{vendor}</h3>
 					<ul>

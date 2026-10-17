@@ -7,7 +7,11 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
-import { BenchmarkDataset, Plans } from "../src/domain/model.ts";
+import {
+	BenchmarkDataset,
+	Plans,
+	type ReportedCap,
+} from "../src/domain/model.ts";
 
 const ROOT = new URL("..", import.meta.url);
 
@@ -67,6 +71,64 @@ const PLAN_FAMILIES: Record<
 	"opencode-go-plus": { lab: "opencode", families: OPENCODE_GO },
 };
 
+// Theo (t3.gg), "Does the $200 Codex plan suck now?", 2026-10-07.
+const THEO = "https://www.youtube.com/watch?v=nYA0yASgaZI";
+const at = (seconds: number) => `${THEO}&t=${seconds}s`;
+const WEEKS_PER_MONTH = 52 / 12;
+const MAX_20X_WEEKLY = 8000 / WEEKS_PER_MONTH;
+const PRO_200_WEEKLY = 573.86;
+
+/** Published weekly caps, used until a plan has measured samples. */
+const REPORTED_CAPS: Record<string, ReportedCap> = {
+	"claude-max-20x": {
+		weeklyCapApiUsd: MAX_20X_WEEKLY,
+		by: "Theo",
+		url: at(28),
+		basis: "Theo: $200 in, $8,000 a month of API-priced inference out",
+	},
+	// Theo gives no figure for the smaller Claude tiers; Anthropic sizes Max
+	// 20x and 5x at 20 and 5 times Pro's per-session allowance.
+	"claude-max-5x": {
+		weeklyCapApiUsd: MAX_20X_WEEKLY / 4,
+		by: "Theo",
+		url: at(28),
+		basis: "A quarter of Theo's Max 20x figure (Max 5x vs 20x of Pro)",
+	},
+	"claude-pro": {
+		weeklyCapApiUsd: MAX_20X_WEEKLY / 20,
+		by: "Theo",
+		url: at(28),
+		basis: "A twentieth of Theo's Max 20x figure (Max 20x is 20x Pro)",
+	},
+	"chatgpt-pro-200": {
+		weeklyCapApiUsd: PRO_200_WEEKLY,
+		by: "Theo",
+		url: at(1037),
+		basis: "Theo measured $573.86 of API-priced usage in one weekly cap",
+	},
+	// "The 20x plan is now 10x, but you can get the 25x plan" (24:34), in
+	// multiples of Plus.
+	"chatgpt-plus": {
+		weeklyCapApiUsd: PRO_200_WEEKLY / 10,
+		by: "Theo",
+		url: at(1474),
+		basis: "A tenth of Theo's Pro 200 figure (Pro 200 is now 10x Plus)",
+	},
+	"chatgpt-pro-500": {
+		weeklyCapApiUsd: PRO_200_WEEKLY * 2.5,
+		by: "Theo",
+		url: at(1474),
+		basis: "2.5x Theo's Pro 200 figure (Pro 500 is 25x Plus, Pro 200 10x)",
+	},
+	// Theo gives no Pro 100 figure; OpenAI launched it at 5x Plus.
+	"chatgpt-pro-100": {
+		weeklyCapApiUsd: (PRO_200_WEEKLY / 10) * 5,
+		by: "Theo",
+		url: at(1474),
+		basis: "5x Theo's Plus figure (OpenAI launched Pro 100 at 5x Plus)",
+	},
+};
+
 const ResearchPlan = z.object({
 	vendor: z.string(),
 	planId: z.string(),
@@ -123,6 +185,7 @@ const plans = Plans.parse(
 				thirdPartyHarnessAllowed: p.thirdPartyHarnessAllowed,
 				confidence: p.confidence,
 				sourceUrl: p.sources[0].url,
+				reportedCap: REPORTED_CAPS[p.planId] ?? null,
 			};
 		}),
 );

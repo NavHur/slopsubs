@@ -51,6 +51,17 @@ export const BenchmarkDataset = z.object({
 });
 export type BenchmarkDataset = z.infer<typeof BenchmarkDataset>;
 
+/** A weekly cap someone else published, used until we measure our own. */
+const ReportedCap = z.object({
+	/** API-equivalent spend that fills the weekly cap once. */
+	weeklyCapApiUsd: Usd.positive(),
+	by: z.string(),
+	url: z.url(),
+	/** How the figure was reached, shown next to it. */
+	basis: z.string(),
+});
+export type ReportedCap = z.infer<typeof ReportedCap>;
+
 /** A flat-rate subscription usable for agentic coding. */
 const Plan = z.object({
 	id: PlanId,
@@ -66,6 +77,7 @@ const Plan = z.object({
 	thirdPartyHarnessAllowed: z.union([z.boolean(), z.literal("unclear")]),
 	confidence: z.enum(["primary", "secondary", "unverified"]),
 	sourceUrl: z.url(),
+	reportedCap: ReportedCap.nullable(),
 });
 export type Plan = z.infer<typeof Plan>;
 export const Plans = z.array(Plan);

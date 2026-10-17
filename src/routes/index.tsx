@@ -115,8 +115,16 @@ function ValueView() {
 			<footer className="flex justify-between border-t border-line px-7 py-3 text-[12px] text-muted">
 				<span>
 					Benchmarks from Artificial Analysis (
-					{benchmarks.fetchedAt.slice(0, 10)}) · weekly caps measured from real
-					sessions
+					{benchmarks.fetchedAt.slice(0, 10)}) · weekly caps from{" "}
+					<a
+						href="https://www.youtube.com/watch?v=nYA0yASgaZI"
+						target="_blank"
+						rel="noreferrer"
+						className="underline decoration-dotted underline-offset-2 hover:text-fg"
+					>
+						Theo's numbers
+					</a>{" "}
+					until measured
 				</span>
 				<span>Effective cost = API cost ÷ value multiple</span>
 			</footer>
