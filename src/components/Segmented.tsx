@@ -1,0 +1,50 @@
+export function Segmented<T extends string>({
+	label,
+	options,
+	value,
+	onChange,
+}: {
+	label: string;
+	options: readonly { value: T; label: string; hint?: string }[];
+	value: T;
+	onChange: (value: T) => void;
+}) {
+	return (
+		<fieldset aria-label={label} className="flex items-center gap-4">
+			{options.map((option) => (
+				<button
+					key={option.value}
+					type="button"
+					aria-pressed={option.value === value}
+					title={option.hint}
+					onClick={() => onChange(option.value)}
+					className="border-b border-transparent py-1 text-[13px] text-muted transition-colors hover:text-fg aria-pressed:border-fg/60 aria-pressed:text-fg"
+				>
+					{option.label}
+				</button>
+			))}
+		</fieldset>
+	);
+}
+
+export function Toggle({
+	label,
+	checked,
+	onChange,
+}: {
+	label: string;
+	checked: boolean;
+	onChange: (checked: boolean) => void;
+}) {
+	return (
+		<label className="flex cursor-pointer items-center gap-2 text-[13px] text-muted hover:text-fg">
+			<input
+				type="checkbox"
+				checked={checked}
+				onChange={(e) => onChange(e.target.checked)}
+				className="size-3.5 accent-accent"
+			/>
+			{label}
+		</label>
+	);
+}
