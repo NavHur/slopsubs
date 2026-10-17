@@ -18,7 +18,7 @@ export function Segmented<T extends string>({
 					aria-pressed={option.value === value}
 					title={option.hint}
 					onClick={() => onChange(option.value)}
-					className="border-b border-transparent py-1 text-[13px] text-muted transition-colors hover:text-fg aria-pressed:border-fg/60 aria-pressed:text-fg"
+					className="whitespace-nowrap border-b border-transparent py-1 text-[13px] max-lg:min-h-11 text-muted transition-colors hover:text-fg aria-pressed:border-fg/60 aria-pressed:text-fg"
 				>
 					{option.label}
 				</button>
@@ -37,7 +37,7 @@ export function Toggle({
 	onChange: (checked: boolean) => void;
 }) {
 	return (
-		<label className="flex cursor-pointer items-center gap-2 text-[13px] text-muted hover:text-fg">
+		<label className="flex cursor-pointer items-center gap-2 whitespace-nowrap text-[13px] text-muted hover:text-fg max-lg:min-h-11">
 			<input
 				type="checkbox"
 				checked={checked}

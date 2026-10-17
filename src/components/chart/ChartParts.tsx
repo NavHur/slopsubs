@@ -4,8 +4,7 @@ import { familyName } from "#/lib/families";
 import { formatUsd } from "#/lib/format";
 import {
 	type AxisScale,
-	HEIGHT,
-	MARGIN,
+	type ChartLayout,
 	pathOf,
 	px,
 	type Series,
@@ -18,33 +17,36 @@ export function Axes({
 	right,
 	ticks,
 	scale,
+	layout,
 }: {
 	x: XScale;
 	y: ScaleLinear<number, number>;
 	right: number;
 	ticks: number[];
 	scale: AxisScale;
+	layout: ChartLayout;
 }) {
-	const bottom = HEIGHT - MARGIN.bottom;
+	const { margin, height } = layout;
+	const bottom = height - margin.bottom;
 	return (
-		<g className="fill-muted text-[12px]">
-			{y.ticks(6).map((t) => (
+		<g className="fill-muted text-[12px] tabular-nums">
+			{y.ticks(layout.compact ? 5 : 6).map((t) => (
 				<g key={t}>
 					<line
-						x1={MARGIN.left}
+						x1={margin.left}
 						x2={right}
 						y1={px(y(t))}
 						y2={px(y(t))}
 						className="stroke-grid"
 						strokeDasharray="2 6"
 					/>
-					<text x={MARGIN.left - 12} y={px(y(t))} dy="0.32em" textAnchor="end">
+					<text x={margin.left - 12} y={px(y(t))} dy="0.32em" textAnchor="end">
 						{t}
 					</text>
 				</g>
 			))}
 			<line
-				x1={MARGIN.left}
+				x1={margin.left}
 				x2={right}
 				y1={bottom}
 				y2={bottom}
@@ -55,12 +57,12 @@ export function Axes({
 					{formatUsd(t)}
 				</text>
 			))}
-			<text x={MARGIN.left} y={MARGIN.top - 12} className="fill-subtle">
+			<text x={margin.left} y={margin.top - 12} className="fill-subtle">
 				Intelligence index
 			</text>
 			<text
-				x={(MARGIN.left + right) / 2}
-				y={HEIGHT - 6}
+				x={(margin.left + right) / 2}
+				y={height - 6}
 				textAnchor="middle"
 				className="fill-subtle"
 			>
@@ -131,20 +133,31 @@ export function SeriesTag({
 	);
 }
 
+const TOOLTIP_HALF_WIDTH_PX = 120;
+/** Room the tooltip needs above its point before it flips below. */
+const TOOLTIP_FLIP_PX = 140;
+
 export function PointTooltip({
 	point,
 	left,
 	top,
+	containerWidth,
 }: {
 	point: ValuePoint;
 	left: number;
 	top: number;
+	containerWidth: number;
 }) {
 	const { benchmark, pricing } = point;
+	const clampedLeft = Math.min(
+		Math.max(left, TOOLTIP_HALF_WIDTH_PX),
+		containerWidth - TOOLTIP_HALF_WIDTH_PX,
+	);
+	const below = top < TOOLTIP_FLIP_PX;
 	return (
 		<div
-			className="pointer-events-none absolute z-10 w-60 -translate-x-1/2 -translate-y-[calc(100%+14px)] rounded-md border border-line bg-panel px-3 py-2 text-[12px] leading-5 shadow-xl"
-			style={{ left, top }}
+			className={`pointer-events-none absolute z-10 w-60 -translate-x-1/2 rounded-md border border-line bg-panel px-3 py-2 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)] ${below ? "translate-y-[14px]" : "-translate-y-[calc(100%+14px)]"}`}
+			style={{ left: clampedLeft, top }}
 		>
 			<div className="font-semibold text-fg">
 				{familyName(benchmark.family)}{" "}
@@ -174,5 +187,72 @@ export function PointTooltip({
 				<dd className="text-right">{point.intelligence.toFixed(1)}</dd>
 			</dl>
 		</div>
+	);
+}
+
+/** Below-chart legend for narrow screens, grouped by how each line is paid for. */
+export function SeriesLegend({
+	series,
+	activeSeries,
+	onFocus,
+}: {
+	series: readonly Series[];
+	activeSeries: string | null;
+	onFocus: (id: string | null) => void;
+}) {
+	const groups = Map.groupBy(series, (s) => s.pricingLabel);
+	return (
+		<div className="mt-3 space-y-3">
+			{[...groups].map(([pricing, members]) => (
+				<section key={pricing}>
+					<h3 className="text-[12px] font-medium text-subtle">{pricing}</h3>
+					<ul className="grid grid-cols-2 gap-x-3 text-[14px] font-medium">
+						{members.map((s) => (
+							<li key={s.id} className="min-w-0">
+								<LegendButton
+									series={s}
+									active={activeSeries === s.id}
+									muted={activeSeries !== null && activeSeries !== s.id}
+									onFocus={onFocus}
+								/>
+							</li>
+						))}
+					</ul>
+				</section>
+			))}
+		</div>
+	);
+}
+
+function LegendButton({
+	series,
+	active,
+	muted,
+	onFocus,
+}: {
+	series: Series;
+	active: boolean;
+	muted: boolean;
+	onFocus: (id: string | null) => void;
+}) {
+	return (
+		<button
+			type="button"
+			aria-pressed={active}
+			aria-label={series.label}
+			onClick={() => onFocus(active ? null : series.id)}
+			className="flex min-h-10 w-full items-center gap-2 text-left transition-opacity"
+			style={{ color: series.color, opacity: muted ? 0.4 : 1 }}
+		>
+			<span
+				aria-hidden
+				className="w-3.5 shrink-0 border-t-2"
+				style={{
+					borderColor: series.color,
+					borderStyle: series.isApi ? "dashed" : "solid",
+				}}
+			/>
+			<span className="truncate">{series.modelName}</span>
+		</button>
 	);
 }

@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { ValueChart } from "#/components/chart/ValueChart";
 import { Segmented, Toggle } from "#/components/Segmented";
 import { FamilyList, PlanList } from "#/components/Sidebar";
+import { SidePanel } from "#/components/SidePanel";
 import { benchmarks, plans, samples } from "#/data";
 import { USAGE_PROFILES } from "#/domain/model";
 import { valuePoints } from "#/domain/value";
@@ -34,6 +36,8 @@ const SCALE_OPTIONS = [
 function ValueView() {
 	const view = Route.useSearch();
 	const navigate = Route.useNavigate();
+	const [panelOpen, setPanelOpen] = useState(false);
+	const closePanel = useCallback(() => setPanelOpen(false), []);
 	const update = (patch: Partial<ViewSearch>) =>
 		navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
 
@@ -50,53 +54,92 @@ function ValueView() {
 	});
 
 	return (
-		<div className="grid min-h-screen grid-rows-[60px_1fr_auto] bg-bg text-fg">
-			<header className="flex items-center gap-8 border-b border-line px-7">
+		<div className="flex min-h-dvh flex-col bg-bg text-fg lg:h-dvh">
+			<header
+				inert={panelOpen}
+				className="flex h-[60px] shrink-0 items-center gap-8 border-b border-line px-4 sm:px-7"
+			>
 				<a href="/" className="text-[22px] font-semibold tracking-tight">
 					slop<span className="text-accent">subs</span>
 				</a>
-				<p className="text-[13px] text-muted">
+				<p className="text-[13px] text-muted max-sm:hidden">
 					What a task really costs on a subscription
 				</p>
+				<button
+					type="button"
+					onClick={() => setPanelOpen(true)}
+					className="-mr-2 ml-auto flex min-h-11 items-center gap-2 px-2 text-[15px] font-medium lg:hidden"
+				>
+					Plans &amp; models
+					<span className="text-[13px] font-normal text-subtle tabular-nums">
+						{planIds.length + families.length}
+					</span>
+				</button>
 			</header>
-			<div className="grid grid-cols-[1fr_260px] max-lg:grid-cols-1">
-				<main className="min-w-0 px-7 py-5">
-					<div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-						<h1 className="text-[17px] font-semibold">
-							Effective cost vs intelligence
-						</h1>
-						<div className="flex flex-wrap items-center gap-6">
-							<Segmented
-								label="Usage profile"
-								options={PROFILE_OPTIONS}
-								value={view.profile}
-								onChange={(value) => update({ profile: value })}
-							/>
-							<Toggle
-								label="API prices"
-								checked={view.api}
-								onChange={(api) => update({ api })}
-							/>
-							<Toggle
-								label="Pareto line"
-								checked={view.pareto}
-								onChange={(pareto) => update({ pareto })}
-							/>
-							<Segmented
-								label="Cost axis scale"
-								options={SCALE_OPTIONS}
-								value={view.scale}
-								onChange={(scale) => update({ scale })}
-							/>
+			<div className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_272px]">
+				<main
+					inert={panelOpen}
+					className="flex min-w-0 flex-col lg:overflow-y-auto"
+				>
+					<section
+						aria-labelledby="chart-heading"
+						className="flex flex-col px-4 pt-5 pb-6 sm:px-7 lg:min-h-0 lg:flex-1 lg:pb-3"
+					>
+						<div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+							<h1 id="chart-heading" className="text-[17px] font-semibold">
+								Effective cost vs intelligence
+							</h1>
+							<div className="flex flex-wrap items-center gap-x-6 max-sm:w-full max-sm:justify-between">
+								<Segmented
+									label="Usage profile"
+									options={PROFILE_OPTIONS}
+									value={view.profile}
+									onChange={(value) => update({ profile: value })}
+								/>
+								<div className="flex items-center gap-x-6 max-sm:w-full max-sm:justify-between">
+									<Toggle
+										label="API prices"
+										checked={view.api}
+										onChange={(api) => update({ api })}
+									/>
+									<Toggle
+										label="Pareto line"
+										checked={view.pareto}
+										onChange={(pareto) => update({ pareto })}
+									/>
+									<Segmented
+										label="Cost axis scale"
+										options={SCALE_OPTIONS}
+										value={view.scale}
+										onChange={(scale) => update({ scale })}
+									/>
+								</div>
+							</div>
 						</div>
-					</div>
-					<ValueChart
-						points={points}
-						scale={view.scale}
-						showPareto={view.pareto}
-					/>
+						<ValueChart
+							points={points}
+							scale={view.scale}
+							showPareto={view.pareto}
+						/>
+					</section>
+					<footer className="mt-auto flex flex-wrap justify-between gap-x-6 gap-y-1 border-t border-line px-4 py-3 text-[12px] leading-5 text-muted sm:px-7">
+						<span>
+							Benchmarks from Artificial Analysis (
+							{benchmarks.fetchedAt.slice(0, 10)}) · weekly caps from{" "}
+							<a
+								href="https://www.youtube.com/watch?v=nYA0yASgaZI"
+								target="_blank"
+								rel="noreferrer"
+								className="underline decoration-dotted underline-offset-2 hover:text-fg"
+							>
+								Theo's numbers
+							</a>{" "}
+							until measured
+						</span>
+						<span>Effective cost = API cost ÷ value multiple</span>
+					</footer>
 				</main>
-				<aside className="space-y-6 border-l border-line px-6 py-5 max-lg:border-t max-lg:border-l-0">
+				<SidePanel title="Plans & models" open={panelOpen} onClose={closePanel}>
 					<PlanList
 						plans={plans}
 						selected={planIds}
@@ -110,24 +153,8 @@ function ValueView() {
 							update({ families: toggled(families, family) })
 						}
 					/>
-				</aside>
+				</SidePanel>
 			</div>
-			<footer className="flex justify-between border-t border-line px-7 py-3 text-[12px] text-muted">
-				<span>
-					Benchmarks from Artificial Analysis (
-					{benchmarks.fetchedAt.slice(0, 10)}) · weekly caps from{" "}
-					<a
-						href="https://www.youtube.com/watch?v=nYA0yASgaZI"
-						target="_blank"
-						rel="noreferrer"
-						className="underline decoration-dotted underline-offset-2 hover:text-fg"
-					>
-						Theo's numbers
-					</a>{" "}
-					until measured
-				</span>
-				<span>Effective cost = API cost ÷ value multiple</span>
-			</footer>
 		</div>
 	);
 }
