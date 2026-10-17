@@ -1,7 +1,7 @@
 [
   {
     "id": "claude-pro",
-    "vendor": "Anthropic",
+    "vendor": "Claude Code",
     "lab": "anthropic",
     "label": "Claude Pro",
     "monthlyPriceUsd": 20,
@@ -22,7 +22,7 @@
   },
   {
     "id": "claude-max-5x",
-    "vendor": "Anthropic",
+    "vendor": "Claude Code",
     "lab": "anthropic",
     "label": "Claude Max 5x",
     "monthlyPriceUsd": 100,
@@ -44,7 +44,7 @@
   },
   {
     "id": "claude-max-20x",
-    "vendor": "Anthropic",
+    "vendor": "Claude Code",
     "lab": "anthropic",
     "label": "Claude Max 20x",
     "monthlyPriceUsd": 200,
@@ -66,7 +66,7 @@
   },
   {
     "id": "chatgpt-plus",
-    "vendor": "OpenAI",
+    "vendor": "Codex",
     "lab": "openai",
     "label": "ChatGPT Plus",
     "monthlyPriceUsd": 20,
@@ -100,7 +100,7 @@
   },
   {
     "id": "chatgpt-pro-100",
-    "vendor": "OpenAI",
+    "vendor": "Codex",
     "lab": "openai",
     "label": "ChatGPT Pro 100",
     "monthlyPriceUsd": 100,
@@ -134,7 +134,7 @@
   },
   {
     "id": "chatgpt-pro-200",
-    "vendor": "OpenAI",
+    "vendor": "Codex",
     "lab": "openai",
     "label": "ChatGPT Pro 200",
     "monthlyPriceUsd": 200,
@@ -168,7 +168,7 @@
   },
   {
     "id": "chatgpt-pro-500",
-    "vendor": "OpenAI",
+    "vendor": "Codex",
     "lab": "openai",
     "label": "ChatGPT Pro 500",
     "monthlyPriceUsd": 500,
@@ -201,507 +201,61 @@
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans"
   },
   {
-    "id": "google-ai-pro",
-    "vendor": "Google",
-    "lab": "google",
-    "label": "Google AI Pro",
-    "monthlyPriceUsd": 19.99,
+    "id": "opencode-go",
+    "vendor": "OpenCode Go",
+    "lab": "opencode",
+    "label": "OpenCode Go",
+    "monthlyPriceUsd": 10,
     "harnesses": [
-      "Antigravity (IDE/app)",
-      "Antigravity CLI",
-      "Jules",
-      "Android Studio agent",
-      "AI Studio"
+      "OpenCode",
+      "any agent (\"Use with any agent\")"
     ],
     "families": [
+      "kimi-k3",
+      "kimi-k2-7-code",
       "gemini-4-argon",
-      "gemini-3-8-flash",
-      "gemini-3-1-pro-preview"
+      "minimax-m3",
+      "qwen3-7-plus",
+      "glm-5-3-flash",
+      "mimo-v2-6-flash",
+      "deepseek-v4-1-flash",
+      "claude-haiku-5-5",
+      "gpt-6-luna",
+      "step-5-preview"
     ],
-    "limits": "\"Get 4x higher usage access than Free\"; Antigravity: \"Entry rate limits to agent model in Google Antigravity\"; Antigravity docs: \"A high, generous quota, refreshed every five hours until the weekly limit is reached\" / \"A higher weekly rate limit\"; overage via purchased AI credits \"consumed at standard Gemini Enterprise consumption pricing\". No numeric quota published.",
+    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\", e.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K2.7 Code 1,350 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 34,670 / $80.",
     "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": false,
+    "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
-    "sourceUrl": "https://gemini.google/subscriptions/"
+    "sourceUrl": "https://opencode.ai/go"
   },
   {
-    "id": "google-ai-ultra-5x",
-    "vendor": "Google",
-    "lab": "google",
-    "label": "Google AI Ultra (5x)",
-    "monthlyPriceUsd": 99.99,
+    "id": "opencode-go-plus",
+    "vendor": "OpenCode Go",
+    "lab": "opencode",
+    "label": "OpenCode Go Plus",
+    "monthlyPriceUsd": 40,
     "harnesses": [
-      "Antigravity (IDE/app)",
-      "Antigravity CLI",
-      "Jules",
-      "Android Studio agent",
-      "AI Studio"
+      "OpenCode",
+      "any agent"
     ],
     "families": [
+      "kimi-k3",
+      "kimi-k2-7-code",
       "gemini-4-argon",
-      "gemini-3-8-flash",
-      "gemini-3-1-pro-preview"
+      "minimax-m3",
+      "qwen3-7-plus",
+      "glm-5-3-flash",
+      "mimo-v2-6-flash",
+      "deepseek-v4-1-flash",
+      "claude-haiku-5-5",
+      "gpt-6-luna",
+      "step-5-preview"
     ],
-    "limits": "\"$99.99 / month: 5x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 5x: Higher rate limits to agent model in Google Antigravity\"; docs: \"The highest, most generous quota, refreshed every five hours\" / \"The highest weekly rate limits\" / \"Access to third-party models\".",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": false,
-    "confidence": "primary",
-    "sourceUrl": "https://gemini.google/subscriptions/"
-  },
-  {
-    "id": "google-ai-ultra-20x",
-    "vendor": "Google",
-    "lab": "google",
-    "label": "Google AI Ultra (20x)",
-    "monthlyPriceUsd": 199.99,
-    "harnesses": [
-      "Antigravity (IDE/app)",
-      "Antigravity CLI",
-      "Jules",
-      "Android Studio agent",
-      "AI Studio"
-    ],
-    "families": [
-      "gemini-4-argon",
-      "gemini-3-8-flash",
-      "gemini-3-1-pro-preview"
-    ],
-    "limits": "\"$199.99 / month: 20x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 20x: Highest rate limits to agent model in Google Antigravity\"; refreshed every five hours up to weekly limit.",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": false,
-    "confidence": "primary",
-    "sourceUrl": "https://gemini.google/subscriptions/"
-  },
-  {
-    "id": "x-subscription-plus",
-    "vendor": "SpaceXSI (xAI) / Cursor / X",
-    "lab": "xai",
-    "label": "X Plus",
-    "monthlyPriceUsd": 8,
-    "harnesses": [
-      "Cursor (Agent, CLI)",
-      "Grok Build",
-      "Grok apps"
-    ],
-    "families": [
-      "grok-4-7"
-    ],
-    "limits": "Usage \"Basic\"; \"Shared AI usage pool\"; \"Your allowance refreshes weekly\"; Cursor models \"at fixed settings: Fast is off, effort is medium, and Grok 4.7 uses the 256k context window\".",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": "unclear",
-    "confidence": "primary",
-    "sourceUrl": "https://cursor.com/pricing"
-  },
-  {
-    "id": "x-subscription-premium",
-    "vendor": "SpaceXSI (xAI) / Cursor / X",
-    "lab": "xai",
-    "label": "X Premium",
-    "monthlyPriceUsd": 30,
-    "harnesses": [
-      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
-      "Grok Build",
-      "Grok Bot",
-      "Grok apps"
-    ],
-    "families": [
-      "grok-4-7"
-    ],
-    "limits": "\"4x more usage compared to Plus\"; weekly shared pool across Cursor and Grok; \"Third-party models at API list price\".",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": "unclear",
-    "confidence": "primary",
-    "sourceUrl": "https://cursor.com/pricing"
-  },
-  {
-    "id": "x-subscription-super",
-    "vendor": "SpaceXSI (xAI) / Cursor / X",
-    "lab": "xai",
-    "label": "X Super",
-    "monthlyPriceUsd": 100,
-    "harnesses": [
-      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
-      "Grok Build",
-      "Grok Bot",
-      "Grok apps"
-    ],
-    "families": [
-      "grok-4-7"
-    ],
-    "limits": "\"15x more usage compared to Plus\"; \"Priority model access at peak times\"; weekly shared pool.",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": "unclear",
-    "confidence": "primary",
-    "sourceUrl": "https://cursor.com/pricing"
-  },
-  {
-    "id": "x-subscription-ultra",
-    "vendor": "SpaceXSI (xAI) / Cursor / X",
-    "lab": "xai",
-    "label": "X Ultra",
-    "monthlyPriceUsd": 200,
-    "harnesses": [
-      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
-      "Grok Build",
-      "Grok Bot",
-      "Grok apps"
-    ],
-    "families": [
-      "grok-4-7"
-    ],
-    "limits": "\"50x more usage compared to Plus\"; \"Earliest access to all products & models\"; weekly shared pool.",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": "unclear",
-    "confidence": "primary",
-    "sourceUrl": "https://cursor.com/pricing"
-  },
-  {
-    "id": "zai-glm-coding-lite",
-    "vendor": "Zhipu / Z.ai",
-    "lab": "zai",
-    "label": "GLM Coding Lite",
-    "monthlyPriceUsd": 18,
-    "harnesses": [
-      "ZCode",
-      "Claude Code",
-      "Claude for IDE",
-      "Codex",
-      "OpenCode",
-      "Pi",
-      "Cursor",
-      "Cline",
-      "TRAE",
-      "Qoder",
-      "Droid",
-      "Kilo Code",
-      "Roo Code",
-      "Crush",
-      "Goose",
-      "Eigent",
-      "AutoClaw",
-      "OpenClaw",
-      "Hermes Agent"
-    ],
-    "families": [
-      "glm-5-3",
-      "glm-5-3-flash"
-    ],
-    "limits": "Each plan is subject to both a 5-hour usage limit and a weekly usage limit. Lite: 2,000 5-hour credits, 10,000 weekly credits. 5-hour credits: dynamically refreshed; credit quota resets 5 hours after consumption. Weekly credits: activated upon subscription; resets every 7 days. During off-peak hours, model usage is charged at 50% of the standard credit rate (peak: Mon–Fri 14:00–18:00 UTC+8). Est. 48–104M GLM-5.3 tokens/week depending on cache hit rate.",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": "unclear",
-    "confidence": "primary",
-    "sourceUrl": "https://docs.z.ai/devpack/overview"
-  },
-  {
-    "id": "zai-glm-coding-pro",
-    "vendor": "Zhipu / Z.ai",
-    "lab": "zai",
-    "label": "GLM Coding Pro",
-    "monthlyPriceUsd": 80,
-    "harnesses": [
-      "ZCode",
-      "Claude Code",
-      "Claude for IDE",
-      "Codex",
-      "OpenCode",
-      "Pi",
-      "Cursor",
-      "Cline",
-      "TRAE",
-      "Qoder",
-      "Droid",
-      "Kilo Code",
-      "Roo Code",
-      "Crush",
-      "Goose",
-      "Eigent",
-      "AutoClaw",
-      "OpenClaw",
-      "Hermes Agent"
-    ],
-    "families": [
-      "glm-5-3",
-      "glm-5-3-flash"
-    ],
-    "limits": "Pro: 12,000 5-hour credits, 60,000 weekly credits (same reset and off-peak rules as Lite). Est. 290–627M GLM-5.3 tokens/week.",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": "unclear",
-    "confidence": "secondary",
-    "sourceUrl": "https://docs.z.ai/devpack/overview"
-  },
-  {
-    "id": "zai-glm-coding-max",
-    "vendor": "Zhipu / Z.ai",
-    "lab": "zai",
-    "label": "GLM Coding Max",
-    "monthlyPriceUsd": 168,
-    "harnesses": [
-      "ZCode",
-      "Claude Code",
-      "Claude for IDE",
-      "Codex",
-      "OpenCode",
-      "Pi",
-      "Cursor",
-      "Cline",
-      "TRAE",
-      "Qoder",
-      "Droid",
-      "Kilo Code",
-      "Roo Code",
-      "Crush",
-      "Goose",
-      "Eigent",
-      "AutoClaw",
-      "OpenClaw",
-      "Hermes Agent"
-    ],
-    "families": [
-      "glm-5-3",
-      "glm-5-3-flash"
-    ],
-    "limits": "Max: 28,000 5-hour credits, 140,000 weekly credits. Est. 676–1,463M GLM-5.3 tokens/week.",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": "unclear",
-    "confidence": "secondary",
-    "sourceUrl": "https://docs.z.ai/devpack/overview"
-  },
-  {
-    "id": "kimi-plus",
-    "vendor": "Moonshot AI (Kimi)",
-    "lab": "kimi",
-    "label": "Kimi Plus",
-    "monthlyPriceUsd": 19,
-    "harnesses": [
-      "Kimi Code CLI",
-      "Kimi Code Desktop",
-      "Kimi Code for VS Code",
-      "JetBrains/Zed via ACP",
-      "Claude Code",
-      "OpenCode",
-      "Codex",
-      "Hermes Agent",
-      "third-party via API key (OpenAI- and Anthropic-compatible)"
-    ],
-    "families": [
-      "kimi-k3"
-    ],
-    "limits": "New plans with Kimi Code access (Plus and higher) have a rolling 5-hour usage limit and no weekly limit... Exhausting the monthly shared credit pool also affects Kimi Code. Both monthly and annual subscriptions refresh credits monthly, with no rollover.",
+    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K2.7 Code 4,050 / $180; DeepSeek V4.1 Flash 69,330 / $160.",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
-    "sourceUrl": "https://www.kimi.ai/help/membership/membership-pricing"
-  },
-  {
-    "id": "kimi-pro",
-    "vendor": "Moonshot AI (Kimi)",
-    "lab": "kimi",
-    "label": "Kimi Pro",
-    "monthlyPriceUsd": 39,
-    "harnesses": [
-      "Kimi Code CLI",
-      "Kimi Code Desktop",
-      "Kimi Code for VS Code",
-      "Claude Code",
-      "OpenCode",
-      "Codex",
-      "Hermes Agent",
-      "third-party via API key"
-    ],
-    "families": [
-      "kimi-k3"
-    ],
-    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit, monthly shared credit pool ('More credits, Goal Mode, and a dedicated Kimi Claw').",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": true,
-    "confidence": "primary",
-    "sourceUrl": "https://www.kimi.ai/help/membership/membership-pricing"
-  },
-  {
-    "id": "kimi-max",
-    "vendor": "Moonshot AI (Kimi)",
-    "lab": "kimi",
-    "label": "Kimi Max",
-    "monthlyPriceUsd": 99,
-    "harnesses": [
-      "Kimi Code CLI",
-      "Kimi Code Desktop",
-      "Kimi Code for VS Code",
-      "Claude Code",
-      "OpenCode",
-      "Codex",
-      "Hermes Agent",
-      "third-party via API key"
-    ],
-    "families": [
-      "kimi-k3"
-    ],
-    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit, monthly shared credit pool ('More credits and higher Agent task concurrency').",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": true,
-    "confidence": "primary",
-    "sourceUrl": "https://www.kimi.ai/help/membership/membership-pricing"
-  },
-  {
-    "id": "kimi-ultra",
-    "vendor": "Moonshot AI (Kimi)",
-    "lab": "kimi",
-    "label": "Kimi Ultra",
-    "monthlyPriceUsd": 199,
-    "harnesses": [
-      "Kimi Code CLI",
-      "Kimi Code Desktop",
-      "Kimi Code for VS Code",
-      "Claude Code",
-      "OpenCode",
-      "Codex",
-      "Hermes Agent",
-      "third-party via API key"
-    ],
-    "families": [
-      "kimi-k3"
-    ],
-    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit; 'The largest credit pool among these international plans.'",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": true,
-    "confidence": "primary",
-    "sourceUrl": "https://www.kimi.ai/help/membership/membership-pricing"
-  },
-  {
-    "id": "mimo-token-lite",
-    "vendor": "Xiaomi MiMo",
-    "lab": "xiaomi",
-    "label": "MiMo Lite",
-    "monthlyPriceUsd": 6,
-    "harnesses": [
-      "MiMo Code",
-      "MiMo Desktop",
-      "OpenCode",
-      "Claude Code",
-      "Codex",
-      "OpenClaw",
-      "Hermes Agent",
-      "Kilo Code",
-      "third-party via OpenAI/Anthropic-compatible endpoint"
-    ],
-    "families": [
-      "mimo-v2-6-pro",
-      "mimo-v2-6-flash"
-    ],
-    "limits": "Fixed Monthly Quota: 4.1 billion Credits. 'Using mimo-v2.6-flash as the baseline, it can execute approximately 200 rounds of medium-to-complex tasks.' v2.6-pro: 300 credits/input token (cache miss), 2.5 cached, 600 output. 'When the monthly total quota of your plan is used up, the system will suspend the service.' Off-peak (00:00–08:00 Beijing) 0.8x.",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": true,
-    "confidence": "primary",
-    "sourceUrl": "https://mimo.mi.com/static/docs/price/token-plan.md"
-  },
-  {
-    "id": "mimo-token-standard",
-    "vendor": "Xiaomi MiMo",
-    "lab": "xiaomi",
-    "label": "MiMo Standard",
-    "monthlyPriceUsd": 16,
-    "harnesses": [
-      "MiMo Code",
-      "MiMo Desktop",
-      "OpenCode",
-      "Claude Code",
-      "Codex",
-      "OpenClaw",
-      "Hermes Agent",
-      "Kilo Code"
-    ],
-    "families": [
-      "mimo-v2-6-pro",
-      "mimo-v2-6-flash"
-    ],
-    "limits": "Fixed Monthly Quota: 11 billion Credits (~1,600 rounds of medium-to-complex tasks on v2.6-flash).",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": true,
-    "confidence": "primary",
-    "sourceUrl": "https://mimo.mi.com/static/docs/price/token-plan.md"
-  },
-  {
-    "id": "mimo-token-pro",
-    "vendor": "Xiaomi MiMo",
-    "lab": "xiaomi",
-    "label": "MiMo Pro",
-    "monthlyPriceUsd": 50,
-    "harnesses": [
-      "MiMo Code",
-      "MiMo Desktop",
-      "OpenCode",
-      "Claude Code",
-      "Codex",
-      "OpenClaw",
-      "Hermes Agent",
-      "Kilo Code"
-    ],
-    "families": [
-      "mimo-v2-6-pro",
-      "mimo-v2-6-flash"
-    ],
-    "limits": "Fixed Monthly Quota: 38 billion Credits (~5,600 rounds on v2.6-flash).",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": true,
-    "confidence": "primary",
-    "sourceUrl": "https://mimo.mi.com/static/docs/price/token-plan.md"
-  },
-  {
-    "id": "mimo-token-max",
-    "vendor": "Xiaomi MiMo",
-    "lab": "xiaomi",
-    "label": "MiMo Max",
-    "monthlyPriceUsd": 100,
-    "harnesses": [
-      "MiMo Code",
-      "MiMo Desktop",
-      "OpenCode",
-      "Claude Code",
-      "Codex",
-      "OpenClaw",
-      "Hermes Agent",
-      "Kilo Code"
-    ],
-    "families": [
-      "mimo-v2-6-pro",
-      "mimo-v2-6-flash"
-    ],
-    "limits": "Fixed Monthly Quota: 82 billion Credits (~12,800 rounds on v2.6-flash).",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": true,
-    "confidence": "primary",
-    "sourceUrl": "https://mimo.mi.com/static/docs/price/token-plan.md"
-  },
-  {
-    "id": "alibaba-coding-plan-pro",
-    "vendor": "Alibaba Cloud (Model Studio)",
-    "lab": "alibaba",
-    "label": "Qwen Coding Pro",
-    "monthlyPriceUsd": 50,
-    "harnesses": [
-      "Claude Code",
-      "OpenCode",
-      "Cursor",
-      "Codex",
-      "Qwen Code",
-      "Cline",
-      "Kilo CLI",
-      "Qoder",
-      "Lingma",
-      "OpenClaw",
-      "Hermes Agent",
-      "QwenPaw",
-      "Cherry Studio",
-      "Chatbox",
-      "WorkBuddy"
-    ],
-    "families": [
-      "qwen3-7-plus"
-    ],
-    "limits": "Up to 6,000 requests per 5 hours; Up to 45,000 requests per week; Up to 90,000 requests per month. 'Each query consumes quota based on the number of model calls. Simple tasks typically use 5–10 calls, while complex tasks may use 10–30 or more.' 5-hour quota rolls; weekly resets Monday 00:00 UTC+8; monthly on renewal date.",
-    "includedApiCreditUsd": 0,
-    "thirdPartyHarnessAllowed": true,
-    "confidence": "primary",
-    "sourceUrl": "https://www.alibabacloud.com/help/en/model-studio/coding-plan"
+    "sourceUrl": "https://opencode.ai/go"
   }
 ]
