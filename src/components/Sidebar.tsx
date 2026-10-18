@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { samples } from "#/data";
 import type { FamilyId, Plan, PlanId, UsageProfile } from "#/domain/model";
 import {
@@ -6,8 +7,19 @@ import {
 	planCapacity,
 	valueMultiple,
 } from "#/domain/value";
-import { familyColor, familyName } from "#/lib/families";
+import {
+	familyColor,
+	familyLab,
+	familyMatches,
+	familyName,
+} from "#/lib/families";
 import { formatMultiple } from "#/lib/format";
+import {
+	COVERED_FAMILIES,
+	REASONING_LEVELS,
+	type ReasoningLevel,
+	toggled,
+} from "#/lib/view";
 
 /** "12×", or "1.5–6×" when the multiple differs by model. */
 function multipleText(
@@ -169,44 +181,270 @@ function UnmeasuredPlans({ plans }: { plans: readonly Plan[] }) {
 	);
 }
 
-export function FamilyList({
-	families,
-	selected,
+/** Focuses `input` on "/" unless the user is already typing somewhere. */
+function useSlashToFocus(input: React.RefObject<HTMLInputElement | null>) {
+	useEffect(() => {
+		const onKey = (event: KeyboardEvent) => {
+			if (event.key !== "/" || event.metaKey || event.ctrlKey) return;
+			const target = event.target as HTMLElement;
+			if (target.isContentEditable || target.closest("input, textarea")) return;
+			// The sidebar is hidden on phones until the sheet opens.
+			if (!input.current?.checkVisibility()) return;
+			event.preventDefault();
+			input.current.focus();
+		};
+		window.addEventListener("keydown", onKey);
+		return () => window.removeEventListener("keydown", onKey);
+	}, [input]);
+}
+
+function ModelSearch({
+	query,
+	onChange,
+}: {
+	query: string;
+	onChange: (query: string) => void;
+}) {
+	const inputRef = useRef<HTMLInputElement>(null);
+	useSlashToFocus(inputRef);
+	const onKeyDown = (event: React.KeyboardEvent) => {
+		if (event.key !== "Escape" || query === "") return;
+		// Clear the query first; a second Escape closes the phone sheet.
+		event.nativeEvent.stopPropagation();
+		onChange("");
+	};
+	return (
+		<div className="mb-4 flex items-center gap-2 border-b border-line text-[13px] focus-within:border-muted max-lg:text-[15px]">
+			<SearchIcon />
+			<input
+				ref={inputRef}
+				type="search"
+				value={query}
+				onChange={(event) => onChange(event.target.value)}
+				onKeyDown={onKeyDown}
+				placeholder="Find models"
+				aria-label="Find a model"
+				className="min-w-0 flex-1 bg-transparent py-1.5 text-fg placeholder:text-subtle focus:outline-none max-lg:min-h-11 [&::-webkit-search-cancel-button]:hidden"
+			/>
+			{query === "" ? (
+				<kbd className="font-sans text-[11px] text-subtle max-lg:hidden">/</kbd>
+			) : (
+				<button
+					type="button"
+					aria-label="Clear search"
+					onClick={() => onChange("")}
+					className="px-1 text-subtle hover:text-fg max-lg:min-h-11 max-lg:px-2"
+				>
+					×
+				</button>
+			)}
+		</div>
+	);
+}
+
+function SearchIcon() {
+	return (
+		<svg
+			aria-hidden="true"
+			viewBox="0 0 16 16"
+			className="size-3.5 shrink-0 text-subtle"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="1.5"
+		>
+			<circle cx="7" cy="7" r="4.5" />
+			<path d="m10.5 10.5 3.5 3.5" strokeLinecap="round" />
+		</svg>
+	);
+}
+
+function ResetButton({
+	disabled,
+	onReset,
+}: {
+	disabled: boolean;
+	onReset: () => void;
+}) {
+	return (
+		<button
+			type="button"
+			aria-label="Reset models"
+			title="Reset to the default models"
+			disabled={disabled}
+			onClick={onReset}
+			className="-mr-1 p-1 text-subtle hover:text-fg disabled:opacity-40 disabled:hover:text-subtle max-lg:-mr-2 max-lg:p-3"
+		>
+			<svg
+				aria-hidden="true"
+				viewBox="0 0 16 16"
+				className="size-3.5"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			>
+				<path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9" />
+				<path d="M2.5 2.5v2.5H5" />
+			</svg>
+		</button>
+	);
+}
+
+/** A small text toggle, dimmed when off. */
+function Chip({
+	label,
+	on,
+	onClick,
+	className = "",
+}: {
+	label: string;
+	on: boolean;
+	onClick: () => void;
+	className?: string;
+}) {
+	return (
+		<button
+			type="button"
+			aria-pressed={on}
+			onClick={onClick}
+			className={`text-[12px] text-subtle hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[14px] ${className}`}
+		>
+			{label}
+		</button>
+	);
+}
+
+function ReasoningFilter({
+	hidden,
+	onChange,
+}: {
+	hidden: readonly ReasoningLevel[];
+	onChange: (hidden: ReasoningLevel[]) => void;
+}) {
+	const toggle = (level: ReasoningLevel) => {
+		const next = toggled(hidden, level);
+		onChange(REASONING_LEVELS.filter((l) => next.includes(l)));
+	};
+	return (
+		<fieldset aria-label="Reasoning" className="mb-4">
+			<h3 className="mb-1 text-[12px] font-medium text-subtle">Reasoning</h3>
+			<div className="flex flex-wrap gap-x-2.5 max-lg:gap-x-4">
+				{REASONING_LEVELS.map((level) => (
+					<Chip
+						key={level}
+						label={level}
+						on={!hidden.includes(level)}
+						onClick={() => toggle(level)}
+						className="line-through aria-pressed:no-underline"
+					/>
+				))}
+			</div>
+		</fieldset>
+	);
+}
+
+function FamilyRow({
+	family,
+	on,
 	onToggle,
 }: {
-	families: readonly FamilyId[];
-	selected: readonly FamilyId[];
+	family: FamilyId;
+	on: boolean;
 	onToggle: (family: FamilyId) => void;
 }) {
 	return (
-		<section aria-labelledby="models-heading">
-			<h2 id="models-heading" className="mb-2 text-[15px] font-semibold">
-				Models
-			</h2>
+		<li>
+			<button
+				type="button"
+				aria-pressed={on}
+				title={`${familyName(family)} · ${familyLab(family)}`}
+				onClick={() => onToggle(family)}
+				className="flex w-full items-center justify-between py-1 text-left text-[13px] text-muted hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[15px]"
+			>
+				{familyName(family)}
+				<span
+					className="size-2 rounded-full border"
+					style={{
+						borderColor: familyColor(family),
+						background: on ? familyColor(family) : "transparent",
+					}}
+				/>
+			</button>
+		</li>
+	);
+}
+
+type Selection = {
+	selected: readonly FamilyId[];
+	onSelect: (families: FamilyId[]) => void;
+};
+
+function FamilyGroup({
+	title,
+	families,
+	selection,
+}: {
+	title: string;
+	families: readonly FamilyId[];
+	selection: Selection;
+}) {
+	const { selected, onSelect } = selection;
+	return (
+		<section aria-label={title} className="mb-3">
+			<h3 className="mb-1 text-[12px] font-medium text-subtle">{title}</h3>
+			{families.length === 0 && (
+				<p className="py-1 text-[13px] text-muted">No model matches.</p>
+			)}
 			<ul>
-				{families.map((family) => {
-					const on = selected.includes(family);
-					return (
-						<li key={family}>
-							<button
-								type="button"
-								aria-pressed={on}
-								onClick={() => onToggle(family)}
-								className="flex w-full items-center justify-between py-1 text-left text-[13px] text-muted hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[15px]"
-							>
-								{familyName(family)}
-								<span
-									className="size-2 rounded-full border"
-									style={{
-										borderColor: familyColor(family),
-										background: on ? familyColor(family) : "transparent",
-									}}
-								/>
-							</button>
-						</li>
-					);
-				})}
+				{families.map((family) => (
+					<FamilyRow
+						key={family}
+						family={family}
+						on={selected.includes(family)}
+						onToggle={(f) => onSelect(toggled(selected, f))}
+					/>
+				))}
 			</ul>
+		</section>
+	);
+}
+
+export function FamilyList({
+	selected,
+	hiddenReasoning,
+	isDefault,
+	onSelect,
+	onHideReasoning,
+	onReset,
+}: {
+	selected: readonly FamilyId[];
+	hiddenReasoning: readonly ReasoningLevel[];
+	isDefault: boolean;
+	onSelect: (families: FamilyId[]) => void;
+	onHideReasoning: (hidden: ReasoningLevel[]) => void;
+	onReset: () => void;
+}) {
+	const [query, setQuery] = useState("");
+	const selection = { selected, onSelect };
+	return (
+		<section aria-labelledby="models-heading">
+			<div className="mb-2 flex items-center justify-between">
+				<h2 id="models-heading" className="text-[15px] font-semibold">
+					Models{" "}
+					<span className="ml-1 text-[12px] font-normal text-subtle tabular-nums">
+						{selected.length}
+					</span>
+				</h2>
+				<ResetButton disabled={isDefault} onReset={onReset} />
+			</div>
+			<ModelSearch query={query} onChange={setQuery} />
+			<ReasoningFilter hidden={hiddenReasoning} onChange={onHideReasoning} />
+			<FamilyGroup
+				title={query.trim() === "" ? "All" : "Results"}
+				families={COVERED_FAMILIES.filter((f) => familyMatches(f, query))}
+				selection={selection}
+			/>
 		</section>
 	);
 }
