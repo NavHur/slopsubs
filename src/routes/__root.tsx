@@ -1,5 +1,6 @@
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
+import { THEME_SCRIPT } from "#/lib/theme";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -28,8 +29,11 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		// The theme script sets data-theme before hydration.
+		<html lang="en" suppressHydrationWarning>
 			<head>
+				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: static script, no user input */}
+				<script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
 				<HeadContent />
 			</head>
 			<body>
