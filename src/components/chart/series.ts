@@ -41,7 +41,8 @@ export type ModelGroup = {
 	id: FamilyId;
 	name: string;
 	color: string;
-	series: Series[];
+	/** A model exists on the chart only through its lines, so never empty. */
+	series: [Series, ...Series[]];
 };
 
 const API_STYLE: PricingStyle = { label: "API", isApi: true, marker: "circle" };
@@ -83,13 +84,21 @@ export function buildSeries(points: readonly ValuePoint[]): Series[] {
 }
 
 export function groupByModel(series: readonly Series[]): ModelGroup[] {
-	const groups = Map.groupBy(series, (s) => s.modelId);
-	return [...groups].map(([id, members]) => ({
-		id,
-		name: familyName(id),
-		color: members[0].color,
-		series: members,
-	}));
+	const groups = new Map<FamilyId, ModelGroup>();
+	for (const s of series) {
+		const group = groups.get(s.modelId);
+		if (group) {
+			group.series.push(s);
+			continue;
+		}
+		groups.set(s.modelId, {
+			id: s.modelId,
+			name: familyName(s.modelId),
+			color: s.color,
+			series: [s],
+		});
+	}
+	return [...groups.values()];
 }
 
 /** Each pricing on the chart once, in the order its lines appear. */
@@ -99,6 +108,11 @@ export function pricingKey(series: readonly Series[]): PricingStyle[] {
 
 /** The model's line end furthest right, where its label's leader line starts. */
 export function modelEnd(model: ModelGroup): ValuePoint {
-	const ends = model.series.map((s) => s.points[s.points.length - 1]);
-	return ends.reduce((a, b) => (b.costPerTaskUsd > a.costPerTaskUsd ? b : a));
+	const lineEnd = (s: Series) => s.points[s.points.length - 1];
+	return model.series
+		.map(lineEnd)
+		.reduce(
+			(a, b) => (b.costPerTaskUsd > a.costPerTaskUsd ? b : a),
+			lineEnd(model.series[0]),
+		);
 }
