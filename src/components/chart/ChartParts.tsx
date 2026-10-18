@@ -1,6 +1,7 @@
 import type { ScaleLinear } from "d3-scale";
 import type { ValuePoint } from "#/domain/value";
 import { familyName } from "#/lib/families";
+import type { SeriesLabel } from "#/lib/chart";
 import { formatUsd } from "#/lib/format";
 import {
 	type AxisScale,
@@ -90,6 +91,106 @@ export function ParetoLine({
 			strokeDasharray="6 4"
 		/>
 	);
+}
+
+/** Touch-sized target around each 8px dot. */
+const POINT_HIT_RADIUS = 12;
+
+function pointLabel(series: Series, point: ValuePoint): string {
+	return `${series.label}, ${point.benchmark.effortLabel}, effective cost per task ${formatUsd(point.costPerTaskUsd)}, intelligence ${point.intelligence.toFixed(1)}`;
+}
+
+export function SeriesLine({
+	series,
+	x,
+	y,
+	hovered,
+	dimmed,
+	onHover,
+}: {
+	series: Series;
+	x: XScale;
+	y: ScaleLinear<number, number>;
+	hovered: ValuePoint | null;
+	dimmed: boolean;
+	onHover: (point: ValuePoint | null) => void;
+}) {
+	return (
+		<g opacity={dimmed ? 0.15 : 1} className="transition-opacity">
+			<path
+				d={pathOf(series.points, x, y)}
+				fill="none"
+				stroke={series.color}
+				strokeWidth={series.isApi ? 1.25 : 2}
+				strokeDasharray={series.isApi ? "3 4" : undefined}
+				opacity={series.isApi ? 0.6 : 1}
+			/>
+			{series.points.map((p) => (
+				// biome-ignore lint/a11y/useSemanticElements: SVG has no native button; the point needs focus to expose its tooltip
+				<g
+					key={p.benchmark.id}
+					role="button"
+					tabIndex={0}
+					aria-label={pointLabel(series, p)}
+					className="group cursor-pointer outline-none"
+					onMouseEnter={() => onHover(p)}
+					onMouseLeave={() => onHover(null)}
+					onClick={() => onHover(p)}
+					onFocus={() => onHover(p)}
+					onBlur={() => onHover(null)}
+				>
+					<circle
+						cx={px(x(p.costPerTaskUsd))}
+						cy={px(y(p.intelligence))}
+						r={POINT_HIT_RADIUS}
+						fill="transparent"
+					/>
+					<circle
+						cx={px(x(p.costPerTaskUsd))}
+						cy={px(y(p.intelligence))}
+						r={hovered === p ? 6 : 4}
+						fill={series.isApi ? "var(--bg)" : series.color}
+						stroke={series.color}
+						strokeWidth={1.5}
+						className="group-focus-visible:stroke-fg"
+					/>
+				</g>
+			))}
+		</g>
+	);
+}
+
+/** End-of-line labels beside the plot, each tied to its line's last point. */
+export function SeriesTags({
+	labels,
+	series,
+	x,
+	right,
+	activeSeries,
+	onFocus,
+}: {
+	labels: readonly SeriesLabel[];
+	series: readonly Series[];
+	x: XScale;
+	right: number;
+	activeSeries: string | null;
+	onFocus: (id: string | null) => void;
+}) {
+	return labels.map((label) => {
+		const s = series.find((candidate) => candidate.id === label.seriesId);
+		if (!s) return null;
+		const last = s.points[s.points.length - 1];
+		return (
+			<SeriesTag
+				key={s.id}
+				series={s}
+				from={[px(x(last.costPerTaskUsd)), label.anchorY]}
+				at={[right + 24, label.y]}
+				dimmed={activeSeries !== null && activeSeries !== s.id}
+				onFocus={onFocus}
+			/>
+		);
+	});
 }
 
 export function SeriesTag({
