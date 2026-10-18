@@ -2,12 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { ValueChart } from "#/components/chart/ValueChart";
+import { DownloadPngButton, ThemeToggle } from "#/components/HeaderActions";
 import { Segmented, Toggle } from "#/components/Segmented";
 import { FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
 import { benchmarks, plans, samples } from "#/data";
 import { USAGE_PROFILES } from "#/domain/model";
 import { valuePoints } from "#/domain/value";
+import { downloadChartPng } from "#/lib/exportPng";
 import {
 	DEFAULT_MODELS_VIEW,
 	hiddenReasoning,
@@ -29,6 +31,8 @@ const PROFILE_OPTIONS = USAGE_PROFILES.map((p) => ({
 	label: `${p.label} · ${Math.round(p.weeklyCapShare * 100)}%`,
 	hint: `Uses ${Math.round(p.weeklyCapShare * 100)}% of the weekly cap every week`,
 }));
+
+const CHART_TITLE = "Effective cost vs intelligence";
 
 const SCALE_OPTIONS = [
 	{ value: "linear", label: "Linear" },
@@ -56,6 +60,16 @@ function ValueView() {
 		hiddenEfforts: hiddenReasoning(view),
 	});
 
+	const chart = (
+		<ValueChart points={points} scale={view.scale} showPareto={view.pareto} />
+	);
+	const downloadPng = () =>
+		downloadChartPng({
+			chart,
+			title: CHART_TITLE,
+			fileName: "slopsubs-effective-cost.png",
+		});
+
 	return (
 		<div className="flex min-h-dvh flex-col bg-bg text-fg lg:h-dvh">
 			<header
@@ -68,16 +82,25 @@ function ValueView() {
 				<p className="text-[13px] text-muted max-sm:hidden">
 					What a task really costs on a subscription
 				</p>
-				<button
-					type="button"
-					onClick={() => setPanelOpen(true)}
-					className="-mr-2 ml-auto flex min-h-11 items-center gap-2 px-2 text-[15px] font-medium lg:hidden"
-				>
-					Plans &amp; models
-					<span className="text-[13px] font-normal text-subtle tabular-nums">
-						{planIds.length + families.length}
-					</span>
-				</button>
+				<div className="-mr-2 ml-auto flex items-center gap-1">
+					<div className="max-sm:hidden">
+						<DownloadPngButton
+							disabled={points.length === 0}
+							onDownload={downloadPng}
+						/>
+					</div>
+					<ThemeToggle />
+					<button
+						type="button"
+						onClick={() => setPanelOpen(true)}
+						className="flex min-h-11 items-center gap-2 px-2 text-[15px] font-medium lg:hidden"
+					>
+						Plans &amp; models
+						<span className="text-[13px] font-normal text-subtle tabular-nums">
+							{planIds.length + families.length}
+						</span>
+					</button>
+				</div>
 			</header>
 			<div className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_272px]">
 				<main
@@ -90,7 +113,7 @@ function ValueView() {
 					>
 						<div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
 							<h1 id="chart-heading" className="text-[17px] font-semibold">
-								Effective cost vs intelligence
+								{CHART_TITLE}
 							</h1>
 							<div className="flex flex-wrap items-center gap-x-6 max-sm:w-full max-sm:justify-between">
 								<Segmented
@@ -119,11 +142,7 @@ function ValueView() {
 								</div>
 							</div>
 						</div>
-						<ValueChart
-							points={points}
-							scale={view.scale}
-							showPareto={view.pareto}
-						/>
+						{chart}
 					</section>
 					<footer className="mt-auto flex flex-wrap justify-between gap-x-6 gap-y-1 border-t border-line px-4 py-3 text-[12px] leading-5 text-muted sm:px-7">
 						<span>
