@@ -187,17 +187,30 @@ function UnmeasuredPlans({ plans }: { plans: readonly Plan[] }) {
 	);
 }
 
+/** Whether the keydown target is a field the user is typing into. */
+function isTypingTarget(target: EventTarget | null): boolean {
+	if (!(target instanceof HTMLElement)) return false;
+	return target.isContentEditable || target.closest("input, textarea") !== null;
+}
+
+/** Whether a "/" keydown should focus `input`, rather than being typed. */
+function isSlashShortcut(
+	event: KeyboardEvent,
+	input: HTMLInputElement | null,
+): boolean {
+	if (event.key !== "/" || event.metaKey || event.ctrlKey) return false;
+	if (isTypingTarget(event.target)) return false;
+	// The sidebar is hidden on phones until the sheet opens.
+	return input?.checkVisibility() === true;
+}
+
 /** Focuses `input` on "/" unless the user is already typing somewhere. */
 function useSlashToFocus(input: React.RefObject<HTMLInputElement | null>) {
 	useEffect(() => {
 		const onKey = (event: KeyboardEvent) => {
-			if (event.key !== "/" || event.metaKey || event.ctrlKey) return;
-			const target = event.target as HTMLElement;
-			if (target.isContentEditable || target.closest("input, textarea")) return;
-			// The sidebar is hidden on phones until the sheet opens.
-			if (!input.current?.checkVisibility()) return;
+			if (!isSlashShortcut(event, input.current)) return;
 			event.preventDefault();
-			input.current.focus();
+			input.current?.focus();
 		};
 		window.addEventListener("keydown", onKey);
 		return () => window.removeEventListener("keydown", onKey);

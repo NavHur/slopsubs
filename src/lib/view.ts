@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { benchmarks, plans } from "#/data";
 import {
+	type BenchmarkDataset,
 	type Effort,
 	type FamilyId,
 	type PlanId,
@@ -94,7 +95,7 @@ function sameMembers<T>(a: readonly T[], b: readonly T[]): boolean {
 	return a.length === b.length && a.every((x) => b.includes(x));
 }
 
-export type FrontierTier = "Small" | "Medium" | "Large";
+export type FrontierTier = BenchmarkDataset["frontier"][string]["tier"];
 export const FRONTIER_TIERS: readonly FrontierTier[] = [
 	"Small",
 	"Medium",
