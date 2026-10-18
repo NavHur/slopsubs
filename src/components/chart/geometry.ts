@@ -26,6 +26,10 @@ export type ChartLayout = {
 /** Shortest plot worth drawing when the chart fills its container. */
 const MIN_FILL_HEIGHT = 420;
 const DEFAULT_HEIGHT = 620;
+/** Compact plots are roughly square, kept within these heights (px). */
+const COMPACT_MIN_HEIGHT = 360;
+const COMPACT_MAX_HEIGHT = 480;
+const COMPACT_HEIGHT_RATIO = 1.15;
 
 /**
  * Sizes the plot to its container: narrow screens get a squarer plot with
@@ -35,7 +39,12 @@ const DEFAULT_HEIGHT = 620;
 export function chartLayout({ width, height }: Size): ChartLayout {
 	if (width < COMPACT_WIDTH) {
 		return {
-			height: Math.round(Math.min(480, Math.max(360, width * 1.15))),
+			height: Math.round(
+				Math.min(
+					COMPACT_MAX_HEIGHT,
+					Math.max(COMPACT_MIN_HEIGHT, width * COMPACT_HEIGHT_RATIO),
+				),
+			),
 			margin: { top: 28, right: 12, bottom: 48, left: 36 },
 			compact: true,
 		};
