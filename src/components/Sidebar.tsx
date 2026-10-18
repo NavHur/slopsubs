@@ -10,6 +10,7 @@ import {
 import {
 	familyColor,
 	familyLab,
+	familyLabId,
 	familyMatches,
 	familyName,
 } from "#/lib/families";
@@ -26,6 +27,7 @@ import {
 	toggled,
 	toggledGroup,
 } from "#/lib/view";
+import { ProviderLogo } from "./ProviderLogo";
 
 /** "12×", or "1.5–6×" when the multiple differs by model. */
 function multipleText(
@@ -379,9 +381,10 @@ function FamilyRow({
 				aria-pressed={on}
 				title={`${familyName(family)} · ${familyLab(family)}`}
 				onClick={() => onToggle(family)}
-				className="flex w-full items-center justify-between py-1 text-left text-[13px] text-muted hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[15px]"
+				className="flex w-full items-center gap-2 py-1 text-left text-[13px] text-muted hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[15px]"
 			>
-				{familyName(family)}
+				<ProviderLogo lab={familyLabId(family)} />
+				<span className="mr-auto">{familyName(family)}</span>
 				<span
 					className="size-2 rounded-full border"
 					style={{
