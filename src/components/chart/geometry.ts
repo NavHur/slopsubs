@@ -52,7 +52,7 @@ export function chartLayout({ width, height }: Size): ChartLayout {
 	}
 	return {
 		height: height >= MIN_FILL_HEIGHT ? Math.floor(height) : DEFAULT_HEIGHT,
-		margin: { top: 28, right: 230, bottom: 52, left: 56 },
+		margin: { top: 28, right: 160, bottom: 52, left: 56 },
 		compact: false,
 	};
 }
@@ -60,17 +60,6 @@ export function chartLayout({ width, height }: Size): ChartLayout {
 export type XScale =
 	| ScaleLogarithmic<number, number>
 	| ScaleLinear<number, number>;
-
-export type Series = {
-	id: string;
-	points: ValuePoint[];
-	label: string;
-	modelName: string;
-	/** "API", or the subscription plan's label. */
-	pricingLabel: string;
-	color: string;
-	isApi: boolean;
-};
 
 export type AxisScale = "log" | "linear";
 

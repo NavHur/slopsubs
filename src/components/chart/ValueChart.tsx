@@ -1,15 +1,16 @@
 import { useMemo, useState } from "react";
+import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { paretoFrontier, spreadLabels } from "#/lib/chart";
-import { familyColor, familyName } from "#/lib/families";
 import { useElementSize } from "#/lib/useElementSize";
 import {
 	Axes,
+	ModelLegend,
+	ModelTags,
 	ParetoLine,
 	PointTooltip,
-	SeriesLegend,
+	PricingKey,
 	SeriesLine,
-	SeriesTags,
 } from "./ChartParts";
 import {
 	type AxisScale,
@@ -17,30 +18,12 @@ import {
 	LABEL_GAP,
 	makeScales,
 	px,
-	type Series,
 	xTicks,
 } from "./geometry";
+import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
 
-function pricingLabel(point: ValuePoint): string {
-	return point.pricing.kind === "api" ? "API" : point.pricing.plan.label;
-}
-
-function seriesLabel(point: ValuePoint): string {
-	return `${familyName(point.benchmark.family)} · ${pricingLabel(point)}`;
-}
-
-function groupSeries(points: readonly ValuePoint[]): Series[] {
-	const groups = Map.groupBy(points, (p) => p.seriesId);
-	return [...groups].map(([id, members]) => ({
-		id,
-		points: members,
-		label: seriesLabel(members[0]),
-		modelName: familyName(members[0].benchmark.family),
-		pricingLabel: pricingLabel(members[0]),
-		color: familyColor(members[0].benchmark.family),
-		isApi: members[0].pricing.kind === "api",
-	}));
-}
+/** Room left of the desktop key for the y-axis title it shares a row with. */
+const KEY_TITLE_ROOM_PX = 130;
 
 export function ValueChart({
 	points,
@@ -54,8 +37,9 @@ export function ValueChart({
 	const [ref, size] = useElementSize<HTMLDivElement>();
 	const { width } = size;
 	const [hovered, setHovered] = useState<ValuePoint | null>(null);
-	const [focusSeries, setFocusSeries] = useState<string | null>(null);
-	const series = useMemo(() => groupSeries(points), [points]);
+	const [focusModel, setFocusModel] = useState<FamilyId | null>(null);
+	const series = useMemo(() => buildSeries(points), [points]);
+	const models = useMemo(() => groupByModel(series), [series]);
 	const layout = chartLayout(size);
 	const { height, margin } = layout;
 
@@ -75,16 +59,20 @@ export function ValueChart({
 	const labels = layout.compact
 		? []
 		: spreadLabels({
-				anchors: series.map((s) => ({
-					seriesId: s.id,
-					anchorY: px(y(s.points[s.points.length - 1].intelligence)),
+				anchors: models.map((m) => ({
+					id: m.id,
+					anchorY: px(y(modelEnd(m).intelligence)),
 				})),
 				gap: LABEL_GAP,
 				top: margin.top,
 				bottom: height - margin.bottom,
 			});
-	const activeSeries = hovered?.seriesId ?? focusSeries;
-	const dim = (id: string) => activeSeries !== null && activeSeries !== id;
+	const activeModel = hovered?.benchmark.family ?? focusModel;
+	const dim = (id: string, modelId: FamilyId) =>
+		hovered
+			? hovered.seriesId !== id
+			: focusModel !== null && focusModel !== modelId;
+	const pricings = pricingKey(series);
 
 	return (
 		<div ref={ref} className="relative lg:min-h-0 lg:flex-1">
@@ -113,17 +101,17 @@ export function ValueChart({
 						x={x}
 						y={y}
 						hovered={hovered}
-						dimmed={dim(s.id)}
+						dimmed={dim(s.id, s.modelId)}
 						onHover={setHovered}
 					/>
 				))}
-				<SeriesTags
+				<ModelTags
 					labels={labels}
-					series={series}
+					models={models}
 					x={x}
 					right={right}
-					activeSeries={activeSeries}
-					onFocus={setFocusSeries}
+					activeModel={activeModel}
+					onFocus={setFocusModel}
 				/>
 			</svg>
 			{hovered && (
@@ -134,11 +122,23 @@ export function ValueChart({
 					containerWidth={width}
 				/>
 			)}
-			{layout.compact && (
-				<SeriesLegend
-					series={series}
-					activeSeries={activeSeries}
-					onFocus={setFocusSeries}
+			{layout.compact ? (
+				<>
+					<PricingKey pricings={pricings} className="mt-3" />
+					<ModelLegend
+						models={models}
+						activeModel={activeModel}
+						onFocus={setFocusModel}
+					/>
+				</>
+			) : (
+				<PricingKey
+					pricings={pricings}
+					className="absolute top-0 justify-end"
+					style={{
+						right: width - right,
+						maxWidth: right - margin.left - KEY_TITLE_ROOM_PX,
+					}}
 				/>
 			)}
 		</div>
