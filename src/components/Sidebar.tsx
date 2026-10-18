@@ -109,7 +109,7 @@ export function PlanList({
 					<ul>
 						{group.map((plan) => (
 							<li key={plan.id}>
-								<label className="flex cursor-pointer items-center gap-2 py-1 text-[13px] hover:text-fg">
+								<label className="flex cursor-pointer items-center gap-2 py-1 text-[13px] hover:text-fg max-lg:min-h-11 max-lg:text-[15px]">
 									<input
 										type="checkbox"
 										checked={selected.includes(plan.id)}
@@ -140,13 +140,16 @@ export function PlanList({
 
 function UnmeasuredPlans({ plans }: { plans: readonly Plan[] }) {
 	return (
-		<details className="group text-[13px]">
-			<summary className="cursor-pointer py-1 text-muted hover:text-fg">
+		<details className="group text-[13px] max-lg:text-[15px]">
+			<summary className="cursor-pointer py-1 text-muted hover:text-fg max-lg:py-3">
 				Not yet measured ({plans.length})
 			</summary>
 			<ul className="mt-1">
 				{plans.map((plan) => (
-					<li key={plan.id} className="flex items-center gap-2 py-0.5">
+					<li
+						key={plan.id}
+						className="flex items-center gap-2 py-0.5 max-lg:min-h-11"
+					>
 						<a
 							href={plan.sourceUrl}
 							target="_blank"
@@ -189,7 +192,7 @@ export function FamilyList({
 								type="button"
 								aria-pressed={on}
 								onClick={() => onToggle(family)}
-								className="flex w-full items-center justify-between py-1 text-left text-[13px] text-muted hover:text-fg aria-pressed:text-fg"
+								className="flex w-full items-center justify-between py-1 text-left text-[13px] text-muted hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[15px]"
 							>
 								{familyName(family)}
 								<span
