@@ -23,15 +23,15 @@ describe("spreadLabels", () => {
 	it("pushes colliding labels apart and keeps them in bounds", () => {
 		const labels = spreadLabels({
 			anchors: [
-				{ seriesId: "a", anchorY: 100 },
-				{ seriesId: "b", anchorY: 105 },
-				{ seriesId: "c", anchorY: 395 },
+				{ id: "a", anchorY: 100 },
+				{ id: "b", anchorY: 105 },
+				{ id: "c", anchorY: 395 },
 			],
 			gap: 20,
 			top: 0,
 			bottom: 400,
 		});
-		expect(labels.map((l) => [l.seriesId, l.y])).toEqual([
+		expect(labels.map((l) => [l.id, l.y])).toEqual([
 			["a", 100],
 			["b", 120],
 			["c", 395],
@@ -41,8 +41,8 @@ describe("spreadLabels", () => {
 	it("shifts labels up when the bottom edge would push them out", () => {
 		const labels = spreadLabels({
 			anchors: [
-				{ seriesId: "a", anchorY: 395 },
-				{ seriesId: "b", anchorY: 398 },
+				{ id: "a", anchorY: 395 },
+				{ id: "b", anchorY: 398 },
 			],
 			gap: 20,
 			top: 0,

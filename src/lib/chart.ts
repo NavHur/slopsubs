@@ -14,7 +14,7 @@ export function paretoFrontier(points: readonly ValuePoint[]): ValuePoint[] {
 	});
 }
 
-export type SeriesLabel = { seriesId: string; anchorY: number; y: number };
+export type LineLabel = { id: string; anchorY: number; y: number };
 
 /**
  * Spreads end-of-line labels vertically so none sit closer than `gap`,
@@ -26,11 +26,11 @@ export function spreadLabels({
 	top,
 	bottom,
 }: {
-	anchors: readonly { seriesId: string; anchorY: number }[];
+	anchors: readonly { id: string; anchorY: number }[];
 	gap: number;
 	top: number;
 	bottom: number;
-}): SeriesLabel[] {
+}): LineLabel[] {
 	const sorted = [...anchors].sort((a, b) => a.anchorY - b.anchorY);
 	const placed = sorted.map((a) => ({ ...a, y: a.anchorY }));
 	for (let i = 0; i < placed.length; i++) {

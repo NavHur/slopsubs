@@ -1,16 +1,24 @@
 import type { ScaleLinear } from "d3-scale";
+import type { CSSProperties } from "react";
+import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
+import type { LineLabel } from "#/lib/chart";
 import { familyName } from "#/lib/families";
-import type { SeriesLabel } from "#/lib/chart";
 import { formatUsd } from "#/lib/format";
 import {
 	type AxisScale,
 	type ChartLayout,
+	markerPath,
 	pathOf,
 	px,
-	type Series,
 	type XScale,
 } from "./geometry";
+import {
+	type ModelGroup,
+	modelEnd,
+	type PricingStyle,
+	type Series,
+} from "./series";
 
 export function Axes({
 	x,
@@ -95,6 +103,7 @@ export function ParetoLine({
 
 /** Touch-sized target around each 8px dot. */
 const POINT_HIT_RADIUS = 12;
+const API_DASH = "3 4";
 
 function pointLabel(series: Series, point: ValuePoint): string {
 	return `${series.label}, ${point.benchmark.effortLabel}, effective cost per task ${formatUsd(point.costPerTaskUsd)}, intelligence ${point.intelligence.toFixed(1)}`;
@@ -115,15 +124,16 @@ export function SeriesLine({
 	dimmed: boolean;
 	onHover: (point: ValuePoint | null) => void;
 }) {
+	const { isApi, marker } = series.pricing;
 	return (
 		<g opacity={dimmed ? 0.15 : 1} className="transition-opacity">
 			<path
 				d={pathOf(series.points, x, y)}
 				fill="none"
 				stroke={series.color}
-				strokeWidth={series.isApi ? 1.25 : 2}
-				strokeDasharray={series.isApi ? "3 4" : undefined}
-				opacity={series.isApi ? 0.6 : 1}
+				strokeWidth={isApi ? 1.25 : 2}
+				strokeDasharray={isApi ? API_DASH : undefined}
+				opacity={isApi ? 0.6 : 1}
 			/>
 			{series.points.map((p) => (
 				// biome-ignore lint/a11y/useSemanticElements: SVG has no native button; the point needs focus to expose its tooltip
@@ -145,11 +155,14 @@ export function SeriesLine({
 						r={POINT_HIT_RADIUS}
 						fill="transparent"
 					/>
-					<circle
-						cx={px(x(p.costPerTaskUsd))}
-						cy={px(y(p.intelligence))}
-						r={hovered === p ? 6 : 4}
-						fill={series.isApi ? "var(--bg)" : series.color}
+					<path
+						d={markerPath(
+							marker,
+							x(p.costPerTaskUsd),
+							y(p.intelligence),
+							hovered === p ? 6 : 4,
+						)}
+						fill={isApi ? "var(--bg)" : series.color}
 						stroke={series.color}
 						strokeWidth={1.5}
 						className="group-focus-visible:stroke-fg"
@@ -160,57 +173,56 @@ export function SeriesLine({
 	);
 }
 
-/** End-of-line labels beside the plot, each tied to its line's last point. */
-export function SeriesTags({
+/** One label per model beside the plot, tied to its rightmost line end. */
+export function ModelTags({
 	labels,
-	series,
+	models,
 	x,
 	right,
-	activeSeries,
+	activeModel,
 	onFocus,
 }: {
-	labels: readonly SeriesLabel[];
-	series: readonly Series[];
+	labels: readonly LineLabel[];
+	models: readonly ModelGroup[];
 	x: XScale;
 	right: number;
-	activeSeries: string | null;
-	onFocus: (id: string | null) => void;
+	activeModel: FamilyId | null;
+	onFocus: (id: FamilyId | null) => void;
 }) {
 	return labels.map((label) => {
-		const s = series.find((candidate) => candidate.id === label.seriesId);
-		if (!s) return null;
-		const last = s.points[s.points.length - 1];
+		const model = models.find((candidate) => candidate.id === label.id);
+		if (!model) return null;
 		return (
-			<SeriesTag
-				key={s.id}
-				series={s}
-				from={[px(x(last.costPerTaskUsd)), label.anchorY]}
+			<ModelTag
+				key={model.id}
+				model={model}
+				from={[px(x(modelEnd(model).costPerTaskUsd)), label.anchorY]}
 				at={[right + 24, label.y]}
-				dimmed={activeSeries !== null && activeSeries !== s.id}
+				dimmed={activeModel !== null && activeModel !== model.id}
 				onFocus={onFocus}
 			/>
 		);
 	});
 }
 
-export function SeriesTag({
-	series,
+function ModelTag({
+	model,
 	from,
 	at,
 	dimmed,
 	onFocus,
 }: {
-	series: Series;
+	model: ModelGroup;
 	from: [number, number];
 	at: [number, number];
 	dimmed: boolean;
-	onFocus: (id: string | null) => void;
+	onFocus: (id: FamilyId | null) => void;
 }) {
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: hover-only emphasis; the data is also in the tooltip and sidebar
 		<g
 			opacity={dimmed ? 0.25 : 1}
-			onMouseEnter={() => onFocus(series.id)}
+			onMouseEnter={() => onFocus(model.id)}
 			onMouseLeave={() => onFocus(null)}
 			className="cursor-default transition-opacity"
 		>
@@ -225,10 +237,10 @@ export function SeriesTag({
 				x={at[0]}
 				y={at[1]}
 				dy="0.32em"
-				fill={series.color}
+				fill={model.color}
 				className="text-[13px] font-medium"
 			>
-				{series.label}
+				{model.name}
 			</text>
 		</g>
 	);
@@ -291,69 +303,99 @@ export function PointTooltip({
 	);
 }
 
-/** Below-chart legend for narrow screens, grouped by how each line is paid for. */
-export function SeriesLegend({
-	series,
-	activeSeries,
+/** Line style and point shape of each pricing, so one model's lines can be told apart. */
+export function PricingKey({
+	pricings,
+	className,
+	style,
+}: {
+	pricings: readonly PricingStyle[];
+	className?: string;
+	style?: CSSProperties;
+}) {
+	return (
+		<ul
+			aria-label="Line styles"
+			className={`flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-muted ${className ?? ""}`}
+			style={style}
+		>
+			{pricings.map((pricing) => (
+				<li key={pricing.label} className="flex items-center gap-1.5">
+					<svg width={26} height={12} aria-hidden="true">
+						<line
+							x1={1}
+							x2={25}
+							y1={6}
+							y2={6}
+							stroke="currentColor"
+							strokeWidth={pricing.isApi ? 1.25 : 2}
+							strokeDasharray={pricing.isApi ? API_DASH : undefined}
+						/>
+						<path
+							d={markerPath(pricing.marker, 13, 6, 3.5)}
+							fill={pricing.isApi ? "var(--bg)" : "currentColor"}
+							stroke="currentColor"
+							strokeWidth={1.5}
+						/>
+					</svg>
+					{pricing.label}
+				</li>
+			))}
+		</ul>
+	);
+}
+
+/** Below-chart legend for narrow screens: one entry per model. */
+export function ModelLegend({
+	models,
+	activeModel,
 	onFocus,
 }: {
-	series: readonly Series[];
-	activeSeries: string | null;
-	onFocus: (id: string | null) => void;
+	models: readonly ModelGroup[];
+	activeModel: FamilyId | null;
+	onFocus: (id: FamilyId | null) => void;
 }) {
-	const groups = Map.groupBy(series, (s) => s.pricingLabel);
 	return (
-		<div className="mt-3 space-y-3">
-			{[...groups].map(([pricing, members]) => (
-				<section key={pricing}>
-					<h3 className="text-[12px] font-medium text-subtle">{pricing}</h3>
-					<ul className="grid grid-cols-2 gap-x-3 text-[14px] font-medium">
-						{members.map((s) => (
-							<li key={s.id} className="min-w-0">
-								<LegendButton
-									series={s}
-									active={activeSeries === s.id}
-									muted={activeSeries !== null && activeSeries !== s.id}
-									onFocus={onFocus}
-								/>
-							</li>
-						))}
-					</ul>
-				</section>
+		<ul className="mt-3 grid grid-cols-2 gap-x-3 gap-y-0.5 text-[14px] font-medium">
+			{models.map((model) => (
+				<li key={model.id} className="min-w-0">
+					<LegendButton
+						model={model}
+						active={activeModel === model.id}
+						muted={activeModel !== null && activeModel !== model.id}
+						onFocus={onFocus}
+					/>
+				</li>
 			))}
-		</div>
+		</ul>
 	);
 }
 
 function LegendButton({
-	series,
+	model,
 	active,
 	muted,
 	onFocus,
 }: {
-	series: Series;
+	model: ModelGroup;
 	active: boolean;
 	muted: boolean;
-	onFocus: (id: string | null) => void;
+	onFocus: (id: FamilyId | null) => void;
 }) {
 	return (
 		<button
 			type="button"
 			aria-pressed={active}
-			aria-label={series.label}
-			onClick={() => onFocus(active ? null : series.id)}
-			className="flex min-h-10 w-full items-center gap-2 text-left transition-opacity"
-			style={{ color: series.color, opacity: muted ? 0.4 : 1 }}
+			onClick={() => onFocus(active ? null : model.id)}
+			className="flex min-h-8 w-full items-center gap-2 text-left transition-opacity"
+			style={{ color: model.color, opacity: muted ? 0.4 : 1 }}
 		>
 			<span
 				aria-hidden
-				className="w-3.5 shrink-0 border-t-2"
-				style={{
-					borderColor: series.color,
-					borderStyle: series.isApi ? "dashed" : "solid",
-				}}
+				className="size-2 shrink-0 rounded-full"
+				style={{ backgroundColor: model.color }}
 			/>
-			<span className="truncate">{series.modelName}</span>
+			<span className="truncate">{model.name}</span>
 		</button>
 	);
 }
