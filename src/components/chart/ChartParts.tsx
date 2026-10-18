@@ -3,8 +3,9 @@ import type { CSSProperties } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import type { LineLabel } from "#/lib/chart";
-import { familyName } from "#/lib/families";
+import { familyLabId, familyName } from "#/lib/families";
 import { formatUsd } from "#/lib/format";
+import { ProviderLogo } from "../ProviderLogo";
 import {
 	type AxisScale,
 	type ChartLayout,
@@ -205,6 +206,8 @@ export function ModelTags({
 	});
 }
 
+const TAG_LOGO_SIZE = 14;
+
 function ModelTag({
 	model,
 	from,
@@ -225,6 +228,7 @@ function ModelTag({
 			onMouseEnter={() => onFocus(model.id)}
 			onMouseLeave={() => onFocus(null)}
 			className="cursor-default transition-opacity"
+			style={{ color: model.color }}
 		>
 			<line
 				x1={from[0] + 6}
@@ -233,8 +237,14 @@ function ModelTag({
 				y2={at[1]}
 				className="stroke-grid"
 			/>
-			<text
+			<ProviderLogo
+				lab={familyLabId(model.id)}
 				x={at[0]}
+				y={at[1] - TAG_LOGO_SIZE / 2}
+				size={TAG_LOGO_SIZE}
+			/>
+			<text
+				x={at[0] + TAG_LOGO_SIZE + 5}
 				y={at[1]}
 				dy="0.32em"
 				fill={model.color}
@@ -395,6 +405,7 @@ function LegendButton({
 				className="size-2 shrink-0 rounded-full"
 				style={{ backgroundColor: model.color }}
 			/>
+			<ProviderLogo lab={familyLabId(model.id)} />
 			<span className="truncate">{model.name}</span>
 		</button>
 	);

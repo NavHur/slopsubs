@@ -52,7 +52,7 @@ export function chartLayout({ width, height }: Size): ChartLayout {
 	}
 	return {
 		height: height >= MIN_FILL_HEIGHT ? Math.floor(height) : DEFAULT_HEIGHT,
-		margin: { top: 28, right: 160, bottom: 52, left: 56 },
+		margin: { top: 28, right: 180, bottom: 52, left: 56 },
 		compact: false,
 	};
 }
