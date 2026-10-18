@@ -15,10 +15,16 @@ import {
 } from "#/lib/families";
 import { formatMultiple } from "#/lib/format";
 import {
+	allSelected,
 	COVERED_FAMILIES,
+	FRONTIER_FAMILIES,
+	FRONTIER_TIERS,
+	frontierTier,
+	NOTABLE_FAMILIES,
 	REASONING_LEVELS,
 	type ReasoningLevel,
 	toggled,
+	toggledGroup,
 } from "#/lib/view";
 
 /** "12×", or "1.5–6×" when the multiple differs by model. */
@@ -384,15 +390,20 @@ function FamilyGroup({
 	title,
 	families,
 	selection,
+	actions,
 }: {
 	title: string;
 	families: readonly FamilyId[];
 	selection: Selection;
+	actions?: React.ReactNode;
 }) {
 	const { selected, onSelect } = selection;
 	return (
 		<section aria-label={title} className="mb-3">
-			<h3 className="mb-1 text-[12px] font-medium text-subtle">{title}</h3>
+			<div className="mb-1 flex items-baseline justify-between gap-2">
+				<h3 className="text-[12px] font-medium text-subtle">{title}</h3>
+				{actions && <div className="flex gap-x-2.5">{actions}</div>}
+			</div>
 			{families.length === 0 && (
 				<p className="py-1 text-[13px] text-muted">No model matches.</p>
 			)}
@@ -408,6 +419,36 @@ function FamilyGroup({
 			</ul>
 		</section>
 	);
+}
+
+/** Selects or clears a whole set of families at once. */
+function GroupChip({
+	label,
+	group,
+	selection,
+}: {
+	label: string;
+	group: readonly FamilyId[];
+	selection: Selection;
+}) {
+	const { selected, onSelect } = selection;
+	return (
+		<Chip
+			label={label}
+			on={allSelected(selected, group)}
+			onClick={() => onSelect(toggledGroup(selected, group))}
+		/>
+	);
+}
+
+function FrontierTierChips({ selection }: { selection: Selection }) {
+	return FRONTIER_TIERS.map((tier) => {
+		const group = FRONTIER_FAMILIES.filter((f) => frontierTier(f) === tier);
+		if (group.length === 0) return null;
+		return (
+			<GroupChip key={tier} label={tier} group={group} selection={selection} />
+		);
+	});
 }
 
 export function FamilyList({
@@ -440,11 +481,34 @@ export function FamilyList({
 			</div>
 			<ModelSearch query={query} onChange={setQuery} />
 			<ReasoningFilter hidden={hiddenReasoning} onChange={onHideReasoning} />
-			<FamilyGroup
-				title={query.trim() === "" ? "All" : "Results"}
-				families={COVERED_FAMILIES.filter((f) => familyMatches(f, query))}
-				selection={selection}
-			/>
+			{query.trim() === "" ? (
+				<>
+					<FamilyGroup
+						title="Frontier"
+						families={FRONTIER_FAMILIES}
+						selection={selection}
+						actions={<FrontierTierChips selection={selection} />}
+					/>
+					<FamilyGroup
+						title="Notable"
+						families={NOTABLE_FAMILIES}
+						selection={selection}
+						actions={
+							<GroupChip
+								label="All"
+								group={NOTABLE_FAMILIES}
+								selection={selection}
+							/>
+						}
+					/>
+				</>
+			) : (
+				<FamilyGroup
+					title="Results"
+					families={COVERED_FAMILIES.filter((f) => familyMatches(f, query))}
+					selection={selection}
+				/>
+			)}
 		</section>
 	);
 }
