@@ -10,6 +10,7 @@ import { USAGE_PROFILES } from "#/domain/model";
 import { valuePoints } from "#/domain/value";
 import {
 	COVERED_FAMILIES,
+	hiddenReasoning,
 	profileOf,
 	selectedFamilies,
 	selectedPlans,
@@ -51,6 +52,7 @@ function ValueView() {
 		samples,
 		profile,
 		showApi: view.api,
+		hiddenEfforts: hiddenReasoning(view),
 	});
 
 	return (
