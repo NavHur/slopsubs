@@ -6,6 +6,7 @@ import {
 } from "d3-scale";
 import type { ValuePoint } from "#/domain/value";
 import type { Size } from "#/lib/useElementSize";
+import type { PointMarker } from "./series";
 
 export const LABEL_GAP = 22;
 export const LOG_TICKS = [
@@ -59,6 +60,7 @@ export function chartLayout({ width, height }: Size): ChartLayout {
 export type XScale =
 	| ScaleLogarithmic<number, number>
 	| ScaleLinear<number, number>;
+
 export type Series = {
 	id: string;
 	points: ValuePoint[];
@@ -125,4 +127,37 @@ export function pathOf(
 				`${i ? "L" : "M"}${px(x(p.costPerTaskUsd))},${px(y(p.intelligence))}`,
 		)
 		.join("");
+}
+
+/**
+ * SVG path for a point marker of radius `r` centred on (cx, cy). Shapes are
+ * scaled to look about as heavy as the circle.
+ */
+export function markerPath(
+	marker: PointMarker,
+	cx: number,
+	cy: number,
+	r: number,
+): string {
+	const at = (dx: number, dy: number) => `${px(cx + dx)},${px(cy + dy)}`;
+	switch (marker) {
+		case "circle":
+			return `M${at(-r, 0)}a${r},${r} 0 1,0 ${2 * r},0a${r},${r} 0 1,0 ${-2 * r},0Z`;
+		case "square": {
+			const h = r * 0.9;
+			return `M${at(-h, -h)}L${at(h, -h)}L${at(h, h)}L${at(-h, h)}Z`;
+		}
+		case "diamond": {
+			const h = r * 1.25;
+			return `M${at(0, -h)}L${at(h, 0)}L${at(0, h)}L${at(-h, 0)}Z`;
+		}
+		case "triangle": {
+			const h = r * 1.3;
+			return `M${at(0, -h)}L${at(h * 0.87, h / 2)}L${at(-h * 0.87, h / 2)}Z`;
+		}
+		case "triangle-down": {
+			const h = r * 1.3;
+			return `M${at(0, h)}L${at(h * 0.87, -h / 2)}L${at(-h * 0.87, -h / 2)}Z`;
+		}
+	}
 }
