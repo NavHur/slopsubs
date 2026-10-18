@@ -4,6 +4,28 @@ import { useEffect, useRef } from "react";
 const WIDE_QUERY = "(min-width: 64rem)";
 
 /**
+ * Calls `onClose` on Escape, or when the viewport widens past `lg`: the sheet
+ * only exists below it, so the page must not stay inert or scroll-locked
+ * behind the sidebar. Returns the cleanup.
+ */
+function listenForDismiss(onClose: () => void): () => void {
+	const onKey = (event: KeyboardEvent) => {
+		if (event.key === "Escape") onClose();
+	};
+	const wide = window.matchMedia(WIDE_QUERY);
+	const onWide = () => {
+		if (wide.matches) onClose();
+	};
+	onWide();
+	window.addEventListener("keydown", onKey);
+	wide.addEventListener("change", onWide);
+	return () => {
+		window.removeEventListener("keydown", onKey);
+		wide.removeEventListener("change", onWide);
+	};
+}
+
+/**
  * The sidebar on wide screens; below `lg` a full-screen sheet that opens
  * over the chart, like a native picker. The caller makes the rest of the
  * page `inert` while it is open.
@@ -26,22 +48,10 @@ export function SidePanel({
 		doneRef.current?.focus({ focusVisible: false });
 		const { overflow } = document.body.style;
 		document.body.style.overflow = "hidden";
-		const onKey = (event: KeyboardEvent) => {
-			if (event.key === "Escape") onClose();
-		};
-		window.addEventListener("keydown", onKey);
-		// The sheet only exists below `lg`; widening past it dismisses the sheet
-		// so the page is no longer inert or scroll-locked behind the sidebar.
-		const wide = window.matchMedia(WIDE_QUERY);
-		const onWide = () => {
-			if (wide.matches) onClose();
-		};
-		onWide();
-		wide.addEventListener("change", onWide);
+		const stopListening = listenForDismiss(onClose);
 		return () => {
 			document.body.style.overflow = overflow;
-			window.removeEventListener("keydown", onKey);
-			wide.removeEventListener("change", onWide);
+			stopListening();
 		};
 	}, [open, onClose]);
 
