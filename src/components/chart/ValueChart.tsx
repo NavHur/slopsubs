@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { paretoFrontier, spreadLabels } from "#/lib/chart";
@@ -20,10 +20,26 @@ import {
 	px,
 	xTicks,
 } from "./geometry";
+import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
 import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
 
 /** Room left of the desktop key for the y-axis title it shares a row with. */
 const KEY_TITLE_ROOM_PX = 130;
+
+/** Shared label and legend highlight; Escape clears a pinned model. */
+function useModelHighlight() {
+	const [highlight, dispatch] = useReducer(updateHighlight, NO_HIGHLIGHT);
+	const hasPin = highlight.pinned !== null;
+	useEffect(() => {
+		if (!hasPin) return;
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") dispatch({ type: "clear" });
+		};
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, [hasPin]);
+	return [highlight, dispatch] as const;
+}
 
 export function ValueChart({
 	points,
@@ -37,7 +53,7 @@ export function ValueChart({
 	const [ref, size] = useElementSize<HTMLDivElement>();
 	const { width } = size;
 	const [hovered, setHovered] = useState<ValuePoint | null>(null);
-	const [focusModel, setFocusModel] = useState<FamilyId | null>(null);
+	const [highlight, dispatchHighlight] = useModelHighlight();
 	const series = useMemo(() => buildSeries(points), [points]);
 	const models = useMemo(() => groupByModel(series), [series]);
 	const layout = chartLayout(size);
@@ -67,6 +83,7 @@ export function ValueChart({
 				top: margin.top,
 				bottom: height - margin.bottom,
 			});
+	const focusModel = highlightedModel(highlight);
 	const activeModel = hovered?.benchmark.family ?? focusModel;
 	const dim = (id: string, modelId: FamilyId) =>
 		hovered
@@ -111,7 +128,8 @@ export function ValueChart({
 					x={x}
 					right={right}
 					activeModel={activeModel}
-					onFocus={setFocusModel}
+					pinnedModel={highlight.pinned}
+					onHighlight={dispatchHighlight}
 				/>
 			</svg>
 			{hovered && (
@@ -128,7 +146,8 @@ export function ValueChart({
 					<ModelLegend
 						models={models}
 						activeModel={activeModel}
-						onFocus={setFocusModel}
+						pinnedModel={highlight.pinned}
+						onHighlight={dispatchHighlight}
 					/>
 				</>
 			) : (
