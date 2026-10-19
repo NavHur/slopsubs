@@ -1,5 +1,5 @@
 import type { ScaleLinear } from "d3-scale";
-import type { CSSProperties } from "react";
+import { type CSSProperties, useEffect } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import type { LineLabel } from "#/lib/chart";
@@ -234,6 +234,14 @@ function ModelTag({
 	const endPreview = (source: PreviewSource) => () =>
 		onHighlight({ type: "endPreview", source, modelId });
 	const toggle = () => onHighlight({ type: "toggle", modelId });
+	// An unmounted label never sends mouseleave or blur, so end its previews here.
+	useEffect(
+		() => () => {
+			onHighlight({ type: "endPreview", source: "hover", modelId });
+			onHighlight({ type: "endPreview", source: "focus", modelId });
+		},
+		[modelId, onHighlight],
+	);
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: SVG has no native button; the label toggles its model's highlight
 		<g

@@ -4,7 +4,6 @@ import {
 	type HighlightEvent,
 	highlightedModel,
 	NO_HIGHLIGHT,
-	pinnedOnly,
 	plottedHighlight,
 	updateHighlight,
 } from "./highlight";
@@ -109,13 +108,15 @@ describe("model highlight", () => {
 		expect(highlightedModel(shown)).toBeNull();
 	});
 
-	it("ignores hover and focus previews when no label exists to preview", () => {
-		const state = reduce(
+	it("leaves no preview behind when a label unmounts while hovered and focused", () => {
+		const unmounted = reduce(
 			{ type: "preview", source: "focus", modelId: a },
 			{ type: "preview", source: "hover", modelId: a },
+			{ type: "endPreview", source: "hover", modelId: a },
+			{ type: "endPreview", source: "focus", modelId: a },
 		);
-		const pinned = updateHighlight(state, { type: "toggle", modelId: b });
-		expect(highlightedModel(pinnedOnly(state))).toBeNull();
-		expect(highlightedModel(pinnedOnly(pinned))).toBe(b);
+		expect(highlightedModel(unmounted)).toBeNull();
+		const pinned = updateHighlight(unmounted, { type: "toggle", modelId: b });
+		expect(highlightedModel(pinned)).toBe(b);
 	});
 });

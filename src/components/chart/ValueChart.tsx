@@ -32,7 +32,6 @@ import {
 import {
 	highlightedModel,
 	NO_HIGHLIGHT,
-	pinnedOnly,
 	plottedHighlight,
 	updateHighlight,
 } from "./highlight";
@@ -123,8 +122,7 @@ export function ValueChart({
 				top: margin.top,
 				bottom: height - margin.bottom,
 			});
-	const plottedState = plottedHighlight(highlight, plotted);
-	const shown = layout.compact ? pinnedOnly(plottedState) : plottedState;
+	const shown = plottedHighlight(highlight, plotted);
 	const highlighted = highlightedModel(shown);
 	const activeModel = hovered?.benchmark.family ?? highlighted;
 	const dim = (id: string, modelId: FamilyId) =>
