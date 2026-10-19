@@ -10,6 +10,7 @@ import {
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { paretoFrontier, spreadLabels } from "#/lib/chart";
+import { isTextEntryTarget } from "#/lib/textEntry";
 import { useElementSize } from "#/lib/useElementSize";
 import {
 	Axes,
@@ -31,6 +32,7 @@ import {
 import {
 	highlightedModel,
 	NO_HIGHLIGHT,
+	pinnedOnly,
 	plottedHighlight,
 	updateHighlight,
 } from "./highlight";
@@ -39,19 +41,12 @@ import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
 /** Room left of the desktop key for the y-axis title it shares a row with. */
 const KEY_TITLE_ROOM_PX = 130;
 
-function isTextEntry(target: EventTarget | null): boolean {
-	return (
-		target instanceof HTMLElement &&
-		(target.isContentEditable || target.matches("input, textarea, select"))
-	);
-}
-
 /** Escape meant for a text field, or for the sheet that made the chart inert. */
 function escapeBelongsElsewhere(
 	event: KeyboardEvent,
 	chart: HTMLElement | null,
 ): boolean {
-	return isTextEntry(event.target) || Boolean(chart?.closest("[inert]"));
+	return isTextEntryTarget(event.target) || Boolean(chart?.closest("[inert]"));
 }
 
 /** Shared label and legend highlight; Escape clears a pinned model. */
@@ -128,7 +123,8 @@ export function ValueChart({
 				top: margin.top,
 				bottom: height - margin.bottom,
 			});
-	const shown = plottedHighlight(highlight, plotted);
+	const plottedState = plottedHighlight(highlight, plotted);
+	const shown = layout.compact ? pinnedOnly(plottedState) : plottedState;
 	const highlighted = highlightedModel(shown);
 	const activeModel = hovered?.benchmark.family ?? highlighted;
 	const dim = (id: string, modelId: FamilyId) =>

@@ -69,6 +69,11 @@ export function plottedHighlight(
 	};
 }
 
+/** Just the pin: without labels there is nothing to hover or focus. */
+export function pinnedOnly(state: ModelHighlight): ModelHighlight {
+	return { ...NO_HIGHLIGHT, pinned: state.pinned };
+}
+
 export function highlightedModel(state: ModelHighlight): FamilyId | null {
 	return state.hovered ?? state.focused ?? state.pinned;
 }
