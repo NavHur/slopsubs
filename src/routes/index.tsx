@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
+import { PricingKey } from "#/components/chart/PricingKey";
 import { buildSeries, pricingStyles } from "#/components/chart/series";
 import { ValueChart } from "#/components/chart/ValueChart";
 import {
@@ -79,6 +80,7 @@ function ValueView() {
 		const { downloadChartPng } = await import("#/lib/exportPng");
 		await downloadChartPng({
 			chart,
+			legend: <PricingKey pricings={[...styles.values()]} />,
 			title: CHART_TITLE,
 			fileName: "slopsubs-effective-cost.png",
 		});

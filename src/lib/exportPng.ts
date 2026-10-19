@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { createElement, Fragment, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { DEFAULT_HEIGHT } from "#/components/chart/geometry";
 
@@ -9,6 +9,8 @@ const CHART_SIZE = { width: 1200, height: DEFAULT_HEIGHT };
 const PADDING_PX = 32;
 const TITLE_BAND_PX = 40;
 const TITLE_FONT = '600 20px "DM Sans", sans-serif';
+/** The legend's row, level with the 20px title at the top of its band. */
+const LEGEND_ROW_PX = 24;
 const PIXEL_RATIO = 2;
 /** Frames to wait for the offscreen chart to measure itself and re-render. */
 const MAX_LAYOUT_FRAMES = 20;
@@ -27,10 +29,10 @@ const INLINED_STYLES = [
 	"font-variant-numeric",
 ] as const;
 
-/** A laid-out piece of the chart, placed relative to the chart's top left. */
+/** A laid-out piece of the image, placed relative to the title band's top left. */
 type Box = { x: number; y: number; width: number; height: number };
 type SvgLayer = Box & { svg: string };
-/** HTML text, such as the line-style key, which sits over the SVG. */
+/** HTML text, such as the legend's labels. */
 type TextRun = Box & { text: string; font: string; color: string };
 type Rendered = {
 	layers: SvgLayer[];
@@ -39,18 +41,24 @@ type Rendered = {
 	foreground: string;
 };
 
-/** Renders `chart` offscreen and downloads it as a titled PNG. */
+/**
+ * Renders `chart` offscreen and downloads it as a PNG titled `title`, with
+ * `legend` right-aligned beside the title: a downloaded image has no side
+ * panel to explain the chart's lines.
+ */
 export async function downloadChartPng({
 	chart,
+	legend,
 	title,
 	fileName,
 }: {
 	chart: ReactNode;
+	legend: ReactNode;
 	title: string;
 	fileName: string;
 }): Promise<void> {
 	const [rendered, fontCss] = await Promise.all([
-		renderOffscreen(chart),
+		renderOffscreen(chart, legend),
 		embeddedFontCss(),
 	]);
 	const blob = await rasterize(rendered, fontCss, title);
@@ -62,7 +70,10 @@ export async function downloadChartPng({
 	URL.revokeObjectURL(url);
 }
 
-async function renderOffscreen(chart: ReactNode): Promise<Rendered> {
+async function renderOffscreen(
+	chart: ReactNode,
+	legend: ReactNode,
+): Promise<Rendered> {
 	const host = document.createElement("div");
 	host.inert = true;
 	host.setAttribute("aria-hidden", "true");
@@ -72,12 +83,27 @@ async function renderOffscreen(chart: ReactNode): Promise<Rendered> {
 		top: "0",
 		left: "-100000px",
 		width: `${CHART_SIZE.width}px`,
-		height: `${CHART_SIZE.height}px`,
+		height: `${TITLE_BAND_PX + CHART_SIZE.height}px`,
+		paddingTop: `${TITLE_BAND_PX}px`,
 	});
 	document.body.append(host);
 	const root = createRoot(host);
 	try {
-		root.render(chart);
+		root.render(
+			createElement(
+				Fragment,
+				null,
+				chart,
+				createElement(
+					"div",
+					{
+						className: "absolute top-0 right-0 flex items-center",
+						style: { height: LEGEND_ROW_PX },
+					},
+					legend,
+				),
+			),
+		);
 		await waitForLayout(host);
 		const origin = host.getBoundingClientRect();
 		const style = getComputedStyle(host);
@@ -99,8 +125,10 @@ async function renderOffscreen(chart: ReactNode): Promise<Rendered> {
 async function waitForLayout(host: HTMLElement): Promise<void> {
 	for (let frame = 0; frame < MAX_LAYOUT_FRAMES; frame++) {
 		await new Promise(requestAnimationFrame);
-		const svg = host.querySelector("svg");
-		if (svg?.width.baseVal.value === CHART_SIZE.width) return;
+		const svgs = [...host.querySelectorAll("svg")];
+		if (svgs.some((svg) => svg.width.baseVal.value === CHART_SIZE.width)) {
+			return;
+		}
 	}
 	throw new Error("The chart never laid out at its export size");
 }
@@ -114,7 +142,7 @@ function boxIn(rect: DOMRect, origin: DOMRect): Box {
 	};
 }
 
-/** The chart's SVG plus any drawn beside it, like the key's swatches. */
+/** The chart's SVG plus any drawn beside it, like the legend's swatches. */
 function outerSvgs(host: HTMLElement): SVGSVGElement[] {
 	return [...host.querySelectorAll("svg")].filter(
 		(svg) => !svg.parentElement?.closest("svg"),
@@ -255,7 +283,7 @@ async function rasterize(
 	context.textBaseline = "top";
 	context.fillText(title, PADDING_PX, PADDING_PX);
 
-	context.translate(PADDING_PX, PADDING_PX + TITLE_BAND_PX);
+	context.translate(PADDING_PX, PADDING_PX);
 	layers.forEach((layer, i) => {
 		context.drawImage(images[i], layer.x, layer.y, layer.width, layer.height);
 	});
