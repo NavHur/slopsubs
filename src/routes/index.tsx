@@ -190,6 +190,11 @@ function ValueView() {
 							</div>
 						</div>
 						{chart}
+						{/* From lg the side panel shows each plan's line style; the PNG draws its own key. */}
+						<PricingKey
+							pricings={[...styles.values()]}
+							className="mt-3 lg:hidden"
+						/>
 					</section>
 					<footer className="mt-auto flex flex-wrap justify-between gap-x-6 border-t border-line px-4 py-3 text-[12px] leading-5 text-muted sm:px-7">
 						<span>

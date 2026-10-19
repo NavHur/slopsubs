@@ -29,8 +29,7 @@ import {
 	xTicks,
 } from "./geometry";
 import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
-import { PricingKey } from "./PricingKey";
-import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
+import { buildSeries, groupByModel, modelEnd } from "./series";
 
 /**
  * Escape meant for the chart, not for a text field or for the sheet that made
@@ -133,7 +132,6 @@ export function ValueChart({
 		hovered
 			? hovered.seriesId !== id
 			: highlighted !== null && highlighted !== modelId;
-	const pricings = pricingKey(series);
 
 	return (
 		<div ref={ref} className="relative lg:min-h-0 lg:flex-1">
@@ -185,17 +183,13 @@ export function ValueChart({
 					containerWidth={width}
 				/>
 			)}
-			{/* Wider screens show line styles beside each plan in the side panel. */}
 			{layout.compact && (
-				<>
-					<PricingKey pricings={pricings} className="mt-3" />
-					<ModelLegend
-						models={models}
-						activeModel={activeModel}
-						pinnedModel={shown.pinned}
-						onHighlight={dispatchHighlight}
-					/>
-				</>
+				<ModelLegend
+					models={models}
+					activeModel={activeModel}
+					pinnedModel={shown.pinned}
+					onHighlight={dispatchHighlight}
+				/>
 			)}
 		</div>
 	);
