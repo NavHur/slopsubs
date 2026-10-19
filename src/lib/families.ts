@@ -36,3 +36,11 @@ export function familyName(family: FamilyId): string {
 export function familyLab(family: FamilyId): string {
 	return firstOfFamily.get(family)?.labName ?? "";
 }
+
+/** Whether a "Find models" query names the family or its lab. */
+export function familyMatches(family: FamilyId, query: string): boolean {
+	const needle = query.trim().toLowerCase();
+	const model = firstOfFamily.get(family);
+	const haystack = [family, model?.name, model?.labName].join(" ");
+	return haystack.toLowerCase().includes(needle);
+}

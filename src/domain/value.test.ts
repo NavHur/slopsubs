@@ -149,6 +149,7 @@ describe("valuePoints", () => {
 			samples: [sample(0, 10, 120)],
 			profile: maxed,
 			showApi: true,
+			hiddenEfforts: [],
 		});
 		const multiple = (1200 * 52) / 12 / 200;
 		expect(
@@ -161,7 +162,7 @@ describe("valuePoints", () => {
 		]);
 	});
 
-	it("drops the non-reasoning variant when reasoning efforts exist", () => {
+	it("leaves out hidden reasoning efforts", () => {
 		const points = valuePoints({
 			benchmarks: [benchmark("none", 0), ...benchmarks],
 			families: [opus],
@@ -169,8 +170,26 @@ describe("valuePoints", () => {
 			samples: [],
 			profile: maxed,
 			showApi: true,
+			hiddenEfforts: ["none", "max"],
 		});
-		expect(points.map((p) => p.benchmark.effort)).toEqual(["low", "max"]);
+		expect(points.map((p) => p.benchmark.effort)).toEqual(["low"]);
+	});
+
+	it("plots the non-reasoning variant first when shown", () => {
+		const points = valuePoints({
+			benchmarks: [...benchmarks, benchmark("none", 0)],
+			families: [opus],
+			plans: [],
+			samples: [],
+			profile: maxed,
+			showApi: true,
+			hiddenEfforts: [],
+		});
+		expect(points.map((p) => p.benchmark.effort)).toEqual([
+			"none",
+			"low",
+			"max",
+		]);
 	});
 
 	it("omits plans that have not been measured", () => {
@@ -181,6 +200,7 @@ describe("valuePoints", () => {
 			samples: [],
 			profile: maxed,
 			showApi: false,
+			hiddenEfforts: [],
 		});
 		expect(points).toEqual([]);
 	});
@@ -193,6 +213,7 @@ describe("valuePoints", () => {
 			samples: [sample(0, 10, 120)],
 			profile: maxed,
 			showApi: true,
+			hiddenEfforts: [],
 		});
 		expect(points.map((p) => [p.seriesId, p.benchmark.effort])).toEqual([
 			[`${opus}@api`, "low"],
@@ -223,6 +244,7 @@ describe("valuePoints", () => {
 			samples: [],
 			profile: maxed,
 			showApi: false,
+			hiddenEfforts: [],
 		});
 		expect(
 			points.map((p) => [

@@ -9,7 +9,9 @@ import { benchmarks, plans, samples } from "#/data";
 import { USAGE_PROFILES } from "#/domain/model";
 import { valuePoints } from "#/domain/value";
 import {
-	COVERED_FAMILIES,
+	DEFAULT_MODELS_VIEW,
+	hiddenReasoning,
+	isDefaultModelsView,
 	profileOf,
 	selectedFamilies,
 	selectedPlans,
@@ -51,6 +53,7 @@ function ValueView() {
 		samples,
 		profile,
 		showApi: view.api,
+		hiddenEfforts: hiddenReasoning(view),
 	});
 
 	return (
@@ -147,11 +150,12 @@ function ValueView() {
 						onToggle={(id) => update({ plans: toggled(planIds, id) })}
 					/>
 					<FamilyList
-						families={COVERED_FAMILIES}
 						selected={families}
-						onToggle={(family) =>
-							update({ families: toggled(families, family) })
-						}
+						hiddenReasoning={hiddenReasoning(view)}
+						isDefault={isDefaultModelsView(view)}
+						onSelect={(next) => update({ families: next })}
+						onHideReasoning={(hideReasoning) => update({ hideReasoning })}
+						onReset={() => update(DEFAULT_MODELS_VIEW)}
 					/>
 				</SidePanel>
 			</div>

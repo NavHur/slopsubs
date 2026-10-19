@@ -1,6 +1,7 @@
 import {
 	type BenchmarkPoint,
 	EFFORTS,
+	type Effort,
 	type FamilyId,
 	type LimitSample,
 	type Plan,
@@ -134,10 +135,8 @@ function seriesFor(
 	const divisor = pricing.kind === "plan" ? pricing.valueMultiple : 1;
 	const seriesId =
 		pricing.kind === "plan" ? `${family}@${pricing.plan.id}` : `${family}@api`;
-	const own = points.filter((p) => p.family === family);
-	// A family's non-reasoning variant is a different mode, not its lowest effort.
-	const reasoning = own.filter((p) => p.effort !== "none");
-	return (reasoning.length > 0 ? reasoning : own)
+	return points
+		.filter((p) => p.family === family)
 		.sort((a, b) => a.effortOrder - b.effortOrder)
 		.map((benchmark) => ({
 			seriesId,
@@ -150,7 +149,8 @@ function seriesFor(
 
 /**
  * Every plotted point: each selected family at API prices, and again under
- * each selected plan with a known cap that covers it at that plan's effective cost.
+ * each selected plan with a known cap that covers it at that plan's effective
+ * cost, leaving out the hidden reasoning efforts.
  */
 export function valuePoints({
 	benchmarks,
@@ -159,6 +159,7 @@ export function valuePoints({
 	samples,
 	profile,
 	showApi,
+	hiddenEfforts,
 }: {
 	benchmarks: readonly BenchmarkPoint[];
 	families: readonly FamilyId[];
@@ -166,8 +167,11 @@ export function valuePoints({
 	samples: readonly LimitSample[];
 	profile: UsageProfile;
 	showApi: boolean;
+	hiddenEfforts: readonly Effort[];
 }): ValuePoint[] {
-	const plottable = benchmarks.filter(isPlottable);
+	const plottable = benchmarks
+		.filter(isPlottable)
+		.filter((p) => !hiddenEfforts.includes(p.effort));
 	const api = showApi
 		? families.flatMap((f) => seriesFor(plottable, f, { kind: "api" }))
 		: [];
