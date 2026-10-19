@@ -29,12 +29,7 @@ import {
 	px,
 	xTicks,
 } from "./geometry";
-import {
-	highlightedModel,
-	NO_HIGHLIGHT,
-	plottedHighlight,
-	updateHighlight,
-} from "./highlight";
+import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
 import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
 
 /** Room left of the desktop key for the y-axis title it shares a row with. */
@@ -54,11 +49,13 @@ function useModelHighlight(
 	plotted: ReadonlySet<FamilyId>,
 ) {
 	const [highlight, dispatch] = useReducer(updateHighlight, NO_HIGHLIGHT);
-	// Forget models that left the chart, so a reselect starts clean.
-	useEffect(() => dispatch({ type: "prune", plotted }), [plotted]);
-	// Correct on the render before the effect runs.
-	const shown = plottedHighlight(highlight, plotted);
-	const hasPin = shown.pinned !== null;
+	const [prunedFor, setPrunedFor] = useState(plotted);
+	if (prunedFor !== plotted) {
+		// Forget models that left the chart before this render commits.
+		setPrunedFor(plotted);
+		dispatch({ type: "prune", plotted });
+	}
+	const hasPin = highlight.pinned !== null;
 	useEffect(() => {
 		if (!hasPin) return;
 		const onKeyDown = (event: KeyboardEvent) => {
@@ -69,7 +66,7 @@ function useModelHighlight(
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);
 	}, [hasPin, chart]);
-	return [shown, dispatch] as const;
+	return [highlight, dispatch] as const;
 }
 
 /** useElementSize's ref, plus a ref object so handlers can read the element. */

@@ -1,8 +1,8 @@
 import type { FamilyId } from "#/domain/model";
 
 /**
- * Which model the chart emphasizes. A click pins a model until it is
- * clicked again or cleared; hover and focus each preview one on top of it.
+ * Which model the chart emphasizes. A click pins a model until it is clicked
+ * again, cleared, or leaves the chart; hover and focus preview over the pin.
  */
 export type ModelHighlight = {
 	pinned: FamilyId | null;
