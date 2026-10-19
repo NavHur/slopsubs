@@ -108,15 +108,15 @@ describe("model highlight", () => {
 		expect(highlightedModel(shown)).toBeNull();
 	});
 
-	it("leaves no preview behind when a label unmounts while hovered and focused", () => {
-		const unmounted = reduce(
+	it("returns to the pin once both previews of a model end", () => {
+		const ended = reduce(
 			{ type: "preview", source: "focus", modelId: a },
 			{ type: "preview", source: "hover", modelId: a },
 			{ type: "endPreview", source: "hover", modelId: a },
 			{ type: "endPreview", source: "focus", modelId: a },
 		);
-		expect(highlightedModel(unmounted)).toBeNull();
-		const pinned = updateHighlight(unmounted, { type: "toggle", modelId: b });
+		expect(highlightedModel(ended)).toBeNull();
+		const pinned = updateHighlight(ended, { type: "toggle", modelId: b });
 		expect(highlightedModel(pinned)).toBe(b);
 	});
 });
