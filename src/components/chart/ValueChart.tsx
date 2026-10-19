@@ -17,7 +17,6 @@ import {
 	ModelLegend,
 	ModelTags,
 	ParetoLine,
-	PointTooltip,
 	SeriesLine,
 } from "./ChartParts";
 import {
@@ -29,6 +28,7 @@ import {
 	xTicks,
 } from "./geometry";
 import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
+import { PointTooltip } from "./PointTooltip";
 import { buildSeries, groupByModel, modelEnd } from "./series";
 
 /**
