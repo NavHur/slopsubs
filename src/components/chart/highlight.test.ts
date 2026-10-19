@@ -109,14 +109,18 @@ describe("model highlight", () => {
 	});
 
 	it("returns to the pin once both previews of a model end", () => {
-		const ended = reduce(
+		const previews: HighlightEvent[] = [
+			{ type: "toggle", modelId: b },
 			{ type: "preview", source: "focus", modelId: a },
 			{ type: "preview", source: "hover", modelId: a },
-			{ type: "endPreview", source: "hover", modelId: a },
-			{ type: "endPreview", source: "focus", modelId: a },
-		);
-		expect(highlightedModel(ended)).toBeNull();
-		const pinned = updateHighlight(ended, { type: "toggle", modelId: b });
-		expect(highlightedModel(pinned)).toBe(b);
+		];
+		expect(run(...previews)).toBe(a);
+		expect(
+			run(
+				...previews,
+				{ type: "endPreview", source: "hover", modelId: a },
+				{ type: "endPreview", source: "focus", modelId: a },
+			),
+		).toBe(b);
 	});
 });
