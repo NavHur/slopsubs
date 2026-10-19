@@ -1,11 +1,10 @@
 import { z } from "zod";
 import { benchmarks, plans } from "#/data";
-import {
-	type BenchmarkDataset,
-	type Effort,
-	type FamilyId,
-	type PlanId,
-	USAGE_PROFILES,
+import type {
+	BenchmarkDataset,
+	Effort,
+	FamilyId,
+	PlanId,
 } from "#/domain/model";
 
 /** Reasoning efforts the Models panel can hide; "default" always shows. */
@@ -21,7 +20,6 @@ export type ReasoningLevel = (typeof REASONING_LEVELS)[number];
 
 /** Chart state, kept in the URL so every view is shareable. */
 export const ViewSearch = z.object({
-	profile: z.enum(["maxed", "heavy", "light"]).default("maxed"),
 	scale: z.enum(["log", "linear"]).default("log"),
 	pareto: z.boolean().default(false),
 	api: z.boolean().default(true),
@@ -32,12 +30,6 @@ export const ViewSearch = z.object({
 	hideReasoning: z.array(z.enum(REASONING_LEVELS)).optional(),
 });
 export type ViewSearch = z.infer<typeof ViewSearch>;
-
-export function profileOf(view: ViewSearch) {
-	const profile = USAGE_PROFILES.find((p) => p.id === view.profile);
-	if (!profile) throw new Error(`Unknown usage profile ${view.profile}`);
-	return profile;
-}
 
 // SAFETY: frontier keys are family ids from the same dataset.
 const FRONTIER = Object.keys(benchmarks.frontier) as FamilyId[];

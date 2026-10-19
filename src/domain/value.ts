@@ -7,7 +7,6 @@ import {
 	type Plan,
 	type PublishedAllowance,
 	type ReportedCap,
-	type UsageProfile,
 } from "./model";
 
 const WEEKS_PER_MONTH = 52 / 12;
@@ -78,23 +77,18 @@ export function apiUsdPerMonth(
 }
 
 /**
- * API-equivalent dollars a subscriber gets per dollar of subscription, given
- * how much of what the plan offers (monthly usage plus bundled API credit)
- * they use. Below 1, paying per token is cheaper.
+ * API-equivalent dollars a subscriber gets per dollar of subscription when
+ * they use everything the plan offers: monthly usage plus bundled API credit.
+ * Below 1, paying per token is cheaper.
  */
 export function valueMultiple({
 	plan,
 	apiUsdPerMonth,
-	profile,
 }: {
 	plan: Plan;
 	apiUsdPerMonth: number;
-	profile: UsageProfile;
 }): number {
-	const availableApiUsdPerMonth = apiUsdPerMonth + plan.includedApiCreditUsd;
-	return (
-		(availableApiUsdPerMonth * profile.weeklyCapShare) / plan.monthlyPriceUsd
-	);
+	return (apiUsdPerMonth + plan.includedApiCreditUsd) / plan.monthlyPriceUsd;
 }
 
 export type Pricing =
@@ -159,7 +153,6 @@ export function valuePoints({
 	families,
 	plans,
 	samples,
-	profile,
 	showApi,
 	hiddenEfforts,
 }: {
@@ -167,7 +160,6 @@ export function valuePoints({
 	families: readonly FamilyId[];
 	plans: readonly Plan[];
 	samples: readonly LimitSample[];
-	profile: UsageProfile;
 	showApi: boolean;
 	hiddenEfforts: readonly Effort[];
 }): ValuePoint[] {
@@ -188,7 +180,7 @@ export function valuePoints({
 				return seriesFor(served, family, {
 					kind: "plan",
 					plan,
-					valueMultiple: valueMultiple({ plan, apiUsdPerMonth: usd, profile }),
+					valueMultiple: valueMultiple({ plan, apiUsdPerMonth: usd }),
 				});
 			});
 	});

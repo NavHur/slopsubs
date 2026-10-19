@@ -13,14 +13,12 @@ import { Segmented, Toggle } from "#/components/Segmented";
 import { FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
 import { benchmarks, plans, samples } from "#/data";
-import { USAGE_PROFILES } from "#/domain/model";
 import { valuePoints } from "#/domain/value";
 import { formatDay } from "#/lib/format";
 import {
 	DEFAULT_MODELS_VIEW,
 	hiddenReasoning,
 	isDefaultModelsView,
-	profileOf,
 	selectedFamilies,
 	selectedPlans,
 	toggled,
@@ -31,12 +29,6 @@ export const Route = createFileRoute("/")({
 	validateSearch: ViewSearch,
 	component: ValueView,
 });
-
-const PROFILE_OPTIONS = USAGE_PROFILES.map((p) => ({
-	value: p.id,
-	label: `${p.label} · ${Math.round(p.weeklyCapShare * 100)}%`,
-	hint: `Uses ${Math.round(p.weeklyCapShare * 100)}% of the weekly cap every week`,
-}));
 
 const CHART_TITLE = "Effective cost vs intelligence";
 
@@ -75,7 +67,6 @@ function ValueView() {
 	const update = (patch: Partial<ViewSearch>) =>
 		navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
 
-	const profile = profileOf(view);
 	const planIds = selectedPlans(view);
 	const families = selectedFamilies(view);
 	const points = valuePoints({
@@ -83,7 +74,6 @@ function ValueView() {
 		families,
 		plans: plans.filter((p) => planIds.includes(p.id)),
 		samples,
-		profile,
 		showApi: view.api,
 		hiddenEfforts: hiddenReasoning(view),
 	});
@@ -171,31 +161,23 @@ function ValueView() {
 							<h1 id="chart-heading" className="text-[17px] font-semibold">
 								{CHART_TITLE}
 							</h1>
-							<div className="flex flex-wrap items-center gap-x-6 max-sm:w-full max-sm:justify-between">
-								<Segmented
-									label="Usage profile"
-									options={PROFILE_OPTIONS}
-									value={view.profile}
-									onChange={(value) => update({ profile: value })}
+							<div className="flex items-center gap-x-6 max-sm:w-full max-sm:justify-between">
+								<Toggle
+									label="API prices"
+									checked={view.api}
+									onChange={(api) => update({ api })}
 								/>
-								<div className="flex items-center gap-x-6 max-sm:w-full max-sm:justify-between">
-									<Toggle
-										label="API prices"
-										checked={view.api}
-										onChange={(api) => update({ api })}
-									/>
-									<Toggle
-										label="Pareto line"
-										checked={view.pareto}
-										onChange={(pareto) => update({ pareto })}
-									/>
-									<Segmented
-										label="Cost axis scale"
-										options={SCALE_OPTIONS}
-										value={view.scale}
-										onChange={(scale) => update({ scale })}
-									/>
-								</div>
+								<Toggle
+									label="Pareto line"
+									checked={view.pareto}
+									onChange={(pareto) => update({ pareto })}
+								/>
+								<Segmented
+									label="Cost axis scale"
+									options={SCALE_OPTIONS}
+									value={view.scale}
+									onChange={(scale) => update({ scale })}
+								/>
 							</div>
 						</div>
 						{chart}
@@ -232,7 +214,6 @@ function ValueView() {
 					<PlanList
 						plans={plans}
 						selected={planIds}
-						profile={profile}
 						styles={styles}
 						showApi={view.api}
 						onToggle={(id) => update({ plans: toggled(planIds, id) })}

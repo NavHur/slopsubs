@@ -116,16 +116,3 @@ const LimitSample = z
 	});
 export type LimitSample = z.infer<typeof LimitSample>;
 export const LimitSamples = z.array(LimitSample);
-
-/** How much of the weekly cap a subscriber actually uses. */
-export type UsageProfile = {
-	id: "maxed" | "heavy" | "light";
-	label: string;
-	weeklyCapShare: number;
-};
-
-export const USAGE_PROFILES = [
-	{ id: "maxed", label: "Maxed", weeklyCapShare: 1 },
-	{ id: "heavy", label: "Heavy", weeklyCapShare: 0.6 },
-	{ id: "light", label: "Light", weeklyCapShare: 0.2 },
-] as const satisfies readonly UsageProfile[];

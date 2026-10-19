@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { samples } from "#/data";
-import type { FamilyId, Plan, PlanId, UsageProfile } from "#/domain/model";
+import type { FamilyId, Plan, PlanId } from "#/domain/model";
 import {
 	apiUsdPerMonth,
 	type PlanCapacity,
@@ -33,27 +33,23 @@ import type { PricingId, PricingStyle } from "./chart/series";
 import { ProviderLogo } from "./ProviderLogo";
 
 /** "12×", or "1.5–6×" when the multiple differs by model. */
-function multipleText(
-	plan: Plan,
-	capacity: PlanCapacity,
-	profile: UsageProfile,
-): string {
+function multipleText(plan: Plan, capacity: PlanCapacity): string {
 	const multiples = plan.families
 		.map((family) => apiUsdPerMonth(capacity, family))
 		.filter((usd) => usd !== null)
-		.map((usd) => valueMultiple({ plan, apiUsdPerMonth: usd, profile }));
+		.map((usd) => valueMultiple({ plan, apiUsdPerMonth: usd }));
 	const low = Math.min(...multiples);
 	const high = Math.max(...multiples);
 	if (formatMultiple(low) === formatMultiple(high)) return formatMultiple(low);
 	return `${formatMultiple(low).replace("×", "")}–${formatMultiple(high)}`;
 }
 
-function PlanValue({ plan, profile }: { plan: Plan; profile: UsageProfile }) {
+function PlanValue({ plan }: { plan: Plan }) {
 	const capacity = planCapacity(plan, samples);
 	if (capacity.kind === "unmeasured") {
 		return <span className="text-[11px] text-subtle">unmeasured</span>;
 	}
-	const text = multipleText(plan, capacity, profile);
+	const text = multipleText(plan, capacity);
 	if (capacity.kind === "measured") {
 		return (
 			<span
@@ -168,7 +164,6 @@ function ApiRow({
 export function PlanList({
 	plans,
 	selected,
-	profile,
 	styles,
 	showApi,
 	onToggle,
@@ -176,7 +171,6 @@ export function PlanList({
 }: {
 	plans: readonly Plan[];
 	selected: readonly PlanId[];
-	profile: UsageProfile;
 	/** How the chart draws each pricing it has lines for. */
 	styles: ReadonlyMap<PricingId, PricingStyle>;
 	showApi: boolean;
@@ -191,9 +185,7 @@ export function PlanList({
 				<h2 id="plans-heading" className="text-[15px] font-semibold">
 					Plans
 				</h2>
-				<span className="text-[11px] text-subtle">
-					value at {Math.round(profile.weeklyCapShare * 100)}% of cap
-				</span>
+				<span className="text-[11px] text-subtle">value at full cap</span>
 			</div>
 			<p className="mb-3 text-[11px] text-subtle">
 				Effective cost = API cost ÷ value multiple
@@ -221,7 +213,7 @@ export function PlanList({
 									onChange={() => onToggle(plan.id)}
 									lineStyle={styles.get(plan.id)}
 									detail={<PlanPrice plan={plan} />}
-									value={<PlanValue plan={plan} profile={profile} />}
+									value={<PlanValue plan={plan} />}
 								/>
 							</li>
 						))}
