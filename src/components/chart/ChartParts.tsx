@@ -163,8 +163,10 @@ export function SeriesLine({
 	onDetails: (event: PointDetailsEvent) => void;
 }) {
 	const { isApi, marker, lineWidth } = series.pricing;
-	const hover = (point: ValuePoint | null) => () =>
-		onDetails({ type: "hover", point });
+	const preview = (source: PreviewSource, point: ValuePoint) => () =>
+		onDetails({ type: "preview", source, point });
+	const endPreview = (source: PreviewSource, point: ValuePoint) => () =>
+		onDetails({ type: "endPreview", source, point });
 	const pin = (point: ValuePoint) => () =>
 		onDetails({ type: "togglePin", point });
 	return (
@@ -185,12 +187,12 @@ export function SeriesLine({
 					tabIndex={0}
 					aria-label={pointLabel(series, p)}
 					className="group cursor-pointer outline-none"
-					onMouseEnter={hover(p)}
-					onMouseLeave={hover(null)}
+					onMouseEnter={preview("hover", p)}
+					onMouseLeave={endPreview("hover", p)}
 					onClick={pin(p)}
 					onKeyDown={onActivationKey(pin(p))}
-					onFocus={hover(p)}
-					onBlur={hover(null)}
+					onFocus={preview("focus", p)}
+					onBlur={endPreview("focus", p)}
 				>
 					<circle
 						cx={px(x(p.costPerTaskUsd))}
