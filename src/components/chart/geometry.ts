@@ -22,6 +22,8 @@ export type ChartLayout = {
 	margin: { top: number; right: number; bottom: number; left: number };
 	/** Series labels sit in a legend below the plot instead of beside it. */
 	compact: boolean;
+	/** Model labels sit in a column right of the plot. */
+	endLabels: boolean;
 };
 
 /** Shortest plot worth drawing when the chart fills its container. */
@@ -31,13 +33,21 @@ export const DEFAULT_HEIGHT = 620;
 const COMPACT_MIN_HEIGHT = 360;
 const COMPACT_MAX_HEIGHT = 480;
 const COMPACT_HEIGHT_RATIO = 1.15;
+/** Right margin holding the model labels beside a wide plot. */
+const LABEL_COLUMN_PX = 180;
+/** Right margin without labels: room for half the last x-axis tick label. */
+const PLOT_EDGE_PX = 24;
 
 /**
  * Sizes the plot to its container: narrow screens get a squarer plot with
  * the legend below; wide ones fill the available height (the app shell) or
- * fall back to a fixed height when the page flows.
+ * fall back to a fixed height when the page flows, and give the label column
+ * back to the plot when `labels` is off.
  */
-export function chartLayout({ width, height }: Size): ChartLayout {
+export function chartLayout(
+	{ width, height }: Size,
+	{ labels }: { labels: boolean },
+): ChartLayout {
 	if (width < COMPACT_WIDTH) {
 		return {
 			height: Math.round(
@@ -48,12 +58,19 @@ export function chartLayout({ width, height }: Size): ChartLayout {
 			),
 			margin: { top: 28, right: 12, bottom: 48, left: 36 },
 			compact: true,
+			endLabels: false,
 		};
 	}
 	return {
 		height: height >= MIN_FILL_HEIGHT ? Math.floor(height) : DEFAULT_HEIGHT,
-		margin: { top: 28, right: 180, bottom: 52, left: 56 },
+		margin: {
+			top: 28,
+			right: labels ? LABEL_COLUMN_PX : PLOT_EDGE_PX,
+			bottom: 52,
+			left: 56,
+		},
 		compact: false,
+		endLabels: labels,
 	};
 }
 

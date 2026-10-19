@@ -60,7 +60,12 @@ function ValueView() {
 	});
 
 	const chart = (
-		<ValueChart points={points} scale={view.scale} showPareto={view.pareto} />
+		<ValueChart
+			points={points}
+			scale={view.scale}
+			showPareto={view.pareto}
+			showLabels={view.labels}
+		/>
 	);
 	const downloadPng = async () => {
 		// Loaded on demand so visitors who never export skip the code.

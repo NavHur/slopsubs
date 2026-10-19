@@ -27,13 +27,33 @@ describe("xTicks", () => {
 });
 
 describe("chartLayout", () => {
+	const labelled = { labels: true };
+
 	it("moves labels to a legend on phone widths", () => {
-		expect(chartLayout({ width: 358, height: 0 }).compact).toBe(true);
-		expect(chartLayout({ width: 960, height: 700 }).compact).toBe(false);
+		const phone = chartLayout({ width: 358, height: 0 }, labelled);
+		const desktop = chartLayout({ width: 960, height: 700 }, labelled);
+		expect([phone.compact, phone.endLabels]).toEqual([true, false]);
+		expect([desktop.compact, desktop.endLabels]).toEqual([false, true]);
 	});
 
 	it("fills a tall container but never draws a squashed plot", () => {
-		expect(chartLayout({ width: 960, height: 700 }).height).toBe(700);
-		expect(chartLayout({ width: 960, height: 200 }).height).toBe(620);
+		expect(chartLayout({ width: 960, height: 700 }, labelled).height).toBe(700);
+		expect(chartLayout({ width: 960, height: 200 }, labelled).height).toBe(620);
+	});
+
+	it("gives the label column to the plot when labels are off", () => {
+		const size = { width: 960, height: 700 };
+		const on = chartLayout(size, labelled);
+		const off = chartLayout(size, { labels: false });
+		expect(off.endLabels).toBe(false);
+		expect(off.margin.right).toBeLessThan(on.margin.right);
+		expect({ ...off.margin, right: on.margin.right }).toEqual(on.margin);
+	});
+
+	it("keeps the phone layout whatever the labels setting", () => {
+		const size = { width: 358, height: 0 };
+		expect(chartLayout(size, { labels: false })).toEqual(
+			chartLayout(size, labelled),
+		);
 	});
 });
