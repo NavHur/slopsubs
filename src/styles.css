@@ -13,9 +13,17 @@
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light dark;
   --bg: light-dark(#fbfaf8, #000000);
   scrollbar-color: var(--color-grid) transparent;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 html,

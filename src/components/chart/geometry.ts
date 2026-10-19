@@ -26,7 +26,7 @@ export type ChartLayout = {
 
 /** Shortest plot worth drawing when the chart fills its container. */
 const MIN_FILL_HEIGHT = 420;
-const DEFAULT_HEIGHT = 620;
+export const DEFAULT_HEIGHT = 620;
 /** Compact plots are roughly square, kept within these heights (px). */
 const COMPACT_MIN_HEIGHT = 360;
 const COMPACT_MAX_HEIGHT = 480;
