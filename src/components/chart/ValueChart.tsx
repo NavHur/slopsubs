@@ -49,9 +49,16 @@ function escapeBelongsElsewhere(
 }
 
 /** Shared label and legend highlight; Escape clears a pinned model. */
-function useModelHighlight(chart: RefObject<HTMLElement | null>) {
+function useModelHighlight(
+	chart: RefObject<HTMLElement | null>,
+	plotted: ReadonlySet<FamilyId>,
+) {
 	const [highlight, dispatch] = useReducer(updateHighlight, NO_HIGHLIGHT);
-	const hasPin = highlight.pinned !== null;
+	// Forget models that left the chart, so a reselect starts clean.
+	useEffect(() => dispatch({ type: "prune", plotted }), [plotted]);
+	// Correct on the render before the effect runs.
+	const shown = plottedHighlight(highlight, plotted);
+	const hasPin = shown.pinned !== null;
 	useEffect(() => {
 		if (!hasPin) return;
 		const onKeyDown = (event: KeyboardEvent) => {
@@ -62,7 +69,7 @@ function useModelHighlight(chart: RefObject<HTMLElement | null>) {
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);
 	}, [hasPin, chart]);
-	return [highlight, dispatch] as const;
+	return [shown, dispatch] as const;
 }
 
 /** useElementSize's ref, plus a ref object so handlers can read the element. */
@@ -91,10 +98,10 @@ export function ValueChart({
 	const { ref, element, size } = useChartRef();
 	const { width } = size;
 	const [hovered, setHovered] = useState<ValuePoint | null>(null);
-	const [highlight, dispatchHighlight] = useModelHighlight(element);
 	const series = useMemo(() => buildSeries(points), [points]);
 	const models = useMemo(() => groupByModel(series), [series]);
 	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
+	const [shown, dispatchHighlight] = useModelHighlight(element, plotted);
 	const layout = chartLayout(size);
 	const { height, margin } = layout;
 
@@ -122,7 +129,6 @@ export function ValueChart({
 				top: margin.top,
 				bottom: height - margin.bottom,
 			});
-	const shown = plottedHighlight(highlight, plotted);
 	const highlighted = highlightedModel(shown);
 	const activeModel = hovered?.benchmark.family ?? highlighted;
 	const dim = (id: string, modelId: FamilyId) =>

@@ -108,6 +108,29 @@ describe("model highlight", () => {
 		expect(highlightedModel(shown)).toBeNull();
 	});
 
+	it("forgets a pinned model that leaves the chart, so a reselect starts clean", () => {
+		const state = reduce(
+			{ type: "toggle", modelId: a },
+			{ type: "prune", plotted: new Set([b]) },
+			{ type: "prune", plotted: new Set([a, b]) },
+		);
+		expect(state.pinned).toBeNull();
+		expect(highlightedModel(state)).toBeNull();
+	});
+
+	it("keeps the same state when every highlighted model is still plotted", () => {
+		const state = reduce(
+			{ type: "toggle", modelId: a },
+			{ type: "preview", source: "hover", modelId: b },
+			{ type: "preview", source: "focus", modelId: a },
+		);
+		const pruned = updateHighlight(state, {
+			type: "prune",
+			plotted: new Set([a, b]),
+		});
+		expect(pruned).toBe(state);
+	});
+
 	it("returns to the pin once both previews of a model end", () => {
 		const previews: HighlightEvent[] = [
 			{ type: "toggle", modelId: b },

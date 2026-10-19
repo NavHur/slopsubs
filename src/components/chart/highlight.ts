@@ -16,6 +16,7 @@ export type HighlightEvent =
 	| { type: "preview"; source: PreviewSource; modelId: FamilyId }
 	| { type: "endPreview"; source: PreviewSource; modelId: FamilyId }
 	| { type: "toggle"; modelId: FamilyId }
+	| { type: "prune"; plotted: ReadonlySet<FamilyId> }
 	| { type: "clear" };
 
 export const NO_HIGHLIGHT: ModelHighlight = {
@@ -40,6 +41,8 @@ export function updateHighlight(
 			return state.pinned === event.modelId
 				? NO_HIGHLIGHT
 				: { ...state, pinned: event.modelId };
+		case "prune":
+			return plottedHighlight(state, event.plotted);
 		case "clear":
 			return NO_HIGHLIGHT;
 	}
@@ -62,11 +65,16 @@ export function plottedHighlight(
 ): ModelHighlight {
 	const keep = (id: FamilyId | null) =>
 		id !== null && plotted.has(id) ? id : null;
-	return {
+	const next = {
 		pinned: keep(state.pinned),
 		hovered: keep(state.hovered),
 		focused: keep(state.focused),
 	};
+	const unchanged =
+		next.pinned === state.pinned &&
+		next.hovered === state.hovered &&
+		next.focused === state.focused;
+	return unchanged ? state : next;
 }
 
 export function highlightedModel(state: ModelHighlight): FamilyId | null {
