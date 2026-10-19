@@ -1,13 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { BenchmarkPoint, FamilyId, Plan, PlanId } from "#/domain/model";
 import type { Pricing, ValuePoint } from "#/domain/value";
-import {
-	buildSeries,
-	groupByModel,
-	modelEnd,
-	pricingKey,
-	pricingStyles,
-} from "./series";
+import { buildSeries, groupByModel, modelEnd, pricingStyles } from "./series";
 
 const haiku = "claude-haiku-5-5" as FamilyId;
 const opus = "claude-opus-5-5" as FamilyId;
@@ -85,7 +79,7 @@ const points = [
 
 describe("buildSeries", () => {
 	it("gives each plan its own marker and keeps API lines apart", () => {
-		const key = pricingKey(buildSeries(points));
+		const key = [...pricingStyles(buildSeries(points)).values()];
 		expect(key.map((s) => [s.label, s.isApi, s.marker])).toEqual([
 			["API", true, "circle"],
 			["Max 20x", false, "circle"],

@@ -105,14 +105,14 @@ function PricingRow({
 	label,
 	checked,
 	onChange,
-	style,
+	lineStyle,
 	detail,
 	value,
 }: {
 	label: string;
 	checked: boolean;
 	onChange: () => void;
-	style: PricingStyle | undefined;
+	lineStyle: PricingStyle | undefined;
 	detail: ReactNode;
 	value: ReactNode;
 }) {
@@ -125,7 +125,7 @@ function PricingRow({
 				className="size-3.5 accent-accent"
 			/>
 			<span className="flex text-muted">
-				{style ? <PricingSwatch pricing={style} /> : <SwatchSpace />}
+				{lineStyle ? <PricingSwatch pricing={lineStyle} /> : <SwatchSpace />}
 			</span>
 			<span className={checked ? "text-fg" : "text-muted"}>{label}</span>
 			{detail}
@@ -137,11 +137,11 @@ function PricingRow({
 /** API prices: the baseline every value multiple is measured against. */
 function ApiRow({
 	shown,
-	style,
+	lineStyle,
 	onToggle,
 }: {
 	shown: boolean;
-	style: PricingStyle | undefined;
+	lineStyle: PricingStyle | undefined;
 	onToggle: () => void;
 }) {
 	return (
@@ -153,7 +153,7 @@ function ApiRow({
 				label="API"
 				checked={shown}
 				onChange={onToggle}
-				style={style}
+				lineStyle={lineStyle}
 				detail={<span className="text-[11px] text-subtle">list price</span>}
 				value={
 					<span className="whitespace-nowrap tabular-nums text-[12px] text-fg">
@@ -200,7 +200,7 @@ export function PlanList({
 			</p>
 			<ApiRow
 				shown={showApi}
-				style={styles.get("api")}
+				lineStyle={styles.get("api")}
 				onToggle={onToggleApi}
 			/>
 			{valued.length === 0 && (
@@ -219,7 +219,7 @@ export function PlanList({
 									label={plan.label}
 									checked={selected.includes(plan.id)}
 									onChange={() => onToggle(plan.id)}
-									style={styles.get(plan.id)}
+									lineStyle={styles.get(plan.id)}
 									detail={<PlanPrice plan={plan} />}
 									value={<PlanValue plan={plan} profile={profile} />}
 								/>

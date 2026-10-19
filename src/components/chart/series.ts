@@ -17,8 +17,12 @@ export const PLAN_MARKERS = [
 ] as const;
 export type PointMarker = (typeof PLAN_MARKERS)[number];
 
+/** A pricing's identity: "api", or the subscription plan's id. */
+export type PricingId = PlanId | "api";
+
 /** How a line is paid for, and how the chart draws that. */
 export type PricingStyle = {
+	id: PricingId;
 	/** "API", or the subscription plan's label. */
 	label: string;
 	isApi: boolean;
@@ -48,7 +52,12 @@ export type ModelGroup = {
 /** Dash pattern of API lines, which keep a hollow marker. */
 export const API_DASH = "3 4";
 
-const API_STYLE: PricingStyle = { label: "API", isApi: true, marker: "circle" };
+const API_STYLE: PricingStyle = {
+	id: "api",
+	label: "API",
+	isApi: true,
+	marker: "circle",
+};
 
 function pricingStyle(
 	pricing: Pricing,
@@ -57,6 +66,7 @@ function pricingStyle(
 	if (pricing.kind === "api") return API_STYLE;
 	const index = planOrder.indexOf(pricing.plan.id);
 	return {
+		id: pricing.plan.id,
 		label: pricing.plan.label,
 		isApi: false,
 		marker: PLAN_MARKERS[index % PLAN_MARKERS.length],
@@ -104,24 +114,11 @@ export function groupByModel(series: readonly Series[]): ModelGroup[] {
 	return [...groups.values()];
 }
 
-/** A pricing's identity: "api", or the subscription plan's id. */
-export type PricingId = PlanId | "api";
-
-function pricingId(series: Series): PricingId {
-	const { pricing } = series.points[0];
-	return pricing.kind === "api" ? "api" : pricing.plan.id;
-}
-
 /** How each pricing on the chart is drawn, in the order its lines appear. */
 export function pricingStyles(
 	series: readonly Series[],
 ): Map<PricingId, PricingStyle> {
-	return new Map(series.map((s) => [pricingId(s), s.pricing]));
-}
-
-/** Each pricing on the chart once, in the order its lines appear. */
-export function pricingKey(series: readonly Series[]): PricingStyle[] {
-	return [...pricingStyles(series).values()];
+	return new Map(series.map((s) => [s.pricing.id, s.pricing]));
 }
 
 /** The model's line end furthest right, where its label's leader line starts. */
