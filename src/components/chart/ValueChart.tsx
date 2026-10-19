@@ -35,12 +35,16 @@ import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
 /** Room left of the desktop key for the y-axis title it shares a row with. */
 const KEY_TITLE_ROOM_PX = 130;
 
-/** Escape meant for a text field, or for the sheet that made the chart inert. */
-function escapeBelongsElsewhere(
-	event: KeyboardEvent,
-	chart: HTMLElement | null,
-): boolean {
-	return isTextEntryTarget(event.target) || Boolean(chart?.closest("[inert]"));
+/**
+ * Escape meant for the chart, not for a text field or for the sheet that made
+ * the chart inert.
+ */
+function isChartEscape(event: KeyboardEvent, chart: HTMLElement | null) {
+	return (
+		event.key === "Escape" &&
+		!isTextEntryTarget(event.target) &&
+		!chart?.closest("[inert]")
+	);
 }
 
 /** Shared label and legend highlight; Escape clears a pinned model. */
@@ -59,9 +63,7 @@ function useModelHighlight(
 	useEffect(() => {
 		if (!hasPin) return;
 		const onKeyDown = (event: KeyboardEvent) => {
-			if (event.key !== "Escape") return;
-			if (escapeBelongsElsewhere(event, chart.current)) return;
-			dispatch({ type: "clear" });
+			if (isChartEscape(event, chart.current)) dispatch({ type: "clear" });
 		};
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);

@@ -59,7 +59,7 @@ function endPreview(
 }
 
 /** The highlight with every model that is not plotted dropped. */
-export function plottedHighlight(
+function plottedHighlight(
 	state: ModelHighlight,
 	plotted: ReadonlySet<FamilyId>,
 ): ModelHighlight {

@@ -4,7 +4,6 @@ import {
 	type HighlightEvent,
 	highlightedModel,
 	NO_HIGHLIGHT,
-	plottedHighlight,
 	updateHighlight,
 } from "./highlight";
 
@@ -97,15 +96,6 @@ describe("model highlight", () => {
 				{ type: "endPreview", source: "hover", modelId: a },
 			),
 		).toBe(b);
-	});
-
-	it("drops a pinned model that is no longer plotted", () => {
-		const shown = plottedHighlight(
-			reduce({ type: "toggle", modelId: a }),
-			new Set([b]),
-		);
-		expect(shown.pinned).toBeNull();
-		expect(highlightedModel(shown)).toBeNull();
 	});
 
 	it("forgets a pinned model that leaves the chart, so a reselect starts clean", () => {
