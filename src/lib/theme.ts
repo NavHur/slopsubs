@@ -19,5 +19,9 @@ function currentTheme(): Theme {
 export function toggleTheme(): void {
 	const next: Theme = currentTheme() === "dark" ? "light" : "dark";
 	document.documentElement.dataset.theme = next;
-	localStorage.setItem(STORAGE_KEY, next);
+	try {
+		localStorage.setItem(STORAGE_KEY, next);
+	} catch {
+		// Storage is blocked, so the choice lasts only for this page.
+	}
 }
