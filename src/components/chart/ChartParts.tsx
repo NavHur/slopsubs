@@ -1,5 +1,5 @@
 import type { ScaleLinear } from "d3-scale";
-import { type CSSProperties, useEffect } from "react";
+import { useEffect } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import type { LineLabel } from "#/lib/chart";
@@ -15,12 +15,7 @@ import {
 	type XScale,
 } from "./geometry";
 import type { HighlightEvent, PreviewSource } from "./highlight";
-import {
-	type ModelGroup,
-	modelEnd,
-	type PricingStyle,
-	type Series,
-} from "./series";
+import { API_DASH, type ModelGroup, modelEnd, type Series } from "./series";
 
 export function Axes({
 	x,
@@ -105,7 +100,6 @@ export function ParetoLine({
 
 /** Touch-sized target around each 8px dot. */
 const POINT_HIT_RADIUS = 12;
-const API_DASH = "3 4";
 
 function pointLabel(series: Series, point: ValuePoint): string {
 	return `${series.label}, ${point.benchmark.effortLabel}, effective cost per task ${formatUsd(point.costPerTaskUsd)}, intelligence ${point.intelligence.toFixed(1)}`;
@@ -343,48 +337,6 @@ export function PointTooltip({
 				<dd className="text-right">{point.intelligence.toFixed(1)}</dd>
 			</dl>
 		</div>
-	);
-}
-
-/** Line style and point shape of each pricing, so one model's lines can be told apart. */
-export function PricingKey({
-	pricings,
-	className,
-	style,
-}: {
-	pricings: readonly PricingStyle[];
-	className?: string;
-	style?: CSSProperties;
-}) {
-	return (
-		<ul
-			aria-label="Line styles"
-			className={`flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-muted ${className ?? ""}`}
-			style={style}
-		>
-			{pricings.map((pricing) => (
-				<li key={pricing.label} className="flex items-center gap-1.5">
-					<svg width={26} height={12} aria-hidden="true">
-						<line
-							x1={1}
-							x2={25}
-							y1={6}
-							y2={6}
-							stroke="currentColor"
-							strokeWidth={pricing.isApi ? 1.25 : 2}
-							strokeDasharray={pricing.isApi ? API_DASH : undefined}
-						/>
-						<path
-							d={markerPath(pricing.marker, 13, 6, 3.5)}
-							fill={pricing.isApi ? "var(--bg)" : "currentColor"}
-							stroke="currentColor"
-							strokeWidth={1.5}
-						/>
-					</svg>
-					{pricing.label}
-				</li>
-			))}
-		</ul>
 	);
 }
 

@@ -58,7 +58,7 @@ export function SidePanel({
 	return (
 		<aside
 			aria-label={title}
-			className={`border-line bg-bg lg:block lg:overflow-y-auto lg:border-l lg:px-6 lg:py-5 ${open ? "max-lg:fixed max-lg:inset-0 max-lg:z-40 max-lg:overflow-y-auto max-lg:overscroll-contain" : "max-lg:hidden"}`}
+			className={`border-line bg-bg lg:block lg:overflow-y-auto lg:border-l lg:px-5 lg:py-5 ${open ? "max-lg:fixed max-lg:inset-0 max-lg:z-40 max-lg:overflow-y-auto max-lg:overscroll-contain" : "max-lg:hidden"}`}
 		>
 			<div className="sticky top-0 z-10 flex h-[60px] items-center justify-between border-b border-line bg-bg px-4 lg:hidden">
 				<h2 className="text-[17px] font-semibold">{title}</h2>

@@ -1,4 +1,4 @@
-import type { FamilyId } from "#/domain/model";
+import type { FamilyId, PlanId } from "#/domain/model";
 import type { Pricing, ValuePoint } from "#/domain/value";
 import { familyColor, familyName } from "#/lib/families";
 
@@ -44,6 +44,9 @@ export type ModelGroup = {
 	/** A model exists on the chart only through its lines, so never empty. */
 	series: [Series, ...Series[]];
 };
+
+/** Dash pattern of API lines, which keep a hollow marker. */
+export const API_DASH = "3 4";
 
 const API_STYLE: PricingStyle = { label: "API", isApi: true, marker: "circle" };
 
@@ -101,9 +104,24 @@ export function groupByModel(series: readonly Series[]): ModelGroup[] {
 	return [...groups.values()];
 }
 
+/** A pricing's identity: "api", or the subscription plan's id. */
+export type PricingId = PlanId | "api";
+
+function pricingId(series: Series): PricingId {
+	const { pricing } = series.points[0];
+	return pricing.kind === "api" ? "api" : pricing.plan.id;
+}
+
+/** How each pricing on the chart is drawn, in the order its lines appear. */
+export function pricingStyles(
+	series: readonly Series[],
+): Map<PricingId, PricingStyle> {
+	return new Map(series.map((s) => [pricingId(s), s.pricing]));
+}
+
 /** Each pricing on the chart once, in the order its lines appear. */
 export function pricingKey(series: readonly Series[]): PricingStyle[] {
-	return [...new Map(series.map((s) => [s.pricing.label, s.pricing])).values()];
+	return [...pricingStyles(series).values()];
 }
 
 /** The model's line end furthest right, where its label's leader line starts. */

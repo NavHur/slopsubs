@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { samples } from "#/data";
 import type { FamilyId, Plan, PlanId, UsageProfile } from "#/domain/model";
 import {
@@ -28,6 +28,8 @@ import {
 	toggled,
 	toggledGroup,
 } from "#/lib/view";
+import { PricingSwatch, SwatchSpace } from "./chart/PricingKey";
+import type { PricingId, PricingStyle } from "./chart/series";
 import { ProviderLogo } from "./ProviderLogo";
 
 /** "12×", or "1.5–6×" when the multiple differs by model. */
@@ -95,22 +97,97 @@ function PlanPrice({ plan }: { plan: Plan }) {
 	);
 }
 
+/**
+ * A checkbox that puts a pricing on the chart, beside the line style the
+ * chart draws it with while it has lines there.
+ */
+function PricingRow({
+	label,
+	checked,
+	onChange,
+	style,
+	detail,
+	value,
+}: {
+	label: string;
+	checked: boolean;
+	onChange: () => void;
+	style: PricingStyle | undefined;
+	detail: ReactNode;
+	value: ReactNode;
+}) {
+	return (
+		<label className="flex cursor-pointer items-center gap-1.5 py-1 text-[13px] hover:text-fg max-lg:min-h-11 max-lg:gap-2 max-lg:text-[15px]">
+			<input
+				type="checkbox"
+				checked={checked}
+				onChange={onChange}
+				className="size-3.5 accent-accent"
+			/>
+			<span className="flex text-muted">
+				{style ? <PricingSwatch pricing={style} /> : <SwatchSpace />}
+			</span>
+			<span className={checked ? "text-fg" : "text-muted"}>{label}</span>
+			{detail}
+			<span className="ml-auto">{value}</span>
+		</label>
+	);
+}
+
+/** API prices: the baseline every value multiple is measured against. */
+function ApiRow({
+	shown,
+	style,
+	onToggle,
+}: {
+	shown: boolean;
+	style: PricingStyle | undefined;
+	onToggle: () => void;
+}) {
+	return (
+		<div className="mb-3">
+			<h3 className="mb-1 text-[12px] font-medium text-subtle">
+				Pay per token
+			</h3>
+			<PricingRow
+				label="API"
+				checked={shown}
+				onChange={onToggle}
+				style={style}
+				detail={<span className="text-[11px] text-subtle">list price</span>}
+				value={
+					<span className="whitespace-nowrap tabular-nums text-[12px] text-fg">
+						1×
+					</span>
+				}
+			/>
+		</div>
+	);
+}
+
 export function PlanList({
 	plans,
 	selected,
 	profile,
+	styles,
+	showApi,
 	onToggle,
+	onToggleApi,
 }: {
 	plans: readonly Plan[];
 	selected: readonly PlanId[];
 	profile: UsageProfile;
+	/** How the chart draws each pricing it has lines for. */
+	styles: ReadonlyMap<PricingId, PricingStyle>;
+	showApi: boolean;
 	onToggle: (plan: PlanId) => void;
+	onToggleApi: () => void;
 }) {
 	const valued = plans.filter(hasCap);
 	const unmeasured = plans.filter((p) => !hasCap(p));
 	return (
 		<section aria-labelledby="plans-heading">
-			<div className="mb-2 flex items-baseline justify-between">
+			<div className="flex items-baseline justify-between">
 				<h2 id="plans-heading" className="text-[15px] font-semibold">
 					Plans
 				</h2>
@@ -118,6 +195,14 @@ export function PlanList({
 					value at {Math.round(profile.weeklyCapShare * 100)}% of cap
 				</span>
 			</div>
+			<p className="mb-3 text-[11px] text-subtle">
+				Effective cost = API cost ÷ value multiple
+			</p>
+			<ApiRow
+				shown={showApi}
+				style={styles.get("api")}
+				onToggle={onToggleApi}
+			/>
 			{valued.length === 0 && (
 				<p className="mb-3 text-[12px] leading-5 text-muted">
 					No plan measured yet. Record <code>/usage</code> marks with{" "}
@@ -130,25 +215,14 @@ export function PlanList({
 					<ul>
 						{group.map((plan) => (
 							<li key={plan.id}>
-								<label className="flex cursor-pointer items-center gap-2 py-1 text-[13px] hover:text-fg max-lg:min-h-11 max-lg:text-[15px]">
-									<input
-										type="checkbox"
-										checked={selected.includes(plan.id)}
-										onChange={() => onToggle(plan.id)}
-										className="size-3.5 accent-accent"
-									/>
-									<span
-										className={
-											selected.includes(plan.id) ? "text-fg" : "text-muted"
-										}
-									>
-										{plan.label}
-									</span>
-									<PlanPrice plan={plan} />
-									<span className="ml-auto">
-										<PlanValue plan={plan} profile={profile} />
-									</span>
-								</label>
+								<PricingRow
+									label={plan.label}
+									checked={selected.includes(plan.id)}
+									onChange={() => onToggle(plan.id)}
+									style={styles.get(plan.id)}
+									detail={<PlanPrice plan={plan} />}
+									value={<PlanValue plan={plan} profile={profile} />}
+								/>
 							</li>
 						))}
 					</ul>

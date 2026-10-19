@@ -18,7 +18,6 @@ import {
 	ModelTags,
 	ParetoLine,
 	PointTooltip,
-	PricingKey,
 	SeriesLine,
 } from "./ChartParts";
 import {
@@ -30,10 +29,8 @@ import {
 	xTicks,
 } from "./geometry";
 import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
+import { PricingKey } from "./PricingKey";
 import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
-
-/** Room left of the desktop key for the y-axis title it shares a row with. */
-const KEY_TITLE_ROOM_PX = 130;
 
 /**
  * Escape meant for the chart, not for a text field or for the sheet that made
@@ -188,7 +185,8 @@ export function ValueChart({
 					containerWidth={width}
 				/>
 			)}
-			{layout.compact ? (
+			{/* Wider screens show line styles beside each plan in the side panel. */}
+			{layout.compact && (
 				<>
 					<PricingKey pricings={pricings} className="mt-3" />
 					<ModelLegend
@@ -198,15 +196,6 @@ export function ValueChart({
 						onHighlight={dispatchHighlight}
 					/>
 				</>
-			) : (
-				<PricingKey
-					pricings={pricings}
-					className="absolute top-0 justify-end"
-					style={{
-						right: width - right,
-						maxWidth: right - margin.left - KEY_TITLE_ROOM_PX,
-					}}
-				/>
 			)}
 		</div>
 	);

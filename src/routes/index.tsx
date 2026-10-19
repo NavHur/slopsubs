@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
+import { buildSeries, pricingStyles } from "#/components/chart/series";
 import { ValueChart } from "#/components/chart/ValueChart";
 import {
 	ChartSettingsMenu,
@@ -63,6 +64,8 @@ function ValueView() {
 		hiddenEfforts: hiddenReasoning(view),
 	});
 
+	const styles = pricingStyles(buildSeries(points));
+
 	const chart = (
 		<ValueChart
 			points={points}
@@ -119,7 +122,7 @@ function ValueView() {
 					</button>
 				</div>
 			</header>
-			<div className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_272px]">
+			<div className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_288px]">
 				<main
 					inert={panelOpen}
 					className="flex min-w-0 flex-col lg:overflow-y-auto"
@@ -183,7 +186,10 @@ function ValueView() {
 						plans={plans}
 						selected={planIds}
 						profile={profile}
+						styles={styles}
+						showApi={view.api}
 						onToggle={(id) => update({ plans: toggled(planIds, id) })}
+						onToggleApi={() => update({ api: !view.api })}
 					/>
 					<FamilyList
 						selected={families}
