@@ -1,32 +1,48 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import type { ValuePoint } from "#/domain/value";
 import { familyName } from "#/lib/families";
 import { formatUsd } from "#/lib/format";
+import { type Box, tooltipPlacement } from "./geometry";
 
-const TOOLTIP_HALF_WIDTH_PX = 120;
-/** Room the tooltip needs above its point before it flips below. */
-const TOOLTIP_FLIP_PX = 140;
+/**
+ * The element's border box, or null before its first layout. Measured after
+ * every render, before paint, so new contents never show at the old spot.
+ */
+function useBorderBox<T extends HTMLElement>() {
+	const ref = useRef<T>(null);
+	const [box, setBox] = useState<Box | null>(null);
+	useLayoutEffect(() => {
+		const node = ref.current;
+		if (!node) return;
+		const { offsetWidth: width, offsetHeight: height } = node;
+		if (box?.width !== width || box?.height !== height) {
+			setBox({ width, height });
+		}
+	});
+	return [ref, box] as const;
+}
 
+/** Details of one point, placed beside it so it never covers it. */
 export function PointTooltip({
 	point,
-	left,
-	top,
-	containerWidth,
+	anchor,
+	bounds,
 }: {
 	point: ValuePoint;
-	left: number;
-	top: number;
-	containerWidth: number;
+	/** The point's position in the chart. */
+	anchor: { x: number; y: number };
+	/** The chart's size; the tooltip stays inside it when it can. */
+	bounds: Box;
 }) {
+	const [ref, box] = useBorderBox<HTMLDivElement>();
 	const { benchmark, pricing } = point;
-	const clampedLeft = Math.min(
-		Math.max(left, TOOLTIP_HALF_WIDTH_PX),
-		containerWidth - TOOLTIP_HALF_WIDTH_PX,
-	);
-	const below = top < TOOLTIP_FLIP_PX;
+	// Hidden for the one layout before its size is known.
+	const placement = box && tooltipPlacement(anchor, box, bounds);
 	return (
 		<div
-			className={`pointer-events-none absolute z-10 w-60 -translate-x-1/2 rounded-md border border-line bg-panel px-3 py-2 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)] ${below ? "translate-y-[14px]" : "-translate-y-[calc(100%+14px)]"}`}
-			style={{ left: clampedLeft, top }}
+			ref={ref}
+			className="pointer-events-none absolute z-10 w-60 max-w-[calc(100%-16px)] rounded-md border border-line bg-panel px-3 py-2 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]"
+			style={placement ?? { left: 0, top: 0, visibility: "hidden" }}
 		>
 			<div className="font-semibold text-fg">
 				{familyName(benchmark.family)}{" "}

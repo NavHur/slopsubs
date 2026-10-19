@@ -178,9 +178,8 @@ export function ValueChart({
 			{hovered && (
 				<PointTooltip
 					point={hovered}
-					left={x(hovered.costPerTaskUsd)}
-					top={y(hovered.intelligence)}
-					containerWidth={width}
+					anchor={{ x: x(hovered.costPerTaskUsd), y: y(hovered.intelligence) }}
+					bounds={{ width, height }}
 				/>
 			)}
 			{layout.compact && (

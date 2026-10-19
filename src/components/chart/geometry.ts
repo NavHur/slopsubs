@@ -167,3 +167,67 @@ export function markerPath(
 		}
 	}
 }
+
+export type Box = { width: number; height: number };
+
+/** A span of `size` placed as near `start` as fits between `min` and `max`. */
+export function clampSpan(
+	start: number,
+	size: number,
+	min: number,
+	max: number,
+): number {
+	return Math.max(min, Math.min(start, max - size));
+}
+
+/** Space between a point and its tooltip. */
+const TOOLTIP_GAP_PX = 14;
+/** Closest a tooltip comes to the chart's edge. */
+const TOOLTIP_EDGE_PX = 8;
+
+type Placement = { left: number; top: number };
+
+/**
+ * Where a tooltip sits so it never covers its point: centred above it, else
+ * below, else beside it. When none of those fit inside `bounds` it takes the
+ * roomier of above and below and spills out of the chart.
+ */
+export function tooltipPlacement(
+	anchor: { x: number; y: number },
+	tooltip: Box,
+	bounds: Box,
+): Placement {
+	const left = clampSpan(
+		anchor.x - tooltip.width / 2,
+		tooltip.width,
+		TOOLTIP_EDGE_PX,
+		bounds.width - TOOLTIP_EDGE_PX,
+	);
+	const above = anchor.y - TOOLTIP_GAP_PX - tooltip.height;
+	const below = anchor.y + TOOLTIP_GAP_PX;
+	if (above >= TOOLTIP_EDGE_PX) return { left, top: above };
+	if (below + tooltip.height <= bounds.height - TOOLTIP_EDGE_PX) {
+		return { left, top: below };
+	}
+	const roomier = anchor.y > bounds.height / 2 ? above : below;
+	return besidePlacement(anchor, tooltip, bounds) ?? { left, top: roomier };
+}
+
+function besidePlacement(
+	anchor: { x: number; y: number },
+	tooltip: Box,
+	bounds: Box,
+): Placement | null {
+	const top = clampSpan(
+		anchor.y - tooltip.height / 2,
+		tooltip.height,
+		TOOLTIP_EDGE_PX,
+		bounds.height - TOOLTIP_EDGE_PX,
+	);
+	const right = anchor.x + TOOLTIP_GAP_PX;
+	if (right + tooltip.width <= bounds.width - TOOLTIP_EDGE_PX) {
+		return { left: right, top };
+	}
+	const left = anchor.x - TOOLTIP_GAP_PX - tooltip.width;
+	return left >= TOOLTIP_EDGE_PX ? { left, top } : null;
+}
