@@ -8,3 +8,16 @@ export function formatUsd(value: number): string {
 export function formatMultiple(value: number): string {
 	return value >= 10 ? `${Math.round(value)}×` : `${value.toFixed(1)}×`;
 }
+
+const DAY_FORMAT = new Intl.DateTimeFormat("en-US", {
+	month: "short",
+	day: "numeric",
+	year: "numeric",
+	// The same day on the server that prerenders and in every visitor's zone.
+	timeZone: "UTC",
+});
+
+/** "Oct 13, 2026" for an ISO timestamp. */
+export function formatDay(iso: string): string {
+	return DAY_FORMAT.format(new Date(iso));
+}
