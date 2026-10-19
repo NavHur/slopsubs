@@ -1,5 +1,5 @@
 import type { ScaleLinear } from "d3-scale";
-import { type KeyboardEvent, useEffect } from "react";
+import { type FocusEvent, type KeyboardEvent, useEffect } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import type { LineLabel } from "#/lib/chart";
@@ -143,6 +143,16 @@ function onActivationKey(action: () => void) {
 }
 
 /**
+ * A focus handler that runs `action` for keyboard focus only, since a mouse
+ * press focuses the point too.
+ */
+function onKeyboardFocus(action: () => void) {
+	return (event: FocusEvent) => {
+		if (event.currentTarget.matches(":focus-visible")) action();
+	};
+}
+
+/**
  * Hover or focus previews a point's details; click, Enter or Space pins them,
  * or unpins them.
  */
@@ -191,7 +201,7 @@ export function SeriesLine({
 					onMouseLeave={endPreview("hover", p)}
 					onClick={pin(p)}
 					onKeyDown={onActivationKey(pin(p))}
-					onFocus={preview("focus", p)}
+					onFocus={onKeyboardFocus(preview("focus", p))}
 					onBlur={endPreview("focus", p)}
 				>
 					<circle
