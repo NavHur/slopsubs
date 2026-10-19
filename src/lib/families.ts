@@ -44,3 +44,8 @@ export function familyMatches(family: FamilyId, query: string): boolean {
 	const haystack = [family, model?.name, model?.labName].join(" ");
 	return haystack.toLowerCase().includes(needle);
 }
+
+/** The lab's id in the benchmark data, such as "anthropic". */
+export function familyLabId(family: FamilyId): string {
+	return firstOfFamily.get(family)?.lab ?? "";
+}
