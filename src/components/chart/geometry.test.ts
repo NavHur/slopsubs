@@ -142,6 +142,11 @@ describe("axisReadouts", () => {
 		expect(y.left + y.width).toBeLessThanOrEqual(desktop.margin.left);
 	});
 
+	it("returns the point's position for the guides and the tooltip", () => {
+		const { at } = axisReadouts({ x: 500, y: 200 }, text, desktop, 960);
+		expect(at).toEqual({ x: 500, y: 200 });
+	});
+
 	it("keeps both readouts inside a phone chart", () => {
 		const nearLeft = axisReadouts({ x: 37, y: 30 }, text, phone, 398);
 		const nearRight = axisReadouts({ x: 396, y: 30 }, text, phone, 398);

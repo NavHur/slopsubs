@@ -1,5 +1,5 @@
 import type { ScaleLinear } from "d3-scale";
-import { useEffect } from "react";
+import { type KeyboardEvent, useEffect } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import type { LineLabel } from "#/lib/chart";
@@ -22,6 +22,7 @@ import {
 	yTickLabelBox,
 } from "./geometry";
 import type { HighlightEvent, PreviewSource } from "./highlight";
+import type { PointDetailsEvent } from "./pointDetails";
 import { API_DASH, type ModelGroup, modelEnd, type Series } from "./series";
 
 export function Axes({
@@ -39,13 +40,13 @@ export function Axes({
 	ticks: number[];
 	scale: AxisScale;
 	layout: ChartLayout;
-	/** A hovered point's values, which hide the tick labels they cover. */
-	readouts: AxisReadouts | null;
+	/** The shown point's values, which hide the tick labels they cover. */
+	readouts?: AxisReadouts;
 }) {
 	const { margin, height } = layout;
 	const bottom = height - margin.bottom;
 	const covered = (label: Rect) =>
-		readouts !== null &&
+		readouts !== undefined &&
 		(overlaps(label, readouts.x) || overlaps(label, readouts.y));
 	return (
 		<g className="fill-muted text-[12px] tabular-nums">
@@ -132,14 +133,26 @@ function pointLabel(series: Series, point: ValuePoint): string {
 	return `${series.label}, ${point.benchmark.effortLabel}, effective cost per task ${formatUsd(point.costPerTaskUsd)}, intelligence ${point.intelligence.toFixed(1)}`;
 }
 
+/** A key handler that runs `action` on Enter or Space, as a button does. */
+function onActivationKey(action: () => void) {
+	return (event: KeyboardEvent) => {
+		if (event.key !== "Enter" && event.key !== " ") return;
+		event.preventDefault();
+		action();
+	};
+}
+
+/**
+ * Hover or focus previews a point's details; click, Enter or Space pins them,
+ * or unpins them.
+ */
 export function SeriesLine({
 	series,
 	x,
 	y,
 	activePoint,
 	dimmed,
-	onHover,
-	onPin,
+	onDetails,
 }: {
 	series: Series;
 	x: XScale;
@@ -147,11 +160,13 @@ export function SeriesLine({
 	/** The point whose details show, drawn larger. */
 	activePoint: ValuePoint | null;
 	dimmed: boolean;
-	onHover: (point: ValuePoint | null) => void;
-	/** Click, Enter or Space pins the point's details, or unpins them. */
-	onPin: (point: ValuePoint) => void;
+	onDetails: (event: PointDetailsEvent) => void;
 }) {
 	const { isApi, marker, lineWidth } = series.pricing;
+	const hover = (point: ValuePoint | null) => () =>
+		onDetails({ type: "hover", point });
+	const pin = (point: ValuePoint) => () =>
+		onDetails({ type: "togglePin", point });
 	return (
 		<g opacity={dimmed ? 0.15 : 1} className="transition-opacity">
 			<path
@@ -170,16 +185,12 @@ export function SeriesLine({
 					tabIndex={0}
 					aria-label={pointLabel(series, p)}
 					className="group cursor-pointer outline-none"
-					onMouseEnter={() => onHover(p)}
-					onMouseLeave={() => onHover(null)}
-					onClick={() => onPin(p)}
-					onKeyDown={(event) => {
-						if (event.key !== "Enter" && event.key !== " ") return;
-						event.preventDefault();
-						onPin(p);
-					}}
-					onFocus={() => onHover(p)}
-					onBlur={() => onHover(null)}
+					onMouseEnter={hover(p)}
+					onMouseLeave={hover(null)}
+					onClick={pin(p)}
+					onKeyDown={onActivationKey(pin(p))}
+					onFocus={hover(p)}
+					onBlur={hover(null)}
 				>
 					<circle
 						cx={px(x(p.costPerTaskUsd))}

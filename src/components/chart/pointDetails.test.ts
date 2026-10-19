@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { BenchmarkPoint, FamilyId } from "#/domain/model";
-import type { ValuePoint } from "#/domain/value";
+import type { FamilyId } from "#/domain/model";
+import type { PlottableBenchmark, ValuePoint } from "#/domain/value";
 import {
 	NO_DETAILS,
 	type PointDetails,
@@ -16,7 +16,7 @@ function point(effort: string): ValuePoint {
 	const benchmark = {
 		id: `${haiku}-${effort}`,
 		family: haiku,
-	} as BenchmarkPoint;
+	} as PlottableBenchmark;
 	return {
 		seriesId: `${haiku}@api`,
 		benchmark,
@@ -93,7 +93,9 @@ describe("point details", () => {
 			{ type: "hover", point: low },
 			{ type: "prune", points: [high] },
 		);
-		expect(state).toEqual(NO_DETAILS);
+		expect(shownDetails(state, [high])).toBeNull();
+		// The dropped pin stays gone when its point returns.
+		expect(shownDetails(state, [low, high])).toBeNull();
 	});
 
 	it("moves a preview onto the rebuilt point and keeps unchanged state", () => {
@@ -103,7 +105,7 @@ describe("point details", () => {
 			type: "prune",
 			points: rebuilt,
 		});
-		expect(pruned.hovered).toBe(rebuilt[0]);
+		expect(shownDetails(pruned, rebuilt)?.point).toBe(rebuilt[0]);
 		expect(updatePointDetails(pruned, { type: "prune", points: rebuilt })).toBe(
 			pruned,
 		);

@@ -251,6 +251,8 @@ export function overlaps(a: Rect, b: Rect, gap = 2): boolean {
  */
 const textWidth = (text: string) => text.length * 7;
 const TICK_LABEL_HEIGHT_PX = 16;
+/** Height of the axis text above its baseline; tracks the 12px axis font. */
+const TICK_LABEL_ASCENT_PX = 12;
 /** Baseline of the x-axis tick labels below the plot. */
 export const X_TICK_LABEL_DROP_PX = 22;
 /** Gap between the y-axis tick labels and the plot. */
@@ -264,7 +266,7 @@ export function xTickLabelBox(
 	const width = textWidth(label);
 	return {
 		left: centerX - width / 2,
-		top: height - margin.bottom + X_TICK_LABEL_DROP_PX - 12,
+		top: height - margin.bottom + X_TICK_LABEL_DROP_PX - TICK_LABEL_ASCENT_PX,
 		width,
 		height: TICK_LABEL_HEIGHT_PX,
 	};
@@ -286,7 +288,12 @@ export function yTickLabelBox(
 
 /** A point's value shown on an axis, in a pill over the tick labels. */
 export type AxisReadout = Rect & { text: string };
-export type AxisReadouts = { x: AxisReadout; y: AxisReadout };
+export type AxisReadouts = {
+	x: AxisReadout;
+	y: AxisReadout;
+	/** The point's position in the chart, which the pills sit level with. */
+	at: { x: number; y: number };
+};
 
 const READOUT_PAD_PX = 10;
 const READOUT_HEIGHT_PX = 18;
@@ -307,6 +314,7 @@ export function axisReadouts(
 	const yWidth = textWidth(text.y) + READOUT_PAD_PX;
 	const xRow = xTickLabelBox(text.x, at.x, layout);
 	return {
+		at,
 		x: {
 			text: text.x,
 			left: clampSpan(at.x - xWidth / 2, xWidth, 0, chartWidth),

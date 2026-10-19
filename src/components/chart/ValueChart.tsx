@@ -33,7 +33,7 @@ import {
 import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
 import { PointTooltip } from "./PointTooltip";
 import { usePointDetails } from "./pointDetails";
-import { buildSeries, groupByModel, modelEnd } from "./series";
+import { buildSeries, groupByModel, modelEnd, type Series } from "./series";
 
 /**
  * Escape meant for the chart, not for a text field or for the sheet that made
@@ -47,21 +47,40 @@ function isChartEscape(event: KeyboardEvent, chart: HTMLElement | null) {
 	);
 }
 
-/** While `enabled`, Escape meant for the chart calls `onEscape`. */
+/** Something Escape closes while it is `open`. */
+type Dismissable = { open: boolean; close: () => void };
+
+/**
+ * While any layer is open, Escape meant for the chart closes the first open
+ * one, so the layers peel off in order.
+ */
 function useChartEscape(
 	chart: RefObject<HTMLElement | null>,
-	enabled: boolean,
-	onEscape: () => void,
+	layers: readonly Dismissable[],
 ) {
-	const handleEscape = useEffectEvent(onEscape);
+	const closeFirst = useEffectEvent(() => layers.find((l) => l.open)?.close());
+	const enabled = layers.some((l) => l.open);
 	useEffect(() => {
 		if (!enabled) return;
 		const onKeyDown = (event: KeyboardEvent) => {
-			if (isChartEscape(event, chart.current)) handleEscape();
+			if (isChartEscape(event, chart.current)) closeFirst();
 		};
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);
 	}, [enabled, chart]);
+}
+
+/**
+ * A line fades unless it holds the shown point or, with none shown, belongs to
+ * the highlighted model.
+ */
+function isDimmed(
+	series: Series,
+	activePoint: ValuePoint | null,
+	highlighted: FamilyId | null,
+) {
+	if (activePoint) return activePoint.seriesId !== series.id;
+	return highlighted !== null && highlighted !== series.modelId;
 }
 
 /** Shared label and legend highlight. */
@@ -109,12 +128,16 @@ export function ValueChart({
 	const models = useMemo(() => groupByModel(series), [series]);
 	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
 	const [shown, dispatchHighlight] = useModelHighlight(plotted);
-	// Escape closes a point's details first, then a pinned model.
-	useChartEscape(element, activePoint !== null || shown.pinned !== null, () =>
-		activePoint
-			? dispatchDetails({ type: "close" })
-			: dispatchHighlight({ type: "clear" }),
-	);
+	useChartEscape(element, [
+		{
+			open: activePoint !== null,
+			close: () => dispatchDetails({ type: "close" }),
+		},
+		{
+			open: shown.pinned !== null,
+			close: () => dispatchHighlight({ type: "clear" }),
+		},
+	]);
 	const layout = chartLayout(size, { labels: showLabels });
 	const { height, margin } = layout;
 
@@ -144,12 +167,11 @@ export function ValueChart({
 		: [];
 	const highlighted = highlightedModel(shown);
 	const activeModel = activePoint?.benchmark.family ?? highlighted;
-	const dim = (id: string, modelId: FamilyId) =>
-		activePoint
-			? activePoint.seriesId !== id
-			: highlighted !== null && highlighted !== modelId;
-	const readouts =
-		activePoint && pointReadouts(activePoint, { x, y }, layout, width);
+	// The shown point is projected once; the guides, pills and tooltip share it.
+	const active = details && {
+		...details,
+		readouts: pointReadouts(details.point, { x, y }, layout, width),
+	};
 
 	return (
 		<div ref={ref} className="relative lg:min-h-0 lg:flex-1">
@@ -168,19 +190,16 @@ export function ValueChart({
 					ticks={xTicks(x, scale)}
 					scale={scale}
 					layout={layout}
-					readouts={readouts}
+					readouts={active?.readouts}
 				/>
 				{showPareto && (
 					<ParetoLine points={paretoFrontier(points)} x={x} y={y} />
 				)}
-				{activePoint && readouts && (
+				{active && (
 					<Crosshair
-						point={activePoint}
-						color={familyColor(activePoint.benchmark.family)}
-						x={x}
-						y={y}
+						readouts={active.readouts}
 						layout={layout}
-						readouts={readouts}
+						color={familyColor(active.point.benchmark.family)}
 					/>
 				)}
 				{series.map((s) => (
@@ -190,9 +209,8 @@ export function ValueChart({
 						x={x}
 						y={y}
 						activePoint={activePoint}
-						dimmed={dim(s.id, s.modelId)}
-						onHover={(point) => dispatchDetails({ type: "hover", point })}
-						onPin={(point) => dispatchDetails({ type: "togglePin", point })}
+						dimmed={isDimmed(s, activePoint, highlighted)}
+						onDetails={dispatchDetails}
 					/>
 				))}
 				<ModelTags
@@ -205,15 +223,12 @@ export function ValueChart({
 					onHighlight={dispatchHighlight}
 				/>
 			</svg>
-			{details && (
+			{active && (
 				<PointTooltip
-					point={details.point}
-					anchor={{
-						x: x(details.point.costPerTaskUsd),
-						y: y(details.point.intelligence),
-					}}
+					point={active.point}
+					anchor={active.readouts.at}
 					bounds={{ width, height }}
-					pinned={details.pinned}
+					pinned={active.pinned}
 					onClose={() => dispatchDetails({ type: "close" })}
 				/>
 			)}

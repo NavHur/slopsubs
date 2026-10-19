@@ -32,14 +32,14 @@ const compactCount = new Intl.NumberFormat("en-US", {
 	maximumSignificantDigits: 3,
 });
 
-/** Token counts at a glance: 850, 38.1K, 1.2M. */
+/** Token counts at a glance: 850, 38.1K, 1.23M. */
 export function formatTokens(value: number): string {
 	return compactCount.format(value);
 }
 
 /**
- * How a plan's effective cost compares with paying per token for the same
- * work, from the plan's value multiple (effective cost = API cost ÷ multiple).
+ * How a plan compares with paying per token for the same work, from its value
+ * multiple: "2.0× cheaper than API", "Same cost as API".
  */
 export function formatApiComparison(valueMultiple: number): string {
 	const factor = formatMultiple(Math.max(valueMultiple, 1 / valueMultiple));

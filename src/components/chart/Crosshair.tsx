@@ -33,23 +33,17 @@ export function pointReadouts(
  * axes hide the tick labels the pills cover.
  */
 export function Crosshair({
-	point,
-	color,
-	x,
-	y,
-	layout,
 	readouts,
+	layout,
+	color,
 }: {
-	point: ValuePoint;
-	color: string;
-	x: XScale;
-	y: ScaleLinear<number, number>;
-	layout: ChartLayout;
 	readouts: AxisReadouts;
+	layout: ChartLayout;
+	color: string;
 }) {
 	const { margin, height } = layout;
-	const cx = px(x(point.costPerTaskUsd));
-	const cy = px(y(point.intelligence));
+	const cx = px(readouts.at.x);
+	const cy = px(readouts.at.y);
 	return (
 		// biome-ignore lint/a11y/noAriaHiddenOnFocusable: an SVG group is not focusable; the point's own label already reads these values
 		<g

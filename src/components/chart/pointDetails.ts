@@ -47,11 +47,15 @@ function plottedDetails(
 	state: PointDetails,
 	points: readonly ValuePoint[],
 ): PointDetails {
-	const keys = new Map(points.map((p) => [pointKey(p), p]));
-	const hovered = state.hovered && (keys.get(pointKey(state.hovered)) ?? null);
-	const pinned = state.pinned !== null && keys.has(state.pinned);
-	const unchanged = hovered === state.hovered && (pinned || !state.pinned);
-	return unchanged ? state : { hovered, pinned: pinned ? state.pinned : null };
+	const current = new Map(points.map((p) => [pointKey(p), p]));
+	const next = {
+		hovered: state.hovered && (current.get(pointKey(state.hovered)) ?? null),
+		pinned:
+			state.pinned !== null && current.has(state.pinned) ? state.pinned : null,
+	};
+	const unchanged =
+		next.hovered === state.hovered && next.pinned === state.pinned;
+	return unchanged ? state : next;
 }
 
 /** The point whose details show, and whether they are pinned. */

@@ -98,7 +98,7 @@ export function PointTooltip({
 						{formatApiComparison(pricing.valueMultiple)}
 					</span>{" "}
 					<span className="text-muted tabular-nums">
-						({formatUsd(point.costPerTaskUsd * pricing.valueMultiple)})
+						({formatUsd(benchmark.costPerTaskUsd)})
 					</span>
 				</p>
 			)}
