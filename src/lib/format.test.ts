@@ -6,7 +6,12 @@ vi.hoisted(() => {
 	process.env.TZ = "Pacific/Kiritimati";
 });
 
-import { formatDay, formatIntelligence } from "./format";
+import {
+	formatApiComparison,
+	formatDay,
+	formatIntelligence,
+	formatTokens,
+} from "./format";
 
 describe("formatDay", () => {
 	it("names the UTC day of an ISO timestamp", () => {
@@ -23,5 +28,30 @@ describe("formatIntelligence", () => {
 		expect(formatIntelligence(57.6)).toBe("57.6");
 		expect(formatIntelligence(53.35)).toBe("53.4");
 		expect(formatIntelligence(50)).toBe("50.0");
+	});
+});
+
+describe("formatTokens", () => {
+	it("abbreviates thousands and millions to three digits", () => {
+		expect(formatTokens(850)).toBe("850");
+		expect(formatTokens(38054)).toBe("38.1K");
+		expect(formatTokens(162164)).toBe("162K");
+		expect(formatTokens(1_234_567)).toBe("1.23M");
+	});
+});
+
+describe("formatApiComparison", () => {
+	it("says how many times cheaper a plan is than paying per token", () => {
+		expect(formatApiComparison(41.3)).toBe("41× cheaper than API");
+		expect(formatApiComparison(2.46)).toBe("2.5× cheaper than API");
+	});
+
+	it("says how many times pricier a plan is below a multiple of one", () => {
+		expect(formatApiComparison(0.4)).toBe("2.5× pricier than API");
+	});
+
+	it("calls a plan the same cost when it rounds to the API price", () => {
+		expect(formatApiComparison(1.02)).toBe("Same cost as API");
+		expect(formatApiComparison(0.98)).toBe("Same cost as API");
 	});
 });

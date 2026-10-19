@@ -1,7 +1,13 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { ValuePoint } from "#/domain/value";
-import { familyName } from "#/lib/families";
-import { formatUsd } from "#/lib/format";
+import { familyColor, familyLabId, familyName } from "#/lib/families";
+import {
+	formatApiComparison,
+	formatIntelligence,
+	formatTokens,
+	formatUsd,
+} from "#/lib/format";
+import { ProviderLogo } from "../ProviderLogo";
 import { type Box, tooltipPlacement } from "./geometry";
 
 /**
@@ -21,6 +27,9 @@ function useBorderBox<T extends HTMLElement>() {
 	});
 	return [ref, box] as const;
 }
+
+/** Benchmark source pages, keyed by the benchmark's own id. */
+const ARTIFICIAL_ANALYSIS_MODELS = "https://artificialanalysis.ai/models/";
 
 /** Details of one point, placed beside it so it never covers it. */
 export function PointTooltip({
@@ -46,40 +55,71 @@ export function PointTooltip({
 	return (
 		<div
 			ref={ref}
-			className={`${pinned ? "" : "pointer-events-none"} absolute z-10 w-60 max-w-[calc(100%-16px)] rounded-md border border-line bg-panel px-3 py-2 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]`}
+			className={`${pinned ? "" : "pointer-events-none"} absolute z-10 w-64 max-w-[calc(100%-16px)] rounded-md border border-line bg-panel px-3 pt-1.5 pb-2.5 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]`}
 			style={placement ?? { left: 0, top: 0, visibility: "hidden" }}
 		>
 			<div className="flex min-h-7 items-center justify-between gap-2">
-				<div className="font-semibold text-fg">
-					{familyName(benchmark.family)}{" "}
-					<span className="font-normal text-muted">
-						· {benchmark.effortLabel}
+				<div className="flex min-w-0 items-center gap-2 text-[13px] font-semibold text-fg">
+					<ProviderLogo lab={familyLabId(benchmark.family)} size={16} />
+					<span
+						className="truncate"
+						style={{ color: familyColor(benchmark.family) }}
+					>
+						{familyName(benchmark.family)}
 					</span>
 				</div>
 				{pinned && <CloseButton onClose={onClose} />}
 			</div>
-			<div className="text-muted">
+			<p className="text-muted">
+				{benchmark.effortLabel} ·{" "}
 				{pricing.kind === "api" ? "Pay per token (API)" : pricing.plan.label}
-			</div>
-			<dl className="mt-1 grid grid-cols-[1fr_auto] gap-x-3 tabular-nums">
-				<dt className="text-muted">Effective / task</dt>
-				<dd className="text-right text-fg">
-					{formatUsd(point.costPerTaskUsd)}
-				</dd>
-				{pricing.kind === "plan" && (
-					<>
-						<dt className="text-muted">API / task</dt>
-						<dd className="text-right">
-							{formatUsd(benchmark.costPerTaskUsd ?? 0)}
-						</dd>
-						<dt className="text-muted">Value multiple</dt>
-						<dd className="text-right">{pricing.valueMultiple.toFixed(1)}×</dd>
-					</>
+			</p>
+			<dl className="mt-2 grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 tabular-nums">
+				<Metric
+					label="Intelligence index"
+					value={formatIntelligence(point.intelligence)}
+				/>
+				<Metric
+					label={
+						pricing.kind === "api" ? "Cost per task" : "Effective cost per task"
+					}
+					value={formatUsd(point.costPerTaskUsd)}
+				/>
+				{benchmark.tokensPerTask !== null && (
+					<Metric
+						label="Tokens per task"
+						value={formatTokens(benchmark.tokensPerTask)}
+					/>
 				)}
-				<dt className="text-muted">Intelligence</dt>
-				<dd className="text-right">{point.intelligence.toFixed(1)}</dd>
 			</dl>
+			{pricing.kind === "plan" && (
+				<p className="mt-2 border-t border-line pt-2">
+					<span className="font-medium text-fg">
+						{formatApiComparison(pricing.valueMultiple)}
+					</span>{" "}
+					<span className="text-muted tabular-nums">
+						({formatUsd(point.costPerTaskUsd * pricing.valueMultiple)})
+					</span>
+				</p>
+			)}
+			<a
+				href={`${ARTIFICIAL_ANALYSIS_MODELS}${benchmark.id}`}
+				target="_blank"
+				rel="noreferrer"
+				className="mt-1.5 inline-block text-muted underline decoration-dotted underline-offset-2 hover:text-fg"
+			>
+				Artificial Analysis
+			</a>
 		</div>
+	);
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+	return (
+		<>
+			<dt className="text-muted">{label}</dt>
+			<dd className="text-right text-fg">{value}</dd>
+		</>
 	);
 }
 
