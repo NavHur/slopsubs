@@ -50,8 +50,8 @@ export function SwatchSpace() {
 
 /**
  * Line style and point shape of each pricing, so one model's lines can be
- * told apart where the Plans panel is out of sight: on phones, and in the
- * exported PNG.
+ * told apart where the Plans panel is out of sight: below the lg breakpoint,
+ * where it is a sheet, and in the exported PNG.
  */
 export function PricingKey({
 	pricings,
@@ -60,13 +60,14 @@ export function PricingKey({
 	pricings: readonly PricingStyle[];
 	className?: string;
 }) {
+	if (pricings.length === 0) return null;
 	return (
 		<ul
 			aria-label="Line styles"
 			className={`flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-muted ${className}`}
 		>
 			{pricings.map((pricing) => (
-				<li key={pricing.label} className="flex items-center gap-1.5">
+				<li key={pricing.id} className="flex items-center gap-1.5">
 					<PricingSwatch pricing={pricing} />
 					{pricing.label}
 				</li>
