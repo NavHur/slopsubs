@@ -202,7 +202,7 @@ function ValueView() {
 							<FooterLink href="https://artificialanalysis.ai">
 								Artificial Analysis
 							</FooterLink>{" "}
-							· caps from{" "}
+							· estimated caps from{" "}
 							<FooterLink
 								href="https://www.youtube.com/watch?v=nYA0yASgaZI"
 								title="Weekly caps from Theo's numbers until we measure them"
