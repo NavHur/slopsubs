@@ -10,6 +10,7 @@ import {
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { paretoFrontier, spreadLabels } from "#/lib/chart";
+import { familyColor } from "#/lib/families";
 import { isTextEntryTarget } from "#/lib/textEntry";
 import { useElementSize } from "#/lib/useElementSize";
 import {
@@ -19,6 +20,7 @@ import {
 	ParetoLine,
 	SeriesLine,
 } from "./ChartParts";
+import { Crosshair } from "./Crosshair";
 import {
 	type AxisScale,
 	chartLayout,
@@ -153,6 +155,16 @@ export function ValueChart({
 				/>
 				{showPareto && (
 					<ParetoLine points={paretoFrontier(points)} x={x} y={y} />
+				)}
+				{hovered && (
+					<Crosshair
+						point={hovered}
+						color={familyColor(hovered.benchmark.family)}
+						x={x}
+						y={y}
+						layout={layout}
+						width={width}
+					/>
 				)}
 				{series.map((s) => (
 					<SeriesLine

@@ -21,3 +21,8 @@ const DAY_FORMAT = new Intl.DateTimeFormat("en-US", {
 export function formatDay(iso: string): string {
 	return DAY_FORMAT.format(new Date(iso));
 }
+
+/** An intelligence index score, to the tenth the benchmark reports. */
+export function formatIntelligence(value: number): string {
+	return value.toFixed(1);
+}
