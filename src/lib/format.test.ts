@@ -1,4 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+// UTC+14, so a formatter that follows the host zone names the next day for
+// any time after 10:00 UTC. Set before ./format builds its formatter.
+vi.hoisted(() => {
+	process.env.TZ = "Pacific/Kiritimati";
+});
+
 import { formatDay } from "./format";
 
 describe("formatDay", () => {
