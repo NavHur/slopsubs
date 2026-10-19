@@ -26,7 +26,17 @@ const INLINED_STYLES = [
 	"font-variant-numeric",
 ] as const;
 
-type Rendered = { svg: string; background: string; foreground: string };
+/** A laid-out piece of the chart, placed relative to the chart's top left. */
+type Box = { x: number; y: number; width: number; height: number };
+type SvgLayer = Box & { svg: string };
+/** HTML text, such as the line-style key, which sits over the SVG. */
+type TextRun = Box & { text: string; font: string; color: string };
+type Rendered = {
+	layers: SvgLayer[];
+	texts: TextRun[];
+	background: string;
+	foreground: string;
+};
 
 /** Renders `chart` offscreen and downloads it as a titled PNG. */
 export async function downloadChartPng({
@@ -67,10 +77,15 @@ async function renderOffscreen(chart: ReactNode): Promise<Rendered> {
 	const root = createRoot(host);
 	try {
 		root.render(chart);
-		const svg = await laidOutSvg(host);
+		await waitForLayout(host);
+		const origin = host.getBoundingClientRect();
 		const style = getComputedStyle(host);
 		return {
-			svg: serializeWithStyles(svg),
+			layers: outerSvgs(host).map((svg) => ({
+				...boxIn(svg.getBoundingClientRect(), origin),
+				svg: serializeWithStyles(svg),
+			})),
+			texts: htmlTexts(host, origin),
 			background: style.backgroundColor,
 			foreground: style.color,
 		};
@@ -80,13 +95,49 @@ async function renderOffscreen(chart: ReactNode): Promise<Rendered> {
 	}
 }
 
-async function laidOutSvg(host: HTMLElement): Promise<SVGSVGElement> {
+async function waitForLayout(host: HTMLElement): Promise<void> {
 	for (let frame = 0; frame < MAX_LAYOUT_FRAMES; frame++) {
 		await new Promise(requestAnimationFrame);
 		const svg = host.querySelector("svg");
-		if (svg?.width.baseVal.value === CHART_SIZE.width) return svg;
+		if (svg?.width.baseVal.value === CHART_SIZE.width) return;
 	}
 	throw new Error("The chart never laid out at its export size");
+}
+
+function boxIn(rect: DOMRect, origin: DOMRect): Box {
+	return {
+		x: rect.left - origin.left,
+		y: rect.top - origin.top,
+		width: rect.width,
+		height: rect.height,
+	};
+}
+
+/** The chart's SVG plus any drawn beside it, like the key's swatches. */
+function outerSvgs(host: HTMLElement): SVGSVGElement[] {
+	return [...host.querySelectorAll("svg")].filter(
+		(svg) => !svg.parentElement?.closest("svg"),
+	);
+}
+
+function htmlTexts(host: HTMLElement, origin: DOMRect): TextRun[] {
+	const runs: TextRun[] = [];
+	const walker = document.createTreeWalker(host, NodeFilter.SHOW_TEXT);
+	const range = document.createRange();
+	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+		const parent = node.parentElement;
+		const text = node.textContent?.trim();
+		if (!parent || !text || parent.closest("svg")) continue;
+		range.selectNodeContents(node);
+		const computed = getComputedStyle(parent);
+		runs.push({
+			...boxIn(range.getBoundingClientRect(), origin),
+			text,
+			font: `${computed.fontWeight} ${computed.fontSize} ${computed.fontFamily}`,
+			color: computed.color,
+		});
+	}
+	return runs;
 }
 
 function serializeWithStyles(svg: SVGSVGElement): string {
@@ -160,17 +211,29 @@ async function fetchDataUrl(url: string): Promise<string> {
 	});
 }
 
-async function rasterize(
-	{ svg, background, foreground }: Rendered,
+async function svgImage(
+	svg: string,
 	fontCss: string,
-	title: string,
-): Promise<Blob> {
+): Promise<HTMLImageElement> {
 	const withFonts = svg.replace(/^<svg[^>]*>/, (open) => {
 		return `${open}<style>${fontCss}</style>`;
 	});
 	const image = new Image();
 	image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(withFonts)}`;
-	await Promise.all([image.decode(), document.fonts.load(TITLE_FONT)]);
+	await image.decode();
+	return image;
+}
+
+async function rasterize(
+	{ layers, texts, background, foreground }: Rendered,
+	fontCss: string,
+	title: string,
+): Promise<Blob> {
+	const fonts = new Set([TITLE_FONT, ...texts.map((t) => t.font)]);
+	const [images] = await Promise.all([
+		Promise.all(layers.map((layer) => svgImage(layer.svg, fontCss))),
+		...[...fonts].map((font) => document.fonts.load(font)),
+	]);
 
 	const width = CHART_SIZE.width + PADDING_PX * 2;
 	const height = PADDING_PX * 2 + TITLE_BAND_PX + CHART_SIZE.height;
@@ -186,13 +249,17 @@ async function rasterize(
 	context.font = TITLE_FONT;
 	context.textBaseline = "top";
 	context.fillText(title, PADDING_PX, PADDING_PX);
-	context.drawImage(
-		image,
-		PADDING_PX,
-		PADDING_PX + TITLE_BAND_PX,
-		CHART_SIZE.width,
-		CHART_SIZE.height,
-	);
+
+	context.translate(PADDING_PX, PADDING_PX + TITLE_BAND_PX);
+	layers.forEach((layer, i) => {
+		context.drawImage(images[i], layer.x, layer.y, layer.width, layer.height);
+	});
+	context.textBaseline = "middle";
+	for (const run of texts) {
+		context.fillStyle = run.color;
+		context.font = run.font;
+		context.fillText(run.text, run.x, run.y + run.height / 2);
+	}
 	return new Promise((resolve, reject) =>
 		canvas.toBlob(
 			(blob) =>
