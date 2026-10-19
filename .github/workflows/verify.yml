@@ -14,8 +14,21 @@ permissions:
 
 jobs:
   verify:
+    name: ${{ matrix.name }}
     # GitHub-hosted: free for a public repository, and keeps outside contributors' code off our machines.
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Format & lint
+            command: pnpm check
+          - name: Typecheck
+            command: pnpm typecheck
+          - name: Tests
+            command: pnpm test
+          - name: Build
+            command: pnpm build
 
     steps:
       - name: Check out repository
@@ -33,19 +46,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        id: install
         run: pnpm install --frozen-lockfile
 
-      - name: Lint and check formatting
-        run: pnpm check
-
-      - name: Typecheck
-        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: pnpm typecheck
-
-      - name: Test
-        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
-        run: pnpm test
-
-      - name: Build
-        run: pnpm build
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.command }}
