@@ -21,7 +21,7 @@ import {
 	ParetoLine,
 	SeriesLine,
 } from "./ChartParts";
-import { Crosshair } from "./Crosshair";
+import { Crosshair, pointReadouts } from "./Crosshair";
 import {
 	type AxisScale,
 	chartLayout,
@@ -148,6 +148,8 @@ export function ValueChart({
 		activePoint
 			? activePoint.seriesId !== id
 			: highlighted !== null && highlighted !== modelId;
+	const readouts =
+		activePoint && pointReadouts(activePoint, { x, y }, layout, width);
 
 	return (
 		<div ref={ref} className="relative lg:min-h-0 lg:flex-1">
@@ -166,18 +168,19 @@ export function ValueChart({
 					ticks={xTicks(x, scale)}
 					scale={scale}
 					layout={layout}
+					readouts={readouts}
 				/>
 				{showPareto && (
 					<ParetoLine points={paretoFrontier(points)} x={x} y={y} />
 				)}
-				{activePoint && (
+				{activePoint && readouts && (
 					<Crosshair
 						point={activePoint}
 						color={familyColor(activePoint.benchmark.family)}
 						x={x}
 						y={y}
 						layout={layout}
-						width={width}
+						readouts={readouts}
 					/>
 				)}
 				{series.map((s) => (

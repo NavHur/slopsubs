@@ -7,12 +7,19 @@ import { familyLabId } from "#/lib/families";
 import { formatUsd } from "#/lib/format";
 import { ProviderLogo } from "../ProviderLogo";
 import {
+	type AxisReadouts,
 	type AxisScale,
 	type ChartLayout,
 	markerPath,
+	overlaps,
 	pathOf,
 	px,
+	type Rect,
+	X_TICK_LABEL_DROP_PX,
 	type XScale,
+	xTickLabelBox,
+	Y_TICK_LABEL_GAP_PX,
+	yTickLabelBox,
 } from "./geometry";
 import type { HighlightEvent, PreviewSource } from "./highlight";
 import { API_DASH, type ModelGroup, modelEnd, type Series } from "./series";
@@ -24,6 +31,7 @@ export function Axes({
 	ticks,
 	scale,
 	layout,
+	readouts,
 }: {
 	x: XScale;
 	y: ScaleLinear<number, number>;
@@ -31,9 +39,14 @@ export function Axes({
 	ticks: number[];
 	scale: AxisScale;
 	layout: ChartLayout;
+	/** A hovered point's values, which hide the tick labels they cover. */
+	readouts: AxisReadouts | null;
 }) {
 	const { margin, height } = layout;
 	const bottom = height - margin.bottom;
+	const covered = (label: Rect) =>
+		readouts !== null &&
+		(overlaps(label, readouts.x) || overlaps(label, readouts.y));
 	return (
 		<g className="fill-muted text-[12px] tabular-nums">
 			{y.ticks(layout.compact ? 5 : 6).map((t) => (
@@ -46,9 +59,16 @@ export function Axes({
 						className="stroke-grid"
 						strokeDasharray="2 6"
 					/>
-					<text x={margin.left - 12} y={px(y(t))} dy="0.32em" textAnchor="end">
-						{t}
-					</text>
+					{!covered(yTickLabelBox(String(t), y(t), layout)) && (
+						<text
+							x={margin.left - Y_TICK_LABEL_GAP_PX}
+							y={px(y(t))}
+							dy="0.32em"
+							textAnchor="end"
+						>
+							{t}
+						</text>
+					)}
 				</g>
 			))}
 			<line
@@ -58,11 +78,18 @@ export function Axes({
 				y2={bottom}
 				className="stroke-grid"
 			/>
-			{ticks.map((t) => (
-				<text key={t} x={px(x(t))} y={bottom + 22} textAnchor="middle">
-					{formatUsd(t)}
-				</text>
-			))}
+			{ticks
+				.filter((t) => !covered(xTickLabelBox(formatUsd(t), x(t), layout)))
+				.map((t) => (
+					<text
+						key={t}
+						x={px(x(t))}
+						y={bottom + X_TICK_LABEL_DROP_PX}
+						textAnchor="middle"
+					>
+						{formatUsd(t)}
+					</text>
+				))}
 			<text x={margin.left} y={margin.top - 12} className="fill-subtle">
 				Intelligence index
 			</text>

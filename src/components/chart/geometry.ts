@@ -231,3 +231,100 @@ function besidePlacement(
 	const left = anchor.x - TOOLTIP_GAP_PX - tooltip.width;
 	return left >= TOOLTIP_EDGE_PX ? { left, top } : null;
 }
+
+export type Rect = { left: number; top: number; width: number; height: number };
+
+/** Whether two boxes come within `gap` px of each other. */
+export function overlaps(a: Rect, b: Rect, gap = 2): boolean {
+	return (
+		a.left < b.left + b.width + gap &&
+		b.left < a.left + a.width + gap &&
+		a.top < b.top + b.height + gap &&
+		b.top < a.top + a.height + gap
+	);
+}
+
+/**
+ * Width of a short tabular label at the axis font size.
+ * ceiling: estimated, not measured; measure the text if labels grow longer
+ * than a price or a score, or the axis font changes.
+ */
+const textWidth = (text: string) => text.length * 7;
+const TICK_LABEL_HEIGHT_PX = 16;
+/** Baseline of the x-axis tick labels below the plot. */
+export const X_TICK_LABEL_DROP_PX = 22;
+/** Gap between the y-axis tick labels and the plot. */
+export const Y_TICK_LABEL_GAP_PX = 12;
+
+export function xTickLabelBox(
+	label: string,
+	centerX: number,
+	{ height, margin }: ChartLayout,
+): Rect {
+	const width = textWidth(label);
+	return {
+		left: centerX - width / 2,
+		top: height - margin.bottom + X_TICK_LABEL_DROP_PX - 12,
+		width,
+		height: TICK_LABEL_HEIGHT_PX,
+	};
+}
+
+export function yTickLabelBox(
+	label: string,
+	centerY: number,
+	{ margin }: ChartLayout,
+): Rect {
+	const width = textWidth(label);
+	return {
+		left: margin.left - Y_TICK_LABEL_GAP_PX - width,
+		top: centerY - TICK_LABEL_HEIGHT_PX / 2,
+		width,
+		height: TICK_LABEL_HEIGHT_PX,
+	};
+}
+
+/** A point's value shown on an axis, in a pill over the tick labels. */
+export type AxisReadout = Rect & { text: string };
+export type AxisReadouts = { x: AxisReadout; y: AxisReadout };
+
+const READOUT_PAD_PX = 10;
+const READOUT_HEIGHT_PX = 18;
+/** Gap between a y-axis readout and the plot. */
+const Y_READOUT_GAP_PX = 4;
+
+/**
+ * Pills for a point's value on each axis: the y one beside the plot level
+ * with the point, the x one in the tick row under it, both inside the chart.
+ */
+export function axisReadouts(
+	at: { x: number; y: number },
+	text: { x: string; y: string },
+	layout: ChartLayout,
+	chartWidth: number,
+): AxisReadouts {
+	const xWidth = textWidth(text.x) + READOUT_PAD_PX;
+	const yWidth = textWidth(text.y) + READOUT_PAD_PX;
+	const xRow = xTickLabelBox(text.x, at.x, layout);
+	return {
+		x: {
+			text: text.x,
+			left: clampSpan(at.x - xWidth / 2, xWidth, 0, chartWidth),
+			top: xRow.top + (xRow.height - READOUT_HEIGHT_PX) / 2,
+			width: xWidth,
+			height: READOUT_HEIGHT_PX,
+		},
+		y: {
+			text: text.y,
+			left: clampSpan(
+				layout.margin.left - Y_READOUT_GAP_PX - yWidth,
+				yWidth,
+				0,
+				chartWidth,
+			),
+			top: at.y - READOUT_HEIGHT_PX / 2,
+			width: yWidth,
+			height: READOUT_HEIGHT_PX,
+		},
+	};
+}

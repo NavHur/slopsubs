@@ -1,6 +1,14 @@
 import { scaleLinear, scaleLog } from "d3-scale";
 import { describe, expect, it } from "vitest";
-import { chartLayout, tooltipPlacement, xTicks } from "./geometry";
+import {
+	axisReadouts,
+	chartLayout,
+	overlaps,
+	tooltipPlacement,
+	xTickLabelBox,
+	xTicks,
+	yTickLabelBox,
+} from "./geometry";
 
 const minGap = (ticks: number[], x: (t: number) => number) =>
 	Math.min(...ticks.slice(1).map((t, i) => x(t) - x(ticks[i])));
@@ -114,5 +122,39 @@ describe("tooltipPlacement", () => {
 		const placement = tooltipPlacement({ x: 160, y: 200 }, tooltip, tiny);
 		expect(placement.top).toBe(6);
 		expect(covers(placement, { x: 160, y: 200 })).toBe(false);
+	});
+});
+
+describe("axisReadouts", () => {
+	const desktop = chartLayout({ width: 960, height: 620 }, { labels: true });
+	const phone = chartLayout({ width: 398, height: 0 }, { labels: true });
+	const text = { x: "$0.15", y: "57.6" };
+
+	it("centres the cost readout under the point, in the tick row", () => {
+		const { x } = axisReadouts({ x: 500, y: 200 }, text, desktop, 960);
+		expect(x.left + x.width / 2).toBe(500);
+		expect(overlaps(x, xTickLabelBox("$0.1", 500, desktop))).toBe(true);
+	});
+
+	it("sets the score readout level with the point, beside the plot", () => {
+		const { y } = axisReadouts({ x: 500, y: 200 }, text, desktop, 960);
+		expect(y.top + y.height / 2).toBe(200);
+		expect(y.left + y.width).toBeLessThanOrEqual(desktop.margin.left);
+	});
+
+	it("keeps both readouts inside a phone chart", () => {
+		const nearLeft = axisReadouts({ x: 37, y: 30 }, text, phone, 398);
+		const nearRight = axisReadouts({ x: 396, y: 30 }, text, phone, 398);
+		expect(nearLeft.x.left).toBeGreaterThanOrEqual(0);
+		expect(nearLeft.y.left).toBeGreaterThanOrEqual(0);
+		expect(nearRight.x.left + nearRight.x.width).toBeLessThanOrEqual(398);
+	});
+
+	it("covers only the tick labels it lands on", () => {
+		const { x, y } = axisReadouts({ x: 500, y: 200 }, text, desktop, 960);
+		expect(overlaps(x, xTickLabelBox("$0.2", 530, desktop))).toBe(true);
+		expect(overlaps(x, xTickLabelBox("$0.5", 600, desktop))).toBe(false);
+		expect(overlaps(y, yTickLabelBox("55", 212, desktop))).toBe(true);
+		expect(overlaps(y, yTickLabelBox("50", 279, desktop))).toBe(false);
 	});
 });

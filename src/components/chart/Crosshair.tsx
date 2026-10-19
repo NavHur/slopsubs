@@ -1,28 +1,36 @@
 import type { ScaleLinear } from "d3-scale";
 import type { ValuePoint } from "#/domain/value";
 import { formatIntelligence, formatUsd } from "#/lib/format";
-import { type ChartLayout, clampSpan, px, type XScale } from "./geometry";
+import {
+	type AxisReadout,
+	type AxisReadouts,
+	axisReadouts,
+	type ChartLayout,
+	px,
+	type XScale,
+} from "./geometry";
+
+/** A point's effective cost and score on the axes, in the tick formats. */
+export function pointReadouts(
+	point: ValuePoint,
+	scales: { x: XScale; y: ScaleLinear<number, number> },
+	layout: ChartLayout,
+	chartWidth: number,
+): AxisReadouts {
+	return axisReadouts(
+		{ x: scales.x(point.costPerTaskUsd), y: scales.y(point.intelligence) },
+		{
+			x: formatUsd(point.costPerTaskUsd),
+			y: formatIntelligence(point.intelligence),
+		},
+		layout,
+		chartWidth,
+	);
+}
 
 /**
- * Width of a readout pill: an estimate for short tabular labels at the axis
- * font size.
- * ceiling: estimated, not measured; measure the text if labels grow longer
- * than a price or a score, or the axis font changes.
- */
-const READOUT_CHAR_PX = 7;
-const READOUT_PAD_PX = 10;
-const READOUT_HEIGHT_PX = 18;
-/** Gap between a y-axis readout and the plot, matching the tick labels. */
-const Y_READOUT_GAP_PX = 4;
-/** Centre of the x-axis tick labels below the plot. */
-const X_READOUT_DROP_PX = 18;
-
-const readoutWidth = (text: string) =>
-	text.length * READOUT_CHAR_PX + READOUT_PAD_PX;
-
-/**
- * Dashed guides from a point to both axes, each axis showing the point's
- * value in the axis format, over the tick labels it lands on.
+ * Dashed guides from a point to both axes, where pills show its value; the
+ * axes hide the tick labels the pills cover.
  */
 export function Crosshair({
 	point,
@@ -30,24 +38,18 @@ export function Crosshair({
 	x,
 	y,
 	layout,
-	width,
+	readouts,
 }: {
 	point: ValuePoint;
 	color: string;
 	x: XScale;
 	y: ScaleLinear<number, number>;
 	layout: ChartLayout;
-	/** The chart's width; readouts stay inside it. */
-	width: number;
+	readouts: AxisReadouts;
 }) {
 	const { margin, height } = layout;
-	const bottom = height - margin.bottom;
 	const cx = px(x(point.costPerTaskUsd));
 	const cy = px(y(point.intelligence));
-	const score = formatIntelligence(point.intelligence);
-	const cost = formatUsd(point.costPerTaskUsd);
-	const scoreWidth = readoutWidth(score);
-	const costWidth = readoutWidth(cost);
 	return (
 		// biome-ignore lint/a11y/noAriaHiddenOnFocusable: an SVG group is not focusable; the point's own label already reads these values
 		<g
@@ -67,56 +69,32 @@ export function Crosshair({
 				x1={cx}
 				x2={cx}
 				y1={cy}
-				y2={bottom}
+				y2={height - margin.bottom}
 				stroke="currentColor"
 				strokeDasharray="4 4"
 			/>
-			<Readout
-				text={score}
-				left={clampSpan(
-					margin.left - Y_READOUT_GAP_PX - scoreWidth,
-					scoreWidth,
-					0,
-					width,
-				)}
-				centerY={cy}
-				width={scoreWidth}
-			/>
-			<Readout
-				text={cost}
-				left={clampSpan(cx - costWidth / 2, costWidth, 0, width)}
-				centerY={bottom + X_READOUT_DROP_PX}
-				width={costWidth}
-			/>
+			<Readout readout={readouts.y} />
+			<Readout readout={readouts.x} />
 		</g>
 	);
 }
 
-function Readout({
-	text,
-	left,
-	centerY,
-	width,
-}: {
-	text: string;
-	left: number;
-	centerY: number;
-	width: number;
-}) {
+function Readout({ readout }: { readout: AxisReadout }) {
+	const { text, left, top, width, height } = readout;
 	return (
 		<g>
 			<rect
 				x={px(left)}
-				y={px(centerY - READOUT_HEIGHT_PX / 2)}
+				y={px(top)}
 				width={width}
-				height={READOUT_HEIGHT_PX}
+				height={height}
 				rx={4}
 				className="fill-panel"
 				stroke="currentColor"
 			/>
 			<text
 				x={px(left + width / 2)}
-				y={centerY}
+				y={px(top + height / 2)}
 				dy="0.32em"
 				textAnchor="middle"
 				fill="currentColor"
