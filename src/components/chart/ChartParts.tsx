@@ -109,16 +109,20 @@ export function SeriesLine({
 	series,
 	x,
 	y,
-	hovered,
+	activePoint,
 	dimmed,
 	onHover,
+	onPin,
 }: {
 	series: Series;
 	x: XScale;
 	y: ScaleLinear<number, number>;
-	hovered: ValuePoint | null;
+	/** The point whose details show, drawn larger. */
+	activePoint: ValuePoint | null;
 	dimmed: boolean;
 	onHover: (point: ValuePoint | null) => void;
+	/** Click, Enter or Space pins the point's details, or unpins them. */
+	onPin: (point: ValuePoint) => void;
 }) {
 	const { isApi, marker, lineWidth } = series.pricing;
 	return (
@@ -141,7 +145,12 @@ export function SeriesLine({
 					className="group cursor-pointer outline-none"
 					onMouseEnter={() => onHover(p)}
 					onMouseLeave={() => onHover(null)}
-					onClick={() => onHover(p)}
+					onClick={() => onPin(p)}
+					onKeyDown={(event) => {
+						if (event.key !== "Enter" && event.key !== " ") return;
+						event.preventDefault();
+						onPin(p);
+					}}
 					onFocus={() => onHover(p)}
 					onBlur={() => onHover(null)}
 				>
@@ -156,7 +165,7 @@ export function SeriesLine({
 							marker,
 							x(p.costPerTaskUsd),
 							y(p.intelligence),
-							hovered === p ? 6 : 4,
+							activePoint === p ? 6 : 4,
 						)}
 						fill={isApi ? "var(--bg)" : series.color}
 						stroke={series.color}

@@ -2,6 +2,7 @@ import {
 	type RefObject,
 	useCallback,
 	useEffect,
+	useEffectEvent,
 	useMemo,
 	useReducer,
 	useRef,
@@ -31,6 +32,7 @@ import {
 } from "./geometry";
 import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
 import { PointTooltip } from "./PointTooltip";
+import { usePointDetails } from "./pointDetails";
 import { buildSeries, groupByModel, modelEnd } from "./series";
 
 /**
@@ -45,11 +47,25 @@ function isChartEscape(event: KeyboardEvent, chart: HTMLElement | null) {
 	);
 }
 
-/** Shared label and legend highlight; Escape clears a pinned model. */
-function useModelHighlight(
+/** While `enabled`, Escape meant for the chart calls `onEscape`. */
+function useChartEscape(
 	chart: RefObject<HTMLElement | null>,
-	plotted: ReadonlySet<FamilyId>,
+	enabled: boolean,
+	onEscape: () => void,
 ) {
+	const handleEscape = useEffectEvent(onEscape);
+	useEffect(() => {
+		if (!enabled) return;
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (isChartEscape(event, chart.current)) handleEscape();
+		};
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, [enabled, chart]);
+}
+
+/** Shared label and legend highlight. */
+function useModelHighlight(plotted: ReadonlySet<FamilyId>) {
 	const [highlight, dispatch] = useReducer(updateHighlight, NO_HIGHLIGHT);
 	const [prunedFor, setPrunedFor] = useState(plotted);
 	if (prunedFor !== plotted) {
@@ -57,15 +73,6 @@ function useModelHighlight(
 		setPrunedFor(plotted);
 		dispatch({ type: "prune", plotted });
 	}
-	const hasPin = highlight.pinned !== null;
-	useEffect(() => {
-		if (!hasPin) return;
-		const onKeyDown = (event: KeyboardEvent) => {
-			if (isChartEscape(event, chart.current)) dispatch({ type: "clear" });
-		};
-		window.addEventListener("keydown", onKeyDown);
-		return () => window.removeEventListener("keydown", onKeyDown);
-	}, [hasPin, chart]);
 	return [highlight, dispatch] as const;
 }
 
@@ -96,11 +103,18 @@ export function ValueChart({
 }) {
 	const { ref, element, size } = useChartRef();
 	const { width } = size;
-	const [hovered, setHovered] = useState<ValuePoint | null>(null);
+	const [details, dispatchDetails] = usePointDetails(points);
+	const activePoint = details?.point ?? null;
 	const series = useMemo(() => buildSeries(points), [points]);
 	const models = useMemo(() => groupByModel(series), [series]);
 	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
-	const [shown, dispatchHighlight] = useModelHighlight(element, plotted);
+	const [shown, dispatchHighlight] = useModelHighlight(plotted);
+	// Escape closes a point's details first, then a pinned model.
+	useChartEscape(element, activePoint !== null || shown.pinned !== null, () =>
+		activePoint
+			? dispatchDetails({ type: "close" })
+			: dispatchHighlight({ type: "clear" }),
+	);
 	const layout = chartLayout(size, { labels: showLabels });
 	const { height, margin } = layout;
 
@@ -129,10 +143,10 @@ export function ValueChart({
 			})
 		: [];
 	const highlighted = highlightedModel(shown);
-	const activeModel = hovered?.benchmark.family ?? highlighted;
+	const activeModel = activePoint?.benchmark.family ?? highlighted;
 	const dim = (id: string, modelId: FamilyId) =>
-		hovered
-			? hovered.seriesId !== id
+		activePoint
+			? activePoint.seriesId !== id
 			: highlighted !== null && highlighted !== modelId;
 
 	return (
@@ -156,10 +170,10 @@ export function ValueChart({
 				{showPareto && (
 					<ParetoLine points={paretoFrontier(points)} x={x} y={y} />
 				)}
-				{hovered && (
+				{activePoint && (
 					<Crosshair
-						point={hovered}
-						color={familyColor(hovered.benchmark.family)}
+						point={activePoint}
+						color={familyColor(activePoint.benchmark.family)}
 						x={x}
 						y={y}
 						layout={layout}
@@ -172,9 +186,10 @@ export function ValueChart({
 						series={s}
 						x={x}
 						y={y}
-						hovered={hovered}
+						activePoint={activePoint}
 						dimmed={dim(s.id, s.modelId)}
-						onHover={setHovered}
+						onHover={(point) => dispatchDetails({ type: "hover", point })}
+						onPin={(point) => dispatchDetails({ type: "togglePin", point })}
 					/>
 				))}
 				<ModelTags
@@ -187,11 +202,16 @@ export function ValueChart({
 					onHighlight={dispatchHighlight}
 				/>
 			</svg>
-			{hovered && (
+			{details && (
 				<PointTooltip
-					point={hovered}
-					anchor={{ x: x(hovered.costPerTaskUsd), y: y(hovered.intelligence) }}
+					point={details.point}
+					anchor={{
+						x: x(details.point.costPerTaskUsd),
+						y: y(details.point.intelligence),
+					}}
 					bounds={{ width, height }}
+					pinned={details.pinned}
+					onClose={() => dispatchDetails({ type: "close" })}
 				/>
 			)}
 			{layout.compact && (
