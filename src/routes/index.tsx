@@ -103,7 +103,9 @@ function ValueView() {
 		const { downloadChartPng } = await import("#/lib/exportPng");
 		await downloadChartPng({
 			chart,
-			legend: <PricingKey pricings={[...styles.values()]} />,
+			legend: (
+				<PricingKey pricings={[...styles.values()]} className="justify-end" />
+			),
 			title: CHART_TITLE,
 			fileName: "slopsubs-effective-cost.png",
 		});
