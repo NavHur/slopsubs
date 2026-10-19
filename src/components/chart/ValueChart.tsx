@@ -1,4 +1,12 @@
-import { useEffect, useMemo, useReducer, useState } from "react";
+import {
+	type RefObject,
+	useCallback,
+	useEffect,
+	useMemo,
+	useReducer,
+	useRef,
+	useState,
+} from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { paretoFrontier, spreadLabels } from "#/lib/chart";
@@ -20,25 +28,61 @@ import {
 	px,
 	xTicks,
 } from "./geometry";
-import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
+import {
+	highlightedModel,
+	NO_HIGHLIGHT,
+	plottedHighlight,
+	updateHighlight,
+} from "./highlight";
 import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
 
 /** Room left of the desktop key for the y-axis title it shares a row with. */
 const KEY_TITLE_ROOM_PX = 130;
 
+function isTextEntry(target: EventTarget | null): boolean {
+	return (
+		target instanceof HTMLElement &&
+		(target.isContentEditable || target.matches("input, textarea, select"))
+	);
+}
+
+/** Escape meant for a text field, or for the sheet that made the chart inert. */
+function escapeBelongsElsewhere(
+	event: KeyboardEvent,
+	chart: HTMLElement | null,
+): boolean {
+	return isTextEntry(event.target) || Boolean(chart?.closest("[inert]"));
+}
+
 /** Shared label and legend highlight; Escape clears a pinned model. */
-function useModelHighlight() {
+function useModelHighlight(chart: RefObject<HTMLElement | null>) {
 	const [highlight, dispatch] = useReducer(updateHighlight, NO_HIGHLIGHT);
 	const hasPin = highlight.pinned !== null;
 	useEffect(() => {
 		if (!hasPin) return;
 		const onKeyDown = (event: KeyboardEvent) => {
-			if (event.key === "Escape") dispatch({ type: "clear" });
+			if (event.key !== "Escape") return;
+			if (escapeBelongsElsewhere(event, chart.current)) return;
+			dispatch({ type: "clear" });
 		};
 		window.addEventListener("keydown", onKeyDown);
 		return () => window.removeEventListener("keydown", onKeyDown);
-	}, [hasPin]);
+	}, [hasPin, chart]);
 	return [highlight, dispatch] as const;
+}
+
+/** useElementSize's ref, plus a ref object so handlers can read the element. */
+function useChartRef() {
+	const [sizeRef, size] = useElementSize<HTMLDivElement>();
+	const element = useRef<HTMLDivElement | null>(null);
+	const ref = useCallback(
+		(node: HTMLDivElement | null) => {
+			element.current = node;
+			return sizeRef(node);
+		},
+		[sizeRef],
+	);
+	return { ref, element, size };
 }
 
 export function ValueChart({
@@ -50,12 +94,13 @@ export function ValueChart({
 	scale: AxisScale;
 	showPareto: boolean;
 }) {
-	const [ref, size] = useElementSize<HTMLDivElement>();
+	const { ref, element, size } = useChartRef();
 	const { width } = size;
 	const [hovered, setHovered] = useState<ValuePoint | null>(null);
-	const [highlight, dispatchHighlight] = useModelHighlight();
+	const [highlight, dispatchHighlight] = useModelHighlight(element);
 	const series = useMemo(() => buildSeries(points), [points]);
 	const models = useMemo(() => groupByModel(series), [series]);
+	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
 	const layout = chartLayout(size);
 	const { height, margin } = layout;
 
@@ -83,20 +128,22 @@ export function ValueChart({
 				top: margin.top,
 				bottom: height - margin.bottom,
 			});
-	const focusModel = highlightedModel(highlight);
-	const activeModel = hovered?.benchmark.family ?? focusModel;
+	const shown = plottedHighlight(highlight, plotted);
+	const highlighted = highlightedModel(shown);
+	const activeModel = hovered?.benchmark.family ?? highlighted;
 	const dim = (id: string, modelId: FamilyId) =>
 		hovered
 			? hovered.seriesId !== id
-			: focusModel !== null && focusModel !== modelId;
+			: highlighted !== null && highlighted !== modelId;
 	const pricings = pricingKey(series);
 
 	return (
 		<div ref={ref} className="relative lg:min-h-0 lg:flex-1">
+			{/* biome-ignore lint/a11y/useSemanticElements: an SVG root cannot be a fieldset; role=img would hide the buttons inside */}
 			<svg
 				width={width}
 				height={height}
-				role="img"
+				role="group"
 				aria-label="Effective cost per task versus intelligence index"
 				className="block select-none"
 			>
@@ -128,7 +175,7 @@ export function ValueChart({
 					x={x}
 					right={right}
 					activeModel={activeModel}
-					pinnedModel={highlight.pinned}
+					pinnedModel={shown.pinned}
 					onHighlight={dispatchHighlight}
 				/>
 			</svg>
@@ -146,7 +193,7 @@ export function ValueChart({
 					<ModelLegend
 						models={models}
 						activeModel={activeModel}
-						pinnedModel={highlight.pinned}
+						pinnedModel={shown.pinned}
 						onHighlight={dispatchHighlight}
 					/>
 				</>

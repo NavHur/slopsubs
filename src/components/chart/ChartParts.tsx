@@ -14,7 +14,7 @@ import {
 	px,
 	type XScale,
 } from "./geometry";
-import type { HighlightEvent } from "./highlight";
+import type { HighlightEvent, PreviewSource } from "./highlight";
 import {
 	type ModelGroup,
 	modelEnd,
@@ -229,8 +229,10 @@ function ModelTag({
 	onHighlight: (event: HighlightEvent) => void;
 }) {
 	const modelId = model.id;
-	const preview = () => onHighlight({ type: "preview", modelId });
-	const endPreview = () => onHighlight({ type: "endPreview", modelId });
+	const preview = (source: PreviewSource) => () =>
+		onHighlight({ type: "preview", source, modelId });
+	const endPreview = (source: PreviewSource) => () =>
+		onHighlight({ type: "endPreview", source, modelId });
 	const toggle = () => onHighlight({ type: "toggle", modelId });
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: SVG has no native button; the label toggles its model's highlight
@@ -240,10 +242,10 @@ function ModelTag({
 			aria-pressed={pinned}
 			aria-label={`Highlight ${model.name}`}
 			opacity={dimmed ? 0.25 : 1}
-			onMouseEnter={preview}
-			onMouseLeave={endPreview}
-			onFocus={preview}
-			onBlur={endPreview}
+			onMouseEnter={preview("hover")}
+			onMouseLeave={endPreview("hover")}
+			onFocus={preview("focus")}
+			onBlur={endPreview("focus")}
 			onClick={toggle}
 			onKeyDown={(event) => {
 				if (event.key !== "Enter" && event.key !== " ") return;

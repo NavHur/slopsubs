@@ -2,20 +2,29 @@ import type { FamilyId } from "#/domain/model";
 
 /**
  * Which model the chart emphasizes. A click pins a model until it is
- * clicked again or cleared; hover and focus preview one on top of the pin.
+ * clicked again or cleared; hover and focus each preview one on top of it.
  */
 export type ModelHighlight = {
 	pinned: FamilyId | null;
-	preview: FamilyId | null;
+	hovered: FamilyId | null;
+	focused: FamilyId | null;
 };
 
+export type PreviewSource = "hover" | "focus";
+
 export type HighlightEvent =
-	| { type: "preview"; modelId: FamilyId }
-	| { type: "endPreview"; modelId: FamilyId }
+	| { type: "preview"; source: PreviewSource; modelId: FamilyId }
+	| { type: "endPreview"; source: PreviewSource; modelId: FamilyId }
 	| { type: "toggle"; modelId: FamilyId }
 	| { type: "clear" };
 
-export const NO_HIGHLIGHT: ModelHighlight = { pinned: null, preview: null };
+export const NO_HIGHLIGHT: ModelHighlight = {
+	pinned: null,
+	hovered: null,
+	focused: null,
+};
+
+const SOURCE_SLOT = { hover: "hovered", focus: "focused" } as const;
 
 export function updateHighlight(
 	state: ModelHighlight,
@@ -23,14 +32,11 @@ export function updateHighlight(
 ): ModelHighlight {
 	switch (event.type) {
 		case "preview":
-			return { ...state, preview: event.modelId };
+			return { ...state, [SOURCE_SLOT[event.source]]: event.modelId };
 		case "endPreview":
-			// A leave can arrive after focus already moved to another model.
-			return state.preview === event.modelId
-				? { ...state, preview: null }
-				: state;
+			return endPreview(state, event.source, event.modelId);
 		case "toggle":
-			// Unpinning also drops the preview so the clear shows while hovered.
+			// Unpinning also drops both previews so the clear shows while hovered.
 			return state.pinned === event.modelId
 				? NO_HIGHLIGHT
 				: { ...state, pinned: event.modelId };
@@ -39,6 +45,30 @@ export function updateHighlight(
 	}
 }
 
+/** A leave can arrive after that source already moved to another model. */
+function endPreview(
+	state: ModelHighlight,
+	source: PreviewSource,
+	modelId: FamilyId,
+): ModelHighlight {
+	const slot = SOURCE_SLOT[source];
+	return state[slot] === modelId ? { ...state, [slot]: null } : state;
+}
+
+/** The highlight with every model that is not plotted dropped. */
+export function plottedHighlight(
+	state: ModelHighlight,
+	plotted: ReadonlySet<FamilyId>,
+): ModelHighlight {
+	const keep = (id: FamilyId | null) =>
+		id !== null && plotted.has(id) ? id : null;
+	return {
+		pinned: keep(state.pinned),
+		hovered: keep(state.hovered),
+		focused: keep(state.focused),
+	};
+}
+
 export function highlightedModel(state: ModelHighlight): FamilyId | null {
-	return state.preview ?? state.pinned;
+	return state.hovered ?? state.focused ?? state.pinned;
 }
