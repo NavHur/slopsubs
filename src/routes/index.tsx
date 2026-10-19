@@ -9,7 +9,6 @@ import { SidePanel } from "#/components/SidePanel";
 import { benchmarks, plans, samples } from "#/data";
 import { USAGE_PROFILES } from "#/domain/model";
 import { valuePoints } from "#/domain/value";
-import { downloadChartPng } from "#/lib/exportPng";
 import {
 	DEFAULT_MODELS_VIEW,
 	hiddenReasoning,
@@ -63,12 +62,15 @@ function ValueView() {
 	const chart = (
 		<ValueChart points={points} scale={view.scale} showPareto={view.pareto} />
 	);
-	const downloadPng = () =>
-		downloadChartPng({
+	const downloadPng = async () => {
+		// Loaded on demand so visitors who never export skip the code.
+		const { downloadChartPng } = await import("#/lib/exportPng");
+		await downloadChartPng({
 			chart,
 			title: CHART_TITLE,
 			fileName: "slopsubs-effective-cost.png",
 		});
+	};
 
 	return (
 		<div className="flex min-h-dvh flex-col bg-bg text-fg lg:h-dvh">

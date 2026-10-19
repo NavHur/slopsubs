@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
+import { DEFAULT_HEIGHT } from "#/components/chart/geometry";
 
 /** The chart lays out at this size for export, whatever the screen size, so
- * phones get the labelled desktop layout too. Height matches the chart's
- * default so it is stable whether or not the host fills the screen. */
-const CHART_SIZE = { width: 1200, height: 620 };
+ * phones get the labelled desktop layout too. Height is the chart's default
+ * so it is stable whether or not the host fills the screen. */
+const CHART_SIZE = { width: 1200, height: DEFAULT_HEIGHT };
 const PADDING_PX = 32;
 const TITLE_BAND_PX = 40;
 const TITLE_FONT = '600 20px "DM Sans", sans-serif';
@@ -175,8 +176,12 @@ async function loadFontCss(): Promise<string> {
 	const dataUrls = new Map<string, Promise<string>>();
 	const faces = basicLatinFontFaces(css).map(async (face) => {
 		const url = fontUrl(face);
-		if (!dataUrls.has(url)) dataUrls.set(url, fetchDataUrl(url));
-		return face.replace(url, await (dataUrls.get(url) as Promise<string>));
+		let dataUrl = dataUrls.get(url);
+		if (!dataUrl) {
+			dataUrl = fetchDataUrl(url);
+			dataUrls.set(url, dataUrl);
+		}
+		return face.replace(url, await dataUrl);
 	});
 	return (await Promise.all(faces)).join("\n");
 }
