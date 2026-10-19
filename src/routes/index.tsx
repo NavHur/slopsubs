@@ -2,7 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { ValueChart } from "#/components/chart/ValueChart";
-import { DownloadPngButton, ThemeToggle } from "#/components/HeaderActions";
+import {
+	ChartSettingsMenu,
+	DownloadPngButton,
+	ThemeToggle,
+} from "#/components/HeaderActions";
 import { Segmented, Toggle } from "#/components/Segmented";
 import { FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
@@ -97,6 +101,12 @@ function ValueView() {
 						/>
 					</div>
 					<ThemeToggle />
+					<div className="max-sm:hidden">
+						<ChartSettingsMenu
+							labels={view.labels}
+							onLabelsChange={(labels) => update({ labels })}
+						/>
+					</div>
 					<button
 						type="button"
 						onClick={() => setPanelOpen(true)}
