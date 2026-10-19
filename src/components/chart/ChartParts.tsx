@@ -1,5 +1,5 @@
 import type { ScaleLinear } from "d3-scale";
-import type { CSSProperties } from "react";
+import { type CSSProperties, useEffect } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import type { LineLabel } from "#/lib/chart";
@@ -14,6 +14,7 @@ import {
 	px,
 	type XScale,
 } from "./geometry";
+import type { HighlightEvent, PreviewSource } from "./highlight";
 import {
 	type ModelGroup,
 	modelEnd,
@@ -181,14 +182,16 @@ export function ModelTags({
 	x,
 	right,
 	activeModel,
-	onFocus,
+	pinnedModel,
+	onHighlight,
 }: {
 	labels: readonly LineLabel[];
 	models: readonly ModelGroup[];
 	x: XScale;
 	right: number;
 	activeModel: FamilyId | null;
-	onFocus: (id: FamilyId | null) => void;
+	pinnedModel: FamilyId | null;
+	onHighlight: (event: HighlightEvent) => void;
 }) {
 	return labels.map((label) => {
 		const model = models.find((candidate) => candidate.id === label.id);
@@ -200,7 +203,8 @@ export function ModelTags({
 				from={[px(x(modelEnd(model).costPerTaskUsd)), label.anchorY]}
 				at={[right + 24, label.y]}
 				dimmed={activeModel !== null && activeModel !== model.id}
-				onFocus={onFocus}
+				pinned={pinnedModel === model.id}
+				onHighlight={onHighlight}
 			/>
 		);
 	});
@@ -208,26 +212,55 @@ export function ModelTags({
 
 const TAG_LOGO_SIZE = 14;
 
+/** Hover or focus previews the model; click, Enter or Space pins it. */
 function ModelTag({
 	model,
 	from,
 	at,
 	dimmed,
-	onFocus,
+	pinned,
+	onHighlight,
 }: {
 	model: ModelGroup;
 	from: [number, number];
 	at: [number, number];
 	dimmed: boolean;
-	onFocus: (id: FamilyId | null) => void;
+	pinned: boolean;
+	onHighlight: (event: HighlightEvent) => void;
 }) {
+	const modelId = model.id;
+	const preview = (source: PreviewSource) => () =>
+		onHighlight({ type: "preview", source, modelId });
+	const endPreview = (source: PreviewSource) => () =>
+		onHighlight({ type: "endPreview", source, modelId });
+	const toggle = () => onHighlight({ type: "toggle", modelId });
+	// An unmounted label never sends mouseleave or blur, so end its previews here.
+	useEffect(
+		() => () => {
+			onHighlight({ type: "endPreview", source: "hover", modelId });
+			onHighlight({ type: "endPreview", source: "focus", modelId });
+		},
+		[modelId, onHighlight],
+	);
 	return (
-		// biome-ignore lint/a11y/noStaticElementInteractions: hover-only emphasis; the data is also in the tooltip and sidebar
+		// biome-ignore lint/a11y/useSemanticElements: SVG has no native button; the label toggles its model's highlight
 		<g
+			role="button"
+			tabIndex={0}
+			aria-pressed={pinned}
+			aria-label={`Highlight ${model.name}`}
 			opacity={dimmed ? 0.25 : 1}
-			onMouseEnter={() => onFocus(model.id)}
-			onMouseLeave={() => onFocus(null)}
-			className="cursor-default transition-opacity"
+			onMouseEnter={preview("hover")}
+			onMouseLeave={endPreview("hover")}
+			onFocus={preview("focus")}
+			onBlur={endPreview("focus")}
+			onClick={toggle}
+			onKeyDown={(event) => {
+				if (event.key !== "Enter" && event.key !== " ") return;
+				event.preventDefault();
+				toggle();
+			}}
+			className="group cursor-pointer outline-none transition-opacity"
 			style={{ color: model.color }}
 		>
 			<line
@@ -248,7 +281,7 @@ function ModelTag({
 				y={at[1]}
 				dy="0.32em"
 				fill={model.color}
-				className="text-[13px] font-medium"
+				className="text-[13px] font-medium group-focus-visible:underline"
 			>
 				{model.name}
 			</text>
@@ -359,11 +392,13 @@ export function PricingKey({
 export function ModelLegend({
 	models,
 	activeModel,
-	onFocus,
+	pinnedModel,
+	onHighlight,
 }: {
 	models: readonly ModelGroup[];
 	activeModel: FamilyId | null;
-	onFocus: (id: FamilyId | null) => void;
+	pinnedModel: FamilyId | null;
+	onHighlight: (event: HighlightEvent) => void;
 }) {
 	return (
 		<ul className="mt-3 grid grid-cols-2 gap-x-3 gap-y-0.5 text-[14px] font-medium">
@@ -371,9 +406,9 @@ export function ModelLegend({
 				<li key={model.id} className="min-w-0">
 					<LegendButton
 						model={model}
-						active={activeModel === model.id}
+						pinned={pinnedModel === model.id}
 						muted={activeModel !== null && activeModel !== model.id}
-						onFocus={onFocus}
+						onHighlight={onHighlight}
 					/>
 				</li>
 			))}
@@ -383,20 +418,20 @@ export function ModelLegend({
 
 function LegendButton({
 	model,
-	active,
+	pinned,
 	muted,
-	onFocus,
+	onHighlight,
 }: {
 	model: ModelGroup;
-	active: boolean;
+	pinned: boolean;
 	muted: boolean;
-	onFocus: (id: FamilyId | null) => void;
+	onHighlight: (event: HighlightEvent) => void;
 }) {
 	return (
 		<button
 			type="button"
-			aria-pressed={active}
-			onClick={() => onFocus(active ? null : model.id)}
+			aria-pressed={pinned}
+			onClick={() => onHighlight({ type: "toggle", modelId: model.id })}
 			className="flex min-h-8 w-full items-center gap-2 text-left transition-opacity"
 			style={{ color: model.color, opacity: muted ? 0.4 : 1 }}
 		>

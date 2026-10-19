@@ -1,7 +1,16 @@
-import { useMemo, useState } from "react";
+import {
+	type RefObject,
+	useCallback,
+	useEffect,
+	useMemo,
+	useReducer,
+	useRef,
+	useState,
+} from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { paretoFrontier, spreadLabels } from "#/lib/chart";
+import { isTextEntryTarget } from "#/lib/textEntry";
 import { useElementSize } from "#/lib/useElementSize";
 import {
 	Axes,
@@ -20,10 +29,61 @@ import {
 	px,
 	xTicks,
 } from "./geometry";
+import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
 import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
 
 /** Room left of the desktop key for the y-axis title it shares a row with. */
 const KEY_TITLE_ROOM_PX = 130;
+
+/**
+ * Escape meant for the chart, not for a text field or for the sheet that made
+ * the chart inert.
+ */
+function isChartEscape(event: KeyboardEvent, chart: HTMLElement | null) {
+	return (
+		event.key === "Escape" &&
+		!isTextEntryTarget(event.target) &&
+		!chart?.closest("[inert]")
+	);
+}
+
+/** Shared label and legend highlight; Escape clears a pinned model. */
+function useModelHighlight(
+	chart: RefObject<HTMLElement | null>,
+	plotted: ReadonlySet<FamilyId>,
+) {
+	const [highlight, dispatch] = useReducer(updateHighlight, NO_HIGHLIGHT);
+	const [prunedFor, setPrunedFor] = useState(plotted);
+	if (prunedFor !== plotted) {
+		// Forget models that left the chart before this render commits.
+		setPrunedFor(plotted);
+		dispatch({ type: "prune", plotted });
+	}
+	const hasPin = highlight.pinned !== null;
+	useEffect(() => {
+		if (!hasPin) return;
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (isChartEscape(event, chart.current)) dispatch({ type: "clear" });
+		};
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, [hasPin, chart]);
+	return [highlight, dispatch] as const;
+}
+
+/** useElementSize's ref, plus a ref object so handlers can read the element. */
+function useChartRef() {
+	const [sizeRef, size] = useElementSize<HTMLDivElement>();
+	const element = useRef<HTMLDivElement | null>(null);
+	const ref = useCallback(
+		(node: HTMLDivElement | null) => {
+			element.current = node;
+			return sizeRef(node);
+		},
+		[sizeRef],
+	);
+	return { ref, element, size };
+}
 
 export function ValueChart({
 	points,
@@ -34,12 +94,13 @@ export function ValueChart({
 	scale: AxisScale;
 	showPareto: boolean;
 }) {
-	const [ref, size] = useElementSize<HTMLDivElement>();
+	const { ref, element, size } = useChartRef();
 	const { width } = size;
 	const [hovered, setHovered] = useState<ValuePoint | null>(null);
-	const [focusModel, setFocusModel] = useState<FamilyId | null>(null);
 	const series = useMemo(() => buildSeries(points), [points]);
 	const models = useMemo(() => groupByModel(series), [series]);
+	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
+	const [shown, dispatchHighlight] = useModelHighlight(element, plotted);
 	const layout = chartLayout(size);
 	const { height, margin } = layout;
 
@@ -67,19 +128,21 @@ export function ValueChart({
 				top: margin.top,
 				bottom: height - margin.bottom,
 			});
-	const activeModel = hovered?.benchmark.family ?? focusModel;
+	const highlighted = highlightedModel(shown);
+	const activeModel = hovered?.benchmark.family ?? highlighted;
 	const dim = (id: string, modelId: FamilyId) =>
 		hovered
 			? hovered.seriesId !== id
-			: focusModel !== null && focusModel !== modelId;
+			: highlighted !== null && highlighted !== modelId;
 	const pricings = pricingKey(series);
 
 	return (
 		<div ref={ref} className="relative lg:min-h-0 lg:flex-1">
+			{/* biome-ignore lint/a11y/useSemanticElements: an SVG root cannot be a fieldset; role=img would hide the buttons inside */}
 			<svg
 				width={width}
 				height={height}
-				role="img"
+				role="group"
 				aria-label="Effective cost per task versus intelligence index"
 				className="block select-none"
 			>
@@ -111,7 +174,8 @@ export function ValueChart({
 					x={x}
 					right={right}
 					activeModel={activeModel}
-					onFocus={setFocusModel}
+					pinnedModel={shown.pinned}
+					onHighlight={dispatchHighlight}
 				/>
 			</svg>
 			{hovered && (
@@ -128,7 +192,8 @@ export function ValueChart({
 					<ModelLegend
 						models={models}
 						activeModel={activeModel}
-						onFocus={setFocusModel}
+						pinnedModel={shown.pinned}
+						onHighlight={dispatchHighlight}
 					/>
 				</>
 			) : (

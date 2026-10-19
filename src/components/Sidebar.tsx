@@ -15,6 +15,7 @@ import {
 	familyName,
 } from "#/lib/families";
 import { formatMultiple } from "#/lib/format";
+import { isTextEntryTarget } from "#/lib/textEntry";
 import {
 	allSelected,
 	COVERED_FAMILIES,
@@ -189,19 +190,13 @@ function UnmeasuredPlans({ plans }: { plans: readonly Plan[] }) {
 	);
 }
 
-/** Whether the keydown target is a field the user is typing into. */
-function isTypingTarget(target: EventTarget | null): boolean {
-	if (!(target instanceof HTMLElement)) return false;
-	return target.isContentEditable || target.closest("input, textarea") !== null;
-}
-
 /** Whether a "/" keydown should focus `input`, rather than being typed. */
 function isSlashShortcut(
 	event: KeyboardEvent,
 	input: HTMLInputElement | null,
 ): boolean {
 	if (event.key !== "/" || event.metaKey || event.ctrlKey) return false;
-	if (isTypingTarget(event.target)) return false;
+	if (isTextEntryTarget(event.target)) return false;
 	// The sidebar is hidden on phones until the sheet opens.
 	return input?.checkVisibility() === true;
 }
