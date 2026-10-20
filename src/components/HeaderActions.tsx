@@ -79,6 +79,11 @@ export function DownloadPngButton({
 	);
 }
 
+/** Whether an event's target sits inside `root`. */
+function isInside(root: Element | null, target: EventTarget | null) {
+	return target instanceof Node && !!root?.contains(target);
+}
+
 /**
  * Open state for a disclosure that closes on Escape (refocusing its trigger),
  * a press outside it, or focus leaving it.
@@ -90,9 +95,7 @@ function useDisclosure() {
 	useEffect(() => {
 		if (!open) return;
 		const closeOutside = (event: Event) => {
-			if (event.target instanceof Node && root.current?.contains(event.target))
-				return;
-			setOpen(false);
+			if (!isInside(root.current, event.target)) setOpen(false);
 		};
 		const onKeyDown = (event: KeyboardEvent) => {
 			if (event.key !== "Escape") return;
