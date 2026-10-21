@@ -25,6 +25,8 @@ export const ViewSearch = z.object({
 	scale: z.enum(["log", "linear"]).default("log"),
 	pareto: z.boolean().default(false),
 	api: z.boolean().default(true),
+	/** Model names at the right end of each line; off gives the plot more room. */
+	labels: z.boolean().default(true),
 	plans: z.array(z.string()).optional(),
 	families: z.array(z.string()).optional(),
 	hideReasoning: z.array(z.enum(REASONING_LEVELS)).optional(),

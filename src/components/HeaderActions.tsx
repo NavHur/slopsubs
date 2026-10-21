@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { toggleTheme } from "#/lib/theme";
 
 const HEADER_BUTTON =
@@ -75,6 +75,124 @@ export function DownloadPngButton({
 				<path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
 			</Icon>
 			<span aria-live="polite">{STATUS_TEXT[status]}</span>
+		</button>
+	);
+}
+
+/** Whether an event's target sits inside `root`. */
+function isInside(root: Element | null, target: EventTarget | null) {
+	return target instanceof Node && !!root?.contains(target);
+}
+
+/**
+ * Open state for a disclosure that closes on Escape (refocusing its trigger),
+ * a press outside it, or focus leaving it.
+ */
+function useDisclosure() {
+	const [open, setOpen] = useState(false);
+	const root = useRef<HTMLDivElement>(null);
+	const trigger = useRef<HTMLButtonElement>(null);
+	useEffect(() => {
+		if (!open) return;
+		const closeOutside = (event: Event) => {
+			if (!isInside(root.current, event.target)) setOpen(false);
+		};
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (event.key !== "Escape") return;
+			// Stop at the document so the chart's window listener keeps its pin.
+			event.stopPropagation();
+			setOpen(false);
+			trigger.current?.focus();
+		};
+		document.addEventListener("pointerdown", closeOutside);
+		document.addEventListener("focusin", closeOutside);
+		document.addEventListener("keydown", onKeyDown);
+		return () => {
+			document.removeEventListener("pointerdown", closeOutside);
+			document.removeEventListener("focusin", closeOutside);
+			document.removeEventListener("keydown", onKeyDown);
+		};
+	}, [open]);
+	return { open, setOpen, root, trigger };
+}
+
+/** The ⋯ menu of display preferences; for now, the line labels. */
+export function ChartSettingsMenu({
+	labels,
+	onLabelsChange,
+}: {
+	labels: boolean;
+	onLabelsChange: (labels: boolean) => void;
+}) {
+	const { open, setOpen, root, trigger } = useDisclosure();
+	const panelId = useId();
+	return (
+		<div ref={root} className="relative">
+			<button
+				ref={trigger}
+				type="button"
+				aria-label="Chart settings"
+				title="Chart settings"
+				aria-expanded={open}
+				aria-controls={panelId}
+				onClick={() => setOpen(!open)}
+				className={`${HEADER_BUTTON} w-11`}
+			>
+				<Icon>
+					<circle cx="5" cy="12" r="1" />
+					<circle cx="12" cy="12" r="1" />
+					<circle cx="19" cy="12" r="1" />
+				</Icon>
+			</button>
+			<div
+				id={panelId}
+				hidden={!open}
+				className="absolute top-full right-0 z-20 mt-1 w-48 rounded-md border border-line bg-panel px-3 py-2.5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]"
+			>
+				<fieldset>
+					<legend className="pb-1 text-[11px] text-subtle">Line chart</legend>
+					<CheckButton
+						label="Labels"
+						checked={labels}
+						onChange={onLabelsChange}
+					/>
+				</fieldset>
+			</div>
+		</div>
+	);
+}
+
+/** A toggle row drawn as a checkbox, announced as a pressed button. */
+function CheckButton({
+	label,
+	checked,
+	onChange,
+}: {
+	label: string;
+	checked: boolean;
+	onChange: (checked: boolean) => void;
+}) {
+	return (
+		<button
+			type="button"
+			aria-pressed={checked}
+			onClick={() => onChange(!checked)}
+			className="group flex min-h-8 w-full items-center gap-2 text-[13px] text-muted transition-colors hover:text-fg aria-pressed:text-fg"
+		>
+			<span className="grid size-3.5 place-items-center rounded-[3px] border border-subtle group-aria-pressed:border-accent group-aria-pressed:bg-accent">
+				<svg
+					aria-hidden="true"
+					viewBox="0 0 24 24"
+					className="size-2.5 stroke-bg opacity-0 group-aria-pressed:opacity-100"
+					fill="none"
+					strokeWidth={3.5}
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				>
+					<path d="M20 6 9 17l-5-5" />
+				</svg>
+			</span>
+			{label}
 		</button>
 	);
 }

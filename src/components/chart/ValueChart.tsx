@@ -89,10 +89,12 @@ export function ValueChart({
 	points,
 	scale,
 	showPareto,
+	showLabels,
 }: {
 	points: readonly ValuePoint[];
 	scale: AxisScale;
 	showPareto: boolean;
+	showLabels: boolean;
 }) {
 	const { ref, element, size } = useChartRef();
 	const { width } = size;
@@ -101,7 +103,7 @@ export function ValueChart({
 	const models = useMemo(() => groupByModel(series), [series]);
 	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
 	const [shown, dispatchHighlight] = useModelHighlight(element, plotted);
-	const layout = chartLayout(size);
+	const layout = chartLayout(size, { labels: showLabels });
 	const { height, margin } = layout;
 
 	if (points.length === 0) {
@@ -117,9 +119,8 @@ export function ValueChart({
 	}
 
 	const { x, y, right } = makeScales(points, scale, width, layout);
-	const labels = layout.compact
-		? []
-		: spreadLabels({
+	const labels = layout.endLabels
+		? spreadLabels({
 				anchors: models.map((m) => ({
 					id: m.id,
 					anchorY: px(y(modelEnd(m).intelligence)),
@@ -127,7 +128,8 @@ export function ValueChart({
 				gap: LABEL_GAP,
 				top: margin.top,
 				bottom: height - margin.bottom,
-			});
+			})
+		: [];
 	const highlighted = highlightedModel(shown);
 	const activeModel = hovered?.benchmark.family ?? highlighted;
 	const dim = (id: string, modelId: FamilyId) =>

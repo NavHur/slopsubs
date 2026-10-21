@@ -36,6 +36,13 @@ describe("hiddenReasoning", () => {
 	});
 });
 
+describe("labels", () => {
+	it("shows the line labels unless the URL turns them off", () => {
+		expect(view({}).labels).toBe(true);
+		expect(view({ labels: false }).labels).toBe(false);
+	});
+});
+
 describe("isDefaultModelsView", () => {
 	it("holds for the default view and its explicit equivalent", () => {
 		const explicit = view({
