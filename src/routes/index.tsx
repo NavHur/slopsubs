@@ -102,7 +102,16 @@ function ValueView() {
 		// Loaded on demand so visitors who never export skip the code.
 		const { downloadChartPng } = await import("#/lib/exportPng");
 		await downloadChartPng({
-			chart,
+			// Labelled whatever the Labels setting: the image leaves the page,
+			// and colour alone cannot tell its models apart.
+			chart: (
+				<ValueChart
+					points={points}
+					scale={view.scale}
+					showPareto={view.pareto}
+					showLabels
+				/>
+			),
 			legend: (
 				<PricingKey pricings={[...styles.values()]} className="justify-end" />
 			),
