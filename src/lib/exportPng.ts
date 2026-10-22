@@ -3,8 +3,9 @@ import { createRoot } from "react-dom/client";
 import { DEFAULT_HEIGHT } from "#/components/chart/geometry";
 
 /** The chart lays out at this size for export, whatever the screen size, so
- * phones get the labelled desktop layout too. Height is the chart's default
- * so it is stable whether or not the host fills the screen. */
+ * phones export the wide desktop layout too, not their compact one. Height is
+ * the chart's default so it is stable whether or not the host fills the
+ * screen. */
 const CHART_SIZE = { width: 1200, height: DEFAULT_HEIGHT };
 const PADDING_PX = 32;
 const TITLE_FONT = '600 20px "DM Sans", sans-serif';
