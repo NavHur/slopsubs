@@ -23,7 +23,7 @@ export function PricingSwatch({ pricing }: { pricing: PricingStyle }) {
 				y1={middle}
 				y2={middle}
 				stroke="currentColor"
-				strokeWidth={pricing.isApi ? 1.25 : 2}
+				strokeWidth={pricing.lineWidth}
 				strokeDasharray={pricing.isApi ? API_DASH : undefined}
 				strokeDashoffset={pricing.isApi ? API_DASH_OFFSET : undefined}
 			/>

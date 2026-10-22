@@ -120,14 +120,14 @@ export function SeriesLine({
 	dimmed: boolean;
 	onHover: (point: ValuePoint | null) => void;
 }) {
-	const { isApi, marker } = series.pricing;
+	const { isApi, marker, lineWidth } = series.pricing;
 	return (
 		<g opacity={dimmed ? 0.15 : 1} className="transition-opacity">
 			<path
 				d={pathOf(series.points, x, y)}
 				fill="none"
 				stroke={series.color}
-				strokeWidth={isApi ? 1.25 : 2}
+				strokeWidth={lineWidth}
 				strokeDasharray={isApi ? API_DASH : undefined}
 				opacity={isApi ? 0.6 : 1}
 			/>

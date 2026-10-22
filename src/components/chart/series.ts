@@ -27,6 +27,8 @@ export type PricingStyle = {
 	label: string;
 	isApi: boolean;
 	marker: PointMarker;
+	/** Stroke width of the pricing's line, and of its key swatch. */
+	lineWidth: number;
 };
 
 /** One line on the chart: a model under one pricing. */
@@ -57,6 +59,7 @@ const API_STYLE: PricingStyle = {
 	label: "API",
 	isApi: true,
 	marker: "circle",
+	lineWidth: 1.25,
 };
 
 function pricingStyle(
@@ -70,6 +73,7 @@ function pricingStyle(
 		label: pricing.plan.label,
 		isApi: false,
 		marker: PLAN_MARKERS[index % PLAN_MARKERS.length],
+		lineWidth: 2,
 	};
 }
 
