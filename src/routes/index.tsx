@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
+import { PricingKey } from "#/components/chart/PricingKey";
+import { buildSeries, pricingStyles } from "#/components/chart/series";
 import { ValueChart } from "#/components/chart/ValueChart";
 import {
 	ChartSettingsMenu,
@@ -13,6 +15,7 @@ import { SidePanel } from "#/components/SidePanel";
 import { benchmarks, plans, samples } from "#/data";
 import { USAGE_PROFILES } from "#/domain/model";
 import { valuePoints } from "#/domain/value";
+import { formatDay } from "#/lib/format";
 import {
 	DEFAULT_MODELS_VIEW,
 	hiddenReasoning,
@@ -42,6 +45,28 @@ const SCALE_OPTIONS = [
 	{ value: "log", label: "Log" },
 ] as const satisfies readonly { value: AxisScale; label: string }[];
 
+function FooterLink({
+	href,
+	title,
+	children,
+}: {
+	href: string;
+	title?: string;
+	children: string;
+}) {
+	return (
+		<a
+			href={href}
+			title={title}
+			target="_blank"
+			rel="noreferrer"
+			className="underline decoration-dotted underline-offset-2 hover:text-fg"
+		>
+			{children}
+		</a>
+	);
+}
+
 function ValueView() {
 	const view = Route.useSearch();
 	const navigate = Route.useNavigate();
@@ -63,6 +88,8 @@ function ValueView() {
 		hiddenEfforts: hiddenReasoning(view),
 	});
 
+	const styles = pricingStyles(buildSeries(points));
+
 	const chart = (
 		<ValueChart
 			points={points}
@@ -76,6 +103,9 @@ function ValueView() {
 		const { downloadChartPng } = await import("#/lib/exportPng");
 		await downloadChartPng({
 			chart,
+			legend: (
+				<PricingKey pricings={[...styles.values()]} className="justify-end" />
+			),
 			title: CHART_TITLE,
 			fileName: "slopsubs-effective-cost.png",
 		});
@@ -119,7 +149,7 @@ function ValueView() {
 					</button>
 				</div>
 			</header>
-			<div className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_272px]">
+			<div className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_288px]">
 				<main
 					inert={panelOpen}
 					className="flex min-w-0 flex-col lg:overflow-y-auto"
@@ -160,22 +190,33 @@ function ValueView() {
 							</div>
 						</div>
 						{chart}
+						{/* From lg the side panel shows each plan's line style; the PNG draws its own key. */}
+						<PricingKey
+							pricings={[...styles.values()]}
+							className="mt-3 lg:hidden"
+						/>
 					</section>
-					<footer className="mt-auto flex flex-wrap justify-between gap-x-6 gap-y-1 border-t border-line px-4 py-3 text-[12px] leading-5 text-muted sm:px-7">
+					<footer className="mt-auto flex flex-wrap justify-between gap-x-6 border-t border-line px-4 py-3 text-[12px] leading-5 text-muted sm:px-7">
 						<span>
-							Benchmarks from Artificial Analysis (
-							{benchmarks.fetchedAt.slice(0, 10)}) · weekly caps from{" "}
-							<a
+							Data from{" "}
+							<FooterLink href="https://artificialanalysis.ai">
+								Artificial Analysis
+							</FooterLink>{" "}
+							· estimated caps from{" "}
+							<FooterLink
 								href="https://www.youtube.com/watch?v=nYA0yASgaZI"
-								target="_blank"
-								rel="noreferrer"
-								className="underline decoration-dotted underline-offset-2 hover:text-fg"
+								title="Weekly caps from Theo's numbers until we measure them"
 							>
-								Theo's numbers
-							</a>{" "}
-							until measured
+								Theo
+							</FooterLink>
 						</span>
-						<span>Effective cost = API cost ÷ value multiple</span>
+						<time
+							dateTime={benchmarks.fetchedAt}
+							title="When the benchmarks were fetched"
+							className="text-subtle"
+						>
+							Updated {formatDay(benchmarks.fetchedAt)}
+						</time>
 					</footer>
 				</main>
 				<SidePanel title="Plans & models" open={panelOpen} onClose={closePanel}>
@@ -183,7 +224,10 @@ function ValueView() {
 						plans={plans}
 						selected={planIds}
 						profile={profile}
+						styles={styles}
+						showApi={view.api}
 						onToggle={(id) => update({ plans: toggled(planIds, id) })}
+						onToggleApi={() => update({ api: !view.api })}
 					/>
 					<FamilyList
 						selected={families}

@@ -18,7 +18,6 @@ import {
 	ModelTags,
 	ParetoLine,
 	PointTooltip,
-	PricingKey,
 	SeriesLine,
 } from "./ChartParts";
 import {
@@ -30,10 +29,7 @@ import {
 	xTicks,
 } from "./geometry";
 import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
-import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
-
-/** Room left of the desktop key for the y-axis title it shares a row with. */
-const KEY_TITLE_ROOM_PX = 130;
+import { buildSeries, groupByModel, modelEnd } from "./series";
 
 /**
  * Escape meant for the chart, not for a text field or for the sheet that made
@@ -136,7 +132,6 @@ export function ValueChart({
 		hovered
 			? hovered.seriesId !== id
 			: highlighted !== null && highlighted !== modelId;
-	const pricings = pricingKey(series);
 
 	return (
 		<div ref={ref} className="relative lg:min-h-0 lg:flex-1">
@@ -188,24 +183,12 @@ export function ValueChart({
 					containerWidth={width}
 				/>
 			)}
-			{layout.compact ? (
-				<>
-					<PricingKey pricings={pricings} className="mt-3" />
-					<ModelLegend
-						models={models}
-						activeModel={activeModel}
-						pinnedModel={shown.pinned}
-						onHighlight={dispatchHighlight}
-					/>
-				</>
-			) : (
-				<PricingKey
-					pricings={pricings}
-					className="absolute top-0 justify-end"
-					style={{
-						right: width - right,
-						maxWidth: right - margin.left - KEY_TITLE_ROOM_PX,
-					}}
+			{layout.compact && (
+				<ModelLegend
+					models={models}
+					activeModel={activeModel}
+					pinnedModel={shown.pinned}
+					onHighlight={dispatchHighlight}
 				/>
 			)}
 		</div>

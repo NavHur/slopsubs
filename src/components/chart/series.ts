@@ -1,4 +1,4 @@
-import type { FamilyId } from "#/domain/model";
+import type { FamilyId, PlanId } from "#/domain/model";
 import type { Pricing, ValuePoint } from "#/domain/value";
 import { familyColor, familyName } from "#/lib/families";
 
@@ -17,12 +17,18 @@ export const PLAN_MARKERS = [
 ] as const;
 export type PointMarker = (typeof PLAN_MARKERS)[number];
 
+/** A pricing's identity: "api", or the subscription plan's id. */
+export type PricingId = PlanId | "api";
+
 /** How a line is paid for, and how the chart draws that. */
 export type PricingStyle = {
+	id: PricingId;
 	/** "API", or the subscription plan's label. */
 	label: string;
 	isApi: boolean;
 	marker: PointMarker;
+	/** Stroke width of the pricing's line, and of its key swatch. */
+	lineWidth: number;
 };
 
 /** One line on the chart: a model under one pricing. */
@@ -45,7 +51,16 @@ export type ModelGroup = {
 	series: [Series, ...Series[]];
 };
 
-const API_STYLE: PricingStyle = { label: "API", isApi: true, marker: "circle" };
+/** Dash pattern of API lines, which keep a hollow marker. */
+export const API_DASH = "3 4";
+
+const API_STYLE: PricingStyle = {
+	id: "api",
+	label: "API",
+	isApi: true,
+	marker: "circle",
+	lineWidth: 1.25,
+};
 
 function pricingStyle(
 	pricing: Pricing,
@@ -54,9 +69,11 @@ function pricingStyle(
 	if (pricing.kind === "api") return API_STYLE;
 	const index = planOrder.indexOf(pricing.plan.id);
 	return {
+		id: pricing.plan.id,
 		label: pricing.plan.label,
 		isApi: false,
 		marker: PLAN_MARKERS[index % PLAN_MARKERS.length],
+		lineWidth: 2,
 	};
 }
 
@@ -101,9 +118,11 @@ export function groupByModel(series: readonly Series[]): ModelGroup[] {
 	return [...groups.values()];
 }
 
-/** Each pricing on the chart once, in the order its lines appear. */
-export function pricingKey(series: readonly Series[]): PricingStyle[] {
-	return [...new Map(series.map((s) => [s.pricing.label, s.pricing])).values()];
+/** How each pricing on the chart is drawn, in the order its lines appear. */
+export function pricingStyles(
+	series: readonly Series[],
+): Map<PricingId, PricingStyle> {
+	return new Map(series.map((s) => [s.pricing.id, s.pricing]));
 }
 
 /** The model's line end furthest right, where its label's leader line starts. */

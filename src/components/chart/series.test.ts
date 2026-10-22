@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { BenchmarkPoint, FamilyId, Plan, PlanId } from "#/domain/model";
 import type { Pricing, ValuePoint } from "#/domain/value";
-import { buildSeries, groupByModel, modelEnd, pricingKey } from "./series";
+import { buildSeries, groupByModel, modelEnd, pricingStyles } from "./series";
 
 const haiku = "claude-haiku-5-5" as FamilyId;
 const opus = "claude-opus-5-5" as FamilyId;
@@ -79,7 +79,7 @@ const points = [
 
 describe("buildSeries", () => {
 	it("gives each plan its own marker and keeps API lines apart", () => {
-		const key = pricingKey(buildSeries(points));
+		const key = [...pricingStyles(buildSeries(points)).values()];
 		expect(key.map((s) => [s.label, s.isApi, s.marker])).toEqual([
 			["API", true, "circle"],
 			["Max 20x", false, "circle"],
@@ -91,6 +91,19 @@ describe("buildSeries", () => {
 		const labels = buildSeries(points).map((s) => s.label);
 		expect(labels).toContain("Haiku 5.5 · OpenCode Go");
 		expect(labels).toContain("Opus 5.5 · API");
+	});
+});
+
+describe("pricingStyles", () => {
+	it("finds each plan's line style by plan id, and the API's by api", () => {
+		const styles = pricingStyles(buildSeries(points));
+		expect(styles.get("api")?.isApi).toBe(true);
+		expect(styles.get("opencode-go" as PlanId)?.marker).toBe("square");
+	});
+
+	it("has no style for a plan without lines", () => {
+		const styles = pricingStyles(buildSeries(points));
+		expect(styles.has("claude-pro" as PlanId)).toBe(false);
 	});
 });
 
