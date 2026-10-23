@@ -5,7 +5,7 @@ export function Segmented<T extends string>({
 	onChange,
 }: {
 	label: string;
-	options: readonly { value: T; label: string; hint?: string }[];
+	options: readonly { value: T; label: string }[];
 	value: T;
 	onChange: (value: T) => void;
 }) {
@@ -16,7 +16,6 @@ export function Segmented<T extends string>({
 					key={option.value}
 					type="button"
 					aria-pressed={option.value === value}
-					title={option.hint}
 					onClick={() => onChange(option.value)}
 					className="whitespace-nowrap border-b border-transparent py-1 text-[13px] max-lg:min-h-11 text-muted transition-colors hover:text-fg aria-pressed:border-fg/60 aria-pressed:text-fg"
 				>
