@@ -1,15 +1,13 @@
 import { describe, expect, it } from "vitest";
-import {
-	type BenchmarkPoint,
-	type FamilyId,
-	type LimitSample,
-	type Plan,
-	type PlanId,
-	USAGE_PROFILES,
+import type {
+	BenchmarkPoint,
+	FamilyId,
+	LimitSample,
+	Plan,
+	PlanId,
 } from "./model";
 import { planCapacity, valueMultiple, valuePoints } from "./value";
 
-const [maxed, , light] = USAGE_PROFILES;
 const opus = "claude-opus-5-5" as FamilyId;
 const maxPlan = "claude-max-20x" as PlanId;
 
@@ -117,24 +115,17 @@ describe("planCapacity", () => {
 });
 
 describe("valueMultiple", () => {
-	it("scales with the share of the monthly usage used", () => {
-		const apiUsdPerMonth = 5200;
-		const full = valueMultiple({ plan, apiUsdPerMonth, profile: maxed });
-		expect(full).toBeCloseTo(5200 / 200);
-		expect(valueMultiple({ plan, apiUsdPerMonth, profile: light })).toBeCloseTo(
-			full * 0.2,
+	it("divides the monthly usage by the subscription price", () => {
+		expect(valueMultiple({ plan, apiUsdPerMonth: 5200 })).toBeCloseTo(
+			5200 / 200,
 		);
 	});
 
-	it("counts bundled API credit at the same usage share", () => {
+	it("counts bundled API credit as usage", () => {
 		const withCredit = { ...plan, includedApiCreditUsd: 200 };
 		expect(
-			valueMultiple({
-				plan: withCredit,
-				apiUsdPerMonth: 5200,
-				profile: light,
-			}),
-		).toBeCloseTo(((5200 + 200) * 0.2) / 200);
+			valueMultiple({ plan: withCredit, apiUsdPerMonth: 5200 }),
+		).toBeCloseTo((5200 + 200) / 200);
 	});
 });
 
@@ -147,7 +138,6 @@ describe("valuePoints", () => {
 			families: [opus],
 			plans: [plan],
 			samples: [sample(0, 10, 120)],
-			profile: maxed,
 			showApi: true,
 			hiddenEfforts: [],
 		});
@@ -168,7 +158,6 @@ describe("valuePoints", () => {
 			families: [opus],
 			plans: [],
 			samples: [],
-			profile: maxed,
 			showApi: true,
 			hiddenEfforts: ["none", "max"],
 		});
@@ -181,7 +170,6 @@ describe("valuePoints", () => {
 			families: [opus],
 			plans: [],
 			samples: [],
-			profile: maxed,
 			showApi: true,
 			hiddenEfforts: [],
 		});
@@ -198,7 +186,6 @@ describe("valuePoints", () => {
 			families: [opus],
 			plans: [plan],
 			samples: [],
-			profile: maxed,
 			showApi: false,
 			hiddenEfforts: [],
 		});
@@ -211,7 +198,6 @@ describe("valuePoints", () => {
 			families: [opus],
 			plans: [{ ...plan, maxEffortByFamily: { [opus]: "low" } }],
 			samples: [sample(0, 10, 120)],
-			profile: maxed,
 			showApi: true,
 			hiddenEfforts: [],
 		});
@@ -242,7 +228,6 @@ describe("valuePoints", () => {
 			families: [opus, haiku],
 			plans: [goPlan],
 			samples: [],
-			profile: maxed,
 			showApi: false,
 			hiddenEfforts: [],
 		});

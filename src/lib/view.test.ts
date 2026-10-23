@@ -43,6 +43,13 @@ describe("labels", () => {
 	});
 });
 
+describe("old shared links", () => {
+	it("still load when they carry the removed usage profile", () => {
+		expect(() => view({ profile: "heavy" })).not.toThrow();
+		expect(view({ profile: "heavy" })).toEqual(view({}));
+	});
+});
+
 describe("isDefaultModelsView", () => {
 	it("holds for the default view and its explicit equivalent", () => {
 		const explicit = view({
