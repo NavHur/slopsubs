@@ -21,3 +21,28 @@ const DAY_FORMAT = new Intl.DateTimeFormat("en-US", {
 export function formatDay(iso: string): string {
 	return DAY_FORMAT.format(new Date(iso));
 }
+
+/** An intelligence index score, to the tenth the benchmark reports. */
+export function formatIntelligence(value: number): string {
+	return value.toFixed(1);
+}
+
+const compactCount = new Intl.NumberFormat("en-US", {
+	notation: "compact",
+	maximumSignificantDigits: 3,
+});
+
+/** Token counts at a glance: 850, 38.1K, 1.23M. */
+export function formatTokens(value: number): string {
+	return compactCount.format(value);
+}
+
+/**
+ * How a plan compares with paying per token for the same work, from its value
+ * multiple: "2.0× cheaper than API", "Same cost as API".
+ */
+export function formatApiComparison(valueMultiple: number): string {
+	const factor = formatMultiple(Math.max(valueMultiple, 1 / valueMultiple));
+	if (factor === formatMultiple(1)) return "Same cost as API";
+	return `${factor} ${valueMultiple > 1 ? "cheaper" : "pricier"} than API`;
+}

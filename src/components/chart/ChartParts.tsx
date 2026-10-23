@@ -1,20 +1,28 @@
 import type { ScaleLinear } from "d3-scale";
-import { useEffect } from "react";
+import { type FocusEvent, type KeyboardEvent, useEffect } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import type { LineLabel } from "#/lib/chart";
-import { familyLabId, familyName } from "#/lib/families";
+import { familyLabId } from "#/lib/families";
 import { formatUsd } from "#/lib/format";
 import { ProviderLogo } from "../ProviderLogo";
 import {
+	type AxisReadouts,
 	type AxisScale,
 	type ChartLayout,
 	markerPath,
+	overlaps,
 	pathOf,
 	px,
+	type Rect,
+	X_TICK_LABEL_DROP_PX,
 	type XScale,
+	xTickLabelBox,
+	Y_TICK_LABEL_GAP_PX,
+	yTickLabelBox,
 } from "./geometry";
 import type { HighlightEvent, PreviewSource } from "./highlight";
+import type { PointDetailsEvent } from "./pointDetails";
 import { API_DASH, type ModelGroup, modelEnd, type Series } from "./series";
 
 export function Axes({
@@ -24,6 +32,7 @@ export function Axes({
 	ticks,
 	scale,
 	layout,
+	readouts,
 }: {
 	x: XScale;
 	y: ScaleLinear<number, number>;
@@ -31,9 +40,14 @@ export function Axes({
 	ticks: number[];
 	scale: AxisScale;
 	layout: ChartLayout;
+	/** The shown point's values, which hide the tick labels they cover. */
+	readouts?: AxisReadouts;
 }) {
 	const { margin, height } = layout;
 	const bottom = height - margin.bottom;
+	const covered = (label: Rect) =>
+		readouts !== undefined &&
+		(overlaps(label, readouts.x) || overlaps(label, readouts.y));
 	return (
 		<g className="fill-muted text-[12px] tabular-nums">
 			{y.ticks(layout.compact ? 5 : 6).map((t) => (
@@ -46,9 +60,16 @@ export function Axes({
 						className="stroke-grid"
 						strokeDasharray="2 6"
 					/>
-					<text x={margin.left - 12} y={px(y(t))} dy="0.32em" textAnchor="end">
-						{t}
-					</text>
+					{!covered(yTickLabelBox(String(t), y(t), layout)) && (
+						<text
+							x={margin.left - Y_TICK_LABEL_GAP_PX}
+							y={px(y(t))}
+							dy="0.32em"
+							textAnchor="end"
+						>
+							{t}
+						</text>
+					)}
 				</g>
 			))}
 			<line
@@ -58,11 +79,18 @@ export function Axes({
 				y2={bottom}
 				className="stroke-grid"
 			/>
-			{ticks.map((t) => (
-				<text key={t} x={px(x(t))} y={bottom + 22} textAnchor="middle">
-					{formatUsd(t)}
-				</text>
-			))}
+			{ticks
+				.filter((t) => !covered(xTickLabelBox(formatUsd(t), x(t), layout)))
+				.map((t) => (
+					<text
+						key={t}
+						x={px(x(t))}
+						y={bottom + X_TICK_LABEL_DROP_PX}
+						textAnchor="middle"
+					>
+						{formatUsd(t)}
+					</text>
+				))}
 			<text x={margin.left} y={margin.top - 12} className="fill-subtle">
 				Intelligence index
 			</text>
@@ -105,22 +133,52 @@ function pointLabel(series: Series, point: ValuePoint): string {
 	return `${series.label}, ${point.benchmark.effortLabel}, effective cost per task ${formatUsd(point.costPerTaskUsd)}, intelligence ${point.intelligence.toFixed(1)}`;
 }
 
+/** A key handler that runs `action` on Enter or Space, as a button does. */
+function onActivationKey(action: () => void) {
+	return (event: KeyboardEvent) => {
+		if (event.key !== "Enter" && event.key !== " ") return;
+		event.preventDefault();
+		action();
+	};
+}
+
+/**
+ * A focus handler that runs `action` for keyboard focus only, since a mouse
+ * press focuses the point too.
+ */
+function onKeyboardFocus(action: () => void) {
+	return (event: FocusEvent) => {
+		if (event.currentTarget.matches(":focus-visible")) action();
+	};
+}
+
+/**
+ * Hover or focus previews a point's details; click, Enter or Space pins them,
+ * or unpins them.
+ */
 export function SeriesLine({
 	series,
 	x,
 	y,
-	hovered,
+	activePoint,
 	dimmed,
-	onHover,
+	onDetails,
 }: {
 	series: Series;
 	x: XScale;
 	y: ScaleLinear<number, number>;
-	hovered: ValuePoint | null;
+	/** The point whose details show, drawn larger. */
+	activePoint: ValuePoint | null;
 	dimmed: boolean;
-	onHover: (point: ValuePoint | null) => void;
+	onDetails: (event: PointDetailsEvent) => void;
 }) {
 	const { isApi, marker, lineWidth } = series.pricing;
+	const preview = (source: PreviewSource, point: ValuePoint) => () =>
+		onDetails({ type: "preview", source, point });
+	const endPreview = (source: PreviewSource, point: ValuePoint) => () =>
+		onDetails({ type: "endPreview", source, point });
+	const pin = (point: ValuePoint) => () =>
+		onDetails({ type: "togglePin", point });
 	return (
 		<g opacity={dimmed ? 0.15 : 1} className="transition-opacity">
 			<path
@@ -139,11 +197,12 @@ export function SeriesLine({
 					tabIndex={0}
 					aria-label={pointLabel(series, p)}
 					className="group cursor-pointer outline-none"
-					onMouseEnter={() => onHover(p)}
-					onMouseLeave={() => onHover(null)}
-					onClick={() => onHover(p)}
-					onFocus={() => onHover(p)}
-					onBlur={() => onHover(null)}
+					onMouseEnter={preview("hover", p)}
+					onMouseLeave={endPreview("hover", p)}
+					onClick={pin(p)}
+					onKeyDown={onActivationKey(pin(p))}
+					onFocus={onKeyboardFocus(preview("focus", p))}
+					onBlur={endPreview("focus", p)}
 				>
 					<circle
 						cx={px(x(p.costPerTaskUsd))}
@@ -156,7 +215,7 @@ export function SeriesLine({
 							marker,
 							x(p.costPerTaskUsd),
 							y(p.intelligence),
-							hovered === p ? 6 : 4,
+							activePoint === p ? 6 : 4,
 						)}
 						fill={isApi ? "var(--bg)" : series.color}
 						stroke={series.color}
@@ -280,63 +339,6 @@ function ModelTag({
 				{model.name}
 			</text>
 		</g>
-	);
-}
-
-const TOOLTIP_HALF_WIDTH_PX = 120;
-/** Room the tooltip needs above its point before it flips below. */
-const TOOLTIP_FLIP_PX = 140;
-
-export function PointTooltip({
-	point,
-	left,
-	top,
-	containerWidth,
-}: {
-	point: ValuePoint;
-	left: number;
-	top: number;
-	containerWidth: number;
-}) {
-	const { benchmark, pricing } = point;
-	const clampedLeft = Math.min(
-		Math.max(left, TOOLTIP_HALF_WIDTH_PX),
-		containerWidth - TOOLTIP_HALF_WIDTH_PX,
-	);
-	const below = top < TOOLTIP_FLIP_PX;
-	return (
-		<div
-			className={`pointer-events-none absolute z-10 w-60 -translate-x-1/2 rounded-md border border-line bg-panel px-3 py-2 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)] ${below ? "translate-y-[14px]" : "-translate-y-[calc(100%+14px)]"}`}
-			style={{ left: clampedLeft, top }}
-		>
-			<div className="font-semibold text-fg">
-				{familyName(benchmark.family)}{" "}
-				<span className="font-normal text-muted">
-					· {benchmark.effortLabel}
-				</span>
-			</div>
-			<div className="text-muted">
-				{pricing.kind === "api" ? "Pay per token (API)" : pricing.plan.label}
-			</div>
-			<dl className="mt-1 grid grid-cols-[1fr_auto] gap-x-3 tabular-nums">
-				<dt className="text-muted">Effective / task</dt>
-				<dd className="text-right text-fg">
-					{formatUsd(point.costPerTaskUsd)}
-				</dd>
-				{pricing.kind === "plan" && (
-					<>
-						<dt className="text-muted">API / task</dt>
-						<dd className="text-right">
-							{formatUsd(benchmark.costPerTaskUsd ?? 0)}
-						</dd>
-						<dt className="text-muted">Value multiple</dt>
-						<dd className="text-right">{pricing.valueMultiple.toFixed(1)}×</dd>
-					</>
-				)}
-				<dt className="text-muted">Intelligence</dt>
-				<dd className="text-right">{point.intelligence.toFixed(1)}</dd>
-			</dl>
-		</div>
 	);
 }
 

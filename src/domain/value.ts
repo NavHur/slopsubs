@@ -101,18 +101,20 @@ export type Pricing =
 	| { kind: "api" }
 	| { kind: "plan"; plan: Plan; valueMultiple: number };
 
+/** A benchmark with both measures, so it can be plotted. */
+export type PlottableBenchmark = BenchmarkPoint & {
+	intelligence: number;
+	/** At API prices. */
+	costPerTaskUsd: number;
+};
+
 export type ValuePoint = {
 	/** Stable key for one line on the chart: a family under one pricing. */
 	seriesId: string;
-	benchmark: BenchmarkPoint;
+	benchmark: PlottableBenchmark;
 	intelligence: number;
 	costPerTaskUsd: number;
 	pricing: Pricing;
-};
-
-type PlottableBenchmark = BenchmarkPoint & {
-	intelligence: number;
-	costPerTaskUsd: number;
 };
 
 function isPlottable(point: BenchmarkPoint): point is PlottableBenchmark {

@@ -167,3 +167,172 @@ export function markerPath(
 		}
 	}
 }
+
+export type Box = { width: number; height: number };
+
+/** A span of `size` placed as near `start` as fits between `min` and `max`. */
+export function clampSpan(
+	start: number,
+	size: number,
+	min: number,
+	max: number,
+): number {
+	return Math.max(min, Math.min(start, max - size));
+}
+
+/** Space between a point and its tooltip. */
+const TOOLTIP_GAP_PX = 14;
+/** Closest a tooltip comes to the chart's edge. */
+const TOOLTIP_EDGE_PX = 8;
+
+type Placement = { left: number; top: number };
+
+/**
+ * Where a tooltip sits so it never covers its point: centred above it, else
+ * below, else beside it. When none of those fit inside `bounds` it takes the
+ * roomier of above and below and spills out of the chart.
+ */
+export function tooltipPlacement(
+	anchor: { x: number; y: number },
+	tooltip: Box,
+	bounds: Box,
+): Placement {
+	const left = clampSpan(
+		anchor.x - tooltip.width / 2,
+		tooltip.width,
+		TOOLTIP_EDGE_PX,
+		bounds.width - TOOLTIP_EDGE_PX,
+	);
+	const above = anchor.y - TOOLTIP_GAP_PX - tooltip.height;
+	const below = anchor.y + TOOLTIP_GAP_PX;
+	if (above >= TOOLTIP_EDGE_PX) return { left, top: above };
+	if (below + tooltip.height <= bounds.height - TOOLTIP_EDGE_PX) {
+		return { left, top: below };
+	}
+	const roomier = anchor.y > bounds.height / 2 ? above : below;
+	return besidePlacement(anchor, tooltip, bounds) ?? { left, top: roomier };
+}
+
+function besidePlacement(
+	anchor: { x: number; y: number },
+	tooltip: Box,
+	bounds: Box,
+): Placement | null {
+	const top = clampSpan(
+		anchor.y - tooltip.height / 2,
+		tooltip.height,
+		TOOLTIP_EDGE_PX,
+		bounds.height - TOOLTIP_EDGE_PX,
+	);
+	const right = anchor.x + TOOLTIP_GAP_PX;
+	if (right + tooltip.width <= bounds.width - TOOLTIP_EDGE_PX) {
+		return { left: right, top };
+	}
+	const left = anchor.x - TOOLTIP_GAP_PX - tooltip.width;
+	return left >= TOOLTIP_EDGE_PX ? { left, top } : null;
+}
+
+export type Rect = { left: number; top: number; width: number; height: number };
+
+/** Whether two boxes come within `gap` px of each other. */
+export function overlaps(a: Rect, b: Rect, gap = 2): boolean {
+	return (
+		a.left < b.left + b.width + gap &&
+		b.left < a.left + a.width + gap &&
+		a.top < b.top + b.height + gap &&
+		b.top < a.top + a.height + gap
+	);
+}
+
+/**
+ * Width of a short tabular label at the axis font size.
+ * ceiling: estimated, not measured; measure the text if labels grow longer
+ * than a price or a score, or the axis font changes.
+ */
+const textWidth = (text: string) => text.length * 7;
+const TICK_LABEL_HEIGHT_PX = 16;
+/** Height of the axis text above its baseline; tracks the 12px axis font. */
+const TICK_LABEL_ASCENT_PX = 12;
+/** Baseline of the x-axis tick labels below the plot. */
+export const X_TICK_LABEL_DROP_PX = 22;
+/** Gap between the y-axis tick labels and the plot. */
+export const Y_TICK_LABEL_GAP_PX = 12;
+
+export function xTickLabelBox(
+	label: string,
+	centerX: number,
+	{ height, margin }: ChartLayout,
+): Rect {
+	const width = textWidth(label);
+	return {
+		left: centerX - width / 2,
+		top: height - margin.bottom + X_TICK_LABEL_DROP_PX - TICK_LABEL_ASCENT_PX,
+		width,
+		height: TICK_LABEL_HEIGHT_PX,
+	};
+}
+
+export function yTickLabelBox(
+	label: string,
+	centerY: number,
+	{ margin }: ChartLayout,
+): Rect {
+	const width = textWidth(label);
+	return {
+		left: margin.left - Y_TICK_LABEL_GAP_PX - width,
+		top: centerY - TICK_LABEL_HEIGHT_PX / 2,
+		width,
+		height: TICK_LABEL_HEIGHT_PX,
+	};
+}
+
+/** A point's value shown on an axis, in a pill over the tick labels. */
+export type AxisReadout = Rect & { text: string };
+export type AxisReadouts = {
+	x: AxisReadout;
+	y: AxisReadout;
+	/** The point's position in the chart, which the pills sit level with. */
+	at: { x: number; y: number };
+};
+
+const READOUT_PAD_PX = 10;
+const READOUT_HEIGHT_PX = 18;
+/** Gap between a y-axis readout and the plot. */
+const Y_READOUT_GAP_PX = 4;
+
+/**
+ * Pills for a point's value on each axis: the y one beside the plot level
+ * with the point, the x one in the tick row under it, both inside the chart.
+ */
+export function axisReadouts(
+	at: { x: number; y: number },
+	text: { x: string; y: string },
+	layout: ChartLayout,
+	chartWidth: number,
+): AxisReadouts {
+	const xWidth = textWidth(text.x) + READOUT_PAD_PX;
+	const yWidth = textWidth(text.y) + READOUT_PAD_PX;
+	const xRow = xTickLabelBox(text.x, at.x, layout);
+	return {
+		at,
+		x: {
+			text: text.x,
+			left: clampSpan(at.x - xWidth / 2, xWidth, 0, chartWidth),
+			top: xRow.top + (xRow.height - READOUT_HEIGHT_PX) / 2,
+			width: xWidth,
+			height: READOUT_HEIGHT_PX,
+		},
+		y: {
+			text: text.y,
+			left: clampSpan(
+				layout.margin.left - Y_READOUT_GAP_PX - yWidth,
+				yWidth,
+				0,
+				chartWidth,
+			),
+			top: at.y - READOUT_HEIGHT_PX / 2,
+			width: yWidth,
+			height: READOUT_HEIGHT_PX,
+		},
+	};
+}

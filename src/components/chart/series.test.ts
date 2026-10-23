@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { BenchmarkPoint, FamilyId, Plan, PlanId } from "#/domain/model";
-import type { Pricing, ValuePoint } from "#/domain/value";
+import type { FamilyId, Plan, PlanId } from "#/domain/model";
+import type { PlottableBenchmark, Pricing, ValuePoint } from "#/domain/value";
 import { buildSeries, groupByModel, modelEnd, pricingStyles } from "./series";
 
 const haiku = "claude-haiku-5-5" as FamilyId;
@@ -32,7 +32,7 @@ function plan(id: string, label: string): Pricing {
 	};
 }
 
-function benchmark(family: FamilyId, order: number): BenchmarkPoint {
+function benchmark(family: FamilyId, order: number): PlottableBenchmark {
 	return {
 		id: `${family}-${order}`,
 		family,

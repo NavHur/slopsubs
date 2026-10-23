@@ -2,6 +2,7 @@ import {
 	type RefObject,
 	useCallback,
 	useEffect,
+	useEffectEvent,
 	useMemo,
 	useReducer,
 	useRef,
@@ -10,6 +11,7 @@ import {
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { paretoFrontier, spreadLabels } from "#/lib/chart";
+import { familyColor } from "#/lib/families";
 import { isTextEntryTarget } from "#/lib/textEntry";
 import { useElementSize } from "#/lib/useElementSize";
 import {
@@ -17,9 +19,9 @@ import {
 	ModelLegend,
 	ModelTags,
 	ParetoLine,
-	PointTooltip,
 	SeriesLine,
 } from "./ChartParts";
+import { Crosshair, pointReadouts } from "./Crosshair";
 import {
 	type AxisScale,
 	chartLayout,
@@ -29,7 +31,9 @@ import {
 	xTicks,
 } from "./geometry";
 import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
-import { buildSeries, groupByModel, modelEnd } from "./series";
+import { PointTooltip } from "./PointTooltip";
+import { usePointDetails } from "./pointDetails";
+import { buildSeries, groupByModel, modelEnd, type Series } from "./series";
 
 /**
  * Escape meant for the chart, not for a text field or for the sheet that made
@@ -43,11 +47,44 @@ function isChartEscape(event: KeyboardEvent, chart: HTMLElement | null) {
 	);
 }
 
-/** Shared label and legend highlight; Escape clears a pinned model. */
-function useModelHighlight(
+/** Something Escape closes while it is `open`. */
+type Dismissable = { open: boolean; close: () => void };
+
+/**
+ * While any layer is open, Escape meant for the chart closes the first open
+ * one, so the layers peel off in order.
+ */
+function useChartEscape(
 	chart: RefObject<HTMLElement | null>,
-	plotted: ReadonlySet<FamilyId>,
+	layers: readonly Dismissable[],
 ) {
+	const closeFirst = useEffectEvent(() => layers.find((l) => l.open)?.close());
+	const enabled = layers.some((l) => l.open);
+	useEffect(() => {
+		if (!enabled) return;
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (isChartEscape(event, chart.current)) closeFirst();
+		};
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, [enabled, chart]);
+}
+
+/**
+ * A line fades unless it holds the shown point or, with none shown, belongs to
+ * the highlighted model.
+ */
+function isDimmed(
+	series: Series,
+	activePoint: ValuePoint | null,
+	highlighted: FamilyId | null,
+) {
+	if (activePoint) return activePoint.seriesId !== series.id;
+	return highlighted !== null && highlighted !== series.modelId;
+}
+
+/** Shared label and legend highlight. */
+function useModelHighlight(plotted: ReadonlySet<FamilyId>) {
 	const [highlight, dispatch] = useReducer(updateHighlight, NO_HIGHLIGHT);
 	const [prunedFor, setPrunedFor] = useState(plotted);
 	if (prunedFor !== plotted) {
@@ -55,15 +92,6 @@ function useModelHighlight(
 		setPrunedFor(plotted);
 		dispatch({ type: "prune", plotted });
 	}
-	const hasPin = highlight.pinned !== null;
-	useEffect(() => {
-		if (!hasPin) return;
-		const onKeyDown = (event: KeyboardEvent) => {
-			if (isChartEscape(event, chart.current)) dispatch({ type: "clear" });
-		};
-		window.addEventListener("keydown", onKeyDown);
-		return () => window.removeEventListener("keydown", onKeyDown);
-	}, [hasPin, chart]);
 	return [highlight, dispatch] as const;
 }
 
@@ -94,11 +122,22 @@ export function ValueChart({
 }) {
 	const { ref, element, size } = useChartRef();
 	const { width } = size;
-	const [hovered, setHovered] = useState<ValuePoint | null>(null);
+	const [details, dispatchDetails] = usePointDetails(points);
+	const activePoint = details?.point ?? null;
 	const series = useMemo(() => buildSeries(points), [points]);
 	const models = useMemo(() => groupByModel(series), [series]);
 	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
-	const [shown, dispatchHighlight] = useModelHighlight(element, plotted);
+	const [shown, dispatchHighlight] = useModelHighlight(plotted);
+	useChartEscape(element, [
+		{
+			open: activePoint !== null,
+			close: () => dispatchDetails({ type: "close" }),
+		},
+		{
+			open: shown.pinned !== null,
+			close: () => dispatchHighlight({ type: "clear" }),
+		},
+	]);
 	const layout = chartLayout(size, { labels: showLabels });
 	const { height, margin } = layout;
 
@@ -127,11 +166,12 @@ export function ValueChart({
 			})
 		: [];
 	const highlighted = highlightedModel(shown);
-	const activeModel = hovered?.benchmark.family ?? highlighted;
-	const dim = (id: string, modelId: FamilyId) =>
-		hovered
-			? hovered.seriesId !== id
-			: highlighted !== null && highlighted !== modelId;
+	const activeModel = activePoint?.benchmark.family ?? highlighted;
+	// The shown point is projected once; the guides, pills and tooltip share it.
+	const active = details && {
+		...details,
+		readouts: pointReadouts(details.point, { x, y }, layout, width),
+	};
 
 	return (
 		<div ref={ref} className="relative lg:min-h-0 lg:flex-1">
@@ -150,9 +190,17 @@ export function ValueChart({
 					ticks={xTicks(x, scale)}
 					scale={scale}
 					layout={layout}
+					readouts={active?.readouts}
 				/>
 				{showPareto && (
 					<ParetoLine points={paretoFrontier(points)} x={x} y={y} />
+				)}
+				{active && (
+					<Crosshair
+						readouts={active.readouts}
+						layout={layout}
+						color={familyColor(active.point.benchmark.family)}
+					/>
 				)}
 				{series.map((s) => (
 					<SeriesLine
@@ -160,9 +208,9 @@ export function ValueChart({
 						series={s}
 						x={x}
 						y={y}
-						hovered={hovered}
-						dimmed={dim(s.id, s.modelId)}
-						onHover={setHovered}
+						activePoint={activePoint}
+						dimmed={isDimmed(s, activePoint, highlighted)}
+						onDetails={dispatchDetails}
 					/>
 				))}
 				<ModelTags
@@ -175,12 +223,13 @@ export function ValueChart({
 					onHighlight={dispatchHighlight}
 				/>
 			</svg>
-			{hovered && (
+			{active && (
 				<PointTooltip
-					point={hovered}
-					left={x(hovered.costPerTaskUsd)}
-					top={y(hovered.intelligence)}
-					containerWidth={width}
+					point={active.point}
+					anchor={active.readouts.at}
+					bounds={{ width, height }}
+					pinned={active.pinned}
+					onClose={() => dispatchDetails({ type: "close" })}
 				/>
 			)}
 			{layout.compact && (
