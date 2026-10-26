@@ -46,6 +46,10 @@
       {
         "url": "https://opencode.ai/go",
         "accessed": "2026-10-26"
+      },
+      {
+        "url": "https://opencode.ai/docs/go#usage-limits",
+        "accessed": "2026-10-26"
       }
     ],
     "confidence": "primary",
@@ -69,6 +73,10 @@
     "sources": [
       {
         "url": "https://opencode.ai/go",
+        "accessed": "2026-10-26"
+      },
+      {
+        "url": "https://opencode.ai/docs/go#usage-limits",
         "accessed": "2026-10-26"
       }
     ],
