@@ -1,0 +1,52 @@
+[
+  {
+    "vendor": "Warp",
+    "planId": "warp-build",
+    "label": "Warp Build",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Warp Terminal agent",
+      "Warp Agent CLI",
+      "Warp cloud agents"
+    ],
+    "models": [
+      "frontier and open models from OpenAI, Anthropic, z.ai, and more"
+    ],
+    "limits": "\"$20 of agent usage included each month at API rates\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://www.warp.dev/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Credit at API rates (1:1), so no subsidy. An annual toggle exists but the price wasn't captured."
+  },
+  {
+    "vendor": "Warp",
+    "planId": "warp-max",
+    "label": "Warp Max",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Warp Terminal agent",
+      "Warp Agent CLI",
+      "Warp cloud agents"
+    ],
+    "models": [
+      "as Build"
+    ],
+    "limits": "\"$200 of agent usage included each month (10× Build)\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://www.warp.dev/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "1:1 credit."
+  }
+]

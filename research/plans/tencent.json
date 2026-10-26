@@ -1,0 +1,34 @@
+[
+  {
+    "vendor": "Tencent Cloud",
+    "planId": "tencent-coding-plan-lite",
+    "label": "Tencent Cloud Coding Plan Lite",
+    "monthlyPriceUsd": 5.6,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Claude Code",
+      "OpenCode",
+      "others (unverified)"
+    ],
+    "models": [
+      "Tencent HY 2.0",
+      "GLM-5",
+      "Kimi-K2.5",
+      "MiniMax-M2.5"
+    ],
+    "limits": "Reportedly 1,200 requests/5h, 9,000/week, 18,000/month (conflicting third-party figures of ~750/5h exist).",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://coding-plan.org/plans/tencentcloud",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.huangxiaolong.net/read/3322.html",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "unverified",
+    "notes": "Reportedly ¥40/mo list (¥7.9 first month), Pro ¥200/mo. One aggregator reported both tiers sold out on 2026-08-26. No primary source checked."
+  }
+]

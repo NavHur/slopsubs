@@ -27,6 +27,7 @@ const plan: Plan = {
 	reportedCap: null,
 	publishedAllowance: null,
 	maxEffortByFamily: {},
+	promotionByFamily: {},
 };
 
 function sample(start: number, end: number, apiUsd: number): LimitSample {

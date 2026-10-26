@@ -73,6 +73,15 @@ const PublishedAllowance = z.object({
 });
 export type PublishedAllowance = z.infer<typeof PublishedAllowance>;
 
+/** A limited-time discount a plan's value counts while it runs. */
+const Promotion = z.object({
+	/** What the discount is, shown next to the plan's figures. */
+	summary: z.string(),
+	endsOn: z.iso.date(),
+	url: z.url(),
+});
+export type Promotion = z.infer<typeof Promotion>;
+
 /** A flat-rate subscription usable for agentic coding. */
 const Plan = z.object({
 	id: PlanId,
@@ -92,6 +101,8 @@ const Plan = z.object({
 	publishedAllowance: PublishedAllowance.nullable(),
 	/** Highest effort the plan serves for a family, where below its maximum. */
 	maxEffortByFamily: z.record(z.string(), Effort),
+	/** Promotions included in the plan's value, by family. */
+	promotionByFamily: z.record(z.string(), Promotion),
 });
 export type Plan = z.infer<typeof Plan>;
 export const Plans = z.array(Plan);

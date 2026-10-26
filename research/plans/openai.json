@@ -1,0 +1,210 @@
+[
+  {
+    "vendor": "OpenAI",
+    "planId": "chatgpt-go",
+    "label": "ChatGPT Go",
+    "monthlyPriceUsd": 8,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "ChatGPT desktop app (Codex local chats)"
+    ],
+    "models": [
+      "GPT-6 Luna (Standard speed)"
+    ],
+    "limits": "\"GPT-6 Luna at Standard speed in the desktop app, subject to rollout\"; \"Use Codex for lightweight coding tasks.\" No numeric limits published.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "No Codex CLI or IDE extension: the feature table lists those for Plus and above. Sign in with ChatGPT plan usage is documented for 'eligible ChatGPT Plus and Pro subscribers' only, so Go probably can't power third-party harnesses."
+  },
+  {
+    "vendor": "OpenAI",
+    "planId": "chatgpt-plus",
+    "label": "ChatGPT Plus",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Codex CLI",
+      "Codex IDE extension",
+      "ChatGPT desktop app (Codex/Work)",
+      "Codex cloud (web, iOS)",
+      "Codex SDK / codex exec",
+      "OpenCode",
+      "Pi",
+      "OpenClaw",
+      "T3",
+      "Amp Code",
+      "Kilo Code",
+      "Warp",
+      "Devin",
+      "Hermes Agent",
+      "Conductor"
+    ],
+    "models": [
+      "GPT-6.1 Sol",
+      "GPT-6 Sol",
+      "GPT-6 Luna",
+      "GPT-6 Astra"
+    ],
+    "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://learn.chatgpt.com/codex/sign-in-with-chatgpt",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Third-party use is officially supported through 'Sign in with ChatGPT': 'eligible ChatGPT Plus and Pro subscribers can also choose to use their ChatGPT plan for AI requests'. The listed open-source integrations are OpenClaw, OpenCode, Pi and T3. App usage 'counts toward your existing plan limits', and per-app weekly caps can be set. The pricing page table marks GPT-6 Astra as available on Plus; the model list on the plan card names only GPT-6.1 Sol and GPT-6 Luna. GPT-5.5 retired from ChatGPT-sign-in Codex on 2026-10-14. Overage via ChatGPT credits. No annual price could be verified (chatgpt.com/pricing returns 403 to scripted fetches)."
+  },
+  {
+    "vendor": "OpenAI",
+    "planId": "chatgpt-pro-100",
+    "label": "ChatGPT Pro 100",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Codex CLI",
+      "Codex IDE extension",
+      "ChatGPT desktop app (Codex/Work)",
+      "Codex cloud (web, iOS)",
+      "Codex SDK / codex exec",
+      "OpenCode",
+      "Pi",
+      "OpenClaw",
+      "T3",
+      "Amp Code",
+      "Kilo Code",
+      "Warp",
+      "Devin",
+      "Hermes Agent",
+      "Conductor"
+    ],
+    "models": [
+      "GPT-6.1 Sol",
+      "GPT-6 Sol",
+      "GPT-6 Luna",
+      "GPT-6 Astra",
+      "Pro models (ChatGPT)"
+    ],
+    "limits": "\"Pro plans currently have no five-hour limit.\" Help center: \"Pro 200 includes more usage than Pro 100.\" Weekly limits apply. At launch (2026-04-09) OpenAI said: \"Pro $100 unlocks 5x higher usage than Plus\" (secondary report of the launch statement).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://techcrunch.com/2026/04/09/chatgpt-pro-plan-100-month-codex/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Price is primary. The 5x-Plus multiplier is from the April 2026 launch coverage (secondary), and the current help center doesn't restate it. The help center was read via the r.jina.ai reader because help.openai.com returns 403 to direct fetches. The help center says 'Pro use is subject to our Terms of Use. Sharing account credentials, reselling access and automatically extracting data are prohibited.'"
+  },
+  {
+    "vendor": "OpenAI",
+    "planId": "chatgpt-pro-200",
+    "label": "ChatGPT Pro 200",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Codex CLI",
+      "Codex IDE extension",
+      "ChatGPT desktop app (Codex/Work)",
+      "Codex cloud (web, iOS)",
+      "Codex SDK / codex exec",
+      "OpenCode",
+      "Pi",
+      "OpenClaw",
+      "T3",
+      "Amp Code",
+      "Kilo Code",
+      "Warp",
+      "Devin",
+      "Hermes Agent",
+      "Conductor"
+    ],
+    "models": [
+      "GPT-6.1 Sol",
+      "GPT-6 Sol",
+      "GPT-6 Luna",
+      "GPT-6 Astra",
+      "Pro models (ChatGPT)"
+    ],
+    "limits": "\"Pro plans currently have no five-hour limit.\" \"Pro 200 includes more usage than Pro 100.\" \"New subscriptions that aren't eligible for grandfathering include a lower usage allowance than previously offered with Pro 200.\"",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Allowance was cut on 2026-09-29. Subscribers active between 2026-09-22 and 2026-09-29 keep the old allowance (previously advertised as 20x Plus) through 2026-10-29. Secondary sources describe the new allowance as roughly half the old value, but OpenAI publishes no multiplier. Treat the multiplier as unknown."
+  },
+  {
+    "vendor": "OpenAI",
+    "planId": "chatgpt-pro-500",
+    "label": "ChatGPT Pro 500",
+    "monthlyPriceUsd": 500,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Codex CLI",
+      "Codex IDE extension",
+      "ChatGPT desktop app (Codex/Work)",
+      "Codex cloud (web, iOS)",
+      "Codex SDK / codex exec",
+      "OpenCode",
+      "Pi",
+      "OpenClaw",
+      "T3",
+      "Amp Code",
+      "Kilo Code",
+      "Warp",
+      "Devin",
+      "Hermes Agent",
+      "Conductor"
+    ],
+    "models": [
+      "GPT-6.1 Sol",
+      "GPT-6 Sol",
+      "GPT-6 Luna",
+      "GPT-6 Astra",
+      "GPT-6 Astra Ultrafast",
+      "GPT-6.1 Sol Ultrafast",
+      "Pro models (ChatGPT)"
+    ],
+    "limits": "\"Pro 500 offers the highest included usage of the three plans.\" \"Pro plans currently have no five-hour limit.\" Ultrafast \"uses your plan's included usage first at 8x the Standard rate for the selected model, then draws from your credit balance at 6x the Standard credit rate\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Launched 2026-09-29. No usage multiplier relative to Plus is published."
+  }
+]

@@ -1,6 +1,6 @@
 # Coding subscription plans: caveats (accessed 2026-10-17)
 
-The data is in `plans.json`. Each row has a source URL, an access date and a confidence level (`primary`, `secondary` or `unverified`). Prices are in USD and exclude tax.
+The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an access date and a confidence level (`primary`, `secondary` or `unverified`). Prices are in USD and exclude tax.
 
 ## Market changes in the last month
 
@@ -39,6 +39,7 @@ The data is in `plans.json`. Each row has a source URL, an access date and a con
 - No annual price could be verified for ChatGPT, Google or Copilot. chatgpt.com/pricing and help.openai.com return 403 to scripted fetches; the help center was read through the r.jina.ai reader.
 - **xAI:** standalone SuperGrok prices are secondary only, since x.ai and grok.com were not fetchable.
 - **Volcengine and Tencent:** China-only, CNY prices converted at about 7.1 CNY/USD. Promo pricing dominates. Tencent is unverified.
+- **OpenCode Go (2026-10-26):** Hy4 preview, Qwen3.8 Flash and Beam Free have no Artificial Analysis benchmark yet, so the site leaves them off. AA's "Qwen3.8-Flash-Next" has the same price as Go's Qwen3.8 Flash but isn't confirmed to be the same model. The site counts Go's Gemini 4 Argon promo (50% off through 2026-11-30) in that model's value. After it ends, build-plans fails until its GO_PROMOS entry is removed.
 - **DeepSeek:** no official subscription. "DeepSeek coding plan" sites appear to be resellers, so DeepSeek is excluded.
 - **Excluded:**
   - **Amp:** brings your own subscription or key.

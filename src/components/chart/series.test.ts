@@ -22,6 +22,7 @@ const basePlan: Plan = {
 	reportedCap: null,
 	publishedAllowance: null,
 	maxEffortByFamily: {},
+	promotionByFamily: {},
 };
 
 function plan(id: string, label: string): Pricing {

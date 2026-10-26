@@ -1,0 +1,48 @@
+[
+  {
+    "vendor": "JetBrains",
+    "planId": "jetbrains-ai-pro",
+    "label": "JetBrains AI Pro",
+    "monthlyPriceUsd": 10,
+    "annualMonthlyPriceUsd": 8.33,
+    "harnesses": [
+      "JetBrains IDEs (AI Assistant, Junie)"
+    ],
+    "models": [
+      "JetBrains-hosted cloud models (multi-vendor)"
+    ],
+    "limits": "\"10 AI credits per 30-days\"; \"Each AI credit equals $1 USD\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Credit plan priced at par ($1 = 1 credit), so no subsidy relative to API. Annual $100/yr is from secondary sources. ACP agents and BYOK don't need a subscription."
+  },
+  {
+    "vendor": "JetBrains",
+    "planId": "jetbrains-ai-ultimate",
+    "label": "JetBrains AI Ultimate",
+    "monthlyPriceUsd": 30,
+    "annualMonthlyPriceUsd": 25,
+    "harnesses": [
+      "JetBrains IDEs (AI Assistant, Junie)"
+    ],
+    "models": [
+      "JetBrains-hosted cloud models"
+    ],
+    "limits": "\"35 AI credits per 30-days\" (includes \"a small bonus\").",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $300/yr is from secondary sources."
+  }
+]

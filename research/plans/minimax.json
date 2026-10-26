@@ -1,0 +1,118 @@
+[
+  {
+    "vendor": "MiniMax",
+    "planId": "minimax-m-plan-go",
+    "label": "MiniMax M Plan Go",
+    "monthlyPriceUsd": 22,
+    "annualMonthlyPriceUsd": 18.33,
+    "harnesses": [
+      "MiniMax Code",
+      "Claude Code",
+      "Codex",
+      "Cursor",
+      "OpenCode",
+      "Pi",
+      "Hermes Agent",
+      "OpenClaw",
+      "other tools via Subscription Key"
+    ],
+    "models": [
+      "MiniMax M3.1 Flash Preview",
+      "image and audio models"
+    ],
+    "limits": "Usage relative to Go: 1x (baseline). Text, image, audio: 'Subject to a 5-hour window and a weekly window.' 'Both windows start with your first use: the 5-hour window lasts 5 hours, and the weekly window lasts 7 days.' No absolute numbers published.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/intro",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/faq.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/usage-rules.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/monthly-offer.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "$22/mo regular price comes from the launch-offer doc, whose 50% first-month offer ran 'through October 14'. Annual: 'pay for 10 months and get 2 months free', so $220/yr = $18.33/mo by my calculation. M Plan replaced Token Plan (Plus/Max/Ultra, now closed to new buyers). Separate Subscription Key; pay-as-you-go keys aren't interchangeable."
+  },
+  {
+    "vendor": "MiniMax",
+    "planId": "minimax-m-plan-explore",
+    "label": "MiniMax M Plan Explore",
+    "monthlyPriceUsd": 55,
+    "annualMonthlyPriceUsd": 45.83,
+    "harnesses": [
+      "MiniMax Code",
+      "Claude Code",
+      "Codex",
+      "Cursor",
+      "OpenCode",
+      "Pi",
+      "Hermes Agent",
+      "OpenClaw"
+    ],
+    "models": [
+      "MiniMax M3.1 Flash Preview",
+      "H3 video",
+      "image and audio models"
+    ],
+    "limits": "3x Go usage; 5-hour + weekly windows (video weekly only).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/faq.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/monthly-offer.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual figure derived from the 10-for-12 months rule."
+  },
+  {
+    "vendor": "MiniMax",
+    "planId": "minimax-m-plan-build",
+    "label": "MiniMax M Plan Build",
+    "monthlyPriceUsd": 132,
+    "annualMonthlyPriceUsd": 110,
+    "harnesses": [
+      "MiniMax Code",
+      "Claude Code",
+      "Codex",
+      "Cursor",
+      "OpenCode",
+      "Pi",
+      "Hermes Agent",
+      "OpenClaw"
+    ],
+    "models": [
+      "MiniMax M3.1 Flash Preview",
+      "H3 video",
+      "image and audio models"
+    ],
+    "limits": "7.5x Go usage; 5-hour + weekly windows.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/faq.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://platform.minimax.io/docs/m-plan/monthly-offer.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual figure derived."
+  }
+]

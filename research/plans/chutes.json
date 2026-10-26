@@ -1,0 +1,48 @@
+[
+  {
+    "vendor": "Chutes",
+    "planId": "chutes-plus",
+    "label": "Chutes Plus",
+    "monthlyPriceUsd": 10,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via OpenAI-compatible API"
+    ],
+    "models": [
+      "open models on TEE: Kimi K3/K2.6, GLM-5.x, DeepSeek V4 Flash, Qwen3.x, etc."
+    ],
+    "limits": "\"Bundled daily quota\"; \"6% off PAYG rates beyond the quota\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://chutes.ai/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Daily request quota size is not on the pricing page ('View plan limits' link not fetched)."
+  },
+  {
+    "vendor": "Chutes",
+    "planId": "chutes-pro",
+    "label": "Chutes Pro",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via OpenAI-compatible API"
+    ],
+    "models": [
+      "as Plus"
+    ],
+    "limits": "\"Larger daily quota\"; \"10% off PAYG rates beyond the quota\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://chutes.ai/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Quota size unverified."
+  }
+]

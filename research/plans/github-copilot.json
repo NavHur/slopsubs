@@ -1,0 +1,113 @@
+[
+  {
+    "vendor": "GitHub",
+    "planId": "copilot-pro",
+    "label": "GitHub Copilot Pro",
+    "monthlyPriceUsd": 10,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Copilot in VS Code / Visual Studio / JetBrains / Eclipse / Xcode / Neovim / Zed",
+      "Copilot CLI",
+      "Copilot cloud agent (PRs)",
+      "Copilot code review",
+      "OpenCode"
+    ],
+    "models": [
+      "Multi-vendor: Claude (Haiku/Sonnet/Opus/Fable), GPT-5.x/6.x, Gemini 3.x/4 Argon, Grok 4.x, Kimi K2.7 Code/K3, MAI-Code-1.1-Flash; availability varies by plan"
+    ],
+    "limits": "\"Every plan includes a monthly allowance: 1 AI credit = $0.01 USD.\" Pro: Base 1,000 + flex 500 = 1,500 credits/month ($15). \"Flex allotments may change over time.\" \"Code completions and next edit suggestions don't use credits.\"",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://github.com/features/copilot/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.github.com/en/copilot/get-started/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://github.blog/changelog/2026-01-16-github-copilot-now-supports-opencode/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://github.blog/changelog/2026-04-20-changes-to-github-copilot-plans-for-individuals/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Usage-based since 2026-06-01: credits are drawn at per-model rates, so this behaves like a ~1.5x prepaid credit, not a rate window. OpenCode is officially supported for paid plans (changelog 2026-01-16). Third-party agents (Claude, Codex) inside Copilot need Pro+ or higher. New signups for Pro/Pro+/Max were paused on 2026-04-20 and still paused per the 2026-06-01 changelog; current signup status wasn't verified. Per the April changelog, Opus was removed from Pro. Annual price not shown on current pages."
+  },
+  {
+    "vendor": "GitHub",
+    "planId": "copilot-pro-plus",
+    "label": "GitHub Copilot Pro+",
+    "monthlyPriceUsd": 39,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Copilot in IDEs",
+      "Copilot CLI",
+      "Copilot cloud agent (PRs)",
+      "Copilot code review",
+      "Third-party agents in Copilot: Claude, Codex (preview)",
+      "OpenCode"
+    ],
+    "models": [
+      "Multi-vendor incl. Claude Opus/Fable, GPT-6.x, Gemini 4 Argon, Grok 4.x, Kimi K3"
+    ],
+    "limits": "Base 3,900 + flex 3,100 = 7,000 AI credits/month ($70). \"1 AI credit = $0.01 USD.\" \"Flex allotments may change over time.\"",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://github.com/features/copilot/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.github.com/en/copilot/get-started/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://github.blog/changelog/2026-01-16-github-copilot-now-supports-opencode/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Credit plan worth ~1.8x its price at list model rates. Signups may still be paused (see Pro)."
+  },
+  {
+    "vendor": "GitHub",
+    "planId": "copilot-max",
+    "label": "GitHub Copilot Max",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Copilot in IDEs",
+      "Copilot CLI",
+      "Copilot cloud agent (PRs)",
+      "Copilot code review",
+      "Third-party agents in Copilot: Claude, Codex (preview)",
+      "OpenCode"
+    ],
+    "models": [
+      "Multi-vendor; priority access to premium models"
+    ],
+    "limits": "Base 10,000 + flex 10,000 = 20,000 AI credits/month ($200). \"built for heavy Copilot usage, including sustained agent-driven workflows\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://github.com/features/copilot/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.github.com/en/copilot/get-started/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://github.blog/changelog/2026-06-01-updates-to-github-copilot-billing-and-plans/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Announced 2026-06-01 as an upgrade for existing subscribers. OpenCode support is stated for 'paid Copilot subscriptions (Pro, Pro+, Business, Enterprise)' as of January, before Max existed, so Max is assumed to be covered."
+  }
+]

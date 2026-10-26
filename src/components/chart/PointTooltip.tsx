@@ -1,8 +1,10 @@
 import { useLayoutEffect, useRef, useState } from "react";
+import type { Promotion } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { familyColor, familyLabId, familyName } from "#/lib/families";
 import {
 	formatApiComparison,
+	formatDay,
 	formatIntelligence,
 	formatTokens,
 	formatUsd,
@@ -50,6 +52,7 @@ export function PointTooltip({
 }) {
 	const [ref, box] = useBorderBox<HTMLDivElement>();
 	const { benchmark, pricing } = point;
+	const promotion = planPromotion(point);
 	// Hidden for the one layout before its size is known.
 	const placement = box && tooltipPlacement(anchor, box, bounds);
 	return (
@@ -102,6 +105,7 @@ export function PointTooltip({
 					</span>
 				</p>
 			)}
+			{promotion && <PromotionNote promotion={promotion} />}
 			<a
 				href={`${ARTIFICIAL_ANALYSIS_MODELS}${benchmark.id}`}
 				target="_blank"
@@ -111,6 +115,24 @@ export function PointTooltip({
 				Artificial Analysis
 			</a>
 		</div>
+	);
+}
+
+/** The promo behind a plan point's figures; API points have none. */
+function planPromotion({ benchmark, pricing }: ValuePoint) {
+	if (pricing.kind !== "plan") return undefined;
+	return pricing.plan.promotionByFamily[benchmark.family];
+}
+
+/** The plan's figures count a discount that will end. */
+function PromotionNote({ promotion }: { promotion: Promotion }) {
+	return (
+		<p className="mt-1.5 text-muted">
+			<span className="font-medium text-fg">
+				Promo until {formatDay(promotion.endsOn)}:
+			</span>{" "}
+			{promotion.summary}.
+		</p>
 	);
 }
 
