@@ -117,9 +117,10 @@
     "families": [
       "gpt-6-astra",
       "gpt-6-1-sol",
+      "gpt-6-1-terra",
       "gpt-6-luna"
     ],
-    "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
+    "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6.1 Terra 35-285, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
@@ -160,6 +161,7 @@
     "families": [
       "gpt-6-astra",
       "gpt-6-1-sol",
+      "gpt-6-1-terra",
       "gpt-6-luna"
     ],
     "limits": "\"Pro plans currently have no five-hour limit.\" Help center: \"Pro 200 includes more usage than Pro 100.\" Weekly limits apply. At launch (2026-04-09) OpenAI said: \"Pro $100 unlocks 5x higher usage than Plus\" (secondary report of the launch statement).",
@@ -203,6 +205,7 @@
     "families": [
       "gpt-6-astra",
       "gpt-6-1-sol",
+      "gpt-6-1-terra",
       "gpt-6-luna"
     ],
     "limits": "\"Pro plans currently have no five-hour limit.\" \"Pro 200 includes more usage than Pro 100.\" \"New subscriptions that aren't eligible for grandfathering include a lower usage allowance than previously offered with Pro 200.\"",
@@ -246,6 +249,7 @@
     "families": [
       "gpt-6-astra",
       "gpt-6-1-sol",
+      "gpt-6-1-terra",
       "gpt-6-luna"
     ],
     "limits": "\"Pro 500 offers the highest included usage of the three plans.\" \"Pro plans currently have no five-hour limit.\" Ultrafast \"uses your plan's included usage first at 8x the Standard rate for the selected model, then draws from your credit balance at 6x the Standard credit rate\".",
