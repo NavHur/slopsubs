@@ -1,0 +1,61 @@
+[
+  {
+    "vendor": "Anomaly (OpenCode)",
+    "planId": "opencode-go",
+    "label": "OpenCode Go",
+    "monthlyPriceUsd": 10,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "OpenCode",
+      "any agent (\"Use with any agent\")"
+    ],
+    "models": [
+      "Kimi K3",
+      "Kimi K2.7 Code",
+      "Gemini 4 Argon",
+      "MiniMax M3",
+      "Qwen3.7 Plus",
+      "GLM-5.3-Flash",
+      "MiMo-V2.6-Flash",
+      "DeepSeek V4.1 Flash",
+      "Claude Haiku 5.5",
+      "GPT 6 Luna",
+      "Step 5 Preview",
+      "others (29 total)"
+    ],
+    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\", e.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K2.7 Code 1,350 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 34,670 / $80.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://opencode.ai/go",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Monthly usage is expressed in dollars per model at roughly 1.5-8x the subscription price. Limited-time 2x/4x promos on some models."
+  },
+  {
+    "vendor": "Anomaly (OpenCode)",
+    "planId": "opencode-go-plus",
+    "label": "OpenCode Go Plus",
+    "monthlyPriceUsd": 40,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "OpenCode",
+      "any agent"
+    ],
+    "models": [
+      "same as Go"
+    ],
+    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K2.7 Code 4,050 / $180; DeepSeek V4.1 Flash 69,330 / $160.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://opencode.ai/go",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": ""
+  }
+]

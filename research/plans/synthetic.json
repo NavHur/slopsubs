@@ -1,0 +1,78 @@
+[
+  {
+    "vendor": "Synthetic",
+    "planId": "synthetic-go",
+    "label": "Synthetic Go",
+    "monthlyPriceUsd": 9,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via API key"
+    ],
+    "models": [
+      "gpt-oss-120b",
+      "GLM-4.7-Flash",
+      "GLM-5.3",
+      "GLM-5.3-Flash",
+      "DeepSeek-V4.1-Flash",
+      "Kimi-K3",
+      "Qwen3.8-27B",
+      "Nemotron-3-Super"
+    ],
+    "limits": "\"Credits regenerate over the week and apply at discounted model rates.\"; \"Allows extra usage at API pricing\"; \"1 Usage Reset/month\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://synthetic.new/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Weekly credit amounts per tier are not captured. The page's tokens/mo table doesn't say which tier it's for. API compatibility with Claude Code/OpenCode isn't stated on the page (known from secondary sources)."
+  },
+  {
+    "vendor": "Synthetic",
+    "planId": "synthetic-standard",
+    "label": "Synthetic Standard",
+    "monthlyPriceUsd": 30,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via API key"
+    ],
+    "models": [
+      "as Go"
+    ],
+    "limits": "\"Larger limits for more demanding projects\"; weekly regenerating credits.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://synthetic.new/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": ""
+  },
+  {
+    "vendor": "Synthetic",
+    "planId": "synthetic-big",
+    "label": "Synthetic Big",
+    "monthlyPriceUsd": 90,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via API key"
+    ],
+    "models": [
+      "as Go"
+    ],
+    "limits": "\"Biggest limits for the biggest projects\"; Fast mode \"uses 2× as much of your rate limit\"; Infinite mode \"never count against your rate limit\" (DeepSeek V4.1 Flash only).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://synthetic.new/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": ""
+  }
+]

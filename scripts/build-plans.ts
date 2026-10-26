@@ -1,11 +1,11 @@
 // Builds src/data/plans.json (and the trimmed chart-benchmarks.json the site
-// ships) from research/plans.json, keeping the plans
+// ships) from the research in research/plans/, keeping the plans
 // the site covers (Claude Code, Codex and OpenCode Go tiers) and mapping
 // their models onto benchmarked families.
 //
 // Usage: node scripts/build-plans.ts
 
-import { readFile, writeFile } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
 import {
 	BenchmarkDataset,
@@ -178,9 +178,17 @@ async function readJson(path: string): Promise<unknown> {
 	return JSON.parse(await readFile(new URL(path, ROOT), "utf8"));
 }
 
-const research = z
-	.array(ResearchPlan)
-	.parse(await readJson("research/plans.json"));
+/** Every researched plan, from one file per vendor, in file-name order. */
+async function readResearch(): Promise<unknown[]> {
+	const dir = "research/plans/";
+	const files = (await readdir(new URL(dir, ROOT)))
+		.filter((name) => name.endsWith(".json"))
+		.sort();
+	const rows = await Promise.all(files.map((name) => readJson(dir + name)));
+	return rows.flatMap((r) => z.array(z.unknown()).parse(r));
+}
+
+const research = z.array(ResearchPlan).parse(await readResearch());
 const dataset = BenchmarkDataset.parse(
 	await readJson("src/data/benchmarks.json"),
 );

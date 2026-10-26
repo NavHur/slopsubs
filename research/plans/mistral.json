@@ -1,0 +1,29 @@
+[
+  {
+    "vendor": "Mistral",
+    "planId": "mistral-pro",
+    "label": "Mistral Pro (Vibe / Le Chat)",
+    "monthlyPriceUsd": 14.99,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Vibe CLI",
+      "Vibe for IDE (VS Code, JetBrains)",
+      "Vibe web",
+      "remote coding agents"
+    ],
+    "models": [
+      "Devstral",
+      "Mistral models"
+    ],
+    "limits": "\"All-day coding in the CLI, IDE, or on web.\"; \"Subject to fair usage limits and Mistral's Terms of Service.\"; includes \"$25.5 /mo in API credits\" (card attribution uncertain, see notes).",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://mistral.ai/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "$14.99 confirmed by FAQ ('Verified students can get Mistral Pro for $5.99 / month (normally $14.99)'), excluding tax. The page has a Pro/Education toggle. $25.5 vs $15 API credits: which card each belongs to is inferred from order only. The API credits would be usable from any harness, but the Vibe allowance itself is fair-use."
+  }
+]

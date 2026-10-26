@@ -1,6 +1,6 @@
 # Coding subscription plans: caveats (accessed 2026-10-17)
 
-The data is in `plans.json`. Each row has a source URL, an access date and a confidence level (`primary`, `secondary` or `unverified`). Prices are in USD and exclude tax.
+The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an access date and a confidence level (`primary`, `secondary` or `unverified`). Prices are in USD and exclude tax.
 
 ## Market changes in the last month
 

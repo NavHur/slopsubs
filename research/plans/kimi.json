@@ -1,0 +1,142 @@
+[
+  {
+    "vendor": "Moonshot AI (Kimi)",
+    "planId": "kimi-plus",
+    "label": "Kimi Plus (membership incl. Kimi Code)",
+    "monthlyPriceUsd": 19,
+    "annualMonthlyPriceUsd": 15,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "JetBrains/Zed via ACP",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key (OpenAI- and Anthropic-compatible)"
+    ],
+    "models": [
+      "Kimi K3 (k3, k3-256k; 1M context needs Pro+)",
+      "K2.8 Preview (kimi-for-coding)"
+    ],
+    "limits": "New plans with Kimi Code access (Plus and higher) have a rolling 5-hour usage limit and no weekly limit... Exhausting the monthly shared credit pool also affects Kimi Code. Both monthly and annual subscriptions refresh credits monthly, with no rollover.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://www.kimi.ai/help/membership/membership-pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.kimi.com/code/docs/en/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.kimi.com/code/docs/en/kimi-code/membership.html",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Help center prices were captured 2026-10-12: $19/mo, or $180/yr ($15/mo). The credit pool is shared with Kimi web features (Work, Deep Research, slides, Claw). The docs say: 'Please maintain the tool's real identity identifier... Tampering with the client identifier (User-Agent) is considered a violation.' Legacy tiers (Moderato and others) keep weekly limits. China CNY plans (Go ¥49 with no coding, Plus ¥99, Pro ¥199, Max ¥699) are secondary only and not included. Extra Usage is pay-as-you-go near API rates."
+  },
+  {
+    "vendor": "Moonshot AI (Kimi)",
+    "planId": "kimi-pro",
+    "label": "Kimi Pro",
+    "monthlyPriceUsd": 39,
+    "annualMonthlyPriceUsd": 31,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key"
+    ],
+    "models": [
+      "Kimi K3 (up to 1M context)",
+      "K2.8 Preview",
+      "K2.7 Code HighSpeed (kimi-for-coding-highspeed)"
+    ],
+    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit, monthly shared credit pool ('More credits, Goal Mode, and a dedicated Kimi Claw').",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://www.kimi.ai/help/membership/membership-pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.kimi.com/code/docs/en/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "$372/yr. Secondary sources say plan cards show credits as 2x Plus. Same User-Agent rule as Plus."
+  },
+  {
+    "vendor": "Moonshot AI (Kimi)",
+    "planId": "kimi-max",
+    "label": "Kimi Max",
+    "monthlyPriceUsd": 99,
+    "annualMonthlyPriceUsd": 79,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key"
+    ],
+    "models": [
+      "Kimi K3 (1M)",
+      "K2.8 Preview",
+      "K2.7 Code HighSpeed"
+    ],
+    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit, monthly shared credit pool ('More credits and higher Agent task concurrency').",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://www.kimi.ai/help/membership/membership-pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "$948/yr. Secondary sources say 5x Plus credits."
+  },
+  {
+    "vendor": "Moonshot AI (Kimi)",
+    "planId": "kimi-ultra",
+    "label": "Kimi Ultra",
+    "monthlyPriceUsd": 199,
+    "annualMonthlyPriceUsd": 159,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key"
+    ],
+    "models": [
+      "Kimi K3 (1M)",
+      "K2.8 Preview",
+      "K2.7 Code HighSpeed"
+    ],
+    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit; 'The largest credit pool among these international plans.'",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://www.kimi.ai/help/membership/membership-pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "$1,908/yr. Secondary sources say 10x Plus credits."
+  }
+]

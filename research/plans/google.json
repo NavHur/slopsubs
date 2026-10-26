@@ -1,0 +1,115 @@
+[
+  {
+    "vendor": "Google",
+    "planId": "google-ai-pro",
+    "label": "Google AI Pro",
+    "monthlyPriceUsd": 19.99,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "models": [
+      "Gemini 4 Argon",
+      "Gemini 3.1 Pro",
+      "Gemini 3.8 Flash"
+    ],
+    "limits": "\"Get 4x higher usage access than Free\"; Antigravity: \"Entry rate limits to agent model in Google Antigravity\"; Antigravity docs: \"A high, generous quota, refreshed every five hours until the weekly limit is reached\" / \"A higher weekly rate limit\"; overage via purchased AI credits \"consumed at standard Gemini Enterprise consumption pricing\". No numeric quota published.",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://gemini.google/subscriptions/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://antigravity.google/docs/plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://geminicli.com/docs/resources/quota-and-pricing/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://winbuzzer.com/2026/02/23/google-bans-ai-subscribers-openclaw-no-refunds-xcxwbn/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Price is primary (gemini.google). Gemini CLI: banner says 'Unpaid tier and Google One users: Gemini CLI was replaced by Antigravity CLI on June 18th, 2026', but the body of the same page still lists the old quota of 1,500 requests/day for AI Pro (stale). thirdPartyHarnessAllowed=false is based on secondary reports: from Feb 2026, Pro/Ultra accounts were suspended for routing Antigravity OAuth through OpenCode/OpenClaw. No official ToS clause was quoted. Antigravity docs list BYOK as unsupported. Annual price not verified. Includes $10/mo Google Cloud credits."
+  },
+  {
+    "vendor": "Google",
+    "planId": "google-ai-ultra-5x",
+    "label": "Google AI Ultra (5x)",
+    "monthlyPriceUsd": 99.99,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "models": [
+      "Gemini 4 Argon",
+      "Gemini 3.1 Pro",
+      "Gemini 3.8 Flash",
+      "third-party Model Garden models in Antigravity (e.g. Claude Sonnet)"
+    ],
+    "limits": "\"$99.99 / month: 5x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 5x: Higher rate limits to agent model in Google Antigravity\"; docs: \"The highest, most generous quota, refreshed every five hours\" / \"The highest weekly rate limits\" / \"Access to third-party models\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://gemini.google/subscriptions/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://support.google.com/googleone/answer/16286513?hl=en",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://antigravity.google/docs/plans",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Google One help: 'you get 5x or 20x usage quota in Gemini and Google Antigravity compared to the Google AI Pro plan'; 'Each product has its own AI usage limits.' Secondary sources say Ultra 5x launched 2026-05-19. Includes $40/mo Cloud credits (stated for Ultra). Third-party harness: same OAuth-ban caveat as Pro."
+  },
+  {
+    "vendor": "Google",
+    "planId": "google-ai-ultra-20x",
+    "label": "Google AI Ultra (20x)",
+    "monthlyPriceUsd": 199.99,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "models": [
+      "Gemini 4 Argon",
+      "Gemini 3.1 Pro",
+      "Gemini 3.8 Flash",
+      "third-party Model Garden models in Antigravity (e.g. Claude Sonnet)"
+    ],
+    "limits": "\"$199.99 / month: 20x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 20x: Highest rate limits to agent model in Google Antigravity\"; refreshed every five hours up to weekly limit.",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://gemini.google/subscriptions/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://support.google.com/googleone/answer/16286513?hl=en",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Secondary sources say the price dropped from $249.99 to $199.99 on 2026-05-19. Gemini CLI's stale table says 2,000 req/day for Ultra. Same third-party caveat as Pro."
+  }
+]

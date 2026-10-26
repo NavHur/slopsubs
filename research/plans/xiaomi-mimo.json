@@ -1,0 +1,145 @@
+[
+  {
+    "vendor": "Xiaomi MiMo",
+    "planId": "mimo-token-lite",
+    "label": "MiMo Token Plan Lite",
+    "monthlyPriceUsd": 6,
+    "annualMonthlyPriceUsd": 5.28,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code",
+      "third-party via OpenAI/Anthropic-compatible endpoint"
+    ],
+    "models": [
+      "mimo-v2.6-pro",
+      "mimo-v2.6-flash",
+      "mimo-v2.5-pro (retires 2026-10-21)",
+      "mimo-v2.5 (retires 2026-10-21)",
+      "mimo-v2.5-asr",
+      "mimo-v2.5-tts"
+    ],
+    "limits": "Fixed Monthly Quota: 4.1 billion Credits. 'Using mimo-v2.6-flash as the baseline, it can execute approximately 200 rounds of medium-to-complex tasks.' v2.6-pro: 300 credits/input token (cache miss), 2.5 cached, 600 output. 'When the monthly total quota of your plan is used up, the system will suspend the service.' Off-peak (00:00–08:00 Beijing) 0.8x.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://mimo.mi.com/static/docs/tokenplan/Token%20Plan/subscription.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://mimo.mi.com/static/docs/quick-start/faq/token-plan/Plans&Pricing.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "¥39/mo. Annual: $63.36/yr (¥411.84). Monthly quota only, with no 5-hour or weekly window in the docs. 12% first-purchase discount. No refunds. Xiaomi documents integrations for several third-party tools and I found no supported-tools-only clause, but I didn't read the full ToS."
+  },
+  {
+    "vendor": "Xiaomi MiMo",
+    "planId": "mimo-token-standard",
+    "label": "MiMo Token Plan Standard",
+    "monthlyPriceUsd": 16,
+    "annualMonthlyPriceUsd": 14.08,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code"
+    ],
+    "models": [
+      "mimo-v2.6-pro",
+      "mimo-v2.6-flash",
+      "mimo-v2.5-asr",
+      "mimo-v2.5-tts"
+    ],
+    "limits": "Fixed Monthly Quota: 11 billion Credits (~1,600 rounds of medium-to-complex tasks on v2.6-flash).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "¥99/mo; $168.96/yr (¥1,045.44)."
+  },
+  {
+    "vendor": "Xiaomi MiMo",
+    "planId": "mimo-token-pro",
+    "label": "MiMo Token Plan Pro",
+    "monthlyPriceUsd": 50,
+    "annualMonthlyPriceUsd": 44,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code"
+    ],
+    "models": [
+      "mimo-v2.6-pro",
+      "mimo-v2.6-flash",
+      "mimo-v2.5-asr",
+      "mimo-v2.5-tts"
+    ],
+    "limits": "Fixed Monthly Quota: 38 billion Credits (~5,600 rounds on v2.6-flash).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "¥329/mo; $528/yr (¥3,474.24)."
+  },
+  {
+    "vendor": "Xiaomi MiMo",
+    "planId": "mimo-token-max",
+    "label": "MiMo Token Plan Max",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": 88,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code"
+    ],
+    "models": [
+      "mimo-v2.6-pro",
+      "mimo-v2.6-flash",
+      "mimo-v2.5-asr",
+      "mimo-v2.5-tts"
+    ],
+    "limits": "Fixed Monthly Quota: 82 billion Credits (~12,800 rounds on v2.6-flash).",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "¥659/mo; $1,056/yr (¥6,959.04)."
+  }
+]

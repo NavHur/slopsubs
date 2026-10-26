@@ -1,0 +1,48 @@
+[
+  {
+    "vendor": "Ollama",
+    "planId": "ollama-pro",
+    "label": "Ollama Pro (Cloud)",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": 16.67,
+    "harnesses": [
+      "any harness via Ollama API (Claude Code, Codex, OpenCode, etc.)"
+    ],
+    "models": [
+      "cloud open models: GLM-5.3, Kimi K3, Kimi K2.7 Code, DeepSeek V4/4.1, MiniMax M3, gpt-oss, Qwen, Mistral Large 4, etc."
+    ],
+    "limits": "\"$60 of usage credits per month\"; \"Access to larger pro models\"; \"Run multiple models concurrently\"; resets monthly, no rollover; off-peak pricing outside 12:00-18:00 UTC weekdays.",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://ollama.com/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $200/yr. This is a credit plan ($3 of credit per $1), not a rate-window plan. thirdPartyHarnessAllowed=true because it's API-based; Ollama's harness launcher integrations are known from secondary sources, not this page."
+  },
+  {
+    "vendor": "Ollama",
+    "planId": "ollama-max",
+    "label": "Ollama Max (Cloud)",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "any harness via Ollama API"
+    ],
+    "models": [
+      "as Pro, plus early access to newest models"
+    ],
+    "limits": "\"$300 of usage credits per month\"; \"10 concurrent requests\".",
+    "thirdPartyHarnessAllowed": true,
+    "sources": [
+      {
+        "url": "https://ollama.com/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "No annual price shown for Max."
+  }
+]

@@ -1,0 +1,160 @@
+[
+  {
+    "vendor": "Zhipu / Z.ai",
+    "planId": "zai-glm-coding-lite",
+    "label": "GLM Coding Plan Lite",
+    "monthlyPriceUsd": 18,
+    "annualMonthlyPriceUsd": 12.6,
+    "harnesses": [
+      "ZCode",
+      "Claude Code",
+      "Claude for IDE",
+      "Codex",
+      "OpenCode",
+      "Pi",
+      "Cursor",
+      "Cline",
+      "TRAE",
+      "Qoder",
+      "Droid",
+      "Kilo Code",
+      "Roo Code",
+      "Crush",
+      "Goose",
+      "Eigent",
+      "AutoClaw",
+      "OpenClaw",
+      "Hermes Agent"
+    ],
+    "models": [
+      "GLM-5.3",
+      "GLM-5.3-Flash"
+    ],
+    "limits": "Each plan is subject to both a 5-hour usage limit and a weekly usage limit. Lite: 2,000 5-hour credits, 10,000 weekly credits. 5-hour credits: dynamically refreshed; credit quota resets 5 hours after consumption. Weekly credits: activated upon subscription; resets every 7 days. During off-peak hours, model usage is charged at 50% of the standard credit rate (peak: Mon–Fri 14:00–18:00 UTC+8). Est. 48–104M GLM-5.3 tokens/week depending on cache hit rate.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://docs.z.ai/devpack/overview",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.z.ai/devpack/faq",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.z.ai/devpack/usage-policy",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.z.ai/devpack/tool/others.md",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.z.ai/devpack/notice/usage-revision",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://vibecoding.app/blog/zhipu-ai-glm-coding-plan-review",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "The $18 monthly price is primary (docs: 'Starting at just 18 USD per month'). The $12.60/mo annual figure is secondary: 30% yearly discount, 20% quarterly ($14.40). z.ai/subscribe renders prices client-side, so it couldn't be scraped. Since 2026-07-30 the plan bills in credits instead of prompts. FAQ: 'strictly limited to use within officially supported tools and products', with a list of about 20 tools including Claude Code, Codex, and OpenCode. Third-party use is fine within that list and forbidden outside it. ZCode and AutoClaw consume 1.5x usage. Plan quota can't be used for general API calls; from 2026-10-16 coding-plan API keys are separate keys. No refunds."
+  },
+  {
+    "vendor": "Zhipu / Z.ai",
+    "planId": "zai-glm-coding-pro",
+    "label": "GLM Coding Plan Pro",
+    "monthlyPriceUsd": 80,
+    "annualMonthlyPriceUsd": 56,
+    "harnesses": [
+      "ZCode",
+      "Claude Code",
+      "Claude for IDE",
+      "Codex",
+      "OpenCode",
+      "Pi",
+      "Cursor",
+      "Cline",
+      "TRAE",
+      "Qoder",
+      "Droid",
+      "Kilo Code",
+      "Roo Code",
+      "Crush",
+      "Goose",
+      "Eigent",
+      "AutoClaw",
+      "OpenClaw",
+      "Hermes Agent"
+    ],
+    "models": [
+      "GLM-5.3",
+      "GLM-5.3-Flash"
+    ],
+    "limits": "Pro: 12,000 5-hour credits, 60,000 weekly credits (same reset and off-peak rules as Lite). Est. 290–627M GLM-5.3 tokens/week.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://docs.z.ai/devpack/overview",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://vibecoding.app/blog/zhipu-ai-glm-coding-plan-review",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.digitalapplied.com/blog/glm-coding-plan-worth-it-2026-value-analysis",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "Credit limits are primary. The $80 price is secondary: the official 2026-04-21 Legacy Plan Migration Notice still shows $72 for the old prompt-based plan, and third parties report the live subscribe page shows $80 for the credit plan. Annual $56/mo is secondary. Supported-tools-only restriction as for Lite."
+  },
+  {
+    "vendor": "Zhipu / Z.ai",
+    "planId": "zai-glm-coding-max",
+    "label": "GLM Coding Plan Max",
+    "monthlyPriceUsd": 168,
+    "annualMonthlyPriceUsd": 117.6,
+    "harnesses": [
+      "ZCode",
+      "Claude Code",
+      "Claude for IDE",
+      "Codex",
+      "OpenCode",
+      "Pi",
+      "Cursor",
+      "Cline",
+      "TRAE",
+      "Qoder",
+      "Droid",
+      "Kilo Code",
+      "Roo Code",
+      "Crush",
+      "Goose",
+      "Eigent",
+      "AutoClaw",
+      "OpenClaw",
+      "Hermes Agent"
+    ],
+    "models": [
+      "GLM-5.3",
+      "GLM-5.3-Flash"
+    ],
+    "limits": "Max: 28,000 5-hour credits, 140,000 weekly credits. Est. 676–1,463M GLM-5.3 tokens/week.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://docs.z.ai/devpack/overview",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://vibecoding.app/blog/zhipu-ai-glm-coding-plan-review",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "The $168 price is secondary; the legacy prompt plan was $160 per the official migration notice. Credit limits are primary."
+  }
+]

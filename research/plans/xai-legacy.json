@@ -1,0 +1,30 @@
+[
+  {
+    "vendor": "xAI (legacy)",
+    "planId": "supergrok-legacy",
+    "label": "SuperGrok (legacy)",
+    "monthlyPriceUsd": 30,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Grok apps",
+      "Grok Build"
+    ],
+    "models": [
+      "Grok 4.x"
+    ],
+    "limits": "Not verified.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://costbench.com/software/ai-chatbots/grok/",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://www.engadget.com/2284943/x-subscription-bundles-premium-grok-cursor/",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "x.ai and grok.com blocked or client-rendered, so not verified from a primary source. Secondary reports: SuperGrok $30, SuperGrok Plus $100, SuperGrok Heavy ~$300; closed to new sign-ups since 2026-10-12, with existing subscribers keeping their plans. Consider leaving it out of the comparison."
+  }
+]

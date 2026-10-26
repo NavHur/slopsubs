@@ -1,0 +1,140 @@
+[
+  {
+    "vendor": "SpaceXSI (xAI) / Cursor / X",
+    "planId": "x-subscription-plus",
+    "label": "The X Subscription Plus",
+    "monthlyPriceUsd": 8,
+    "annualMonthlyPriceUsd": 6.67,
+    "harnesses": [
+      "Cursor (Agent, CLI)",
+      "Grok Build",
+      "Grok apps"
+    ],
+    "models": [
+      "Grok 4.7",
+      "Grok 4.6",
+      "Grok 4.5",
+      "Composer 2.5"
+    ],
+    "limits": "Usage \"Basic\"; \"Shared AI usage pool\"; \"Your allowance refreshes weekly\"; Cursor models \"at fixed settings: Fast is off, effort is medium, and Grok 4.7 uses the 256k context window\".",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://cursor.com/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://cursor.com/docs/account/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $80/yr per Cursor docs. 'Only Grok models are available on this plan.' No Auto, Cloud Agents, third-party models, or own API keys. Grok API access is included but 'billed separately at standard model rates and doesn't draw from your plan's usage pool', so the pool can't be used in third-party harnesses through the API. Also bundles X Premium social features."
+  },
+  {
+    "vendor": "SpaceXSI (xAI) / Cursor / X",
+    "planId": "x-subscription-premium",
+    "label": "The X Subscription Premium",
+    "monthlyPriceUsd": 30,
+    "annualMonthlyPriceUsd": 25,
+    "harnesses": [
+      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
+      "Grok Build",
+      "Grok Bot",
+      "Grok apps"
+    ],
+    "models": [
+      "Grok 4.7",
+      "Grok 4.6",
+      "Grok 4.5",
+      "Composer 2.5",
+      "third-party models (Claude, GPT, Gemini) at API list price from prepaid credit, not included"
+    ],
+    "limits": "\"4x more usage compared to Plus\"; weekly shared pool across Cursor and Grok; \"Third-party models at API list price\".",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://cursor.com/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://cursor.com/docs/account/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://forum.cursor.com/t/introducing-the-x-subscription/174450",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $300/yr. Announced 2026-10-12 (forum). Secondary sources (Engadget etc.) say Premium bundles the former SuperGrok + Cursor Pro + X Premium+. Grok API is billed separately."
+  },
+  {
+    "vendor": "SpaceXSI (xAI) / Cursor / X",
+    "planId": "x-subscription-super",
+    "label": "The X Subscription Super",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": 83.33,
+    "harnesses": [
+      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
+      "Grok Build",
+      "Grok Bot",
+      "Grok apps"
+    ],
+    "models": [
+      "Grok 4.7",
+      "Grok 4.6",
+      "Grok 4.5",
+      "Composer 2.5",
+      "third-party models at API list price (not included)"
+    ],
+    "limits": "\"15x more usage compared to Plus\"; \"Priority model access at peak times\"; weekly shared pool.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://cursor.com/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://cursor.com/docs/account/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $1,000/yr."
+  },
+  {
+    "vendor": "SpaceXSI (xAI) / Cursor / X",
+    "planId": "x-subscription-ultra",
+    "label": "The X Subscription Ultra",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": 166.67,
+    "harnesses": [
+      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
+      "Grok Build",
+      "Grok Bot",
+      "Grok apps"
+    ],
+    "models": [
+      "Grok 4.7",
+      "Grok 4.6",
+      "Grok 4.5",
+      "Composer 2.5",
+      "third-party models at API list price (not included)"
+    ],
+    "limits": "\"50x more usage compared to Plus\"; \"Earliest access to all products & models\"; weekly shared pool.",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://cursor.com/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://cursor.com/docs/account/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Annual $2,000/yr. Engadget reportedly says 20x for Ultra; the vendor page says 50x."
+  }
+]

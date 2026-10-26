@@ -1,0 +1,85 @@
+[
+  {
+    "vendor": "Factory",
+    "planId": "factory-pro",
+    "label": "Factory Pro (Droid)",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Droid CLI",
+      "Droid Desktop",
+      "Droid SDK",
+      "cloud background agents"
+    ],
+    "models": [
+      "GPT-5 family, Claude Opus/Sonnet, Gemini, and others (per vendor)",
+      "Droid Core open-weight pool"
+    ],
+    "limits": "\"three rolling windows, 5-hour, 7-day, and 30-day. Each runs independently.\"; \"Droid Core: free open-weight model pool with separate Rate Limits after Standard Usage runs out.\"; \"BYOK is free up to an allowance on all Individual plans.\"",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://factory.ai/pricing",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://docs.factory.com/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Token amounts are not published. Per-model multipliers are on the models page (not fetched)."
+  },
+  {
+    "vendor": "Factory",
+    "planId": "factory-plus",
+    "label": "Factory Plus",
+    "monthlyPriceUsd": 100,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Droid CLI",
+      "Droid Desktop",
+      "Droid SDK",
+      "Droid Computers"
+    ],
+    "models": [
+      "as Pro"
+    ],
+    "limits": "\"Expanded rolling rate limits\"; \"~5x the usage of Pro\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://factory.ai/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": ""
+  },
+  {
+    "vendor": "Factory",
+    "planId": "factory-max",
+    "label": "Factory Max",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Droid CLI",
+      "Droid Desktop",
+      "Droid SDK",
+      "Droid Computers"
+    ],
+    "models": [
+      "as Pro"
+    ],
+    "limits": "\"Expanded rolling rate limits\"; \"~10x the usage of Pro\".",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://factory.ai/pricing",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": ""
+  }
+]

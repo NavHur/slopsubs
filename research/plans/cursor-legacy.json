@@ -1,0 +1,81 @@
+[
+  {
+    "vendor": "Cursor (legacy)",
+    "planId": "cursor-pro-legacy",
+    "label": "Cursor Pro (legacy)",
+    "monthlyPriceUsd": 20,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Cursor (IDE, CLI, Cloud Agents)"
+    ],
+    "models": [
+      "Grok 4.7/4.6/4.5",
+      "Composer 2.5",
+      "third-party models via 'Other Models' pool at API price"
+    ],
+    "limits": "\"Two monthly pools: Cursor Models and Other Models\"; Other Models pool is \"drawn down at each model's API price\". Dollar amounts not stated.",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://cursor.com/docs/account/pricing/legacy-cursor-plans",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Closed to new customers: 'New customers start on The X Subscription.' Existing subscribers keep it. Included pool dollar amounts are not on the page."
+  },
+  {
+    "vendor": "Cursor (legacy)",
+    "planId": "cursor-pro-plus-legacy",
+    "label": "Cursor Pro+ (legacy)",
+    "monthlyPriceUsd": 60,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Cursor (IDE, CLI, Cloud Agents)"
+    ],
+    "models": [
+      "Grok 4.7/4.6/4.5",
+      "Composer 2.5",
+      "third-party models via Other Models pool"
+    ],
+    "limits": "\"Pro+ and Ultra include more of each pool than Pro.\"",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://cursor.com/docs/account/pricing/legacy-cursor-plans",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Closed to new customers."
+  },
+  {
+    "vendor": "Cursor (legacy)",
+    "planId": "cursor-ultra-legacy",
+    "label": "Cursor Ultra (legacy)",
+    "monthlyPriceUsd": 200,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Cursor (IDE, CLI, Cloud Agents)"
+    ],
+    "models": [
+      "Grok 4.7/4.6/4.5",
+      "Composer 2.5",
+      "third-party models via Other Models pool"
+    ],
+    "limits": "\"Pro+ and Ultra include more of each pool than Pro.\"",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://cursor.com/docs/account/pricing/legacy-cursor-plans",
+        "accessed": "2026-10-17"
+      },
+      {
+        "url": "https://forum.cursor.com/t/introducing-the-x-subscription/174450",
+        "accessed": "2026-10-17"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Staff on the forum: Ultra 'is no longer available for new signups.'"
+  }
+]
