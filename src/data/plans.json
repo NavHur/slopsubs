@@ -297,7 +297,7 @@
       "mimo-v2-5-pro",
       "mimo-v2-5-0424",
       "hy3",
-      "deepseek-v4-1-flash",
+      "deepseek-v4-1-flash-1017",
       "deepseek-v4-pro",
       "grok-4-7"
     ],
@@ -332,7 +332,7 @@
         "mimo-v2-5-pro": 15.568965517241379,
         "mimo-v2-5-0424": 57,
         "hy3": 57.78,
-        "deepseek-v4-1-flash": 80,
+        "deepseek-v4-1-flash-1017": 80,
         "deepseek-v4-pro": 15,
         "grok-4-7": 15
       },
@@ -385,7 +385,7 @@
       "mimo-v2-5-pro",
       "mimo-v2-5-0424",
       "hy3",
-      "deepseek-v4-1-flash",
+      "deepseek-v4-1-flash-1017",
       "deepseek-v4-pro",
       "grok-4-7"
     ],
@@ -420,7 +420,7 @@
         "mimo-v2-5-pro": 62.275862068965516,
         "mimo-v2-5-0424": 114,
         "hy3": 231.12,
-        "deepseek-v4-1-flash": 160,
+        "deepseek-v4-1-flash-1017": 160,
         "deepseek-v4-pro": 60,
         "grok-4-7": 60
       },

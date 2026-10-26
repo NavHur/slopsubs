@@ -49,7 +49,7 @@
       }
     ],
     "confidence": "primary",
-    "notes": "Monthly usage is expressed in dollars per model at Go's token prices, roughly 1.5-24x the subscription price. Limited-time promos: Gemini 4 Argon at 50% off ($2/$10 per MTok instead of $4/$20) through 2026-11-30; Beam Free is free with no cap for a limited time, in limited regions. DeepSeek is billed at double rates during peak hours (01:00-04:00 and 06:00-10:00 UTC weekdays). The Muse Spark Contributor variants are cheap in exchange for training on prompts."
+    "notes": "Monthly usage is expressed in dollars per model at Go's token prices, roughly 1.5-24x the subscription price. Limited-time promos: Gemini 4 Argon at 50% off ($2/$10 per MTok instead of $4/$20) through 2026-11-30; Beam Free is free with no cap for a limited time, in limited regions. DeepSeek V4.1 Flash has served the 1017 build since 2026-10-19 (https://x.com/opencode/status/2112220734768779441). DeepSeek is billed at double rates during peak hours (01:00-04:00 and 06:00-10:00 UTC weekdays). The Muse Spark Contributor variants are cheap in exchange for training on prompts."
   },
   {
     "vendor": "Anomaly (OpenCode)",

@@ -48,8 +48,10 @@ const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	"mimo-v2-5-pro": [15, 60],
 	"mimo-v2-5-0424": [60, 120],
 	hy3: [60, 240],
-	// At peak prices, which match the list; off-peak usage goes twice as far.
-	"deepseek-v4-1-flash": [80, 160],
+	// Go's V4.1 Flash serves the 1017 build since 2026-10-19
+	// (x.com/opencode/status/2112220734768779441). At peak prices, which match
+	// the list; off-peak usage goes twice as far.
+	"deepseek-v4-1-flash-1017": [80, 160],
 	"deepseek-v4-pro": [15, 60],
 	"grok-4-7": [15, 60],
 };
