@@ -84,6 +84,13 @@ const GO_PROMOS: Record<
 const OPENCODE_PROMOTIONS = Object.fromEntries(
 	Object.entries(GO_PROMOS).map(([family, p]) => [family, p.promotion]),
 );
+const today = new Date().toISOString().slice(0, 10);
+for (const [family, { promotion }] of Object.entries(GO_PROMOS)) {
+	if (promotion.endsOn < today)
+		throw new Error(
+			`GO_PROMOS["${family}"] ended on ${promotion.endsOn}; delete it and rebuild the plans.`,
+		);
+}
 
 /** Artificial Analysis's blend: three input tokens per output token. */
 function blendedPrice(input: number, output: number): number {
