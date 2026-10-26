@@ -26,7 +26,8 @@
       "basis": "A twentieth of Theo's Max 20x figure (Max 20x is 20x Pro)"
     },
     "publishedAllowance": null,
-    "maxEffortByFamily": {}
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
   },
   {
     "id": "claude-max-5x",
@@ -56,7 +57,8 @@
       "basis": "A quarter of Theo's Max 20x figure (Max 5x vs 20x of Pro)"
     },
     "publishedAllowance": null,
-    "maxEffortByFamily": {}
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
   },
   {
     "id": "claude-max-20x",
@@ -86,7 +88,8 @@
       "basis": "Theo: $200 in, $8,000 a month of API-priced inference out"
     },
     "publishedAllowance": null,
-    "maxEffortByFamily": {}
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
   },
   {
     "id": "chatgpt-plus",
@@ -128,7 +131,8 @@
       "basis": "A tenth of Theo's Pro 200 figure (Pro 200 is now 10x Plus)"
     },
     "publishedAllowance": null,
-    "maxEffortByFamily": {}
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
   },
   {
     "id": "chatgpt-pro-100",
@@ -170,7 +174,8 @@
       "basis": "5x Theo's Plus figure (OpenAI launched Pro 100 at 5x Plus)"
     },
     "publishedAllowance": null,
-    "maxEffortByFamily": {}
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
   },
   {
     "id": "chatgpt-pro-200",
@@ -212,7 +217,8 @@
       "basis": "Theo measured $573.86 of API-priced usage in one weekly cap"
     },
     "publishedAllowance": null,
-    "maxEffortByFamily": {}
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
   },
   {
     "id": "chatgpt-pro-500",
@@ -254,7 +260,8 @@
       "basis": "2.5x Theo's Pro 200 figure (Pro 500 is 25x Plus, Pro 200 10x)"
     },
     "publishedAllowance": null,
-    "maxEffortByFamily": {}
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
   },
   {
     "id": "opencode-go",
@@ -316,7 +323,8 @@
     },
     "maxEffortByFamily": {
       "muse-spark-1-3": "xhigh"
-    }
+    },
+    "promotionByFamily": {}
   },
   {
     "id": "opencode-go-plus",
@@ -378,6 +386,7 @@
     },
     "maxEffortByFamily": {
       "muse-spark-1-3": "xhigh"
-    }
+    },
+    "promotionByFamily": {}
   }
 ]

@@ -252,6 +252,7 @@ const plans = Plans.parse(
 				reportedCap: REPORTED_CAPS[p.planId] ?? null,
 				publishedAllowance: publishedAllowance(p.planId),
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
+				promotionByFamily: {},
 			};
 		}),
 );
