@@ -10,6 +10,7 @@ import { z } from "zod";
 import {
 	BenchmarkDataset,
 	Plans,
+	type Promotion,
 	type PublishedAllowance,
 	type ReportedCap,
 } from "../src/domain/model.ts";
@@ -19,25 +20,34 @@ const ROOT = new URL("..", import.meta.url);
 const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-luna"];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 // Monthly usage by model on OpenCode Go and Go Plus (opencode.ai/docs/go,
-// 2026-10-17), for the benchmarked part of its lineup, without limited-time
-// promos. The dollars are at Go's token prices, which match list prices
-// except where GO_OFF_LIST_PRICES says otherwise.
+// 2026-10-26), for the benchmarked part of its lineup. The dollars are at
+// Go's token prices, which match list prices except where GO_OFF_LIST_PRICES
+// or GO_PROMOS says otherwise.
 const OPENCODE_DOCS = "https://opencode.ai/docs/go#usage-limits";
 const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
+	"kimi-k3-1-pro": [15, 60],
 	"kimi-k3": [15, 60],
 	"kimi-k2-7-code": [60, 180],
 	"gemini-4-argon": [30, 120],
 	"step-5-preview": [15, 60],
+	"minimax-m3-1-flash": [20, 80],
 	"minimax-m3": [60, 180],
 	"muse-spark-1-3": [60, 120],
+	"muse-spark-1-2": [60, 120],
 	"claude-haiku-5-5": [15, 60],
 	"gpt-6-luna": [15, 60],
+	"gpt-5-6-luna": [15, 60],
 	"qwen3-7-plus": [60, 180],
 	"qwen3-8-max": [15, 60],
 	"glm-5-3": [15, 120],
+	"glm-5-2": [60, 180],
 	"glm-5-3-flash": [60, 180],
+	"longcat-2-0": [60, 240],
 	"mimo-v2-6-pro": [15, 60],
 	"mimo-v2-6-flash": [60, 120],
+	"mimo-v2-5-pro": [15, 60],
+	"mimo-v2-5-0424": [60, 120],
+	hy3: [60, 240],
 	// At peak prices, which match the list; off-peak usage goes twice as far.
 	"deepseek-v4-1-flash": [80, 160],
 	"deepseek-v4-pro": [15, 60],
@@ -45,12 +55,38 @@ const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 };
 const OPENCODE_GO = Object.keys(OPENCODE_GO_USD);
 
-/** Go's [input, output] $/MTok where it differs from the list price. */
+/** Go's regular [input, output] $/MTok where it differs from the list price. */
 const GO_OFF_LIST_PRICES: Record<string, [input: number, output: number]> = {
 	"gemini-4-argon": [4, 20],
-	// The Contributor variant, billed far below Meta's list price.
+	// The Contributor variants, billed far below Meta's list price.
 	"muse-spark-1-3": [0.1, 0.2],
+	"muse-spark-1-2": [0.1, 0.2],
+	"longcat-2-0": [0.3, 1.2],
+	"mimo-v2-5-pro": [0.435, 0.87],
+	"mimo-v2-5-0424": [0.14, 0.28],
+	hy3: [0.14, 0.58],
 };
+
+/**
+ * Limited-time discounts on Go's token prices. A discount stretches the same
+ * monthly dollars over more tokens, so the allowance counts it while it runs.
+ */
+const GO_PROMOS: Record<
+	string,
+	{ prices: [input: number, output: number]; promotion: Promotion }
+> = {
+	"gemini-4-argon": {
+		prices: [2, 10],
+		promotion: {
+			summary: "Go bills Gemini 4 Argon at 50% off, doubling its usage",
+			endsOn: "2026-11-30",
+			url: OPENCODE_DOCS,
+		},
+	},
+};
+const OPENCODE_PROMOTIONS = Object.fromEntries(
+	Object.entries(GO_PROMOS).map(([family, p]) => [family, p.promotion]),
+);
 
 /** Artificial Analysis's blend: three input tokens per output token. */
 function blendedPrice(input: number, output: number): number {
@@ -58,7 +94,10 @@ function blendedPrice(input: number, output: number): number {
 }
 
 /** Max effort on Muse Spark is only served by Meta's own API. */
-const OPENCODE_MAX_EFFORT = { "muse-spark-1-3": "xhigh" } as const;
+const OPENCODE_MAX_EFFORT = {
+	"muse-spark-1-3": "xhigh",
+	"muse-spark-1-2": "xhigh",
+} as const;
 
 const PUBLISHED_ALLOWANCES: Record<string, 0 | 1> = {
 	"opencode-go": 0,
@@ -203,7 +242,7 @@ if (missing.length)
 
 /** Converts a Go-priced dollar allowance into list-priced (API) dollars. */
 function listPricedUsd(family: string, goUsd: number): number {
-	const goPrice = GO_OFF_LIST_PRICES[family];
+	const goPrice = GO_PROMOS[family]?.prices ?? GO_OFF_LIST_PRICES[family];
 	if (!goPrice) return goUsd;
 	const list = models.find(
 		(m) => m.family === family && m.inputPricePerMTokUsd !== null,
@@ -228,7 +267,8 @@ function publishedAllowance(planId: string): PublishedAllowance | null {
 			]),
 		),
 		url: OPENCODE_DOCS,
-		basis: "OpenCode's published monthly usage for each model, at list prices",
+		basis:
+			"OpenCode's published monthly usage for each model, at list prices, with current promos",
 	};
 }
 
@@ -260,7 +300,7 @@ const plans = Plans.parse(
 				reportedCap: REPORTED_CAPS[p.planId] ?? null,
 				publishedAllowance: publishedAllowance(p.planId),
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
-				promotionByFamily: {},
+				promotionByFamily: lab === "opencode" ? OPENCODE_PROMOTIONS : {},
 			};
 		}),
 );

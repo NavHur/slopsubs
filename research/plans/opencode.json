@@ -10,29 +10,46 @@
       "any agent (\"Use with any agent\")"
     ],
     "models": [
+      "Kimi K3.1 Pro",
       "Kimi K3",
       "Kimi K2.7 Code",
       "Gemini 4 Argon",
-      "MiniMax M3",
-      "Qwen3.7 Plus",
-      "GLM-5.3-Flash",
-      "MiMo-V2.6-Flash",
-      "DeepSeek V4.1 Flash",
-      "Claude Haiku 5.5",
       "GPT 6 Luna",
+      "GPT 5.6 Luna",
+      "Claude Haiku 5.5",
+      "Grok 4.7",
+      "GLM-5.3",
+      "GLM-5.3-Flash",
+      "GLM-5.2",
+      "MiniMax M3",
+      "MiniMax M3.1 Flash",
+      "Qwen3.8 Max",
+      "Qwen3.8 Flash",
+      "Qwen3.7 Plus",
+      "DeepSeek V4.1 Flash",
+      "DeepSeek V4 Pro",
+      "MiMo-V2.6-Pro",
+      "MiMo-V2.6-Flash",
+      "MiMo-V2.5-Pro",
+      "MiMo-V2.5",
+      "Muse Spark 1.3 Contributor",
+      "Muse Spark 1.2 Contributor",
+      "LongCat-2.0",
+      "Hy4 preview",
+      "Hy3",
       "Step 5 Preview",
-      "others (29 total)"
+      "Beam Free"
     ],
-    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\", e.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K2.7 Code 1,350 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 34,670 / $80.",
+    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\"; the 5-hour window gets 20% of the monthly dollars and the weekly window 50%. E.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K3.1 Pro 147 / $15; Kimi K2.7 Code 1,350 / $60; LongCat-2.0 11,400 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 34,670 / $80. Beam Free is unlimited for a limited time.",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
         "url": "https://opencode.ai/go",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-26"
       }
     ],
     "confidence": "primary",
-    "notes": "Monthly usage is expressed in dollars per model at roughly 1.5-8x the subscription price. Limited-time 2x/4x promos on some models."
+    "notes": "Monthly usage is expressed in dollars per model at Go's token prices, roughly 1.5-24x the subscription price. Limited-time promos: Gemini 4 Argon at 50% off ($2/$10 per MTok instead of $4/$20) through 2026-11-30; Beam Free is free with no cap for a limited time, in limited regions. DeepSeek is billed at double rates during peak hours (01:00-04:00 and 06:00-10:00 UTC weekdays). The Muse Spark Contributor variants are cheap in exchange for training on prompts."
   },
   {
     "vendor": "Anomaly (OpenCode)",
@@ -47,15 +64,15 @@
     "models": [
       "same as Go"
     ],
-    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K2.7 Code 4,050 / $180; DeepSeek V4.1 Flash 69,330 / $160.",
+    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K3.1 Pro 588 / $60; Kimi K2.7 Code 4,050 / $180; LongCat-2.0 45,600 / $240; DeepSeek V4.1 Flash 69,330 / $160.",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
         "url": "https://opencode.ai/go",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-26"
       }
     ],
     "confidence": "primary",
-    "notes": ""
+    "notes": "Same token prices and promos as Go."
   }
 ]
