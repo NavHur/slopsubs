@@ -1,7 +1,5 @@
-// Builds src/data/plans.json (and the trimmed chart-benchmarks.json the site
-// ships) from the research in research/plans/, keeping the plans
-// the site covers (Claude Code, Codex and OpenCode Go tiers) and mapping
-// their models onto benchmarked families.
+// Builds src/data/plans.json and the trimmed chart-benchmarks.json from
+// research/plans/.
 //
 // Usage: node scripts/build-plans.ts
 
@@ -19,10 +17,8 @@ const ROOT = new URL("..", import.meta.url);
 
 const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-luna"];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
-// Monthly usage by model on OpenCode Go and Go Plus (opencode.ai/docs/go,
-// 2026-10-26), for the benchmarked part of its lineup. The dollars are at
-// Go's token prices, which match list prices except where GO_OFF_LIST_PRICES
-// or GO_PROMOS says otherwise.
+// Monthly usage on Go and Go Plus (opencode.ai/docs/go, 2026-10-26), in dollars
+// at Go's token prices; GO_OFF_LIST_PRICES and GO_PROMOS cover those off list.
 const OPENCODE_DOCS = "https://opencode.ai/docs/go#usage-limits";
 const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	"kimi-k3-1-pro": [15, 60],
@@ -48,9 +44,8 @@ const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	"mimo-v2-5-pro": [15, 60],
 	"mimo-v2-5-0424": [60, 120],
 	hy3: [60, 240],
-	// Go's V4.1 Flash serves the 1017 build since 2026-10-19
-	// (x.com/opencode/status/2112220734768779441). At peak prices, which match
-	// the list; off-peak usage goes twice as far.
+	// Go serves V4.1 Flash's 1017 build since 2026-10-19 (research/plans/opencode.json).
+	// At peak prices, which match the list; off-peak usage goes twice as far.
 	"deepseek-v4-1-flash-1017": [80, 160],
 	"deepseek-v4-pro": [15, 60],
 	"grok-4-7": [15, 60],
@@ -219,17 +214,32 @@ async function readJson(path: string): Promise<unknown> {
 	return JSON.parse(await readFile(new URL(path, ROOT), "utf8"));
 }
 
+/** One vendor's plans; a failure names the file. */
+async function readVendorFile(
+	dir: string,
+	name: string,
+): Promise<z.infer<typeof ResearchPlan>[]> {
+	try {
+		return z.array(ResearchPlan).parse(await readJson(dir + name));
+	} catch (cause) {
+		const message = cause instanceof Error ? cause.message : String(cause);
+		throw new Error(`${dir}${name}: ${message}`, { cause });
+	}
+}
+
 /** Every researched plan, from one file per vendor, in file-name order. */
-async function readResearch(): Promise<unknown[]> {
+async function readResearch(): Promise<z.infer<typeof ResearchPlan>[]> {
 	const dir = "research/plans/";
 	const files = (await readdir(new URL(dir, ROOT)))
 		.filter((name) => name.endsWith(".json"))
 		.sort();
-	const rows = await Promise.all(files.map((name) => readJson(dir + name)));
-	return rows.flatMap((r) => z.array(z.unknown()).parse(r));
+	const rows = await Promise.all(
+		files.map((name) => readVendorFile(dir, name)),
+	);
+	return rows.flat();
 }
 
-const research = z.array(ResearchPlan).parse(await readResearch());
+const research = await readResearch();
 const dataset = BenchmarkDataset.parse(
 	await readJson("src/data/benchmarks.json"),
 );

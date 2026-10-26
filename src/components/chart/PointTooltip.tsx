@@ -52,10 +52,7 @@ export function PointTooltip({
 }) {
 	const [ref, box] = useBorderBox<HTMLDivElement>();
 	const { benchmark, pricing } = point;
-	const promotion =
-		pricing.kind === "plan"
-			? pricing.plan.promotionByFamily[benchmark.family]
-			: undefined;
+	const promotion = planPromotion(point);
 	// Hidden for the one layout before its size is known.
 	const placement = box && tooltipPlacement(anchor, box, bounds);
 	return (
@@ -119,6 +116,12 @@ export function PointTooltip({
 			</a>
 		</div>
 	);
+}
+
+/** The promo behind a plan point's figures; API points have none. */
+function planPromotion({ benchmark, pricing }: ValuePoint) {
+	if (pricing.kind !== "plan") return undefined;
+	return pricing.plan.promotionByFamily[benchmark.family];
 }
 
 /** The plan's figures count a discount that will end. */
