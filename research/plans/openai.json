@@ -16,7 +16,7 @@
     "sources": [
       {
         "url": "https://learn.chatgpt.com/docs/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-26"
       }
     ],
     "confidence": "primary",
@@ -47,16 +47,17 @@
     ],
     "models": [
       "GPT-6.1 Sol",
+      "GPT-6.1 Terra",
       "GPT-6 Sol",
       "GPT-6 Luna",
       "GPT-6 Astra"
     ],
-    "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
+    "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6.1 Terra 35-285, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
         "url": "https://learn.chatgpt.com/docs/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-26"
       },
       {
         "url": "https://learn.chatgpt.com/codex/sign-in-with-chatgpt",
@@ -64,7 +65,7 @@
       }
     ],
     "confidence": "primary",
-    "notes": "Third-party use is officially supported through 'Sign in with ChatGPT': 'eligible ChatGPT Plus and Pro subscribers can also choose to use their ChatGPT plan for AI requests'. The listed open-source integrations are OpenClaw, OpenCode, Pi and T3. App usage 'counts toward your existing plan limits', and per-app weekly caps can be set. The pricing page table marks GPT-6 Astra as available on Plus; the model list on the plan card names only GPT-6.1 Sol and GPT-6 Luna. GPT-5.5 retired from ChatGPT-sign-in Codex on 2026-10-14. Overage via ChatGPT credits. No annual price could be verified (chatgpt.com/pricing returns 403 to scripted fetches)."
+    "notes": "Third-party use is officially supported through 'Sign in with ChatGPT': 'eligible ChatGPT Plus and Pro subscribers can also choose to use their ChatGPT plan for AI requests'. The listed open-source integrations are OpenClaw, OpenCode, Pi and T3. App usage 'counts toward your existing plan limits', and per-app weekly caps can be set. The pricing page table marks GPT-6 Astra as available on Plus; the model list on the plan card names only GPT-6.1 Sol and GPT-6 Luna. GPT-6.1 Terra (released 2026-10-26) is listed from the page's availability note, 'GPT-6.1 Terra is available in Work and Codex on Plus, Pro, Business, Enterprise, and Edu plans', and its feature table. GPT-5.5 retired from ChatGPT-sign-in Codex on 2026-10-14. Overage via ChatGPT credits. No annual price could be verified (chatgpt.com/pricing returns 403 to scripted fetches)."
   },
   {
     "vendor": "OpenAI",
@@ -91,6 +92,7 @@
     ],
     "models": [
       "GPT-6.1 Sol",
+      "GPT-6.1 Terra",
       "GPT-6 Sol",
       "GPT-6 Luna",
       "GPT-6 Astra",
@@ -101,7 +103,7 @@
     "sources": [
       {
         "url": "https://learn.chatgpt.com/docs/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-26"
       },
       {
         "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
@@ -140,6 +142,7 @@
     ],
     "models": [
       "GPT-6.1 Sol",
+      "GPT-6.1 Terra",
       "GPT-6 Sol",
       "GPT-6 Luna",
       "GPT-6 Astra",
@@ -154,7 +157,7 @@
       },
       {
         "url": "https://learn.chatgpt.com/docs/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-26"
       }
     ],
     "confidence": "primary",
@@ -185,6 +188,7 @@
     ],
     "models": [
       "GPT-6.1 Sol",
+      "GPT-6.1 Terra",
       "GPT-6 Sol",
       "GPT-6 Luna",
       "GPT-6 Astra",
@@ -201,7 +205,7 @@
       },
       {
         "url": "https://learn.chatgpt.com/docs/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-26"
       }
     ],
     "confidence": "primary",

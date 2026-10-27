@@ -15,7 +15,7 @@ import {
 
 const ROOT = new URL("..", import.meta.url);
 
-const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-luna"];
+const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-1-terra", "gpt-6-luna"];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 // Monthly usage on Go and Go Plus (opencode.ai/docs/go, 2026-10-26), in dollars
 // at Go's token prices; GO_OFF_LIST_PRICES and GO_PROMOS cover those off list.
