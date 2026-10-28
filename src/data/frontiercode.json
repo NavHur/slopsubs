@@ -1,0 +1,617 @@
+{
+  "fetchedAt": "2026-10-28T14:59:20.044Z",
+  "name": "FrontierCode 2.0",
+  "url": "https://cognition.com/frontiercode",
+  "source": "Cognition's FrontierCode 2.0 via mypriors.com",
+  "rows": [
+    {
+      "family": "claude-opus-5-5",
+      "effort": "max",
+      "score": 45.45,
+      "costPerTaskUsd": 12.821,
+      "tokensPerTask": 201919
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "xhigh",
+      "score": 43.38,
+      "costPerTaskUsd": 5.184,
+      "tokensPerTask": 88053
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "max",
+      "score": 42.77,
+      "costPerTaskUsd": 6.676,
+      "tokensPerTask": 36354
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "xhigh",
+      "score": 41.41,
+      "costPerTaskUsd": 4.539,
+      "tokensPerTask": 20869
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "max",
+      "score": 40.96,
+      "costPerTaskUsd": 19.941,
+      "tokensPerTask": 514722
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "max",
+      "score": 38.95,
+      "costPerTaskUsd": 1.029,
+      "tokensPerTask": 41479
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "high",
+      "score": 38.31,
+      "costPerTaskUsd": 4.277,
+      "tokensPerTask": 18433
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "medium",
+      "score": 36.75,
+      "costPerTaskUsd": 3.493,
+      "tokensPerTask": 14065
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "high",
+      "score": 34.82,
+      "costPerTaskUsd": 0.647,
+      "tokensPerTask": 22419
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "xhigh",
+      "score": 34.75,
+      "costPerTaskUsd": 3.315,
+      "tokensPerTask": 80433
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "high",
+      "score": 34.53,
+      "costPerTaskUsd": 2.423,
+      "tokensPerTask": 41233
+    },
+    {
+      "family": "gpt-6-sol",
+      "effort": "max",
+      "score": 34.25,
+      "costPerTaskUsd": 2.3547,
+      "tokensPerTask": 54181
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "xhigh",
+      "score": 32.44,
+      "costPerTaskUsd": 8.68,
+      "tokensPerTask": 92813
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "xhigh",
+      "score": 32.33,
+      "costPerTaskUsd": 0.695,
+      "tokensPerTask": 24789
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "max",
+      "score": 31.67,
+      "costPerTaskUsd": 11.457,
+      "tokensPerTask": 119089
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "low",
+      "score": 31.11,
+      "costPerTaskUsd": 2.437,
+      "tokensPerTask": 8987
+    },
+    {
+      "family": "gpt-6-sol",
+      "effort": "xhigh",
+      "score": 30.32,
+      "costPerTaskUsd": 1.4432,
+      "tokensPerTask": 28587
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "medium",
+      "score": 30.1,
+      "costPerTaskUsd": 1.699,
+      "tokensPerTask": 30068
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "medium",
+      "score": 29.58,
+      "costPerTaskUsd": 0.492,
+      "tokensPerTask": 15686
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "xhigh",
+      "score": 28.62,
+      "costPerTaskUsd": 14.36,
+      "tokensPerTask": 110790
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "max",
+      "score": 27.72,
+      "costPerTaskUsd": 0.366,
+      "tokensPerTask": 205112
+    },
+    {
+      "family": "gpt-5-6-sol",
+      "effort": "max",
+      "score": 27.64,
+      "costPerTaskUsd": 5.503,
+      "tokensPerTask": 38352
+    },
+    {
+      "family": "claude-opus-5",
+      "effort": "xhigh",
+      "score": 26.74,
+      "costPerTaskUsd": 11.093,
+      "tokensPerTask": 76436
+    },
+    {
+      "family": "claude-opus-5",
+      "effort": "high",
+      "score": 26.72,
+      "costPerTaskUsd": 8.361,
+      "tokensPerTask": 59260
+    },
+    {
+      "family": "claude-opus-5",
+      "effort": "max",
+      "score": 26.58,
+      "costPerTaskUsd": 12.997,
+      "tokensPerTask": 88196
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "high",
+      "score": 26.55,
+      "costPerTaskUsd": 11.094,
+      "tokensPerTask": 94341
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "high",
+      "score": 26.3,
+      "costPerTaskUsd": 6.514,
+      "tokensPerTask": 148569
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "medium",
+      "score": 25.94,
+      "costPerTaskUsd": 8.028,
+      "tokensPerTask": 72180
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "high",
+      "score": 25.67,
+      "costPerTaskUsd": 5.386,
+      "tokensPerTask": 54242
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "low",
+      "score": 25.6,
+      "costPerTaskUsd": 0.341,
+      "tokensPerTask": 10042
+    },
+    {
+      "family": "gpt-5-6-sol",
+      "effort": "high",
+      "score": 24.29,
+      "costPerTaskUsd": 3.166,
+      "tokensPerTask": 20920
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "high",
+      "score": 24.28,
+      "costPerTaskUsd": 3.143,
+      "tokensPerTask": 32832
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "xhigh",
+      "score": 24.11,
+      "costPerTaskUsd": 3.793,
+      "tokensPerTask": 38672
+    },
+    {
+      "family": "gpt-5-6-sol",
+      "effort": "xhigh",
+      "score": 24.08,
+      "costPerTaskUsd": 3.83,
+      "tokensPerTask": 26415
+    },
+    {
+      "family": "claude-opus-5",
+      "effort": "medium",
+      "score": 23.97,
+      "costPerTaskUsd": 5.217,
+      "tokensPerTask": 39813
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "medium",
+      "score": 23.45,
+      "costPerTaskUsd": 5.688,
+      "tokensPerTask": 123879
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "medium",
+      "score": 23.14,
+      "costPerTaskUsd": 2.534,
+      "tokensPerTask": 26714
+    },
+    {
+      "family": "gpt-6-sol",
+      "effort": "high",
+      "score": 22.81,
+      "costPerTaskUsd": 1.0714,
+      "tokensPerTask": 19393
+    },
+    {
+      "family": "gpt-5-5",
+      "effort": "xhigh",
+      "score": 22.62,
+      "costPerTaskUsd": 5.2771,
+      "tokensPerTask": 30925
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "xhigh",
+      "score": 22.28,
+      "costPerTaskUsd": 0.226,
+      "tokensPerTask": 127735
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "high",
+      "score": 21.9,
+      "costPerTaskUsd": 1.066,
+      "tokensPerTask": 27839
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "max",
+      "score": 21.87,
+      "costPerTaskUsd": 0.174,
+      "tokensPerTask": 79659
+    },
+    {
+      "family": "gpt-6-sol",
+      "effort": "medium",
+      "score": 21.63,
+      "costPerTaskUsd": 0.8225,
+      "tokensPerTask": 13750
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "medium",
+      "score": 21.47,
+      "costPerTaskUsd": 3.891,
+      "tokensPerTask": 37911
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "low",
+      "score": 21.47,
+      "costPerTaskUsd": 3.977,
+      "tokensPerTask": 63291
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "low",
+      "score": 21.21,
+      "costPerTaskUsd": 1.843,
+      "tokensPerTask": 20301
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "low",
+      "score": 20.8,
+      "costPerTaskUsd": 3.873,
+      "tokensPerTask": 38161
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "low",
+      "score": 20.59,
+      "costPerTaskUsd": 3.007,
+      "tokensPerTask": 28797
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "max",
+      "score": 19.65,
+      "costPerTaskUsd": 1.549,
+      "tokensPerTask": 88069
+    },
+    {
+      "family": "gpt-5-6-sol",
+      "effort": "medium",
+      "score": 19.52,
+      "costPerTaskUsd": 2.36,
+      "tokensPerTask": 15446
+    },
+    {
+      "family": "deepseek-v4-1-flash",
+      "effort": "max",
+      "score": 19.3,
+      "costPerTaskUsd": 0.384,
+      "tokensPerTask": 82220
+    },
+    {
+      "family": "gpt-5-5",
+      "effort": "high",
+      "score": 19.09,
+      "costPerTaskUsd": 3.8021,
+      "tokensPerTask": 21907
+    },
+    {
+      "family": "claude-opus-5",
+      "effort": "low",
+      "score": 18.69,
+      "costPerTaskUsd": 3.276,
+      "tokensPerTask": 26898
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "high",
+      "score": 18.64,
+      "costPerTaskUsd": 0.139,
+      "tokensPerTask": 80993
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "xhigh",
+      "score": 18.44,
+      "costPerTaskUsd": 0.132,
+      "tokensPerTask": 50565
+    },
+    {
+      "family": "deepseek-v4-1-flash",
+      "effort": "high",
+      "score": 18.21,
+      "costPerTaskUsd": 0.274,
+      "tokensPerTask": 57169
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "max",
+      "score": 17.81,
+      "costPerTaskUsd": 7.516,
+      "tokensPerTask": 100706
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "high",
+      "score": 17.74,
+      "costPerTaskUsd": 4.475,
+      "tokensPerTask": 49854
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "max",
+      "score": 17.31,
+      "costPerTaskUsd": 5.456,
+      "tokensPerTask": 64271
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "high",
+      "score": 16.84,
+      "costPerTaskUsd": 5.181,
+      "tokensPerTask": 73247
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "high",
+      "score": 16.5,
+      "costPerTaskUsd": 0.115,
+      "tokensPerTask": 42170
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "medium",
+      "score": 15.97,
+      "costPerTaskUsd": 0.092,
+      "tokensPerTask": 31360
+    },
+    {
+      "family": "deepseek-v4-1-flash",
+      "effort": "low",
+      "score": 15.96,
+      "costPerTaskUsd": 0.206,
+      "tokensPerTask": 40659
+    },
+    {
+      "family": "claude-opus-4-8",
+      "effort": "max",
+      "score": 14.72,
+      "costPerTaskUsd": 12.129,
+      "tokensPerTask": 125863
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "low",
+      "score": 14.72,
+      "costPerTaskUsd": 0.746,
+      "tokensPerTask": 14230
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "low",
+      "score": 14.37,
+      "costPerTaskUsd": 3.189,
+      "tokensPerTask": 47199
+    },
+    {
+      "family": "claude-opus-4-8",
+      "effort": "xhigh",
+      "score": 14.28,
+      "costPerTaskUsd": 9.133,
+      "tokensPerTask": 88364
+    },
+    {
+      "family": "gpt-5-5",
+      "effort": "medium",
+      "score": 14.22,
+      "costPerTaskUsd": 2.9515,
+      "tokensPerTask": 16320
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "max",
+      "score": 14.18,
+      "costPerTaskUsd": 0.792,
+      "tokensPerTask": 90044
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "medium",
+      "score": 14.17,
+      "costPerTaskUsd": 0.482,
+      "tokensPerTask": 14449
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "medium",
+      "score": 13.42,
+      "costPerTaskUsd": 0.097,
+      "tokensPerTask": 57582
+    },
+    {
+      "family": "gpt-5-6-sol",
+      "effort": "low",
+      "score": 12.79,
+      "costPerTaskUsd": 1.451,
+      "tokensPerTask": 9806
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "high",
+      "score": 12.41,
+      "costPerTaskUsd": 0.584,
+      "tokensPerTask": 56914
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "low",
+      "score": 11.1,
+      "costPerTaskUsd": 2.977,
+      "tokensPerTask": 28740
+    },
+    {
+      "family": "claude-opus-4-8",
+      "effort": "medium",
+      "score": 11.02,
+      "costPerTaskUsd": 5.588,
+      "tokensPerTask": 57192
+    },
+    {
+      "family": "claude-opus-4-8",
+      "effort": "high",
+      "score": 10.86,
+      "costPerTaskUsd": 6.316,
+      "tokensPerTask": 62298
+    },
+    {
+      "family": "gpt-6-sol",
+      "effort": "low",
+      "score": 10.49,
+      "costPerTaskUsd": 0.4164,
+      "tokensPerTask": 6487
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "low",
+      "score": 10.46,
+      "costPerTaskUsd": 0.065,
+      "tokensPerTask": 39366
+    },
+    {
+      "family": "claude-opus-4-8",
+      "effort": "low",
+      "score": 9.55,
+      "costPerTaskUsd": 4.195,
+      "tokensPerTask": 40687
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "low",
+      "score": 9.5,
+      "costPerTaskUsd": 0.669,
+      "tokensPerTask": 28384
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "low",
+      "score": 9.41,
+      "costPerTaskUsd": 0.369,
+      "tokensPerTask": 11265
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "high",
+      "score": 8.78,
+      "costPerTaskUsd": 1.031,
+      "tokensPerTask": 51238
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "low",
+      "score": 7.81,
+      "costPerTaskUsd": 0.43,
+      "tokensPerTask": 35321
+    },
+    {
+      "family": "gpt-5-5",
+      "effort": "low",
+      "score": 7.2,
+      "costPerTaskUsd": 1.9753,
+      "tokensPerTask": 10332
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "low",
+      "score": 4.05,
+      "costPerTaskUsd": 0.023,
+      "tokensPerTask": 6519
+    },
+    {
+      "family": "inkling-small",
+      "effort": "max",
+      "score": 3.21,
+      "costPerTaskUsd": 3.684,
+      "tokensPerTask": 39077
+    },
+    {
+      "family": "inkling-small",
+      "effort": "high",
+      "score": 1.27,
+      "costPerTaskUsd": 1.366,
+      "tokensPerTask": 13658
+    }
+  ]
+}

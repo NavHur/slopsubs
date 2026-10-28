@@ -17,6 +17,7 @@
     "typecheck": "tsrs --noEmit",
     "typecheck:tsc": "tsc --noEmit",
     "import-benchmarks": "node scripts/import-benchmarks.ts",
+    "import-frontiercode": "node scripts/import-frontiercode.ts",
     "measure": "node scripts/measure.ts",
     "build-plans": "node scripts/build-plans.ts",
     "deploy": "pnpm build && wrangler deploy"
