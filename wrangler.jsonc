@@ -6,5 +6,9 @@
 		"directory": "./dist/client",
 		"not_found_handling": "single-page-application"
 	},
-	"routes": [{ "pattern": "slopsubs.pnav.dev", "custom_domain": true }]
+	"routes": [
+		{ "pattern": "slopsubs.com", "custom_domain": true },
+		{ "pattern": "www.slopsubs.com", "custom_domain": true },
+		{ "pattern": "slopsubs.pnav.dev", "custom_domain": true }
+	]
 }
