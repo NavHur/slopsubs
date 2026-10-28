@@ -1,11 +1,6 @@
 import { z } from "zod";
-import { benchmarks, plans } from "#/data";
-import type {
-	BenchmarkDataset,
-	Effort,
-	FamilyId,
-	PlanId,
-} from "#/domain/model";
+import { frontier, plans } from "#/data";
+import type { Effort, FamilyId, Frontier, PlanId } from "#/domain/model";
 
 /** Reasoning efforts the Models panel can hide; "default" always shows. */
 export const REASONING_LEVELS = [
@@ -32,7 +27,7 @@ export const ViewSearch = z.object({
 export type ViewSearch = z.infer<typeof ViewSearch>;
 
 // SAFETY: frontier keys are family ids from the same dataset.
-const FRONTIER = Object.keys(benchmarks.frontier) as FamilyId[];
+const FRONTIER = Object.keys(frontier) as FamilyId[];
 
 /** Families a plan covers, frontier first, in dataset order. */
 export const COVERED_FAMILIES: FamilyId[] = [
@@ -89,7 +84,7 @@ function sameMembers<T>(a: readonly T[], b: readonly T[]): boolean {
 	return a.length === b.length && a.every((x) => b.includes(x));
 }
 
-export type FrontierTier = BenchmarkDataset["frontier"][string]["tier"];
+export type FrontierTier = Frontier[string]["tier"];
 export const FRONTIER_TIERS: readonly FrontierTier[] = [
 	"Small",
 	"Medium",
@@ -97,7 +92,7 @@ export const FRONTIER_TIERS: readonly FrontierTier[] = [
 ];
 
 export function frontierTier(family: FamilyId): FrontierTier | null {
-	return benchmarks.frontier[family]?.tier ?? null;
+	return frontier[family]?.tier ?? null;
 }
 
 export const FRONTIER_FAMILIES = COVERED_FAMILIES.filter(

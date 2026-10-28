@@ -1,4 +1,4 @@
-import { benchmarks } from "#/data";
+import { frontier, leaderboards } from "#/data";
 import type { FamilyId } from "#/domain/model";
 
 const LAB_COLORS: Record<string, string> = {
@@ -17,12 +17,15 @@ const LAB_COLORS: Record<string, string> = {
 const FALLBACK_COLOR = "light-dark(#666, #aaa)";
 
 const firstOfFamily = new Map(
-	benchmarks.models.map((m) => [m.family, m] as const).reverse(),
+	Object.values(leaderboards)
+		.flatMap((board) => board.models)
+		.map((m) => [m.family, m] as const)
+		.reverse(),
 );
 
 export function familyColor(family: FamilyId): string {
-	const frontier = benchmarks.frontier[family];
-	if (frontier) return frontier.color;
+	const frontierFamily = frontier[family];
+	if (frontierFamily) return frontierFamily.color;
 	const lab = firstOfFamily.get(family)?.lab;
 	return (lab && LAB_COLORS[lab]) || FALLBACK_COLOR;
 }

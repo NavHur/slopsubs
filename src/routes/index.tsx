@@ -12,7 +12,7 @@ import {
 import { Segmented, Toggle } from "#/components/Segmented";
 import { FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
-import { benchmarks, plans, samples } from "#/data";
+import { leaderboards, plans, samples } from "#/data";
 import { valuePoints } from "#/domain/value";
 import { formatDay } from "#/lib/format";
 import {
@@ -70,7 +70,7 @@ function ValueView() {
 	const planIds = selectedPlans(view);
 	const families = selectedFamilies(view);
 	const points = valuePoints({
-		benchmarks: benchmarks.models,
+		benchmarks: leaderboards.intelligence.models,
 		families,
 		plans: plans.filter((p) => planIds.includes(p.id)),
 		samples,
@@ -202,11 +202,11 @@ function ValueView() {
 							</FooterLink>
 						</span>
 						<time
-							dateTime={benchmarks.fetchedAt}
+							dateTime={leaderboards.intelligence.fetchedAt}
 							title="When the benchmarks were fetched"
 							className="text-subtle"
 						>
-							Updated {formatDay(benchmarks.fetchedAt)}
+							Updated {formatDay(leaderboards.intelligence.fetchedAt)}
 						</time>
 					</footer>
 				</main>

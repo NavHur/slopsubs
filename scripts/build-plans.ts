@@ -1,12 +1,16 @@
-// Builds src/data/plans.json and the trimmed chart-benchmarks.json from
-// research/plans/.
+// Builds src/data/plans.json from research/plans/, and the trimmed
+// chart-benchmarks.json from the imported leaderboards.
 //
 // Usage: node scripts/build-plans.ts
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
+import { frontierCodePoints } from "../src/domain/leaderboards.ts";
 import {
 	BenchmarkDataset,
+	type BenchmarkPoint,
+	ChartData,
+	FrontierCodeDataset,
 	Plans,
 	type Promotion,
 	type PublishedAllowance,
@@ -331,11 +335,28 @@ await writeFile(
 
 // The site ships only the benchmark points some plan covers.
 const covered = new Set<string>(plans.flatMap((p) => p.families));
-const chartModels = models.filter((m) => covered.has(m.family));
+const onPlans = (points: BenchmarkPoint[]) =>
+	points.filter((m) => covered.has(m.family));
+const frontierCode = FrontierCodeDataset.parse(
+	await readJson("src/data/frontiercode.json"),
+);
+const chart = ChartData.parse({
+	frontier: dataset.frontier,
+	leaderboards: {
+		intelligence: { fetchedAt: dataset.fetchedAt, models: onPlans(models) },
+		frontiercode: {
+			fetchedAt: frontierCode.fetchedAt,
+			models: onPlans(frontierCodePoints(frontierCode.rows, models)),
+		},
+	},
+});
 await writeFile(
 	new URL("src/data/chart-benchmarks.json", ROOT),
-	`${JSON.stringify({ ...dataset, models: chartModels })}\n`,
+	`${JSON.stringify(chart)}\n`,
+);
+const counts = Object.entries(chart.leaderboards).map(
+	([id, board]) => `${board.models.length} ${id}`,
 );
 console.log(
-	`Wrote ${plans.length} plans and ${chartModels.length} chart benchmark points`,
+	`Wrote ${plans.length} plans and ${counts.join(", ")} chart benchmark points`,
 );

@@ -21,7 +21,7 @@ export type PlanId = z.infer<typeof PlanId>;
 
 const Usd = z.number().nonnegative();
 
-/** One model at one reasoning effort, as benchmarked by Artificial Analysis. */
+/** One model at one reasoning effort, as one benchmark scored it. */
 const BenchmarkPoint = z.object({
 	id: z.string(),
 	family: FamilyId,
@@ -40,16 +40,56 @@ const BenchmarkPoint = z.object({
 });
 export type BenchmarkPoint = z.infer<typeof BenchmarkPoint>;
 
+/** The frontier families' size tier and chart colour, by family id. */
+const Frontier = z.record(
+	z.string(),
+	z.object({ tier: z.enum(["Small", "Medium", "Large"]), color: z.string() }),
+);
+export type Frontier = z.infer<typeof Frontier>;
+
+/** Artificial Analysis's Intelligence Index, as imported. */
 export const BenchmarkDataset = z.object({
 	fetchedAt: z.iso.datetime(),
 	source: z.string(),
-	frontier: z.record(
-		z.string(),
-		z.object({ tier: z.enum(["Small", "Medium", "Large"]), color: z.string() }),
-	),
+	frontier: Frontier,
 	models: z.array(BenchmarkPoint),
 });
 export type BenchmarkDataset = z.infer<typeof BenchmarkDataset>;
+
+/** One FrontierCode 2.0 result, keyed by Artificial Analysis family id. */
+export const FrontierCodeRow = z.object({
+	family: FamilyId,
+	effort: Effort,
+	score: z.number(),
+	costPerTaskUsd: Usd.nullable(),
+	tokensPerTask: z.number().nullable(),
+});
+export type FrontierCodeRow = z.infer<typeof FrontierCodeRow>;
+
+/** Cognition's FrontierCode 2.0 leaderboard, as imported. */
+export const FrontierCodeDataset = z.object({
+	fetchedAt: z.iso.datetime(),
+	rows: z.array(FrontierCodeRow),
+});
+
+/** The benchmarks the chart can plot, in tab order. */
+export const BENCHMARK_IDS = ["intelligence", "frontiercode"] as const;
+export type BenchmarkId = (typeof BENCHMARK_IDS)[number];
+
+const Leaderboard = z.object({
+	fetchedAt: z.iso.datetime(),
+	models: z.array(BenchmarkPoint),
+});
+export type Leaderboard = z.infer<typeof Leaderboard>;
+
+/** What the site ships: each benchmark's points for the families on plans. */
+export const ChartData = z.object({
+	frontier: Frontier,
+	leaderboards: z.object({
+		intelligence: Leaderboard,
+		frontiercode: Leaderboard,
+	} satisfies Record<BenchmarkId, typeof Leaderboard>),
+});
 
 /** A weekly cap someone else published, used until we measure our own. */
 const ReportedCap = z.object({
