@@ -69,6 +69,7 @@ export type FrontierCodeRow = z.infer<typeof FrontierCodeRow>;
 /** Cognition's FrontierCode 2.0 leaderboard, as imported. */
 export const FrontierCodeDataset = z.object({
 	fetchedAt: z.iso.datetime(),
+	source: z.string(),
 	rows: z.array(FrontierCodeRow),
 });
 

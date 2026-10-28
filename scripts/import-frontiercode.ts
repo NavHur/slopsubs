@@ -3,7 +3,7 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
-import { EFFORTS } from "../src/domain/model.ts";
+import { BenchmarkDataset, EFFORTS } from "../src/domain/model.ts";
 
 const ROOT = new URL("..", import.meta.url);
 const API = "https://mypriors.com/api/tools/get_benchmark";
@@ -18,7 +18,7 @@ const FAMILY_ALIASES: Record<string, string> = {
 };
 
 const Leaderboard = z.object({
-	benchmark: z.object({ name: z.string(), url: z.url() }),
+	benchmark: z.object({ name: z.string() }),
 	total: z.number(),
 	rows: z.array(
 		z.object({
@@ -47,9 +47,9 @@ async function fetchLeaderboard() {
 
 async function knownFamilies(): Promise<Set<string>> {
 	const path = new URL("src/data/benchmarks.json", ROOT);
-	const { models } = JSON.parse(await readFile(path, "utf8")) as {
-		models: { family: string }[];
-	};
+	const { models } = BenchmarkDataset.parse(
+		JSON.parse(await readFile(path, "utf8")),
+	);
 	return new Set(models.map((m) => m.family));
 }
 
@@ -91,8 +91,6 @@ const rows = leaderboard.rows.flatMap((row) => {
 });
 const output = {
 	fetchedAt: new Date().toISOString(),
-	name: leaderboard.benchmark.name,
-	url: leaderboard.benchmark.url,
 	source: `Cognition's ${leaderboard.benchmark.name} via mypriors.com`,
 	rows,
 };
