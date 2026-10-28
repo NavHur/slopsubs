@@ -10,11 +10,11 @@ import {
 	ThemeToggle,
 } from "#/components/HeaderActions";
 import { Segmented, Toggle } from "#/components/Segmented";
-import { FamilyList, PlanList } from "#/components/Sidebar";
+import { type Coverage, FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
 import { Tabs, tabId } from "#/components/Tabs";
 import { leaderboards, plans, samples } from "#/data";
-import { BENCHMARK_IDS } from "#/domain/model";
+import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/model";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
 import { formatDay } from "#/lib/format";
@@ -37,6 +37,19 @@ const BENCHMARK_TABS = BENCHMARK_IDS.map((id) => ({
 	value: id,
 	label: BENCHMARK_VIEWS[id].tabLabel,
 }));
+
+function coverageOf(id: BenchmarkId): Coverage {
+	return {
+		benchmarkName: BENCHMARK_VIEWS[id].tabLabel,
+		scored: new Set(leaderboards[id].models.map((m) => m.family)),
+	};
+}
+
+// Built once per benchmark, not per render or row.
+const COVERAGE: Record<BenchmarkId, Coverage> = {
+	intelligence: coverageOf("intelligence"),
+	frontiercode: coverageOf("frontiercode"),
+};
 
 const CHART_PANEL = "chart-panel";
 
@@ -255,6 +268,7 @@ function ValueView() {
 						selected={families}
 						hiddenReasoning={hiddenReasoning(view)}
 						isDefault={isDefaultModelsView(view)}
+						coverage={COVERAGE[view.benchmark]}
 						onSelect={(next) => update({ families: next })}
 						onHideReasoning={(hideReasoning) => update({ hideReasoning })}
 						onReset={() => update(DEFAULT_MODELS_VIEW)}

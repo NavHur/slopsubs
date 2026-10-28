@@ -426,26 +426,41 @@ function ReasoningFilter({
 	);
 }
 
+/** The benchmark on the chart, and the families it has a score for. */
+export type Coverage = {
+	benchmarkName: string;
+	scored: ReadonlySet<FamilyId>;
+};
+
 function FamilyRow({
 	family,
 	on,
+	unscoredNote,
 	onToggle,
 }: {
 	family: FamilyId;
 	on: boolean;
+	/** Why the family plots nothing on this benchmark, when it doesn't. */
+	unscoredNote: string | undefined;
 	onToggle: (family: FamilyId) => void;
 }) {
+	const title = `${familyName(family)} · ${familyLab(family)}`;
 	return (
 		<li>
 			<button
 				type="button"
 				aria-pressed={on}
-				title={`${familyName(family)} · ${familyLab(family)}`}
+				title={unscoredNote ? `${title} · ${unscoredNote}` : title}
 				onClick={() => onToggle(family)}
-				className="flex w-full items-center gap-2 py-1 text-left text-[13px] text-muted hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[15px]"
+				className={`flex w-full items-center gap-2 py-1 text-left text-[13px] hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[15px] ${unscoredNote ? "text-subtle" : "text-muted"}`}
 			>
 				<ProviderLogo lab={familyLabId(family)} />
-				<span className="mr-auto">{familyName(family)}</span>
+				<span className="mr-auto">
+					{familyName(family)}
+					{unscoredNote && (
+						<span className="ml-2 text-[11px] italic">{unscoredNote}</span>
+					)}
+				</span>
 				<span
 					className="size-2 rounded-full border"
 					style={{
@@ -463,15 +478,25 @@ type Selection = {
 	onSelect: (families: FamilyId[]) => void;
 };
 
+function unscoredNote(
+	coverage: Coverage,
+	family: FamilyId,
+): string | undefined {
+	if (coverage.scored.has(family)) return undefined;
+	return `No ${coverage.benchmarkName} score`;
+}
+
 function FamilyGroup({
 	title,
 	families,
 	selection,
+	coverage,
 	actions,
 }: {
 	title: string;
 	families: readonly FamilyId[];
 	selection: Selection;
+	coverage: Coverage;
 	actions?: React.ReactNode;
 }) {
 	const { selected, onSelect } = selection;
@@ -490,6 +515,7 @@ function FamilyGroup({
 						key={family}
 						family={family}
 						on={selected.includes(family)}
+						unscoredNote={unscoredNote(coverage, family)}
 						onToggle={(f) => onSelect(toggled(selected, f))}
 					/>
 				))}
@@ -532,6 +558,7 @@ export function FamilyList({
 	selected,
 	hiddenReasoning,
 	isDefault,
+	coverage,
 	onSelect,
 	onHideReasoning,
 	onReset,
@@ -539,6 +566,7 @@ export function FamilyList({
 	selected: readonly FamilyId[];
 	hiddenReasoning: readonly ReasoningLevel[];
 	isDefault: boolean;
+	coverage: Coverage;
 	onSelect: (families: FamilyId[]) => void;
 	onHideReasoning: (hidden: ReasoningLevel[]) => void;
 	onReset: () => void;
@@ -564,12 +592,14 @@ export function FamilyList({
 						title="Frontier"
 						families={FRONTIER_FAMILIES}
 						selection={selection}
+						coverage={coverage}
 						actions={<FrontierTierChips selection={selection} />}
 					/>
 					<FamilyGroup
 						title="Notable"
 						families={NOTABLE_FAMILIES}
 						selection={selection}
+						coverage={coverage}
 						actions={
 							<GroupChip
 								label="All"
@@ -584,6 +614,7 @@ export function FamilyList({
 					title="Results"
 					families={COVERED_FAMILIES.filter((f) => familyMatches(f, query))}
 					selection={selection}
+					coverage={coverage}
 				/>
 			)}
 		</section>
