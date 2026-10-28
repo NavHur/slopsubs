@@ -10,6 +10,7 @@ import {
 	formatApiComparison,
 	formatDay,
 	formatIntelligence,
+	formatPercent,
 	formatTokens,
 } from "./format";
 
@@ -28,6 +29,13 @@ describe("formatIntelligence", () => {
 		expect(formatIntelligence(57.6)).toBe("57.6");
 		expect(formatIntelligence(53.35)).toBe("53.4");
 		expect(formatIntelligence(50)).toBe("50.0");
+	});
+});
+
+describe("formatPercent", () => {
+	it("shows a percentage to one decimal, with its sign", () => {
+		expect(formatPercent(45.45)).toBe("45.5%");
+		expect(formatPercent(4)).toBe("4.0%");
 	});
 });
 

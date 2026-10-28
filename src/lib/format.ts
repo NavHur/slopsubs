@@ -27,6 +27,11 @@ export function formatIntelligence(value: number): string {
 	return value.toFixed(1);
 }
 
+/** A percentage score, to the tenth: "45.5%". */
+export function formatPercent(value: number): string {
+	return `${value.toFixed(1)}%`;
+}
+
 const compactCount = new Intl.NumberFormat("en-US", {
 	notation: "compact",
 	maximumSignificantDigits: 3,

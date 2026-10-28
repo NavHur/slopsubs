@@ -2,13 +2,13 @@ import { describe, expect, it } from "vitest";
 import type { ValuePoint } from "#/domain/value";
 import { paretoFrontier, spreadLabels } from "./chart";
 
-function point(seriesId: string, cost: number, intelligence: number) {
-	// SAFETY: paretoFrontier reads only cost, intelligence and identity.
-	return { seriesId, costPerTaskUsd: cost, intelligence } as ValuePoint;
+function point(seriesId: string, cost: number, score: number) {
+	// SAFETY: paretoFrontier reads only cost, score and identity.
+	return { seriesId, costPerTaskUsd: cost, score } as ValuePoint;
 }
 
 describe("paretoFrontier", () => {
-	it("keeps only points no cheaper point matches in intelligence", () => {
+	it("keeps only points no cheaper point matches in score", () => {
 		const cheapWeak = point("a", 0.1, 30);
 		const dominated = point("b", 0.5, 25);
 		const pricierStrong = point("c", 1, 50);

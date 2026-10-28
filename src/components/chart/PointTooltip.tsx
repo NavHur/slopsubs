@@ -1,11 +1,11 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { Promotion } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
+import type { BenchmarkView } from "#/lib/benchmarks";
 import { familyColor, familyLabId, familyName } from "#/lib/families";
 import {
 	formatApiComparison,
 	formatDay,
-	formatIntelligence,
 	formatTokens,
 	formatUsd,
 } from "#/lib/format";
@@ -30,9 +30,6 @@ function useBorderBox<T extends HTMLElement>() {
 	return [ref, box] as const;
 }
 
-/** Benchmark source pages, keyed by the benchmark's own id. */
-const ARTIFICIAL_ANALYSIS_MODELS = "https://artificialanalysis.ai/models/";
-
 /** Details of one point, placed beside it so it never covers it. */
 export function PointTooltip({
 	point,
@@ -40,6 +37,7 @@ export function PointTooltip({
 	bounds,
 	pinned,
 	onClose,
+	view,
 }: {
 	point: ValuePoint;
 	/** The point's position in the chart. */
@@ -49,10 +47,13 @@ export function PointTooltip({
 	/** Pinned details take the pointer, for the close button and links. */
 	pinned: boolean;
 	onClose: () => void;
+	/** The plotted benchmark, which names, formats and sources the score. */
+	view: BenchmarkView;
 }) {
 	const [ref, box] = useBorderBox<HTMLDivElement>();
 	const { benchmark, pricing } = point;
 	const promotion = planPromotion(point);
+	const source = view.pointSource(benchmark);
 	// Hidden for the one layout before its size is known.
 	const placement = box && tooltipPlacement(anchor, box, bounds);
 	return (
@@ -78,10 +79,7 @@ export function PointTooltip({
 				{pricing.kind === "api" ? "Pay per token (API)" : pricing.plan.label}
 			</p>
 			<dl className="mt-2 grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 tabular-nums">
-				<Metric
-					label="Intelligence index"
-					value={formatIntelligence(point.intelligence)}
-				/>
+				<Metric label={view.scoreLabel} value={view.formatScore(point.score)} />
 				<Metric
 					label={
 						pricing.kind === "api" ? "Cost per task" : "Effective cost per task"
@@ -90,7 +88,7 @@ export function PointTooltip({
 				/>
 				{benchmark.tokensPerTask !== null && (
 					<Metric
-						label="Tokens per task"
+						label={view.tokensLabel}
 						value={formatTokens(benchmark.tokensPerTask)}
 					/>
 				)}
@@ -107,12 +105,12 @@ export function PointTooltip({
 			)}
 			{promotion && <PromotionNote promotion={promotion} />}
 			<a
-				href={`${ARTIFICIAL_ANALYSIS_MODELS}${benchmark.id}`}
+				href={source.url}
 				target="_blank"
 				rel="noreferrer"
 				className="mt-1.5 inline-block text-muted underline decoration-dotted underline-offset-2 hover:text-fg"
 			>
-				Artificial Analysis
+				{source.name}
 			</a>
 		</div>
 	);

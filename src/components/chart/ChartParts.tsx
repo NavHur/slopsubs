@@ -2,6 +2,7 @@ import type { ScaleLinear } from "d3-scale";
 import { type FocusEvent, type KeyboardEvent, useEffect } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
+import type { BenchmarkView } from "#/lib/benchmarks";
 import type { LineLabel } from "#/lib/chart";
 import { familyLabId } from "#/lib/families";
 import { formatUsd } from "#/lib/format";
@@ -33,6 +34,7 @@ export function Axes({
 	scale,
 	layout,
 	readouts,
+	axisLabel,
 }: {
 	x: XScale;
 	y: ScaleLinear<number, number>;
@@ -42,6 +44,7 @@ export function Axes({
 	layout: ChartLayout;
 	/** The shown point's values, which hide the tick labels they cover. */
 	readouts?: AxisReadouts;
+	axisLabel: string;
 }) {
 	const { margin, height } = layout;
 	const bottom = height - margin.bottom;
@@ -92,7 +95,7 @@ export function Axes({
 					</text>
 				))}
 			<text x={margin.left} y={margin.top - 12} className="fill-subtle">
-				Intelligence index
+				{axisLabel}
 			</text>
 			<text
 				x={(margin.left + right) / 2}
@@ -129,8 +132,12 @@ export function ParetoLine({
 /** Touch-sized target around each 8px dot. */
 const POINT_HIT_RADIUS = 12;
 
-function pointLabel(series: Series, point: ValuePoint): string {
-	return `${series.label}, ${point.benchmark.effortLabel}, effective cost per task ${formatUsd(point.costPerTaskUsd)}, intelligence ${point.intelligence.toFixed(1)}`;
+function pointLabel(
+	series: Series,
+	point: ValuePoint,
+	benchmark: BenchmarkView,
+): string {
+	return `${series.label}, ${point.benchmark.effortLabel}, effective cost per task ${formatUsd(point.costPerTaskUsd)}, ${benchmark.scoreLabel} ${benchmark.formatScore(point.score)}`;
 }
 
 /** A key handler that runs `action` on Enter or Space, as a button does. */
@@ -163,6 +170,7 @@ export function SeriesLine({
 	activePoint,
 	dimmed,
 	onDetails,
+	benchmark,
 }: {
 	series: Series;
 	x: XScale;
@@ -171,6 +179,8 @@ export function SeriesLine({
 	activePoint: ValuePoint | null;
 	dimmed: boolean;
 	onDetails: (event: PointDetailsEvent) => void;
+	/** Names and formats the points' scores for screen readers. */
+	benchmark: BenchmarkView;
 }) {
 	const { isApi, marker, lineWidth } = series.pricing;
 	const preview = (source: PreviewSource, point: ValuePoint) => () =>
@@ -195,7 +205,7 @@ export function SeriesLine({
 					key={p.benchmark.id}
 					role="button"
 					tabIndex={0}
-					aria-label={pointLabel(series, p)}
+					aria-label={pointLabel(series, p, benchmark)}
 					className="group cursor-pointer outline-none"
 					onMouseEnter={preview("hover", p)}
 					onMouseLeave={endPreview("hover", p)}
@@ -206,7 +216,7 @@ export function SeriesLine({
 				>
 					<circle
 						cx={px(x(p.costPerTaskUsd))}
-						cy={px(y(p.intelligence))}
+						cy={px(y(p.score))}
 						r={POINT_HIT_RADIUS}
 						fill="transparent"
 					/>
@@ -214,7 +224,7 @@ export function SeriesLine({
 						d={markerPath(
 							marker,
 							x(p.costPerTaskUsd),
-							y(p.intelligence),
+							y(p.score),
 							activePoint === p ? 6 : 4,
 						)}
 						fill={isApi ? "var(--bg)" : series.color}

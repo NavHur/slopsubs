@@ -97,7 +97,7 @@ export type Pricing =
 
 /** A benchmark with both measures, so it can be plotted. */
 export type PlottableBenchmark = BenchmarkPoint & {
-	intelligence: number;
+	score: number;
 	/** At API prices. */
 	costPerTaskUsd: number;
 };
@@ -106,13 +106,13 @@ export type ValuePoint = {
 	/** Stable key for one line on the chart: a family under one pricing. */
 	seriesId: string;
 	benchmark: PlottableBenchmark;
-	intelligence: number;
+	score: number;
 	costPerTaskUsd: number;
 	pricing: Pricing;
 };
 
 function isPlottable(point: BenchmarkPoint): point is PlottableBenchmark {
-	return point.intelligence !== null && point.costPerTaskUsd !== null;
+	return point.score !== null && point.costPerTaskUsd !== null;
 }
 
 /** Drops efforts above the highest one the plan serves for the family. */
@@ -137,7 +137,7 @@ function seriesFor(
 		.map((benchmark) => ({
 			seriesId,
 			benchmark,
-			intelligence: benchmark.intelligence,
+			score: benchmark.score,
 			costPerTaskUsd: benchmark.costPerTaskUsd / divisor,
 			pricing,
 		}));

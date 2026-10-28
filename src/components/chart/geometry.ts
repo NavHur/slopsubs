@@ -87,7 +87,7 @@ export function makeScales(
 	{ height, margin }: ChartLayout,
 ) {
 	const costs = points.map((p) => p.costPerTaskUsd);
-	const iq = points.map((p) => p.intelligence);
+	const scores = points.map((p) => p.score);
 	const right = Math.max(margin.left + 100, width - margin.right);
 	const x: XScale =
 		scale === "log"
@@ -96,8 +96,8 @@ export function makeScales(
 	x.range([margin.left, right]);
 	const y = scaleLinear()
 		.domain([
-			Math.floor(Math.min(...iq) / 10) * 10,
-			Math.ceil(Math.max(...iq) / 10) * 10,
+			Math.floor(Math.min(...scores) / 10) * 10,
+			Math.ceil(Math.max(...scores) / 10) * 10,
 		])
 		.range([height - margin.bottom, margin.top]);
 	return { x, y, right };
@@ -129,8 +129,7 @@ export function pathOf(
 ): string {
 	return points
 		.map(
-			(p, i) =>
-				`${i ? "L" : "M"}${px(x(p.costPerTaskUsd))},${px(y(p.intelligence))}`,
+			(p, i) => `${i ? "L" : "M"}${px(x(p.costPerTaskUsd))},${px(y(p.score))}`,
 		)
 		.join("");
 }

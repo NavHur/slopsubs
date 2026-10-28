@@ -57,7 +57,7 @@ function benchmark(
 		effort,
 		effortLabel: effort,
 		effortOrder: order,
-		intelligence: 40 + order,
+		score: 40 + order,
 		costPerTaskUsd: order,
 		tokensPerTask: 1000,
 		inputPricePerMTokUsd: 5,
