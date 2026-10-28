@@ -1,7 +1,5 @@
 // Builds src/data/plans.json from research/plans/, and the trimmed
 // chart-benchmarks.json from the imported leaderboards.
-//
-// Usage: node scripts/build-plans.ts
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";

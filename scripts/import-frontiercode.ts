@@ -1,9 +1,5 @@
-// Imports Cognition's FrontierCode 2.0 leaderboard, one row per model and
-// effort, from mypriors.com's public tool API into src/data/frontiercode.json.
-// Rows keep only models the Artificial Analysis data already names, under its
-// family ids, so build-plans can join them with names, labs and prices.
-//
-// Usage: node scripts/import-frontiercode.ts
+// Imports Cognition's FrontierCode 2.0 leaderboard from mypriors.com's public
+// tool API into src/data/frontiercode.json, under Artificial Analysis family ids.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
