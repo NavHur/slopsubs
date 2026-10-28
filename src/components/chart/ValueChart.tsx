@@ -10,6 +10,7 @@ import {
 } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
+import type { BenchmarkView } from "#/lib/benchmarks";
 import { paretoFrontier, spreadLabels } from "#/lib/chart";
 import { familyColor } from "#/lib/families";
 import { isTextEntryTarget } from "#/lib/textEntry";
@@ -114,11 +115,14 @@ export function ValueChart({
 	scale,
 	showPareto,
 	showLabels,
+	benchmark,
 }: {
 	points: readonly ValuePoint[];
 	scale: AxisScale;
 	showPareto: boolean;
 	showLabels: boolean;
+	/** The benchmark the points score on. */
+	benchmark: BenchmarkView;
 }) {
 	const { ref, element, size } = useChartRef();
 	const { width } = size;
@@ -170,7 +174,7 @@ export function ValueChart({
 	// The shown point is projected once; the guides, pills and tooltip share it.
 	const active = details && {
 		...details,
-		readouts: pointReadouts(details.point, { x, y }, layout, width),
+		readouts: pointReadouts(details.point, { x, y }, layout, width, benchmark),
 	};
 
 	return (
@@ -180,7 +184,7 @@ export function ValueChart({
 				width={width}
 				height={height}
 				role="group"
-				aria-label="Effective cost per task versus intelligence index"
+				aria-label={`Effective cost per task versus ${benchmark.scoreLabel}`}
 				className="block select-none"
 			>
 				<Axes
@@ -191,6 +195,7 @@ export function ValueChart({
 					scale={scale}
 					layout={layout}
 					readouts={active?.readouts}
+					axisLabel={benchmark.axisLabel}
 				/>
 				{showPareto && (
 					<ParetoLine points={paretoFrontier(points)} x={x} y={y} />
@@ -211,6 +216,7 @@ export function ValueChart({
 						activePoint={activePoint}
 						dimmed={isDimmed(s, activePoint, highlighted)}
 						onDetails={dispatchDetails}
+						benchmark={benchmark}
 					/>
 				))}
 				<ModelTags
@@ -230,6 +236,7 @@ export function ValueChart({
 					bounds={{ width, height }}
 					pinned={active.pinned}
 					onClose={() => dispatchDetails({ type: "close" })}
+					view={benchmark}
 				/>
 			)}
 			{layout.compact && (

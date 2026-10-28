@@ -12,8 +12,11 @@ import {
 import { Segmented, Toggle } from "#/components/Segmented";
 import { FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
+import { Tabs, tabId } from "#/components/Tabs";
 import { leaderboards, plans, samples } from "#/data";
+import { BENCHMARK_IDS } from "#/domain/model";
 import { valuePoints } from "#/domain/value";
+import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
 import { formatDay } from "#/lib/format";
 import {
 	DEFAULT_MODELS_VIEW,
@@ -30,7 +33,12 @@ export const Route = createFileRoute("/")({
 	component: ValueView,
 });
 
-const CHART_TITLE = "Effective cost vs intelligence";
+const BENCHMARK_TABS = BENCHMARK_IDS.map((id) => ({
+	value: id,
+	label: BENCHMARK_VIEWS[id].tabLabel,
+}));
+
+const CHART_PANEL = "chart-panel";
 
 const SCALE_OPTIONS = [
 	{ value: "linear", label: "Linear" },
@@ -67,10 +75,12 @@ function ValueView() {
 	const update = (patch: Partial<ViewSearch>) =>
 		navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
 
+	const benchmark = BENCHMARK_VIEWS[view.benchmark];
+	const leaderboard = leaderboards[view.benchmark];
 	const planIds = selectedPlans(view);
 	const families = selectedFamilies(view);
 	const points = valuePoints({
-		benchmarks: leaderboards.intelligence.models,
+		benchmarks: leaderboard.models,
 		families,
 		plans: plans.filter((p) => planIds.includes(p.id)),
 		samples,
@@ -86,6 +96,7 @@ function ValueView() {
 			scale={view.scale}
 			showPareto={view.pareto}
 			showLabels={view.labels}
+			benchmark={benchmark}
 		/>
 	);
 	const downloadPng = async () => {
@@ -100,13 +111,14 @@ function ValueView() {
 					scale={view.scale}
 					showPareto={view.pareto}
 					showLabels
+					benchmark={benchmark}
 				/>
 			),
 			legend: (
 				<PricingKey pricings={[...styles.values()]} className="justify-end" />
 			),
-			title: CHART_TITLE,
-			fileName: "slopsubs-effective-cost.png",
+			title: benchmark.chartTitle,
+			fileName: `slopsubs-effective-cost-${benchmark.id}.png`,
 		});
 	};
 
@@ -153,13 +165,24 @@ function ValueView() {
 					inert={panelOpen}
 					className="flex min-w-0 flex-col lg:overflow-y-auto"
 				>
+					<nav className="border-b border-line px-4 sm:px-7">
+						<Tabs
+							label="Benchmark"
+							options={BENCHMARK_TABS}
+							value={view.benchmark}
+							panelId={CHART_PANEL}
+							onChange={(id) => update({ benchmark: id })}
+						/>
+					</nav>
 					<section
-						aria-labelledby="chart-heading"
+						id={CHART_PANEL}
+						role="tabpanel"
+						aria-labelledby={tabId(view.benchmark)}
 						className="flex flex-col px-4 pt-5 pb-6 sm:px-7 lg:min-h-0 lg:flex-1 lg:pb-3"
 					>
 						<div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-							<h1 id="chart-heading" className="text-[17px] font-semibold">
-								{CHART_TITLE}
+							<h1 className="text-[17px] font-semibold">
+								{benchmark.chartTitle}
 							</h1>
 							<div className="flex items-center gap-x-6 max-sm:w-full max-sm:justify-between">
 								<Toggle
@@ -190,9 +213,18 @@ function ValueView() {
 					<footer className="mt-auto flex flex-wrap justify-between gap-x-6 border-t border-line px-4 py-3 text-[12px] leading-5 text-muted sm:px-7">
 						<span>
 							Data from{" "}
-							<FooterLink href="https://artificialanalysis.ai">
-								Artificial Analysis
-							</FooterLink>{" "}
+							<FooterLink href={benchmark.source.url}>
+								{benchmark.source.name}
+							</FooterLink>
+							{benchmark.via && (
+								<>
+									{" "}
+									via{" "}
+									<FooterLink href={benchmark.via.url}>
+										{benchmark.via.name}
+									</FooterLink>
+								</>
+							)}{" "}
 							· estimated caps from{" "}
 							<FooterLink
 								href="https://www.youtube.com/watch?v=nYA0yASgaZI"
@@ -202,11 +234,11 @@ function ValueView() {
 							</FooterLink>
 						</span>
 						<time
-							dateTime={leaderboards.intelligence.fetchedAt}
+							dateTime={leaderboard.fetchedAt}
 							title="When the benchmarks were fetched"
 							className="text-subtle"
 						>
-							Updated {formatDay(leaderboards.intelligence.fetchedAt)}
+							Updated {formatDay(leaderboard.fetchedAt)}
 						</time>
 					</footer>
 				</main>

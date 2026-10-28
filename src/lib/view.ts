@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { frontier, plans } from "#/data";
-import type { Effort, FamilyId, Frontier, PlanId } from "#/domain/model";
+import {
+	BENCHMARK_IDS,
+	type Effort,
+	type FamilyId,
+	type Frontier,
+	type PlanId,
+} from "#/domain/model";
 
 /** Reasoning efforts the Models panel can hide; "default" always shows. */
 export const REASONING_LEVELS = [
@@ -15,6 +21,7 @@ export type ReasoningLevel = (typeof REASONING_LEVELS)[number];
 
 /** Chart state, kept in the URL so every view is shareable. */
 export const ViewSearch = z.object({
+	benchmark: z.enum(BENCHMARK_IDS).default("intelligence"),
 	scale: z.enum(["log", "linear"]).default("log"),
 	pareto: z.boolean().default(false),
 	api: z.boolean().default(true),

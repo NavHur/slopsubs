@@ -1,6 +1,7 @@
 import type { ScaleLinear } from "d3-scale";
 import type { ValuePoint } from "#/domain/value";
-import { formatIntelligence, formatUsd } from "#/lib/format";
+import type { BenchmarkView } from "#/lib/benchmarks";
+import { formatUsd } from "#/lib/format";
 import {
 	type AxisReadout,
 	type AxisReadouts,
@@ -16,12 +17,13 @@ export function pointReadouts(
 	scales: { x: XScale; y: ScaleLinear<number, number> },
 	layout: ChartLayout,
 	chartWidth: number,
+	benchmark: BenchmarkView,
 ): AxisReadouts {
 	return axisReadouts(
 		{ x: scales.x(point.costPerTaskUsd), y: scales.y(point.score) },
 		{
 			x: formatUsd(point.costPerTaskUsd),
-			y: formatIntelligence(point.score),
+			y: benchmark.formatScore(point.score),
 		},
 		layout,
 		chartWidth,
