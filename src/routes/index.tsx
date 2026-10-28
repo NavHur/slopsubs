@@ -165,7 +165,7 @@ function ValueView() {
 					inert={panelOpen}
 					className="flex min-w-0 flex-col lg:overflow-y-auto"
 				>
-					<nav className="border-b border-line px-4 sm:px-7">
+					<div className="border-b border-line px-4 sm:px-7">
 						<Tabs
 							label="Benchmark"
 							options={BENCHMARK_TABS}
@@ -173,7 +173,7 @@ function ValueView() {
 							panelId={CHART_PANEL}
 							onChange={(id) => update({ benchmark: id })}
 						/>
-					</nav>
+					</div>
 					<section
 						id={CHART_PANEL}
 						role="tabpanel"
