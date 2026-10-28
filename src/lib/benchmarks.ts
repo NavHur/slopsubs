@@ -13,6 +13,8 @@ export type BenchmarkView = {
 	/** The score beside its formatted value, in a point's details. */
 	scoreLabel: string;
 	formatScore: (score: number) => string;
+	/** What a point's token count measures, in its details. */
+	tokensLabel: string;
 	/** Who publishes the scores, and who we fetch them from if not them. */
 	source: Link;
 	via?: Link;
@@ -37,6 +39,7 @@ export const BENCHMARK_VIEWS: Record<BenchmarkId, BenchmarkView> = {
 		axisLabel: "Intelligence index",
 		scoreLabel: "Intelligence index",
 		formatScore: formatIntelligence,
+		tokensLabel: "Tokens per task",
 		source: ARTIFICIAL_ANALYSIS,
 		pointSource: (point) => ({
 			name: ARTIFICIAL_ANALYSIS.name,
@@ -50,6 +53,7 @@ export const BENCHMARK_VIEWS: Record<BenchmarkId, BenchmarkView> = {
 		axisLabel: "FrontierCode score (%)",
 		scoreLabel: "FrontierCode score",
 		formatScore: formatPercent,
+		tokensLabel: "Output tokens per task",
 		source: COGNITION,
 		via: {
 			name: "Priors",

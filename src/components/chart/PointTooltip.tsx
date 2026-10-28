@@ -88,7 +88,7 @@ export function PointTooltip({
 				/>
 				{benchmark.tokensPerTask !== null && (
 					<Metric
-						label="Tokens per task"
+						label={view.tokensLabel}
 						value={formatTokens(benchmark.tokensPerTask)}
 					/>
 				)}
