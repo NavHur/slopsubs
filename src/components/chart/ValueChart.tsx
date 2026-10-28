@@ -158,7 +158,7 @@ export function ValueChart({
 		? spreadLabels({
 				anchors: models.map((m) => ({
 					id: m.id,
-					anchorY: px(y(modelEnd(m).intelligence)),
+					anchorY: px(y(modelEnd(m).score)),
 				})),
 				gap: LABEL_GAP,
 				top: margin.top,

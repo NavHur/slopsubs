@@ -18,10 +18,10 @@ export function pointReadouts(
 	chartWidth: number,
 ): AxisReadouts {
 	return axisReadouts(
-		{ x: scales.x(point.costPerTaskUsd), y: scales.y(point.intelligence) },
+		{ x: scales.x(point.costPerTaskUsd), y: scales.y(point.score) },
 		{
 			x: formatUsd(point.costPerTaskUsd),
-			y: formatIntelligence(point.intelligence),
+			y: formatIntelligence(point.score),
 		},
 		layout,
 		chartWidth,

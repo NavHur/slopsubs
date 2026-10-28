@@ -44,7 +44,7 @@ function benchmark(family: FamilyId, order: number): PlottableBenchmark {
 		effort: "max",
 		effortLabel: "max",
 		effortOrder: order,
-		intelligence: 40 + order,
+		score: 40 + order,
 		costPerTaskUsd: order,
 		tokensPerTask: 1000,
 		inputPricePerMTokUsd: 5,
@@ -61,7 +61,7 @@ function line(
 	return costs.map((costPerTaskUsd, i) => ({
 		seriesId: `${family}@${key}`,
 		benchmark: benchmark(family, i),
-		intelligence: 40 + i,
+		score: 40 + i,
 		costPerTaskUsd,
 		pricing,
 	}));

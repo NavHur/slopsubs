@@ -94,7 +94,7 @@ async function main() {
 		effort: m.effort,
 		effortLabel: m.effortLabel,
 		effortOrder: m.effortOrder,
-		intelligence: ROUND(m.intelligence, 2),
+		score: ROUND(m.intelligence, 2),
 		costPerTaskUsd: ROUND(m.cost, 5),
 		tokensPerTask: ROUND(m.tokens, 0),
 		secondsPerTask: ROUND(m.time, 1),

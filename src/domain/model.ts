@@ -32,7 +32,7 @@ const BenchmarkPoint = z.object({
 	effort: Effort,
 	effortLabel: z.string(),
 	effortOrder: z.number(),
-	intelligence: z.number().nullable(),
+	score: z.number().nullable(),
 	costPerTaskUsd: Usd.nullable(),
 	tokensPerTask: z.number().nullable(),
 	inputPricePerMTokUsd: Usd.nullable(),

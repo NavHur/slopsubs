@@ -80,7 +80,7 @@ export function PointTooltip({
 			<dl className="mt-2 grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 tabular-nums">
 				<Metric
 					label="Intelligence index"
-					value={formatIntelligence(point.intelligence)}
+					value={formatIntelligence(point.score)}
 				/>
 				<Metric
 					label={

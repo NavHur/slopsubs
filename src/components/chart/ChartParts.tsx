@@ -130,7 +130,7 @@ export function ParetoLine({
 const POINT_HIT_RADIUS = 12;
 
 function pointLabel(series: Series, point: ValuePoint): string {
-	return `${series.label}, ${point.benchmark.effortLabel}, effective cost per task ${formatUsd(point.costPerTaskUsd)}, intelligence ${point.intelligence.toFixed(1)}`;
+	return `${series.label}, ${point.benchmark.effortLabel}, effective cost per task ${formatUsd(point.costPerTaskUsd)}, intelligence ${point.score.toFixed(1)}`;
 }
 
 /** A key handler that runs `action` on Enter or Space, as a button does. */
@@ -206,7 +206,7 @@ export function SeriesLine({
 				>
 					<circle
 						cx={px(x(p.costPerTaskUsd))}
-						cy={px(y(p.intelligence))}
+						cy={px(y(p.score))}
 						r={POINT_HIT_RADIUS}
 						fill="transparent"
 					/>
@@ -214,7 +214,7 @@ export function SeriesLine({
 						d={markerPath(
 							marker,
 							x(p.costPerTaskUsd),
-							y(p.intelligence),
+							y(p.score),
 							activePoint === p ? 6 : 4,
 						)}
 						fill={isApi ? "var(--bg)" : series.color}

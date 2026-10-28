@@ -20,7 +20,7 @@ function point(effort: string): ValuePoint {
 	return {
 		seriesId: `${haiku}@api`,
 		benchmark,
-		intelligence: 40,
+		score: 40,
 		costPerTaskUsd: 1,
 		pricing: { kind: "api" },
 	};
