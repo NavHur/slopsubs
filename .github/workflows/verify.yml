@@ -63,7 +63,7 @@ jobs:
       cancel-in-progress: false
     environment:
       name: production
-      url: https://slopsubs.pnav.dev
+      url: https://slopsubs.com
 
     steps:
       - name: Check out repository
