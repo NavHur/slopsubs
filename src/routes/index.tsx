@@ -8,7 +8,7 @@ import { CapBasisKey, TasksChart } from "#/components/chart/TasksChart";
 import { ValueChart } from "#/components/chart/ValueChart";
 import { ChartSection } from "#/components/ChartSection";
 import { ChartSettingsMenu, ThemeToggle } from "#/components/HeaderActions";
-import { CodeOnlyFilter, ReasoningFilter } from "#/components/ModelFilters";
+import { ReasoningFilter } from "#/components/ModelFilters";
 import { PageFooter } from "#/components/PageFooter";
 import { SectionNav } from "#/components/SectionNav";
 import { Segmented, Toggle } from "#/components/Segmented";
@@ -23,11 +23,9 @@ import { useSectionNav } from "#/lib/useSectionNav";
 import {
 	CHART_SECTIONS,
 	type ChartSectionId,
-	codeOnlyApplies,
 	DEFAULT_MODELS_VIEW,
 	hiddenReasoning,
 	isDefaultModelsView,
-	plottedLeaderboard,
 	selectedFamilies,
 	selectedPlans,
 	toggled,
@@ -64,11 +62,9 @@ function coverageOf(id: LeaderboardId): Coverage {
 }
 
 // Built once per leaderboard, not per render or row.
-const COVERAGE: Record<LeaderboardId, Coverage> = {
-	intelligence: coverageOf("intelligence"),
-	frontiercode: coverageOf("frontiercode"),
-	coding: coverageOf("coding"),
-};
+const COVERAGE: Record<LeaderboardId, Coverage> = Object.fromEntries(
+	BENCHMARK_IDS.map((id) => [id, coverageOf(id)]),
+) as Record<LeaderboardId, Coverage>;
 
 const SCALE_OPTIONS = [
 	{ value: "linear", label: "Linear" },
@@ -102,7 +98,7 @@ function ValueView() {
 			search: { ...view, chart: id === CHART_SECTIONS[0] ? undefined : id },
 		}).href;
 
-	const plotted = plottedLeaderboard(view);
+	const plotted = view.benchmark;
 	const benchmark = BENCHMARK_VIEWS[plotted];
 	const leaderboard = leaderboards[plotted];
 	const planIds = selectedPlans(view);
@@ -320,17 +316,10 @@ function ValueView() {
 					<FamilyList
 						selected={families}
 						filters={
-							<>
-								<CodeOnlyFilter
-									checked={view.code}
-									applies={codeOnlyApplies(view.benchmark)}
-									onChange={(code) => update({ code })}
-								/>
-								<ReasoningFilter
-									hidden={hiddenReasoning(view)}
-									onChange={(hideReasoning) => update({ hideReasoning })}
-								/>
-							</>
+							<ReasoningFilter
+								hidden={hiddenReasoning(view)}
+								onChange={(hideReasoning) => update({ hideReasoning })}
+							/>
 						}
 						isDefault={isDefaultModelsView(view)}
 						coverage={COVERAGE[plotted]}

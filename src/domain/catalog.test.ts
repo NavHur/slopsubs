@@ -41,7 +41,6 @@ function point(extra: Partial<SlopaPoint> = {}): SlopaPoint {
 		secondsPerTask: 1445.4,
 		inputPricePerMTokUsd: 4,
 		outputPricePerMTokUsd: 20,
-		coding: null,
 		...extra,
 	};
 }

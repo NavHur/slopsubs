@@ -13,6 +13,7 @@
     "typecheck": "tsrs --noEmit",
     "typecheck:tsc": "tsc --noEmit",
     "import-benchmarks": "bun scripts/import-benchmarks.ts",
+    "import-aa-evals": "bun scripts/import-aa-evals.ts",
     "import-frontiercode": "bun scripts/import-frontiercode.ts",
     "measure": "node scripts/measure.ts",
     "build-plans": "node scripts/build-plans.ts",

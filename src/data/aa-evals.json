@@ -1,0 +1,6254 @@
+{
+  "fetchedAt": "2026-10-31T23:19:32.600Z",
+  "source": "Artificial Analysis website (model page flight payload)",
+  "evals": [
+    "aa-briefcase",
+    "automationbench-aa",
+    "terminalbench-4-0",
+    "frontiercode-2-0",
+    "omniscience",
+    "gdp-pdf",
+    "hle-diamond",
+    "critpt-v2-hard",
+    "terminal-bench-science"
+  ],
+  "rows": [
+    {
+      "family": "gemini-4-argon",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1484.44,
+      "costPerTaskUsd": 9.16906,
+      "tokensPerTask": 142374,
+      "secondsPerTask": 1668.6
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.7751346945899195,
+      "costPerTaskUsd": 1.12345,
+      "tokensPerTask": 32595,
+      "secondsPerTask": 382
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.570707070707071,
+      "costPerTaskUsd": 10.47894,
+      "tokensPerTask": 165330,
+      "secondsPerTask": 1937.7
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.257076262626263,
+      "costPerTaskUsd": 14.04427,
+      "tokensPerTask": 156345,
+      "secondsPerTask": 1832.4
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 46.1,
+      "costPerTaskUsd": 0.01822,
+      "tokensPerTask": 883,
+      "secondsPerTask": 10.4
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.218,
+      "costPerTaskUsd": 0.51866,
+      "tokensPerTask": 8432,
+      "secondsPerTask": 98.8
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.567,
+      "costPerTaskUsd": 0.48356,
+      "tokensPerTask": 20698,
+      "secondsPerTask": 242.6
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.525,
+      "costPerTaskUsd": 2.14858,
+      "tokensPerTask": 71508,
+      "secondsPerTask": 838.1
+    },
+    {
+      "family": "gemini-4-argon",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.528571428571429,
+      "costPerTaskUsd": 18.69817,
+      "tokensPerTask": 290818,
+      "secondsPerTask": 3408.4
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1440.11,
+      "costPerTaskUsd": 1.39207,
+      "tokensPerTask": 71619,
+      "secondsPerTask": 449.3
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.5490962996121462,
+      "costPerTaskUsd": 0.2621,
+      "tokensPerTask": 12228,
+      "secondsPerTask": 76.7
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "medium",
+      "eval": "terminalbench-4-0",
+      "score": 0.297979797979798,
+      "costPerTaskUsd": 1.57816,
+      "tokensPerTask": 51618,
+      "secondsPerTask": 323.8
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.109708080808081,
+      "costPerTaskUsd": 0.32355,
+      "tokensPerTask": 13314,
+      "secondsPerTask": 83.5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": 18.633333333333333,
+      "costPerTaskUsd": 0.00312,
+      "tokensPerTask": 277,
+      "secondsPerTask": 1.7
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.202,
+      "costPerTaskUsd": 0.38142,
+      "tokensPerTask": 2839,
+      "secondsPerTask": 17.8
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.238,
+      "costPerTaskUsd": 0.03273,
+      "tokensPerTask": 3134,
+      "secondsPerTask": 19.7
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.285,
+      "costPerTaskUsd": 0.09263,
+      "tokensPerTask": 6762,
+      "secondsPerTask": 42.4
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.161904761904762,
+      "costPerTaskUsd": 2.13545,
+      "tokensPerTask": 73731,
+      "secondsPerTask": 462.6
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 1479.14,
+      "costPerTaskUsd": 6.7213,
+      "tokensPerTask": 62221,
+      "secondsPerTask": 680.4
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.522404059498186,
+      "costPerTaskUsd": 1.49949,
+      "tokensPerTask": 15688,
+      "secondsPerTask": 171.5
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.404040404040404,
+      "costPerTaskUsd": 7.19781,
+      "tokensPerTask": 66195,
+      "secondsPerTask": 723.8
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.228400505050505,
+      "costPerTaskUsd": 3.51077,
+      "tokensPerTask": 30009,
+      "secondsPerTask": 328.1
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": 33.93333333333333,
+      "costPerTaskUsd": 0.00799,
+      "tokensPerTask": 126,
+      "secondsPerTask": 1.4
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.28,
+      "costPerTaskUsd": 1.90893,
+      "tokensPerTask": 3537,
+      "secondsPerTask": 38.7
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.374,
+      "costPerTaskUsd": 0.19906,
+      "tokensPerTask": 3932,
+      "secondsPerTask": 43
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.475,
+      "costPerTaskUsd": 0.8923,
+      "tokensPerTask": 13590,
+      "secondsPerTask": 148.6
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.214285714285714,
+      "costPerTaskUsd": 12.90526,
+      "tokensPerTask": 97668,
+      "secondsPerTask": 1068
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1502.05,
+      "costPerTaskUsd": 1.03856,
+      "tokensPerTask": 43513,
+      "secondsPerTask": 612.5
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.6657372141364344,
+      "costPerTaskUsd": 0.25056,
+      "tokensPerTask": 10626,
+      "secondsPerTask": 149.6
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.54040404040404,
+      "costPerTaskUsd": 1.02595,
+      "tokensPerTask": 56902,
+      "secondsPerTask": 801
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.385190909090909,
+      "costPerTaskUsd": 0.70282,
+      "tokensPerTask": 21866,
+      "secondsPerTask": 307.8
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": 42.36666666666667,
+      "costPerTaskUsd": 0.00918,
+      "tokensPerTask": 893,
+      "secondsPerTask": 12.6
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.318,
+      "costPerTaskUsd": 0.36805,
+      "tokensPerTask": 4536,
+      "secondsPerTask": 63.9
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.558,
+      "costPerTaskUsd": 0.06629,
+      "tokensPerTask": 6500,
+      "secondsPerTask": 91.5
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.68,
+      "costPerTaskUsd": 0.1671,
+      "tokensPerTask": 13479,
+      "secondsPerTask": 189.7
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.504761904761905,
+      "costPerTaskUsd": 2.29698,
+      "tokensPerTask": 79028,
+      "secondsPerTask": 1112.5
+    },
+    {
+      "family": "gemini-3-5-flash-lite",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 651.13,
+      "costPerTaskUsd": 0.15414,
+      "tokensPerTask": 23020,
+      "secondsPerTask": 53.8
+    },
+    {
+      "family": "gemini-3-5-flash-lite",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.25011270511840955,
+      "costPerTaskUsd": 0.1962,
+      "tokensPerTask": 21089,
+      "secondsPerTask": 49.3
+    },
+    {
+      "family": "gemini-3-5-flash-lite",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.0101010101010101,
+      "costPerTaskUsd": 1.09506,
+      "tokensPerTask": 54771,
+      "secondsPerTask": 127.9
+    },
+    {
+      "family": "gemini-3-5-flash-lite",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.0602982323232323,
+      "costPerTaskUsd": 2.45945,
+      "tokensPerTask": 60083,
+      "secondsPerTask": 140.4
+    },
+    {
+      "family": "gemini-3-5-flash-lite",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 6.866666666666666,
+      "costPerTaskUsd": 0.00289,
+      "tokensPerTask": 1143,
+      "secondsPerTask": 2.7
+    },
+    {
+      "family": "gemini-3-5-flash-lite",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.136,
+      "costPerTaskUsd": 0.0395,
+      "tokensPerTask": 5351,
+      "secondsPerTask": 12.5
+    },
+    {
+      "family": "gemini-3-5-flash-lite",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.099,
+      "costPerTaskUsd": 0.01989,
+      "tokensPerTask": 7887,
+      "secondsPerTask": 18.4
+    },
+    {
+      "family": "gemini-3-5-flash-lite",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.035,
+      "costPerTaskUsd": 0.18279,
+      "tokensPerTask": 30891,
+      "secondsPerTask": 72.2
+    },
+    {
+      "family": "gemini-3-5-flash-lite",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 1.05914,
+      "tokensPerTask": 46580,
+      "secondsPerTask": 108.8
+    },
+    {
+      "family": "step-5-preview",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 1424.55,
+      "costPerTaskUsd": 2.37285,
+      "tokensPerTask": 120429,
+      "secondsPerTask": 654.4
+    },
+    {
+      "family": "step-5-preview",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.5095659419096288,
+      "costPerTaskUsd": 0.22479,
+      "tokensPerTask": 29651,
+      "secondsPerTask": 161.1
+    },
+    {
+      "family": "step-5-preview",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0.333333333333333,
+      "costPerTaskUsd": 5.1754,
+      "tokensPerTask": 260341,
+      "secondsPerTask": 1414.6
+    },
+    {
+      "family": "step-5-preview",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0.120010101010101,
+      "costPerTaskUsd": 2.11045,
+      "tokensPerTask": 80929,
+      "secondsPerTask": 439.7
+    },
+    {
+      "family": "step-5-preview",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": 16.433333333333334,
+      "costPerTaskUsd": 0.01473,
+      "tokensPerTask": 5407,
+      "secondsPerTask": 29.4
+    },
+    {
+      "family": "step-5-preview",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.148,
+      "costPerTaskUsd": 0.12219,
+      "tokensPerTask": 13243,
+      "secondsPerTask": 72
+    },
+    {
+      "family": "step-5-preview",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.243,
+      "costPerTaskUsd": 0.07971,
+      "tokensPerTask": 29366,
+      "secondsPerTask": 159.6
+    },
+    {
+      "family": "step-5-preview",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.325,
+      "costPerTaskUsd": 0.35841,
+      "tokensPerTask": 70022,
+      "secondsPerTask": 380.5
+    },
+    {
+      "family": "step-5-preview",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0.0238095238095238,
+      "costPerTaskUsd": 7.27898,
+      "tokensPerTask": 295605,
+      "secondsPerTask": 1606.2
+    },
+    {
+      "family": "granite-4-2-3b",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 98.82,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 29940,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-3b",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.003767979122295127,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 11997,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-3b",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 43222,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-3b",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 83964,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-3b",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -18.333333333333332,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 5315,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-3b",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.002,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 7659,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-3b",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.029,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 12520,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-3b",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 12693,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-3b",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 57179,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "none",
+      "eval": "aa-briefcase",
+      "score": 1227.81,
+      "costPerTaskUsd": 0.22024,
+      "tokensPerTask": 12876,
+      "secondsPerTask": 142.8
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "none",
+      "eval": "automationbench-aa",
+      "score": 0.5104424383087566,
+      "costPerTaskUsd": 0.08754,
+      "tokensPerTask": 6145,
+      "secondsPerTask": 68.1
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "none",
+      "eval": "terminalbench-4-0",
+      "score": 0.267676767676768,
+      "costPerTaskUsd": 0.37877,
+      "tokensPerTask": 16600,
+      "secondsPerTask": 184.1
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "none",
+      "eval": "frontiercode-2-0",
+      "score": 0.333510606060606,
+      "costPerTaskUsd": 0.42539,
+      "tokensPerTask": 14330,
+      "secondsPerTask": 158.9
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "none",
+      "eval": "omniscience",
+      "score": -4.966666666666667,
+      "costPerTaskUsd": 0.00019,
+      "tokensPerTask": 14,
+      "secondsPerTask": 0.2
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "none",
+      "eval": "gdp-pdf",
+      "score": 0.232,
+      "costPerTaskUsd": 0.16449,
+      "tokensPerTask": 629,
+      "secondsPerTask": 7
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "none",
+      "eval": "hle-diamond",
+      "score": 0.145,
+      "costPerTaskUsd": 0.00111,
+      "tokensPerTask": 92,
+      "secondsPerTask": 1
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "none",
+      "eval": "critpt-v2-hard",
+      "score": 0.325,
+      "costPerTaskUsd": 0.01705,
+      "tokensPerTask": 2071,
+      "secondsPerTask": 23
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "none",
+      "eval": "terminal-bench-science",
+      "score": 0.242857142857143,
+      "costPerTaskUsd": 0.51152,
+      "tokensPerTask": 21267,
+      "secondsPerTask": 235.8
+    },
+    {
+      "family": "inkling",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 833.06,
+      "costPerTaskUsd": 1.40226,
+      "tokensPerTask": 52231,
+      "secondsPerTask": 232.3
+    },
+    {
+      "family": "inkling",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.04984889684475201,
+      "costPerTaskUsd": 0.21517,
+      "tokensPerTask": 8401,
+      "secondsPerTask": 37.4
+    },
+    {
+      "family": "inkling",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.0101010101010101,
+      "costPerTaskUsd": 2.58206,
+      "tokensPerTask": 87669,
+      "secondsPerTask": 389.9
+    },
+    {
+      "family": "inkling",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.0392487373737374,
+      "costPerTaskUsd": 3.27234,
+      "tokensPerTask": 59526,
+      "secondsPerTask": 264.8
+    },
+    {
+      "family": "inkling",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": -1.5,
+      "costPerTaskUsd": 0.01806,
+      "tokensPerTask": 4428,
+      "secondsPerTask": 19.7
+    },
+    {
+      "family": "inkling",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.128,
+      "costPerTaskUsd": 0.14117,
+      "tokensPerTask": 12046,
+      "secondsPerTask": 53.6
+    },
+    {
+      "family": "inkling",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.106,
+      "costPerTaskUsd": 0.13329,
+      "tokensPerTask": 32748,
+      "secondsPerTask": 145.7
+    },
+    {
+      "family": "inkling",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.18,
+      "costPerTaskUsd": 0.55174,
+      "tokensPerTask": 81749,
+      "secondsPerTask": 363.6
+    },
+    {
+      "family": "inkling",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 2.02355,
+      "tokensPerTask": 83926,
+      "secondsPerTask": 373.3
+    },
+    {
+      "family": "mimo-v2-6-flash",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 1487.33,
+      "costPerTaskUsd": 0.15172,
+      "tokensPerTask": 161314,
+      "secondsPerTask": 3497.6
+    },
+    {
+      "family": "mimo-v2-6-flash",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.6405168250285657,
+      "costPerTaskUsd": 0.01666,
+      "tokensPerTask": 23469,
+      "secondsPerTask": 508.8
+    },
+    {
+      "family": "mimo-v2-6-flash",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0.227272727272727,
+      "costPerTaskUsd": 0.23016,
+      "tokensPerTask": 236366,
+      "secondsPerTask": 5124.8
+    },
+    {
+      "family": "mimo-v2-6-flash",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0.216152272727273,
+      "costPerTaskUsd": 0.10863,
+      "tokensPerTask": 119186,
+      "secondsPerTask": 2584.1
+    },
+    {
+      "family": "mimo-v2-6-flash",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -10.833333333333334,
+      "costPerTaskUsd": 0.00335,
+      "tokensPerTask": 11907,
+      "secondsPerTask": 258.2
+    },
+    {
+      "family": "mimo-v2-6-flash",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.09,
+      "costPerTaskUsd": 0.02013,
+      "tokensPerTask": 5511,
+      "secondsPerTask": 119.5
+    },
+    {
+      "family": "mimo-v2-6-flash",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.137,
+      "costPerTaskUsd": 0.01079,
+      "tokensPerTask": 38276,
+      "secondsPerTask": 829.9
+    },
+    {
+      "family": "mimo-v2-6-flash",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.295,
+      "costPerTaskUsd": 0.06162,
+      "tokensPerTask": 129852,
+      "secondsPerTask": 2815.4
+    },
+    {
+      "family": "mimo-v2-6-flash",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0.0428571428571429,
+      "costPerTaskUsd": 0.37919,
+      "tokensPerTask": 306979,
+      "secondsPerTask": 6655.8
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1451.01,
+      "costPerTaskUsd": 0.98399,
+      "tokensPerTask": 131965,
+      "secondsPerTask": 1593.8
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.6036862782167782,
+      "costPerTaskUsd": 0.03234,
+      "tokensPerTask": 20219,
+      "secondsPerTask": 244.2
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.328282828282828,
+      "costPerTaskUsd": 0.88915,
+      "tokensPerTask": 181054,
+      "secondsPerTask": 2186.7
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.176070454545455,
+      "costPerTaskUsd": 0.44521,
+      "tokensPerTask": 77885,
+      "secondsPerTask": 940.6
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 0.6666666666666666,
+      "costPerTaskUsd": 0.00163,
+      "tokensPerTask": 3217,
+      "secondsPerTask": 38.8
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.154,
+      "costPerTaskUsd": 0.03187,
+      "tokensPerTask": 15701,
+      "secondsPerTask": 189.6
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.182,
+      "costPerTaskUsd": 0.01567,
+      "tokensPerTask": 31144,
+      "secondsPerTask": 376.1
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.24,
+      "costPerTaskUsd": 0.35561,
+      "tokensPerTask": 386226,
+      "secondsPerTask": 4664.6
+    },
+    {
+      "family": "glm-5-3-flash",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.0476190476190476,
+      "costPerTaskUsd": 1.59622,
+      "tokensPerTask": 270711,
+      "secondsPerTask": 3269.5
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1235.3,
+      "costPerTaskUsd": 0.0825,
+      "tokensPerTask": 57304,
+      "secondsPerTask": 472.9
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.47800686767566575,
+      "costPerTaskUsd": 0.0233,
+      "tokensPerTask": 19994,
+      "secondsPerTask": 165
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.0808080808080808,
+      "costPerTaskUsd": 0.19818,
+      "tokensPerTask": 104250,
+      "secondsPerTask": 860.4
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.184238888888889,
+      "costPerTaskUsd": 0.11032,
+      "tokensPerTask": 38300,
+      "secondsPerTask": 316.1
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": -12.966666666666667,
+      "costPerTaskUsd": 0.00089,
+      "tokensPerTask": 1746,
+      "secondsPerTask": 14.4
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.186,
+      "costPerTaskUsd": 0.02066,
+      "tokensPerTask": 9058,
+      "secondsPerTask": 74.8
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.189,
+      "costPerTaskUsd": 0.0062,
+      "tokensPerTask": 12265,
+      "secondsPerTask": 101.2
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.355,
+      "costPerTaskUsd": 0.01287,
+      "tokensPerTask": 19641,
+      "secondsPerTask": 162.1
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.0523809523809524,
+      "costPerTaskUsd": 0.34076,
+      "tokensPerTask": 94817,
+      "secondsPerTask": 782.5
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1543.6,
+      "costPerTaskUsd": 6.56352,
+      "tokensPerTask": 44691,
+      "secondsPerTask": 679.1
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.6717778020215392,
+      "costPerTaskUsd": 1.40639,
+      "tokensPerTask": 10314,
+      "secondsPerTask": 156.7
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.595959595959596,
+      "costPerTaskUsd": 5.85548,
+      "tokensPerTask": 43275,
+      "secondsPerTask": 657.6
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.414029545454545,
+      "costPerTaskUsd": 4.043,
+      "tokensPerTask": 20375,
+      "secondsPerTask": 309.6
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": 43.666666666666664,
+      "costPerTaskUsd": 0.05178,
+      "tokensPerTask": 1011,
+      "secondsPerTask": 15.4
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.322,
+      "costPerTaskUsd": 1.91272,
+      "tokensPerTask": 5579,
+      "secondsPerTask": 84.8
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.615,
+      "costPerTaskUsd": 0.37043,
+      "tokensPerTask": 7279,
+      "secondsPerTask": 110.6
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.705,
+      "costPerTaskUsd": 0.84928,
+      "tokensPerTask": 13528,
+      "secondsPerTask": 205.6
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.547619047619048,
+      "costPerTaskUsd": 7.91138,
+      "tokensPerTask": 64062,
+      "secondsPerTask": 973.5
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1441.2,
+      "costPerTaskUsd": 0.22294,
+      "tokensPerTask": 156711,
+      "secondsPerTask": 544
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.3372685311767238,
+      "costPerTaskUsd": 0.02269,
+      "tokensPerTask": 21082,
+      "secondsPerTask": 73.2
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.217171717171717,
+      "costPerTaskUsd": 0.33148,
+      "tokensPerTask": 166080,
+      "secondsPerTask": 576.6
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.232000505050505,
+      "costPerTaskUsd": 0.14045,
+      "tokensPerTask": 83425,
+      "secondsPerTask": 289.6
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 5.3,
+      "costPerTaskUsd": 0.0004,
+      "tokensPerTask": 769,
+      "secondsPerTask": 2.7
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.172,
+      "costPerTaskUsd": 0.02257,
+      "tokensPerTask": 9984,
+      "secondsPerTask": 34.7
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.237,
+      "costPerTaskUsd": 0.01108,
+      "tokensPerTask": 22015,
+      "secondsPerTask": 76.4
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.425,
+      "costPerTaskUsd": 0.03337,
+      "tokensPerTask": 48148,
+      "secondsPerTask": 167.1
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.1,
+      "costPerTaskUsd": 0.42757,
+      "tokensPerTask": 178341,
+      "secondsPerTask": 619.1
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 1494.82,
+      "costPerTaskUsd": 2.09649,
+      "tokensPerTask": 68680,
+      "secondsPerTask": 946.6
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.5673837407466283,
+      "costPerTaskUsd": 0.40696,
+      "tokensPerTask": 11375,
+      "secondsPerTask": 156.8
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.161616161616162,
+      "costPerTaskUsd": 5.03333,
+      "tokensPerTask": 66886,
+      "secondsPerTask": 921.9
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.218224494949495,
+      "costPerTaskUsd": 4.32539,
+      "tokensPerTask": 42828,
+      "secondsPerTask": 590.3
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": 27.4,
+      "costPerTaskUsd": 0.01003,
+      "tokensPerTask": 1220,
+      "secondsPerTask": 16.8
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.214,
+      "costPerTaskUsd": 0.24974,
+      "tokensPerTask": 3914,
+      "secondsPerTask": 53.9
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.185,
+      "costPerTaskUsd": 0.09893,
+      "tokensPerTask": 15913,
+      "secondsPerTask": 219.3
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.41,
+      "costPerTaskUsd": 0.7943,
+      "tokensPerTask": 45226,
+      "secondsPerTask": 623.4
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.0476190476190476,
+      "costPerTaskUsd": 8.87949,
+      "tokensPerTask": 81290,
+      "secondsPerTask": 1120.4
+    },
+    {
+      "family": "mimo-v2-6-pro",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 1512.15,
+      "costPerTaskUsd": 0.38018,
+      "tokensPerTask": 163892,
+      "secondsPerTask": 2959.4
+    },
+    {
+      "family": "mimo-v2-6-pro",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.5862340943419085,
+      "costPerTaskUsd": 0.04226,
+      "tokensPerTask": 21142,
+      "secondsPerTask": 381.8
+    },
+    {
+      "family": "mimo-v2-6-pro",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0.348484848484849,
+      "costPerTaskUsd": 0.43805,
+      "tokensPerTask": 184486,
+      "secondsPerTask": 3331.2
+    },
+    {
+      "family": "mimo-v2-6-pro",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0.239701262626263,
+      "costPerTaskUsd": 0.25659,
+      "tokensPerTask": 116458,
+      "secondsPerTask": 2102.9
+    },
+    {
+      "family": "mimo-v2-6-pro",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -4.466666666666667,
+      "costPerTaskUsd": 0.00556,
+      "tokensPerTask": 6324,
+      "secondsPerTask": 114.2
+    },
+    {
+      "family": "mimo-v2-6-pro",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.192,
+      "costPerTaskUsd": 0.02402,
+      "tokensPerTask": 9264,
+      "secondsPerTask": 167.3
+    },
+    {
+      "family": "mimo-v2-6-pro",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.152,
+      "costPerTaskUsd": 0.02576,
+      "tokensPerTask": 29353,
+      "secondsPerTask": 530
+    },
+    {
+      "family": "mimo-v2-6-pro",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.34,
+      "costPerTaskUsd": 0.1652,
+      "tokensPerTask": 116292,
+      "secondsPerTask": 2099.9
+    },
+    {
+      "family": "mimo-v2-6-pro",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0.0571428571428571,
+      "costPerTaskUsd": 0.63078,
+      "tokensPerTask": 290259,
+      "secondsPerTask": 5241.2
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1635.21,
+      "costPerTaskUsd": 3.27074,
+      "tokensPerTask": 139976,
+      "secondsPerTask": 844.6
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.5942923026067375,
+      "costPerTaskUsd": 0.31261,
+      "tokensPerTask": 14696,
+      "secondsPerTask": 88.7
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.439393939393939,
+      "costPerTaskUsd": 2.18622,
+      "tokensPerTask": 76655,
+      "secondsPerTask": 462.5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.257380050505051,
+      "costPerTaskUsd": 0.76041,
+      "tokensPerTask": 27588,
+      "secondsPerTask": 166.5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 18.733333333333334,
+      "costPerTaskUsd": 0.00567,
+      "tokensPerTask": 533,
+      "secondsPerTask": 3.2
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.252,
+      "costPerTaskUsd": 0.4086,
+      "tokensPerTask": 5556,
+      "secondsPerTask": 33.5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.338,
+      "costPerTaskUsd": 0.10683,
+      "tokensPerTask": 10546,
+      "secondsPerTask": 63.6
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.475,
+      "costPerTaskUsd": 0.1805,
+      "tokensPerTask": 13687,
+      "secondsPerTask": 82.6
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.342857142857143,
+      "costPerTaskUsd": 4.98127,
+      "tokensPerTask": 147369,
+      "secondsPerTask": 889.2
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1629.41,
+      "costPerTaskUsd": 6.38491,
+      "tokensPerTask": 137434,
+      "secondsPerTask": 1716.4
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.6351937297314658,
+      "costPerTaskUsd": 0.84953,
+      "tokensPerTask": 28840,
+      "secondsPerTask": 360.2
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.247474747474747,
+      "costPerTaskUsd": 7.62576,
+      "tokensPerTask": 126091,
+      "secondsPerTask": 1574.7
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.277836363636364,
+      "costPerTaskUsd": 11.05823,
+      "tokensPerTask": 99886,
+      "secondsPerTask": 1247.5
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 30,
+      "costPerTaskUsd": 0.02163,
+      "tokensPerTask": 3152,
+      "secondsPerTask": 39.4
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.232,
+      "costPerTaskUsd": 0.30216,
+      "tokensPerTask": 13111,
+      "secondsPerTask": 163.7
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.236,
+      "costPerTaskUsd": 0.26913,
+      "tokensPerTask": 44245,
+      "secondsPerTask": 552.6
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.35,
+      "costPerTaskUsd": 1.89405,
+      "tokensPerTask": 91381,
+      "secondsPerTask": 1141.3
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.0952380952380952,
+      "costPerTaskUsd": 16.84934,
+      "tokensPerTask": 165247,
+      "secondsPerTask": 2063.8
+    },
+    {
+      "family": "minimax-m3",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 1089.34,
+      "costPerTaskUsd": 0.93953,
+      "tokensPerTask": 81897,
+      "secondsPerTask": 686.5
+    },
+    {
+      "family": "minimax-m3",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.21251257600749407,
+      "costPerTaskUsd": 0.11538,
+      "tokensPerTask": 20791,
+      "secondsPerTask": 174.3
+    },
+    {
+      "family": "minimax-m3",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0.0202020202020202,
+      "costPerTaskUsd": 3.03988,
+      "tokensPerTask": 176730,
+      "secondsPerTask": 1481.4
+    },
+    {
+      "family": "minimax-m3",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0.219031313131313,
+      "costPerTaskUsd": 1.2877,
+      "tokensPerTask": 103221,
+      "secondsPerTask": 865.2
+    },
+    {
+      "family": "minimax-m3",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -5.5,
+      "costPerTaskUsd": 0.00613,
+      "tokensPerTask": 5035,
+      "secondsPerTask": 42.2
+    },
+    {
+      "family": "minimax-m3",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.098,
+      "costPerTaskUsd": 0.05329,
+      "tokensPerTask": 7937,
+      "secondsPerTask": 66.5
+    },
+    {
+      "family": "minimax-m3",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.16,
+      "costPerTaskUsd": 0.02836,
+      "tokensPerTask": 23457,
+      "secondsPerTask": 196.6
+    },
+    {
+      "family": "minimax-m3",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.265,
+      "costPerTaskUsd": 0.33492,
+      "tokensPerTask": 124977,
+      "secondsPerTask": 1047.6
+    },
+    {
+      "family": "minimax-m3",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0.00476190476190476,
+      "costPerTaskUsd": 4.00895,
+      "tokensPerTask": 193172,
+      "secondsPerTask": 1619.2
+    },
+    {
+      "family": "command-a-plus",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 356.21,
+      "costPerTaskUsd": 0,
+      "tokensPerTask": 26905,
+      "secondsPerTask": 166.4
+    },
+    {
+      "family": "command-a-plus",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.018104537047977383,
+      "costPerTaskUsd": 0,
+      "tokensPerTask": 5132,
+      "secondsPerTask": 31.7
+    },
+    {
+      "family": "command-a-plus",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0.00505050505050505,
+      "costPerTaskUsd": 0,
+      "tokensPerTask": 49994,
+      "secondsPerTask": 309.1
+    },
+    {
+      "family": "command-a-plus",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0,
+      "costPerTaskUsd": 0,
+      "tokensPerTask": 52889,
+      "secondsPerTask": 327
+    },
+    {
+      "family": "command-a-plus",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -2.6666666666666665,
+      "costPerTaskUsd": 0,
+      "tokensPerTask": 2316,
+      "secondsPerTask": 14.3
+    },
+    {
+      "family": "command-a-plus",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.01,
+      "costPerTaskUsd": 0,
+      "tokensPerTask": 12546,
+      "secondsPerTask": 77.6
+    },
+    {
+      "family": "command-a-plus",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.051,
+      "costPerTaskUsd": 0,
+      "tokensPerTask": 22906,
+      "secondsPerTask": 141.6
+    },
+    {
+      "family": "command-a-plus",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.025,
+      "costPerTaskUsd": 0,
+      "tokensPerTask": 62397,
+      "secondsPerTask": 385.8
+    },
+    {
+      "family": "command-a-plus",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 0,
+      "tokensPerTask": 59334,
+      "secondsPerTask": 366.9
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1568.98,
+      "costPerTaskUsd": 9.50208,
+      "tokensPerTask": 68691,
+      "secondsPerTask": 870.2
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.6849174806688876,
+      "costPerTaskUsd": 1.59559,
+      "tokensPerTask": 12900,
+      "secondsPerTask": 163.4
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.590909090909091,
+      "costPerTaskUsd": 8.49812,
+      "tokensPerTask": 75664,
+      "secondsPerTask": 958.5
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.42374797979798,
+      "costPerTaskUsd": 6.53876,
+      "tokensPerTask": 37088,
+      "secondsPerTask": 469.8
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 42.43333333333333,
+      "costPerTaskUsd": 0.09885,
+      "tokensPerTask": 1952,
+      "secondsPerTask": 24.7
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.31,
+      "costPerTaskUsd": 2.07582,
+      "tokensPerTask": 9247,
+      "secondsPerTask": 117.1
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.638,
+      "costPerTaskUsd": 0.55122,
+      "tokensPerTask": 10895,
+      "secondsPerTask": 138
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.705,
+      "costPerTaskUsd": 1.13773,
+      "tokensPerTask": 18256,
+      "secondsPerTask": 231.3
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.633333333333333,
+      "costPerTaskUsd": 17.47623,
+      "tokensPerTask": 161497,
+      "secondsPerTask": 2045.8
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1800.51,
+      "costPerTaskUsd": 21.04597,
+      "tokensPerTask": 338099,
+      "secondsPerTask": 2225.4
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.6953868128636069,
+      "costPerTaskUsd": 1.42876,
+      "tokensPerTask": 41105,
+      "secondsPerTask": 270.6
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.595959595959596,
+      "costPerTaskUsd": 13.10928,
+      "tokensPerTask": 252948,
+      "secondsPerTask": 1665
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.464359595959596,
+      "costPerTaskUsd": 13.45516,
+      "tokensPerTask": 199997,
+      "secondsPerTask": 1316.4
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 48.13333333333333,
+      "costPerTaskUsd": 0.18738,
+      "tokensPerTask": 9329,
+      "secondsPerTask": 61.4
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.262,
+      "costPerTaskUsd": 1.55234,
+      "tokensPerTask": 42319,
+      "secondsPerTask": 278.6
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.679,
+      "costPerTaskUsd": 1.19831,
+      "tokensPerTask": 59682,
+      "secondsPerTask": 392.8
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.61,
+      "costPerTaskUsd": 2.57671,
+      "tokensPerTask": 97157,
+      "secondsPerTask": 639.5
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.59047619047619,
+      "costPerTaskUsd": 19.97098,
+      "tokensPerTask": 306993,
+      "secondsPerTask": 2020.7
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "none",
+      "eval": "aa-briefcase",
+      "score": 900.56,
+      "costPerTaskUsd": 8.99473,
+      "tokensPerTask": 81417,
+      "secondsPerTask": 1844
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "none",
+      "eval": "automationbench-aa",
+      "score": 0.12434667722683214,
+      "costPerTaskUsd": 0.24365,
+      "tokensPerTask": 10302,
+      "secondsPerTask": 233.3
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "none",
+      "eval": "terminalbench-4-0",
+      "score": 0,
+      "costPerTaskUsd": 9.39167,
+      "tokensPerTask": 103527,
+      "secondsPerTask": 2344.7
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "none",
+      "eval": "frontiercode-2-0",
+      "score": 0.0371893939393939,
+      "costPerTaskUsd": 5.52043,
+      "tokensPerTask": 50593,
+      "secondsPerTask": 1145.8
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "none",
+      "eval": "omniscience",
+      "score": -7.266666666666667,
+      "costPerTaskUsd": 0.00014,
+      "tokensPerTask": 24,
+      "secondsPerTask": 0.5
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "none",
+      "eval": "gdp-pdf",
+      "score": 0.052,
+      "costPerTaskUsd": 0.06929,
+      "tokensPerTask": 1335,
+      "secondsPerTask": 30.2
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "none",
+      "eval": "hle-diamond",
+      "score": 0.042,
+      "costPerTaskUsd": 0.01049,
+      "tokensPerTask": 3411,
+      "secondsPerTask": 77.3
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "none",
+      "eval": "critpt-v2-hard",
+      "score": 0.02,
+      "costPerTaskUsd": 0.29146,
+      "tokensPerTask": 31179,
+      "secondsPerTask": 706.2
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "none",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 4.07093,
+      "tokensPerTask": 71122,
+      "secondsPerTask": 1610.8
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1279.13,
+      "costPerTaskUsd": 1.4654,
+      "tokensPerTask": 74054,
+      "secondsPerTask": 534.9
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.4970811827313194,
+      "costPerTaskUsd": 0.46275,
+      "tokensPerTask": 29058,
+      "secondsPerTask": 209.9
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.0808080808080808,
+      "costPerTaskUsd": 4.65697,
+      "tokensPerTask": 122116,
+      "secondsPerTask": 882
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.0760421717171717,
+      "costPerTaskUsd": 3.01178,
+      "tokensPerTask": 59457,
+      "secondsPerTask": 429.5
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": 25.8,
+      "costPerTaskUsd": 0.00938,
+      "tokensPerTask": 2131,
+      "secondsPerTask": 15.4
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.186,
+      "costPerTaskUsd": 0.18765,
+      "tokensPerTask": 7339,
+      "secondsPerTask": 53
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.263,
+      "costPerTaskUsd": 0.12208,
+      "tokensPerTask": 28519,
+      "secondsPerTask": 206
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.275,
+      "costPerTaskUsd": 0.50688,
+      "tokensPerTask": 66798,
+      "secondsPerTask": 482.5
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.019047619047619,
+      "costPerTaskUsd": 5.22381,
+      "tokensPerTask": 150204,
+      "secondsPerTask": 1084.9
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1096.33,
+      "costPerTaskUsd": 0.03312,
+      "tokensPerTask": 23239,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.4046136879135791,
+      "costPerTaskUsd": 0.01657,
+      "tokensPerTask": 12394,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "medium",
+      "eval": "terminalbench-4-0",
+      "score": 0.0252525252525253,
+      "costPerTaskUsd": 0.07157,
+      "tokensPerTask": 45048,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.127693181818182,
+      "costPerTaskUsd": 0.05281,
+      "tokensPerTask": 17269,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": -13.566666666666666,
+      "costPerTaskUsd": 0.00036,
+      "tokensPerTask": 698,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.138,
+      "costPerTaskUsd": 0.01743,
+      "tokensPerTask": 2594,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.151,
+      "costPerTaskUsd": 0.00172,
+      "tokensPerTask": 3318,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.26,
+      "costPerTaskUsd": 0.00549,
+      "tokensPerTask": 8143,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.0142857142857143,
+      "costPerTaskUsd": 0.1312,
+      "tokensPerTask": 48281,
+      "secondsPerTask": null
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1524.92,
+      "costPerTaskUsd": 8.58019,
+      "tokensPerTask": 77049,
+      "secondsPerTask": 851.2
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.5466103465672885,
+      "costPerTaskUsd": 1.62454,
+      "tokensPerTask": 17378,
+      "secondsPerTask": 192
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "medium",
+      "eval": "terminalbench-4-0",
+      "score": 0.44949494949495,
+      "costPerTaskUsd": 8.97577,
+      "tokensPerTask": 84092,
+      "secondsPerTask": 928.9
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.287730808080808,
+      "costPerTaskUsd": 4.77978,
+      "tokensPerTask": 39981,
+      "secondsPerTask": 441.7
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": 36.43333333333333,
+      "costPerTaskUsd": 0.01594,
+      "tokensPerTask": 286,
+      "secondsPerTask": 3.2
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.268,
+      "costPerTaskUsd": 1.94505,
+      "tokensPerTask": 4280,
+      "secondsPerTask": 47.3
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.45,
+      "costPerTaskUsd": 0.45721,
+      "tokensPerTask": 9177,
+      "secondsPerTask": 101.4
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.565,
+      "costPerTaskUsd": 1.38293,
+      "tokensPerTask": 21787,
+      "secondsPerTask": 240.7
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.29047619047619,
+      "costPerTaskUsd": 15.31871,
+      "tokensPerTask": 122398,
+      "secondsPerTask": 1352.1
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1467.03,
+      "costPerTaskUsd": 0.83693,
+      "tokensPerTask": 34116,
+      "secondsPerTask": 565.3
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.6449523732184466,
+      "costPerTaskUsd": 0.22578,
+      "tokensPerTask": 9189,
+      "secondsPerTask": 152.3
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.515151515151515,
+      "costPerTaskUsd": 0.82818,
+      "tokensPerTask": 43650,
+      "secondsPerTask": 723.3
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.36737297979798,
+      "costPerTaskUsd": 0.62992,
+      "tokensPerTask": 19409,
+      "secondsPerTask": 321.6
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 41,
+      "costPerTaskUsd": 0.00493,
+      "tokensPerTask": 469,
+      "secondsPerTask": 7.8
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.32,
+      "costPerTaskUsd": 0.3494,
+      "tokensPerTask": 2671,
+      "secondsPerTask": 44.3
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.519,
+      "costPerTaskUsd": 0.04334,
+      "tokensPerTask": 4205,
+      "secondsPerTask": 69.7
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.675,
+      "costPerTaskUsd": 0.13448,
+      "tokensPerTask": 10707,
+      "secondsPerTask": 177.4
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.461904761904762,
+      "costPerTaskUsd": 1.60573,
+      "tokensPerTask": 53720,
+      "secondsPerTask": 890.2
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1669.8,
+      "costPerTaskUsd": 22.71346,
+      "tokensPerTask": 187455,
+      "secondsPerTask": 1706.8
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.5937591715646424,
+      "costPerTaskUsd": 2.5918,
+      "tokensPerTask": 31099,
+      "secondsPerTask": 283.2
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.52020202020202,
+      "costPerTaskUsd": 18.77304,
+      "tokensPerTask": 191566,
+      "secondsPerTask": 1744.3
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.316248737373737,
+      "costPerTaskUsd": 16.28985,
+      "tokensPerTask": 119810,
+      "secondsPerTask": 1090.9
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 46.266666666666666,
+      "costPerTaskUsd": 0.3262,
+      "tokensPerTask": 6505,
+      "secondsPerTask": 59.2
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.262,
+      "costPerTaskUsd": 2.7553,
+      "tokensPerTask": 20389,
+      "secondsPerTask": 185.7
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.601,
+      "costPerTaskUsd": 2.77085,
+      "tokensPerTask": 55712,
+      "secondsPerTask": 507.3
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.51,
+      "costPerTaskUsd": 4.55291,
+      "tokensPerTask": 71384,
+      "secondsPerTask": 650
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.433333333333333,
+      "costPerTaskUsd": 28.11691,
+      "tokensPerTask": 242900,
+      "secondsPerTask": 2211.7
+    },
+    {
+      "family": "mistral-small-4",
+      "effort": "none",
+      "eval": "aa-briefcase",
+      "score": 241.47,
+      "costPerTaskUsd": 0.0218,
+      "tokensPerTask": 13876,
+      "secondsPerTask": 73.1
+    },
+    {
+      "family": "mistral-small-4",
+      "effort": "none",
+      "eval": "automationbench-aa",
+      "score": 0.009635410038882158,
+      "costPerTaskUsd": 0.01111,
+      "tokensPerTask": 4764,
+      "secondsPerTask": 25.1
+    },
+    {
+      "family": "mistral-small-4",
+      "effort": "none",
+      "eval": "terminalbench-4-0",
+      "score": 0,
+      "costPerTaskUsd": 0.06241,
+      "tokensPerTask": 26721,
+      "secondsPerTask": 140.8
+    },
+    {
+      "family": "mistral-small-4",
+      "effort": "none",
+      "eval": "frontiercode-2-0",
+      "score": 0,
+      "costPerTaskUsd": 0.13942,
+      "tokensPerTask": 21762,
+      "secondsPerTask": 114.6
+    },
+    {
+      "family": "mistral-small-4",
+      "effort": "none",
+      "eval": "omniscience",
+      "score": -30.966666666666665,
+      "costPerTaskUsd": 0.00043,
+      "tokensPerTask": 679,
+      "secondsPerTask": 3.6
+    },
+    {
+      "family": "mistral-small-4",
+      "effort": "none",
+      "eval": "gdp-pdf",
+      "score": 0,
+      "costPerTaskUsd": 0.00258,
+      "tokensPerTask": 1134,
+      "secondsPerTask": 6
+    },
+    {
+      "family": "mistral-small-4",
+      "effort": "none",
+      "eval": "hle-diamond",
+      "score": 0.044,
+      "costPerTaskUsd": 0.00635,
+      "tokensPerTask": 10453,
+      "secondsPerTask": 55.1
+    },
+    {
+      "family": "mistral-small-4",
+      "effort": "none",
+      "eval": "critpt-v2-hard",
+      "score": 0,
+      "costPerTaskUsd": 0.00775,
+      "tokensPerTask": 11242,
+      "secondsPerTask": 59.2
+    },
+    {
+      "family": "mistral-small-4",
+      "effort": "none",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 0.04884,
+      "tokensPerTask": 25441,
+      "secondsPerTask": 134
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1524.75,
+      "costPerTaskUsd": 0.36581,
+      "tokensPerTask": 240301,
+      "secondsPerTask": 823.3
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.35953889773428194,
+      "costPerTaskUsd": 0.02762,
+      "tokensPerTask": 27988,
+      "secondsPerTask": 95.9
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.292929292929293,
+      "costPerTaskUsd": 0.46029,
+      "tokensPerTask": 231801,
+      "secondsPerTask": 794.1
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.299334090909091,
+      "costPerTaskUsd": 0.25634,
+      "tokensPerTask": 147756,
+      "secondsPerTask": 506.2
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": 7.833333333333333,
+      "costPerTaskUsd": 0.00069,
+      "tokensPerTask": 1351,
+      "secondsPerTask": 4.6
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.182,
+      "costPerTaskUsd": 0.02726,
+      "tokensPerTask": 19419,
+      "secondsPerTask": 66.5
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.288,
+      "costPerTaskUsd": 0.02423,
+      "tokensPerTask": 48322,
+      "secondsPerTask": 165.5
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.445,
+      "costPerTaskUsd": 0.05938,
+      "tokensPerTask": 86114,
+      "secondsPerTask": 295
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.180952380952381,
+      "costPerTaskUsd": 0.65202,
+      "tokensPerTask": 258480,
+      "secondsPerTask": 885.5
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 1114.42,
+      "costPerTaskUsd": 0.04721,
+      "tokensPerTask": 40205,
+      "secondsPerTask": 164.5
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.22910812181110643,
+      "costPerTaskUsd": 0.01528,
+      "tokensPerTask": 13000,
+      "secondsPerTask": 53.2
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.126262626262626,
+      "costPerTaskUsd": 0.11856,
+      "tokensPerTask": 70285,
+      "secondsPerTask": 287.6
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.0803666666666667,
+      "costPerTaskUsd": 0.03887,
+      "tokensPerTask": 25867,
+      "secondsPerTask": 105.8
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": 2.1666666666666665,
+      "costPerTaskUsd": 0.00025,
+      "tokensPerTask": 472,
+      "secondsPerTask": 1.9
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.112,
+      "costPerTaskUsd": 0.01928,
+      "tokensPerTask": 3405,
+      "secondsPerTask": 13.9
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.141,
+      "costPerTaskUsd": 0.00172,
+      "tokensPerTask": 3306,
+      "secondsPerTask": 13.5
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.215,
+      "costPerTaskUsd": 0.00829,
+      "tokensPerTask": 12281,
+      "secondsPerTask": 50.2
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.019047619047619,
+      "costPerTaskUsd": 0.10816,
+      "tokensPerTask": 58476,
+      "secondsPerTask": 239.3
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 1279.38,
+      "costPerTaskUsd": 1.15282,
+      "tokensPerTask": 26734,
+      "secondsPerTask": 214.6
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.5292537042934996,
+      "costPerTaskUsd": 0.49261,
+      "tokensPerTask": 11890,
+      "secondsPerTask": 95.4
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.313131313131313,
+      "costPerTaskUsd": 2.07765,
+      "tokensPerTask": 37782,
+      "secondsPerTask": 303.3
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.158378282828283,
+      "costPerTaskUsd": 0.62712,
+      "tokensPerTask": 14073,
+      "secondsPerTask": 113
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": 39.03333333333333,
+      "costPerTaskUsd": 0.00627,
+      "tokensPerTask": 279,
+      "secondsPerTask": 2.2
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.256,
+      "costPerTaskUsd": 0.76412,
+      "tokensPerTask": 2902,
+      "secondsPerTask": 23.3
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.417,
+      "costPerTaskUsd": 0.03513,
+      "tokensPerTask": 1586,
+      "secondsPerTask": 12.7
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.335,
+      "costPerTaskUsd": 0.11905,
+      "tokensPerTask": 4387,
+      "secondsPerTask": 35.2
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.242857142857143,
+      "costPerTaskUsd": 2.81051,
+      "tokensPerTask": 51878,
+      "secondsPerTask": 416.4
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 985.01,
+      "costPerTaskUsd": 0.54043,
+      "tokensPerTask": 14140,
+      "secondsPerTask": 240.4
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.492568024921068,
+      "costPerTaskUsd": 0.45631,
+      "tokensPerTask": 11922,
+      "secondsPerTask": 202.7
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.126262626262626,
+      "costPerTaskUsd": 9.47126,
+      "tokensPerTask": 80413,
+      "secondsPerTask": 1367.3
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.109,
+      "costPerTaskUsd": 1.51711,
+      "tokensPerTask": 23365,
+      "secondsPerTask": 397.3
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": -1.7,
+      "costPerTaskUsd": 0.005,
+      "tokensPerTask": 291,
+      "secondsPerTask": 5
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.186,
+      "costPerTaskUsd": 0.49628,
+      "tokensPerTask": 2110,
+      "secondsPerTask": 35.9
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.14,
+      "costPerTaskUsd": 0.02954,
+      "tokensPerTask": 1823,
+      "secondsPerTask": 31
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.055,
+      "costPerTaskUsd": 0.06443,
+      "tokensPerTask": 2980,
+      "secondsPerTask": 50.7
+    },
+    {
+      "family": "kimi-k3",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.00952380952380952,
+      "costPerTaskUsd": 7.03494,
+      "tokensPerTask": 165157,
+      "secondsPerTask": 2808.3
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "none",
+      "eval": "aa-briefcase",
+      "score": 1426.13,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 120962,
+      "secondsPerTask": 81.8
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "none",
+      "eval": "automationbench-aa",
+      "score": 0.4877893544529126,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 14292,
+      "secondsPerTask": 9.7
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "none",
+      "eval": "terminalbench-4-0",
+      "score": 0.0909090909090909,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 101985,
+      "secondsPerTask": 69
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "none",
+      "eval": "frontiercode-2-0",
+      "score": 0.060984595959596,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 98146,
+      "secondsPerTask": 66.4
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "none",
+      "eval": "omniscience",
+      "score": 2.1,
+      "costPerTaskUsd": 0.00016,
+      "tokensPerTask": 61,
+      "secondsPerTask": 0
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "none",
+      "eval": "gdp-pdf",
+      "score": 0.044,
+      "costPerTaskUsd": 0.03567,
+      "tokensPerTask": 914,
+      "secondsPerTask": 0.6
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "none",
+      "eval": "hle-diamond",
+      "score": 0.071,
+      "costPerTaskUsd": 0.00199,
+      "tokensPerTask": 1010,
+      "secondsPerTask": 0.7
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "none",
+      "eval": "critpt-v2-hard",
+      "score": 0.01,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 20843,
+      "secondsPerTask": 14.1
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "none",
+      "eval": "terminal-bench-science",
+      "score": 0.0238095238095238,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 128922,
+      "secondsPerTask": 87.2
+    },
+    {
+      "family": "muse-glimmer",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 477.84,
+      "costPerTaskUsd": 0.07393,
+      "tokensPerTask": 13549,
+      "secondsPerTask": 124
+    },
+    {
+      "family": "muse-glimmer",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.06831776269647931,
+      "costPerTaskUsd": 0.087,
+      "tokensPerTask": 16470,
+      "secondsPerTask": 150.7
+    },
+    {
+      "family": "muse-glimmer",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.00505050505050505,
+      "costPerTaskUsd": 0.2824,
+      "tokensPerTask": 44264,
+      "secondsPerTask": 405.1
+    },
+    {
+      "family": "muse-glimmer",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.0147431818181818,
+      "costPerTaskUsd": 0.44614,
+      "tokensPerTask": 43334,
+      "secondsPerTask": 396.5
+    },
+    {
+      "family": "muse-glimmer",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": -32.233333333333334,
+      "costPerTaskUsd": 0.00241,
+      "tokensPerTask": 1969,
+      "secondsPerTask": 18
+    },
+    {
+      "family": "muse-glimmer",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.1,
+      "costPerTaskUsd": 0.02268,
+      "tokensPerTask": 4924,
+      "secondsPerTask": 45.1
+    },
+    {
+      "family": "muse-glimmer",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.091,
+      "costPerTaskUsd": 0.00913,
+      "tokensPerTask": 7468,
+      "secondsPerTask": 68.3
+    },
+    {
+      "family": "muse-glimmer",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.07,
+      "costPerTaskUsd": 0.06836,
+      "tokensPerTask": 36156,
+      "secondsPerTask": 330.9
+    },
+    {
+      "family": "muse-glimmer",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 0.27411,
+      "tokensPerTask": 49207,
+      "secondsPerTask": 450.3
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1637.72,
+      "costPerTaskUsd": 8.02556,
+      "tokensPerTask": 161224,
+      "secondsPerTask": 1889.8
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.6555835148969458,
+      "costPerTaskUsd": 0.95497,
+      "tokensPerTask": 31607,
+      "secondsPerTask": 370.5
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.257575757575758,
+      "costPerTaskUsd": 12.42606,
+      "tokensPerTask": 158098,
+      "secondsPerTask": 1853.2
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.286575505050505,
+      "costPerTaskUsd": 13.83494,
+      "tokensPerTask": 118103,
+      "secondsPerTask": 1384.4
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": 31.233333333333334,
+      "costPerTaskUsd": 0.02834,
+      "tokensPerTask": 4458,
+      "secondsPerTask": 52.3
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.2,
+      "costPerTaskUsd": 0.32434,
+      "tokensPerTask": 17045,
+      "secondsPerTask": 199.8
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.232,
+      "costPerTaskUsd": 0.32951,
+      "tokensPerTask": 54306,
+      "secondsPerTask": 636.6
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.32,
+      "costPerTaskUsd": 2.23692,
+      "tokensPerTask": 107423,
+      "secondsPerTask": 1259.2
+    },
+    {
+      "family": "grok-4-7",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.0476190476190476,
+      "costPerTaskUsd": 17.76819,
+      "tokensPerTask": 106575,
+      "secondsPerTask": 1249.2
+    },
+    {
+      "family": "nemotron-3-ultra-550b-a55b",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 877.38,
+      "costPerTaskUsd": 0.80633,
+      "tokensPerTask": 47525,
+      "secondsPerTask": 297.4
+    },
+    {
+      "family": "nemotron-3-ultra-550b-a55b",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.02986349541593992,
+      "costPerTaskUsd": 0.12723,
+      "tokensPerTask": 5609,
+      "secondsPerTask": 35.1
+    },
+    {
+      "family": "nemotron-3-ultra-550b-a55b",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0.00505050505050505,
+      "costPerTaskUsd": 1.71074,
+      "tokensPerTask": 51610,
+      "secondsPerTask": 323
+    },
+    {
+      "family": "nemotron-3-ultra-550b-a55b",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0.0109007575757576,
+      "costPerTaskUsd": 4.84704,
+      "tokensPerTask": 79571,
+      "secondsPerTask": 498
+    },
+    {
+      "family": "nemotron-3-ultra-550b-a55b",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": 3.433333333333333,
+      "costPerTaskUsd": 0.00211,
+      "tokensPerTask": 753,
+      "secondsPerTask": 4.7
+    },
+    {
+      "family": "nemotron-3-ultra-550b-a55b",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.05,
+      "costPerTaskUsd": 0.03113,
+      "tokensPerTask": 3105,
+      "secondsPerTask": 19.4
+    },
+    {
+      "family": "nemotron-3-ultra-550b-a55b",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.085,
+      "costPerTaskUsd": 0.0692,
+      "tokensPerTask": 25567,
+      "secondsPerTask": 160
+    },
+    {
+      "family": "nemotron-3-ultra-550b-a55b",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.15,
+      "costPerTaskUsd": 0.35741,
+      "tokensPerTask": 70245,
+      "secondsPerTask": 439.6
+    },
+    {
+      "family": "nemotron-3-ultra-550b-a55b",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 7.70506,
+      "tokensPerTask": 114082,
+      "secondsPerTask": 714
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "none",
+      "eval": "aa-briefcase",
+      "score": 902.46,
+      "costPerTaskUsd": 0.0208,
+      "tokensPerTask": 9082,
+      "secondsPerTask": 78.8
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "none",
+      "eval": "automationbench-aa",
+      "score": 0.09141771078680867,
+      "costPerTaskUsd": 0.01426,
+      "tokensPerTask": 4741,
+      "secondsPerTask": 41.2
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "none",
+      "eval": "terminalbench-4-0",
+      "score": 0.0151515151515152,
+      "costPerTaskUsd": 0.04462,
+      "tokensPerTask": 13682,
+      "secondsPerTask": 118.8
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "none",
+      "eval": "frontiercode-2-0",
+      "score": 0.0158234848484848,
+      "costPerTaskUsd": 0.12945,
+      "tokensPerTask": 13170,
+      "secondsPerTask": 114.3
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "none",
+      "eval": "omniscience",
+      "score": -25.8,
+      "costPerTaskUsd": 0.00002,
+      "tokensPerTask": 17,
+      "secondsPerTask": 0.2
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "none",
+      "eval": "gdp-pdf",
+      "score": 0.058,
+      "costPerTaskUsd": 0.01651,
+      "tokensPerTask": 761,
+      "secondsPerTask": 6.6
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "none",
+      "eval": "hle-diamond",
+      "score": 0.063,
+      "costPerTaskUsd": 0.00013,
+      "tokensPerTask": 138,
+      "secondsPerTask": 1.2
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "none",
+      "eval": "critpt-v2-hard",
+      "score": 0.045,
+      "costPerTaskUsd": 0.00115,
+      "tokensPerTask": 1418,
+      "secondsPerTask": 12.3
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "none",
+      "eval": "terminal-bench-science",
+      "score": 0.00952380952380952,
+      "costPerTaskUsd": 0.28498,
+      "tokensPerTask": 32795,
+      "secondsPerTask": 284.7
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1372.68,
+      "costPerTaskUsd": 3.15112,
+      "tokensPerTask": 134382,
+      "secondsPerTask": 3007
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.40252101015938635,
+      "costPerTaskUsd": 0.25187,
+      "tokensPerTask": 32048,
+      "secondsPerTask": 717.1
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "medium",
+      "eval": "terminalbench-4-0",
+      "score": 0.0505050505050505,
+      "costPerTaskUsd": 6.53338,
+      "tokensPerTask": 154605,
+      "secondsPerTask": 3459.6
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.115037626262626,
+      "costPerTaskUsd": 3.68994,
+      "tokensPerTask": 103542,
+      "secondsPerTask": 2316.9
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": -35.86666666666667,
+      "costPerTaskUsd": 0.00804,
+      "tokensPerTask": 2659,
+      "secondsPerTask": 59.5
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.128,
+      "costPerTaskUsd": 0.0709,
+      "tokensPerTask": 4116,
+      "secondsPerTask": 92.1
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.067,
+      "costPerTaskUsd": 0.02466,
+      "tokensPerTask": 8134,
+      "secondsPerTask": 182
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.165,
+      "costPerTaskUsd": 0.75442,
+      "tokensPerTask": 116694,
+      "secondsPerTask": 2611.2
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.00952380952380952,
+      "costPerTaskUsd": 2.56837,
+      "tokensPerTask": 137122,
+      "secondsPerTask": 3068.4
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 976.2,
+      "costPerTaskUsd": 0.20231,
+      "tokensPerTask": 34082,
+      "secondsPerTask": 86.9
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.4845786522065588,
+      "costPerTaskUsd": 0.09231,
+      "tokensPerTask": 23486,
+      "secondsPerTask": 59.9
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0.0303030303030303,
+      "costPerTaskUsd": 0.62543,
+      "tokensPerTask": 69385,
+      "secondsPerTask": 176.9
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0.0553143939393939,
+      "costPerTaskUsd": 0.29629,
+      "tokensPerTask": 30807,
+      "secondsPerTask": 78.5
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": 2.3333333333333335,
+      "costPerTaskUsd": 0.00161,
+      "tokensPerTask": 1289,
+      "secondsPerTask": 3.3
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.116,
+      "costPerTaskUsd": 0.02814,
+      "tokensPerTask": 11109,
+      "secondsPerTask": 28.3
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.128,
+      "costPerTaskUsd": 0.01847,
+      "tokensPerTask": 15284,
+      "secondsPerTask": 39
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.265,
+      "costPerTaskUsd": 0.08867,
+      "tokensPerTask": 43582,
+      "secondsPerTask": 111.1
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0.00476190476190476,
+      "costPerTaskUsd": 0.86729,
+      "tokensPerTask": 65071,
+      "secondsPerTask": 165.9
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1336.99,
+      "costPerTaskUsd": 0.16999,
+      "tokensPerTask": 110019,
+      "secondsPerTask": 922
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.5316814034483175,
+      "costPerTaskUsd": 0.0364,
+      "tokensPerTask": 34034,
+      "secondsPerTask": 285.2
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.126262626262626,
+      "costPerTaskUsd": 0.23621,
+      "tokensPerTask": 140974,
+      "secondsPerTask": 1181.4
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.251747727272727,
+      "costPerTaskUsd": 0.17592,
+      "tokensPerTask": 69839,
+      "secondsPerTask": 585.3
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": -8.266666666666667,
+      "costPerTaskUsd": 0.00234,
+      "tokensPerTask": 4663,
+      "secondsPerTask": 39.1
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.228,
+      "costPerTaskUsd": 0.02855,
+      "tokensPerTask": 24831,
+      "secondsPerTask": 208.1
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.222,
+      "costPerTaskUsd": 0.01489,
+      "tokensPerTask": 29661,
+      "secondsPerTask": 248.6
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.415,
+      "costPerTaskUsd": 0.03246,
+      "tokensPerTask": 48777,
+      "secondsPerTask": 408.8
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.0857142857142857,
+      "costPerTaskUsd": 0.45408,
+      "tokensPerTask": 151556,
+      "secondsPerTask": 1270.1
+    },
+    {
+      "family": "inkling-small",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 912.21,
+      "costPerTaskUsd": 0.11804,
+      "tokensPerTask": 29044,
+      "secondsPerTask": 118.9
+    },
+    {
+      "family": "inkling-small",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.048142275152503786,
+      "costPerTaskUsd": 0.05699,
+      "tokensPerTask": 8938,
+      "secondsPerTask": 36.6
+    },
+    {
+      "family": "inkling-small",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0.0101010101010101,
+      "costPerTaskUsd": 0.3508,
+      "tokensPerTask": 56535,
+      "secondsPerTask": 231.4
+    },
+    {
+      "family": "inkling-small",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0.0477487373737374,
+      "costPerTaskUsd": 0.47102,
+      "tokensPerTask": 38652,
+      "secondsPerTask": 158.2
+    },
+    {
+      "family": "inkling-small",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -9.466666666666667,
+      "costPerTaskUsd": 0.0051,
+      "tokensPerTask": 4214,
+      "secondsPerTask": 17.3
+    },
+    {
+      "family": "inkling-small",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.112,
+      "costPerTaskUsd": 0.03675,
+      "tokensPerTask": 10285,
+      "secondsPerTask": 42.1
+    },
+    {
+      "family": "inkling-small",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.121,
+      "costPerTaskUsd": 0.04043,
+      "tokensPerTask": 33524,
+      "secondsPerTask": 137.2
+    },
+    {
+      "family": "inkling-small",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.185,
+      "costPerTaskUsd": 0.13619,
+      "tokensPerTask": 66636,
+      "secondsPerTask": 272.8
+    },
+    {
+      "family": "inkling-small",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 0.37739,
+      "tokensPerTask": 62003,
+      "secondsPerTask": 253.8
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1182.89,
+      "costPerTaskUsd": 5.34666,
+      "tokensPerTask": 128916,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.6088997392114149,
+      "costPerTaskUsd": 0.7606,
+      "tokensPerTask": 37558,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "medium",
+      "eval": "terminalbench-4-0",
+      "score": 0.196969696969697,
+      "costPerTaskUsd": 14.1722,
+      "tokensPerTask": 157235,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.164714393939394,
+      "costPerTaskUsd": 11.6103,
+      "tokensPerTask": 101287,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": 23.7,
+      "costPerTaskUsd": 0.00378,
+      "tokensPerTask": 984,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.228,
+      "costPerTaskUsd": 0.08746,
+      "tokensPerTask": 5911,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.291,
+      "costPerTaskUsd": 0.02698,
+      "tokensPerTask": 7085,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.44,
+      "costPerTaskUsd": 0.82668,
+      "tokensPerTask": 50137,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.104761904761905,
+      "costPerTaskUsd": 14.46323,
+      "tokensPerTask": 158472,
+      "secondsPerTask": null
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1575.9,
+      "costPerTaskUsd": 0.67486,
+      "tokensPerTask": 425446,
+      "secondsPerTask": 1115.3
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.35411015132783624,
+      "costPerTaskUsd": 0.04232,
+      "tokensPerTask": 51001,
+      "secondsPerTask": 133.7
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.328282828282828,
+      "costPerTaskUsd": 0.65188,
+      "tokensPerTask": 346826,
+      "secondsPerTask": 909.2
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.349325505050505,
+      "costPerTaskUsd": 0.4605,
+      "tokensPerTask": 254933,
+      "secondsPerTask": 668.3
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 12.3,
+      "costPerTaskUsd": 0.00601,
+      "tokensPerTask": 11992,
+      "secondsPerTask": 31.4
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.208,
+      "costPerTaskUsd": 0.05269,
+      "tokensPerTask": 70228,
+      "secondsPerTask": 184.1
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.296,
+      "costPerTaskUsd": 0.04673,
+      "tokensPerTask": 93329,
+      "secondsPerTask": 244.7
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.41,
+      "costPerTaskUsd": 0.10132,
+      "tokensPerTask": 147938,
+      "secondsPerTask": 387.8
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.2,
+      "costPerTaskUsd": 1.03371,
+      "tokensPerTask": 381597,
+      "secondsPerTask": 1000.4
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1186.75,
+      "costPerTaskUsd": 0.06221,
+      "tokensPerTask": 42462,
+      "secondsPerTask": 372.2
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.4782449139916615,
+      "costPerTaskUsd": 0.02075,
+      "tokensPerTask": 16678,
+      "secondsPerTask": 146.2
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.0454545454545455,
+      "costPerTaskUsd": 0.1204,
+      "tokensPerTask": 74239,
+      "secondsPerTask": 650.8
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.186015151515152,
+      "costPerTaskUsd": 0.08444,
+      "tokensPerTask": 29605,
+      "secondsPerTask": 259.5
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": -12.8,
+      "costPerTaskUsd": 0.00057,
+      "tokensPerTask": 1122,
+      "secondsPerTask": 9.8
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.182,
+      "costPerTaskUsd": 0.01883,
+      "tokensPerTask": 5381,
+      "secondsPerTask": 47.2
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.156,
+      "costPerTaskUsd": 0.00363,
+      "tokensPerTask": 7121,
+      "secondsPerTask": 62.4
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.305,
+      "costPerTaskUsd": 0.00964,
+      "tokensPerTask": 14062,
+      "secondsPerTask": 123.3
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.0285714285714286,
+      "costPerTaskUsd": 0.2368,
+      "tokensPerTask": 74771,
+      "secondsPerTask": 655.4
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 1269.9,
+      "costPerTaskUsd": 2.27245,
+      "tokensPerTask": 98649,
+      "secondsPerTask": 2077.4
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.3010329530343377,
+      "costPerTaskUsd": 0.2961,
+      "tokensPerTask": 35813,
+      "secondsPerTask": 754.2
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.0252525252525253,
+      "costPerTaskUsd": 6.90418,
+      "tokensPerTask": 179974,
+      "secondsPerTask": 3790
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.123696212121212,
+      "costPerTaskUsd": 2.90479,
+      "tokensPerTask": 90539,
+      "secondsPerTask": 1906.6
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": -21.466666666666665,
+      "costPerTaskUsd": 0.00143,
+      "tokensPerTask": 451,
+      "secondsPerTask": 9.5
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.104,
+      "costPerTaskUsd": 0.07031,
+      "tokensPerTask": 3321,
+      "secondsPerTask": 69.9
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.068,
+      "costPerTaskUsd": 0.01564,
+      "tokensPerTask": 5122,
+      "secondsPerTask": 107.9
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.055,
+      "costPerTaskUsd": 0.41608,
+      "tokensPerTask": 71656,
+      "secondsPerTask": 1509
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.00476190476190476,
+      "costPerTaskUsd": 2.51463,
+      "tokensPerTask": 160652,
+      "secondsPerTask": 3383.2
+    },
+    {
+      "family": "deepseek-v4-pro",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1254.44,
+      "costPerTaskUsd": 0.99549,
+      "tokensPerTask": 92150,
+      "secondsPerTask": 850.8
+    },
+    {
+      "family": "deepseek-v4-pro",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.5671165546344002,
+      "costPerTaskUsd": 0.34075,
+      "tokensPerTask": 37034,
+      "secondsPerTask": 341.9
+    },
+    {
+      "family": "deepseek-v4-pro",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.141414141414141,
+      "costPerTaskUsd": 3.75523,
+      "tokensPerTask": 171514,
+      "secondsPerTask": 1583.5
+    },
+    {
+      "family": "deepseek-v4-pro",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.170742929292929,
+      "costPerTaskUsd": 1.83184,
+      "tokensPerTask": 106465,
+      "secondsPerTask": 982.9
+    },
+    {
+      "family": "deepseek-v4-pro",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": -6.366666666666666,
+      "costPerTaskUsd": 0.01184,
+      "tokensPerTask": 2921,
+      "secondsPerTask": 27
+    },
+    {
+      "family": "deepseek-v4-pro",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.114,
+      "costPerTaskUsd": 0.10999,
+      "tokensPerTask": 16640,
+      "secondsPerTask": 153.6
+    },
+    {
+      "family": "deepseek-v4-pro",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.195,
+      "costPerTaskUsd": 0.12178,
+      "tokensPerTask": 30638,
+      "secondsPerTask": 282.9
+    },
+    {
+      "family": "deepseek-v4-pro",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.235,
+      "costPerTaskUsd": 0.89017,
+      "tokensPerTask": 143378,
+      "secondsPerTask": 1323.7
+    },
+    {
+      "family": "deepseek-v4-pro",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.0571428571428571,
+      "costPerTaskUsd": 5.6267,
+      "tokensPerTask": 208437,
+      "secondsPerTask": 1924.3
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1202.78,
+      "costPerTaskUsd": 7.52219,
+      "tokensPerTask": 154230,
+      "secondsPerTask": 1224.9
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.5993009432118243,
+      "costPerTaskUsd": 0.90299,
+      "tokensPerTask": 46281,
+      "secondsPerTask": 367.6
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.196969696969697,
+      "costPerTaskUsd": 18.14983,
+      "tokensPerTask": 183674,
+      "secondsPerTask": 1458.8
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.187427777777778,
+      "costPerTaskUsd": 14.9039,
+      "tokensPerTask": 117987,
+      "secondsPerTask": 937.1
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 23.266666666666666,
+      "costPerTaskUsd": 0.01364,
+      "tokensPerTask": 3612,
+      "secondsPerTask": 28.7
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.21,
+      "costPerTaskUsd": 0.10896,
+      "tokensPerTask": 12815,
+      "secondsPerTask": 101.8
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.331,
+      "costPerTaskUsd": 0.0985,
+      "tokensPerTask": 26153,
+      "secondsPerTask": 207.7
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.435,
+      "costPerTaskUsd": 1.1535,
+      "tokensPerTask": 66494,
+      "secondsPerTask": 528.1
+    },
+    {
+      "family": "gemini-3-8-flash",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.1,
+      "costPerTaskUsd": 16.06178,
+      "tokensPerTask": 179854,
+      "secondsPerTask": 1428.4
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1743.7,
+      "costPerTaskUsd": 6.97579,
+      "tokensPerTask": 241615,
+      "secondsPerTask": 1433.5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.6552026949665557,
+      "costPerTaskUsd": 0.42239,
+      "tokensPerTask": 20790,
+      "secondsPerTask": 123.3
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.570707070707071,
+      "costPerTaskUsd": 6.07843,
+      "tokensPerTask": 192064,
+      "secondsPerTask": 1139.5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.356494696969697,
+      "costPerTaskUsd": 2.71445,
+      "tokensPerTask": 85399,
+      "secondsPerTask": 506.7
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": 20.6,
+      "costPerTaskUsd": 0.00883,
+      "tokensPerTask": 848,
+      "secondsPerTask": 5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.246,
+      "costPerTaskUsd": 0.46013,
+      "tokensPerTask": 10709,
+      "secondsPerTask": 63.5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.441,
+      "costPerTaskUsd": 0.24629,
+      "tokensPerTask": 24492,
+      "secondsPerTask": 145.3
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.54,
+      "costPerTaskUsd": 0.44782,
+      "tokensPerTask": 34661,
+      "secondsPerTask": 205.6
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.523809523809524,
+      "costPerTaskUsd": 12.77164,
+      "tokensPerTask": 308860,
+      "secondsPerTask": 1832.4
+    },
+    {
+      "family": "muse-spark-1-3",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1581.34,
+      "costPerTaskUsd": 3.27745,
+      "tokensPerTask": 105396,
+      "secondsPerTask": 624.3
+    },
+    {
+      "family": "muse-spark-1-3",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.5785343786538614,
+      "costPerTaskUsd": 0.32389,
+      "tokensPerTask": 28473,
+      "secondsPerTask": 168.7
+    },
+    {
+      "family": "muse-spark-1-3",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.333333333333333,
+      "costPerTaskUsd": 5.58353,
+      "tokensPerTask": 208729,
+      "secondsPerTask": 1236.4
+    },
+    {
+      "family": "muse-spark-1-3",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.231107070707071,
+      "costPerTaskUsd": 2.91638,
+      "tokensPerTask": 76554,
+      "secondsPerTask": 453.5
+    },
+    {
+      "family": "muse-spark-1-3",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 22.4,
+      "costPerTaskUsd": 0.02252,
+      "tokensPerTask": 5264,
+      "secondsPerTask": 31.2
+    },
+    {
+      "family": "muse-spark-1-3",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.266,
+      "costPerTaskUsd": 0.2051,
+      "tokensPerTask": 11446,
+      "secondsPerTask": 67.8
+    },
+    {
+      "family": "muse-spark-1-3",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.337,
+      "costPerTaskUsd": 0.15977,
+      "tokensPerTask": 37426,
+      "secondsPerTask": 221.7
+    },
+    {
+      "family": "muse-spark-1-3",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.46,
+      "costPerTaskUsd": 0.65701,
+      "tokensPerTask": 89198,
+      "secondsPerTask": 528.3
+    },
+    {
+      "family": "muse-spark-1-3",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.10952380952381,
+      "costPerTaskUsd": 5.24566,
+      "tokensPerTask": 183337,
+      "secondsPerTask": 1086
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1650.66,
+      "costPerTaskUsd": 17.79404,
+      "tokensPerTask": 151381,
+      "secondsPerTask": 1513.9
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.57772425084896,
+      "costPerTaskUsd": 2.17719,
+      "tokensPerTask": 25032,
+      "secondsPerTask": 250.3
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.55050505050505,
+      "costPerTaskUsd": 15.52804,
+      "tokensPerTask": 158352,
+      "secondsPerTask": 1583.6
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.357316919191919,
+      "costPerTaskUsd": 12.64733,
+      "tokensPerTask": 95563,
+      "secondsPerTask": 955.7
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": 44.333333333333336,
+      "costPerTaskUsd": 0.09076,
+      "tokensPerTask": 1786,
+      "secondsPerTask": 17.9
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.262,
+      "costPerTaskUsd": 2.30502,
+      "tokensPerTask": 11580,
+      "secondsPerTask": 115.8
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.588,
+      "costPerTaskUsd": 1.87109,
+      "tokensPerTask": 37696,
+      "secondsPerTask": 377
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.565,
+      "costPerTaskUsd": 4.33219,
+      "tokensPerTask": 67381,
+      "secondsPerTask": 673.8
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.404761904761905,
+      "costPerTaskUsd": 25.80276,
+      "tokensPerTask": 210506,
+      "secondsPerTask": 2105.1
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1576.51,
+      "costPerTaskUsd": 11.39879,
+      "tokensPerTask": 99904,
+      "secondsPerTask": 1109.4
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.5532309746463979,
+      "costPerTaskUsd": 1.75359,
+      "tokensPerTask": 19017,
+      "secondsPerTask": 211.2
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.52020202020202,
+      "costPerTaskUsd": 11.48748,
+      "tokensPerTask": 113032,
+      "secondsPerTask": 1255.1
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.302979545454545,
+      "costPerTaskUsd": 7.4327,
+      "tokensPerTask": 59804,
+      "secondsPerTask": 664.1
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 39.93333333333333,
+      "costPerTaskUsd": 0.02323,
+      "tokensPerTask": 433,
+      "secondsPerTask": 4.8
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.268,
+      "costPerTaskUsd": 2.00419,
+      "tokensPerTask": 5530,
+      "secondsPerTask": 61.4
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.504,
+      "costPerTaskUsd": 0.90678,
+      "tokensPerTask": 18192,
+      "secondsPerTask": 202
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.605,
+      "costPerTaskUsd": 2.38764,
+      "tokensPerTask": 37339,
+      "secondsPerTask": 414.6
+    },
+    {
+      "family": "claude-fable-5-1",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.395238095238095,
+      "costPerTaskUsd": 20.30446,
+      "tokensPerTask": 159506,
+      "secondsPerTask": 1771.2
+    },
+    {
+      "family": "nvidia-nemotron-3-nano-4b",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 20563,
+      "secondsPerTask": null
+    },
+    {
+      "family": "nvidia-nemotron-3-nano-4b",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.004483886019625834,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 2720,
+      "secondsPerTask": null
+    },
+    {
+      "family": "nvidia-nemotron-3-nano-4b",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 6451,
+      "secondsPerTask": null
+    },
+    {
+      "family": "nvidia-nemotron-3-nano-4b",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 12718,
+      "secondsPerTask": null
+    },
+    {
+      "family": "nvidia-nemotron-3-nano-4b",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -71.16666666666667,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 375,
+      "secondsPerTask": null
+    },
+    {
+      "family": "nvidia-nemotron-3-nano-4b",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.004,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 4100,
+      "secondsPerTask": null
+    },
+    {
+      "family": "nvidia-nemotron-3-nano-4b",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.028,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 1385,
+      "secondsPerTask": null
+    },
+    {
+      "family": "nvidia-nemotron-3-nano-4b",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 10060,
+      "secondsPerTask": null
+    },
+    {
+      "family": "nvidia-nemotron-3-nano-4b",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 29793,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1360.66,
+      "costPerTaskUsd": 0.46437,
+      "tokensPerTask": 18712,
+      "secondsPerTask": 365.9
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.6257350970435687,
+      "costPerTaskUsd": 0.1963,
+      "tokensPerTask": 7492,
+      "secondsPerTask": 146.5
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "medium",
+      "eval": "terminalbench-4-0",
+      "score": 0.47979797979798,
+      "costPerTaskUsd": 0.61376,
+      "tokensPerTask": 31952,
+      "secondsPerTask": 624.8
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.333875757575758,
+      "costPerTaskUsd": 0.41068,
+      "tokensPerTask": 12493,
+      "secondsPerTask": 244.3
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": 40.166666666666664,
+      "costPerTaskUsd": 0.00215,
+      "tokensPerTask": 191,
+      "secondsPerTask": 3.7
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.3,
+      "costPerTaskUsd": 0.33748,
+      "tokensPerTask": 1479,
+      "secondsPerTask": 28.9
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.46,
+      "costPerTaskUsd": 0.01854,
+      "tokensPerTask": 1725,
+      "secondsPerTask": 33.7
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.65,
+      "costPerTaskUsd": 0.07141,
+      "tokensPerTask": 5548,
+      "secondsPerTask": 108.5
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.371428571428571,
+      "costPerTaskUsd": 0.87167,
+      "tokensPerTask": 29586,
+      "secondsPerTask": 578.5
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 1256.05,
+      "costPerTaskUsd": 1.44299,
+      "tokensPerTask": 9910,
+      "secondsPerTask": 170.5
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.5909672610445402,
+      "costPerTaskUsd": 0.99909,
+      "tokensPerTask": 6084,
+      "secondsPerTask": 104.6
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.419191919191919,
+      "costPerTaskUsd": 2.24856,
+      "tokensPerTask": 14876,
+      "secondsPerTask": 255.9
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.262162878787879,
+      "costPerTaskUsd": 1.33725,
+      "tokensPerTask": 6797,
+      "secondsPerTask": 116.9
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": 40.3,
+      "costPerTaskUsd": 0.00697,
+      "tokensPerTask": 115,
+      "secondsPerTask": 2
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.304,
+      "costPerTaskUsd": 1.69632,
+      "tokensPerTask": 1251,
+      "secondsPerTask": 21.5
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.451,
+      "costPerTaskUsd": 0.05,
+      "tokensPerTask": 870,
+      "secondsPerTask": 15
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.6,
+      "costPerTaskUsd": 0.2367,
+      "tokensPerTask": 3525,
+      "secondsPerTask": 60.6
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.371428571428571,
+      "costPerTaskUsd": 4.11563,
+      "tokensPerTask": 28724,
+      "secondsPerTask": 494.1
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1368.69,
+      "costPerTaskUsd": 0.133,
+      "tokensPerTask": 98578,
+      "secondsPerTask": 361
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.2858961481429316,
+      "costPerTaskUsd": 0.01914,
+      "tokensPerTask": 16868,
+      "secondsPerTask": 61.8
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "medium",
+      "eval": "terminalbench-4-0",
+      "score": 0.151515151515152,
+      "costPerTaskUsd": 0.19378,
+      "tokensPerTask": 106543,
+      "secondsPerTask": 390.1
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.16091994949495,
+      "costPerTaskUsd": 0.07621,
+      "tokensPerTask": 47146,
+      "secondsPerTask": 172.6
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": 4.166666666666667,
+      "costPerTaskUsd": 0.00031,
+      "tokensPerTask": 593,
+      "secondsPerTask": 2.2
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.152,
+      "costPerTaskUsd": 0.02057,
+      "tokensPerTask": 5992,
+      "secondsPerTask": 21.9
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.168,
+      "costPerTaskUsd": 0.0043,
+      "tokensPerTask": 8459,
+      "secondsPerTask": 31
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.3,
+      "costPerTaskUsd": 0.01674,
+      "tokensPerTask": 24471,
+      "secondsPerTask": 89.6
+    },
+    {
+      "family": "claude-haiku-5-5",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.0714285714285714,
+      "costPerTaskUsd": 0.24579,
+      "tokensPerTask": 108649,
+      "secondsPerTask": 397.8
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1393.08,
+      "costPerTaskUsd": 3.24527,
+      "tokensPerTask": 142232,
+      "secondsPerTask": 2828.4
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.48242443682241926,
+      "costPerTaskUsd": 0.27696,
+      "tokensPerTask": 32226,
+      "secondsPerTask": 640.9
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.0555555555555556,
+      "costPerTaskUsd": 4.56685,
+      "tokensPerTask": 148327,
+      "secondsPerTask": 2949.7
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.149142929292929,
+      "costPerTaskUsd": 4.47732,
+      "tokensPerTask": 110224,
+      "secondsPerTask": 2191.9
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": -6.366666666666666,
+      "costPerTaskUsd": 0.01047,
+      "tokensPerTask": 3462,
+      "secondsPerTask": 68.8
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.164,
+      "costPerTaskUsd": 0.09627,
+      "tokensPerTask": 11223,
+      "secondsPerTask": 223.2
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.153,
+      "costPerTaskUsd": 0.10365,
+      "tokensPerTask": 34460,
+      "secondsPerTask": 685.3
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.04,
+      "costPerTaskUsd": 0.52487,
+      "tokensPerTask": 76234,
+      "secondsPerTask": 1516
+    },
+    {
+      "family": "qwen3-8-27b",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.00476190476190476,
+      "costPerTaskUsd": 12.20927,
+      "tokensPerTask": 288932,
+      "secondsPerTask": 5745.7
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1402.26,
+      "costPerTaskUsd": 0.80778,
+      "tokensPerTask": 61442,
+      "secondsPerTask": 626
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.6016762327257726,
+      "costPerTaskUsd": 0.18529,
+      "tokensPerTask": 16470,
+      "secondsPerTask": 167.8
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.555555555555556,
+      "costPerTaskUsd": 1.48531,
+      "tokensPerTask": 101430,
+      "secondsPerTask": 1033.5
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.423200505050505,
+      "costPerTaskUsd": 1.29251,
+      "tokensPerTask": 68142,
+      "secondsPerTask": 694.3
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 29.566666666666666,
+      "costPerTaskUsd": 0.04251,
+      "tokensPerTask": 8478,
+      "secondsPerTask": 86.4
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.286,
+      "costPerTaskUsd": 0.23518,
+      "tokensPerTask": 14767,
+      "secondsPerTask": 150.5
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.473,
+      "costPerTaskUsd": 0.1465,
+      "tokensPerTask": 29171,
+      "secondsPerTask": 297.2
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.645,
+      "costPerTaskUsd": 0.25052,
+      "tokensPerTask": 38380,
+      "secondsPerTask": 391.1
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.576190476190476,
+      "costPerTaskUsd": 2.86953,
+      "tokensPerTask": 138092,
+      "secondsPerTask": 1407
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1813.57,
+      "costPerTaskUsd": 20.47391,
+      "tokensPerTask": 625176,
+      "secondsPerTask": 2844.5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.7176882128193995,
+      "costPerTaskUsd": 1.03244,
+      "tokensPerTask": 60911,
+      "secondsPerTask": 277.1
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.636363636363636,
+      "costPerTaskUsd": 12.64644,
+      "tokensPerTask": 382429,
+      "secondsPerTask": 1740
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.416993434343434,
+      "costPerTaskUsd": 11.55752,
+      "tokensPerTask": 315985,
+      "secondsPerTask": 1437.7
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 30.466666666666665,
+      "costPerTaskUsd": 0.15182,
+      "tokensPerTask": 15148,
+      "secondsPerTask": 68.9
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.258,
+      "costPerTaskUsd": 0.79433,
+      "tokensPerTask": 44189,
+      "secondsPerTask": 201.1
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.533,
+      "costPerTaskUsd": 0.80372,
+      "tokensPerTask": 80244,
+      "secondsPerTask": 365.1
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.56,
+      "costPerTaskUsd": 1.92674,
+      "tokensPerTask": 140930,
+      "secondsPerTask": 641.2
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.533333333333333,
+      "costPerTaskUsd": 23.76071,
+      "tokensPerTask": 508836,
+      "secondsPerTask": 2315.2
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1555.26,
+      "costPerTaskUsd": 2.3126,
+      "tokensPerTask": 114994,
+      "secondsPerTask": 1572.8
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.6486844882398171,
+      "costPerTaskUsd": 0.29682,
+      "tokensPerTask": 13956,
+      "secondsPerTask": 190.9
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.560606060606061,
+      "costPerTaskUsd": 1.82276,
+      "tokensPerTask": 108185,
+      "secondsPerTask": 1479.7
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.406262878787879,
+      "costPerTaskUsd": 1.13038,
+      "tokensPerTask": 39747,
+      "secondsPerTask": 543.6
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 42.03333333333333,
+      "costPerTaskUsd": 0.01831,
+      "tokensPerTask": 1806,
+      "secondsPerTask": 24.7
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.31,
+      "costPerTaskUsd": 0.41987,
+      "tokensPerTask": 9718,
+      "secondsPerTask": 132.9
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.588,
+      "costPerTaskUsd": 0.10916,
+      "tokensPerTask": 10787,
+      "secondsPerTask": 147.5
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.685,
+      "costPerTaskUsd": 0.23002,
+      "tokensPerTask": 18844,
+      "secondsPerTask": 257.7
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.580952380952381,
+      "costPerTaskUsd": 3.33893,
+      "tokensPerTask": 195842,
+      "secondsPerTask": 2678.7
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 1268.25,
+      "costPerTaskUsd": 0.80248,
+      "tokensPerTask": 45609,
+      "secondsPerTask": 284.8
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.4942092641344955,
+      "costPerTaskUsd": 0.24078,
+      "tokensPerTask": 11158,
+      "secondsPerTask": 69.7
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.207070707070707,
+      "costPerTaskUsd": 1.28479,
+      "tokensPerTask": 40277,
+      "secondsPerTask": 251.5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.0712575757575758,
+      "costPerTaskUsd": 0.2495,
+      "tokensPerTask": 10474,
+      "secondsPerTask": 65.4
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": 20.266666666666666,
+      "costPerTaskUsd": 0.00291,
+      "tokensPerTask": 256,
+      "secondsPerTask": 1.6
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.16,
+      "costPerTaskUsd": 0.37231,
+      "tokensPerTask": 1928,
+      "secondsPerTask": 12
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.206,
+      "costPerTaskUsd": 0.01497,
+      "tokensPerTask": 1358,
+      "secondsPerTask": 8.5
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.225,
+      "costPerTaskUsd": 0.07313,
+      "tokensPerTask": 5020,
+      "secondsPerTask": 31.4
+    },
+    {
+      "family": "claude-sonnet-5-5",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.104761904761905,
+      "costPerTaskUsd": 1.23444,
+      "tokensPerTask": 47237,
+      "secondsPerTask": 295
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 740.22,
+      "costPerTaskUsd": 0.00609,
+      "tokensPerTask": 4307,
+      "secondsPerTask": 34.3
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.12049187272690505,
+      "costPerTaskUsd": 0.00588,
+      "tokensPerTask": 3236,
+      "secondsPerTask": 25.8
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0,
+      "costPerTaskUsd": 0.00545,
+      "tokensPerTask": 3695,
+      "secondsPerTask": 29.4
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.0219545454545455,
+      "costPerTaskUsd": 0.00733,
+      "tokensPerTask": 2578,
+      "secondsPerTask": 20.5
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": -18.1,
+      "costPerTaskUsd": 0.00018,
+      "tokensPerTask": 332,
+      "secondsPerTask": 2.6
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.09,
+      "costPerTaskUsd": 0.0166,
+      "tokensPerTask": 935,
+      "secondsPerTask": 7.5
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.102,
+      "costPerTaskUsd": 0.00053,
+      "tokensPerTask": 929,
+      "secondsPerTask": 7.4
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.095,
+      "costPerTaskUsd": 0.00189,
+      "tokensPerTask": 2738,
+      "secondsPerTask": 21.8
+    },
+    {
+      "family": "gpt-6-luna",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.00952380952380952,
+      "costPerTaskUsd": 0.00777,
+      "tokensPerTask": 8457,
+      "secondsPerTask": 67.4
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1190.98,
+      "costPerTaskUsd": 0.18373,
+      "tokensPerTask": 13028,
+      "secondsPerTask": 142.4
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.5780171778957812,
+      "costPerTaskUsd": 0.09567,
+      "tokensPerTask": 7184,
+      "secondsPerTask": 78.5
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "medium",
+      "eval": "terminalbench-4-0",
+      "score": 0.323232323232323,
+      "costPerTaskUsd": 0.27566,
+      "tokensPerTask": 19257,
+      "secondsPerTask": 210.5
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.345359343434343,
+      "costPerTaskUsd": 0.25748,
+      "tokensPerTask": 13672,
+      "secondsPerTask": 149.4
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": 26.6,
+      "costPerTaskUsd": 0.00162,
+      "tokensPerTask": 300,
+      "secondsPerTask": 3.3
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.284,
+      "costPerTaskUsd": 0.16671,
+      "tokensPerTask": 1073,
+      "secondsPerTask": 11.7
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.313,
+      "costPerTaskUsd": 0.00896,
+      "tokensPerTask": 1663,
+      "secondsPerTask": 18.2
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.56,
+      "costPerTaskUsd": 0.04048,
+      "tokensPerTask": 6079,
+      "secondsPerTask": 66.4
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.247619047619048,
+      "costPerTaskUsd": 0.37834,
+      "tokensPerTask": 24751,
+      "secondsPerTask": 270.5
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 1030.12,
+      "costPerTaskUsd": 0.08483,
+      "tokensPerTask": 6033,
+      "secondsPerTask": 65.8
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.5624828754079192,
+      "costPerTaskUsd": 0.07832,
+      "tokensPerTask": 5662,
+      "secondsPerTask": 61.8
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.151515151515152,
+      "costPerTaskUsd": 0.1066,
+      "tokensPerTask": 7483,
+      "secondsPerTask": 81.6
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.244852272727273,
+      "costPerTaskUsd": 0.10666,
+      "tokensPerTask": 5981,
+      "secondsPerTask": 65.3
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": 22.933333333333334,
+      "costPerTaskUsd": 0.00079,
+      "tokensPerTask": 133,
+      "secondsPerTask": 1.4
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.256,
+      "costPerTaskUsd": 0.1644,
+      "tokensPerTask": 612,
+      "secondsPerTask": 6.7
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.249,
+      "costPerTaskUsd": 0.00314,
+      "tokensPerTask": 499,
+      "secondsPerTask": 5.4
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.485,
+      "costPerTaskUsd": 0.0178,
+      "tokensPerTask": 2472,
+      "secondsPerTask": 27
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.0761904761904762,
+      "costPerTaskUsd": 0.11737,
+      "tokensPerTask": 8274,
+      "secondsPerTask": 90.3
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 1184.8,
+      "costPerTaskUsd": 0.7256,
+      "tokensPerTask": 33552,
+      "secondsPerTask": 458.7
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.519790983751346,
+      "costPerTaskUsd": 0.20501,
+      "tokensPerTask": 10548,
+      "secondsPerTask": 144.2
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.348484848484849,
+      "costPerTaskUsd": 6.40494,
+      "tokensPerTask": 128004,
+      "secondsPerTask": 1750.1
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.127379797979798,
+      "costPerTaskUsd": 1.50616,
+      "tokensPerTask": 32524,
+      "secondsPerTask": 444.7
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": -11.166666666666666,
+      "costPerTaskUsd": 0.00091,
+      "tokensPerTask": 167,
+      "secondsPerTask": 2.3
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.088,
+      "costPerTaskUsd": 0.06318,
+      "tokensPerTask": 3370,
+      "secondsPerTask": 46.1
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.175,
+      "costPerTaskUsd": 0.12458,
+      "tokensPerTask": 28227,
+      "secondsPerTask": 385.9
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.21,
+      "costPerTaskUsd": 0.75773,
+      "tokensPerTask": 76627,
+      "secondsPerTask": 1047.6
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.0380952380952381,
+      "costPerTaskUsd": 3.3193,
+      "tokensPerTask": 120450,
+      "secondsPerTask": 1646.8
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1504.57,
+      "costPerTaskUsd": 5.64879,
+      "tokensPerTask": 136335,
+      "secondsPerTask": 1393.6
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.622028649962642,
+      "costPerTaskUsd": 0.46045,
+      "tokensPerTask": 27738,
+      "secondsPerTask": 283.5
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.419191919191919,
+      "costPerTaskUsd": 8.0642,
+      "tokensPerTask": 194566,
+      "secondsPerTask": 1988.8
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.21587095959596,
+      "costPerTaskUsd": 6.09815,
+      "tokensPerTask": 105897,
+      "secondsPerTask": 1082.5
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 6.033333333333333,
+      "costPerTaskUsd": 0.02052,
+      "tokensPerTask": 4623,
+      "secondsPerTask": 47.3
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.112,
+      "costPerTaskUsd": 0.17337,
+      "tokensPerTask": 28417,
+      "secondsPerTask": 290.5
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.179,
+      "costPerTaskUsd": 0.15781,
+      "tokensPerTask": 35781,
+      "secondsPerTask": 365.7
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.335,
+      "costPerTaskUsd": 1.54255,
+      "tokensPerTask": 159480,
+      "secondsPerTask": 1630.2
+    },
+    {
+      "family": "glm-5-3",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.0952380952380952,
+      "costPerTaskUsd": 14.90665,
+      "tokensPerTask": 267785,
+      "secondsPerTask": 2737.2
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1761.21,
+      "costPerTaskUsd": 12.26619,
+      "tokensPerTask": 198195,
+      "secondsPerTask": 1519.6
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.6495283516401527,
+      "costPerTaskUsd": 0.87804,
+      "tokensPerTask": 21784,
+      "secondsPerTask": 167
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.595959595959596,
+      "costPerTaskUsd": 8.77836,
+      "tokensPerTask": 169497,
+      "secondsPerTask": 1299.5
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.437547474747475,
+      "costPerTaskUsd": 6.49391,
+      "tokensPerTask": 101768,
+      "secondsPerTask": 780.3
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": 43.13333333333333,
+      "costPerTaskUsd": 0.01478,
+      "tokensPerTask": 703,
+      "secondsPerTask": 5.4
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.266,
+      "costPerTaskUsd": 0.96427,
+      "tokensPerTask": 12910,
+      "secondsPerTask": 99
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.64,
+      "costPerTaskUsd": 0.47,
+      "tokensPerTask": 23302,
+      "secondsPerTask": 178.7
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.63,
+      "costPerTaskUsd": 0.96574,
+      "tokensPerTask": 36639,
+      "secondsPerTask": 280.9
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.619047619047619,
+      "costPerTaskUsd": 14.11627,
+      "tokensPerTask": 224112,
+      "secondsPerTask": 1718.3
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1504.75,
+      "costPerTaskUsd": 4.76353,
+      "tokensPerTask": 32139,
+      "secondsPerTask": 494.6
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.666122174975011,
+      "costPerTaskUsd": 1.29518,
+      "tokensPerTask": 9189,
+      "secondsPerTask": 141.4
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.54040404040404,
+      "costPerTaskUsd": 4.04699,
+      "tokensPerTask": 30430,
+      "secondsPerTask": 468.3
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.401351515151515,
+      "costPerTaskUsd": 3.76569,
+      "tokensPerTask": 19017,
+      "secondsPerTask": 292.7
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 44.56666666666667,
+      "costPerTaskUsd": 0.02796,
+      "tokensPerTask": 535,
+      "secondsPerTask": 8.2
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.31,
+      "costPerTaskUsd": 1.79482,
+      "tokensPerTask": 3221,
+      "secondsPerTask": 49.6
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.593,
+      "costPerTaskUsd": 0.25744,
+      "tokensPerTask": 5019,
+      "secondsPerTask": 77.2
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.715,
+      "costPerTaskUsd": 0.71418,
+      "tokensPerTask": 11248,
+      "secondsPerTask": 173.1
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.595238095238095,
+      "costPerTaskUsd": 8.65756,
+      "tokensPerTask": 67264,
+      "secondsPerTask": 1035.2
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "low",
+      "eval": "aa-briefcase",
+      "score": 1114.38,
+      "costPerTaskUsd": 0.17709,
+      "tokensPerTask": 6713,
+      "secondsPerTask": 129.7
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "low",
+      "eval": "automationbench-aa",
+      "score": 0.5257088964747538,
+      "costPerTaskUsd": 0.15944,
+      "tokensPerTask": 5459,
+      "secondsPerTask": 105.4
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "low",
+      "eval": "terminalbench-4-0",
+      "score": 0.308080808080808,
+      "costPerTaskUsd": 0.38294,
+      "tokensPerTask": 17351,
+      "secondsPerTask": 335.2
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "low",
+      "eval": "frontiercode-2-0",
+      "score": 0.201560858585859,
+      "costPerTaskUsd": 0.20107,
+      "tokensPerTask": 6231,
+      "secondsPerTask": 120.4
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "low",
+      "eval": "omniscience",
+      "score": 38,
+      "costPerTaskUsd": 0.00149,
+      "tokensPerTask": 125,
+      "secondsPerTask": 2.4
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "low",
+      "eval": "gdp-pdf",
+      "score": 0.27,
+      "costPerTaskUsd": 0.33414,
+      "tokensPerTask": 1145,
+      "secondsPerTask": 22.1
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "low",
+      "eval": "hle-diamond",
+      "score": 0.382,
+      "costPerTaskUsd": 0.00863,
+      "tokensPerTask": 734,
+      "secondsPerTask": 14.2
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "low",
+      "eval": "critpt-v2-hard",
+      "score": 0.595,
+      "costPerTaskUsd": 0.04329,
+      "tokensPerTask": 3264,
+      "secondsPerTask": 63.1
+    },
+    {
+      "family": "gpt-6-1-sol",
+      "effort": "low",
+      "eval": "terminal-bench-science",
+      "score": 0.10952380952381,
+      "costPerTaskUsd": 0.2424,
+      "tokensPerTask": 9417,
+      "secondsPerTask": 181.9
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "xhigh",
+      "eval": "aa-briefcase",
+      "score": 1333.4,
+      "costPerTaskUsd": 0.40585,
+      "tokensPerTask": 28883,
+      "secondsPerTask": 312.2
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "xhigh",
+      "eval": "automationbench-aa",
+      "score": 0.5992855956353923,
+      "costPerTaskUsd": 0.12759,
+      "tokensPerTask": 10449,
+      "secondsPerTask": 112.9
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "xhigh",
+      "eval": "terminalbench-4-0",
+      "score": 0.464646464646465,
+      "costPerTaskUsd": 0.65702,
+      "tokensPerTask": 47494,
+      "secondsPerTask": 513.4
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "xhigh",
+      "eval": "frontiercode-2-0",
+      "score": 0.368595202020202,
+      "costPerTaskUsd": 0.57021,
+      "tokensPerTask": 29523,
+      "secondsPerTask": 319.1
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "xhigh",
+      "eval": "omniscience",
+      "score": 28.933333333333334,
+      "costPerTaskUsd": 0.00794,
+      "tokensPerTask": 1563,
+      "secondsPerTask": 16.9
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "xhigh",
+      "eval": "gdp-pdf",
+      "score": 0.266,
+      "costPerTaskUsd": 0.18232,
+      "tokensPerTask": 4195,
+      "secondsPerTask": 45.3
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "xhigh",
+      "eval": "hle-diamond",
+      "score": 0.423,
+      "costPerTaskUsd": 0.04124,
+      "tokensPerTask": 8119,
+      "secondsPerTask": 87.8
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "xhigh",
+      "eval": "critpt-v2-hard",
+      "score": 0.575,
+      "costPerTaskUsd": 0.11766,
+      "tokensPerTask": 17975,
+      "secondsPerTask": 194.3
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "xhigh",
+      "eval": "terminal-bench-science",
+      "score": 0.419047619047619,
+      "costPerTaskUsd": 1.04001,
+      "tokensPerTask": 60756,
+      "secondsPerTask": 656.8
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1461.69,
+      "costPerTaskUsd": 3.93999,
+      "tokensPerTask": 26424,
+      "secondsPerTask": 465.8
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.6459498850561176,
+      "costPerTaskUsd": 1.17702,
+      "tokensPerTask": 7829,
+      "secondsPerTask": 138
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "medium",
+      "eval": "terminalbench-4-0",
+      "score": 0.494949494949495,
+      "costPerTaskUsd": 4.43011,
+      "tokensPerTask": 29667,
+      "secondsPerTask": 522.9
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.365771717171717,
+      "costPerTaskUsd": 2.79537,
+      "tokensPerTask": 13468,
+      "secondsPerTask": 237.4
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": 41.4,
+      "costPerTaskUsd": 0.01094,
+      "tokensPerTask": 194,
+      "secondsPerTask": 3.4
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.304,
+      "costPerTaskUsd": 1.71981,
+      "tokensPerTask": 1721,
+      "secondsPerTask": 30.3
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.527,
+      "costPerTaskUsd": 0.12001,
+      "tokensPerTask": 2271,
+      "secondsPerTask": 40
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.71,
+      "costPerTaskUsd": 0.40671,
+      "tokensPerTask": 6266,
+      "secondsPerTask": 110.5
+    },
+    {
+      "family": "gpt-6-astra",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.533333333333333,
+      "costPerTaskUsd": 7.19981,
+      "tokensPerTask": 51605,
+      "secondsPerTask": 909.6
+    },
+    {
+      "family": "muse-wonder-full",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1729.32,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 106909,
+      "secondsPerTask": null
+    },
+    {
+      "family": "muse-wonder-full",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.7133074973223975,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 19694,
+      "secondsPerTask": null
+    },
+    {
+      "family": "muse-wonder-full",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.570707070707071,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 153127,
+      "secondsPerTask": null
+    },
+    {
+      "family": "muse-wonder-full",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.377576262626263,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 72663,
+      "secondsPerTask": null
+    },
+    {
+      "family": "muse-wonder-full",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 30.6,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 3299,
+      "secondsPerTask": null
+    },
+    {
+      "family": "muse-wonder-full",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.326,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 11513,
+      "secondsPerTask": null
+    },
+    {
+      "family": "muse-wonder-full",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.485,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 39805,
+      "secondsPerTask": null
+    },
+    {
+      "family": "muse-wonder-full",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.53,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 65357,
+      "secondsPerTask": null
+    },
+    {
+      "family": "muse-wonder-full",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.371428571428571,
+      "costPerTaskUsd": null,
+      "tokensPerTask": 224372,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1263.94,
+      "costPerTaskUsd": 0.27556,
+      "tokensPerTask": 19338,
+      "secondsPerTask": 208
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.584605963496433,
+      "costPerTaskUsd": 0.10816,
+      "tokensPerTask": 8520,
+      "secondsPerTask": 91.6
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.419191919191919,
+      "costPerTaskUsd": 0.43754,
+      "tokensPerTask": 30377,
+      "secondsPerTask": 326.7
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.37457904040404,
+      "costPerTaskUsd": 0.39185,
+      "tokensPerTask": 20604,
+      "secondsPerTask": 221.6
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 27.766666666666666,
+      "costPerTaskUsd": 0.00295,
+      "tokensPerTask": 566,
+      "secondsPerTask": 6.1
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.28,
+      "costPerTaskUsd": 0.17117,
+      "tokensPerTask": 1965,
+      "secondsPerTask": 21.1
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.354,
+      "costPerTaskUsd": 0.01826,
+      "tokensPerTask": 3522,
+      "secondsPerTask": 37.9
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.605,
+      "costPerTaskUsd": 0.06906,
+      "tokensPerTask": 10578,
+      "secondsPerTask": 113.8
+    },
+    {
+      "family": "gpt-6-1-terra",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.333333333333333,
+      "costPerTaskUsd": 0.61515,
+      "tokensPerTask": 37989,
+      "secondsPerTask": 408.6
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1621.76,
+      "costPerTaskUsd": 4.39821,
+      "tokensPerTask": 83406,
+      "secondsPerTask": 660.4
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.6121742919892179,
+      "costPerTaskUsd": 0.63844,
+      "tokensPerTask": 15060,
+      "secondsPerTask": 119.2
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "medium",
+      "eval": "terminalbench-4-0",
+      "score": 0.525252525252525,
+      "costPerTaskUsd": 4.04298,
+      "tokensPerTask": 75654,
+      "secondsPerTask": 599
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.330793181818182,
+      "costPerTaskUsd": 1.70939,
+      "tokensPerTask": 31042,
+      "secondsPerTask": 245.8
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": 39.766666666666666,
+      "costPerTaskUsd": 0.00824,
+      "tokensPerTask": 377,
+      "secondsPerTask": 3
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.256,
+      "costPerTaskUsd": 0.79532,
+      "tokensPerTask": 4462,
+      "secondsPerTask": 35.3
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.514,
+      "costPerTaskUsd": 0.12991,
+      "tokensPerTask": 6312,
+      "secondsPerTask": 50
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.525,
+      "costPerTaskUsd": 0.25115,
+      "tokensPerTask": 9391,
+      "secondsPerTask": 74.4
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.433333333333333,
+      "costPerTaskUsd": 6.79748,
+      "tokensPerTask": 109873,
+      "secondsPerTask": 869.9
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1570.42,
+      "costPerTaskUsd": 0.67829,
+      "tokensPerTask": 201620,
+      "secondsPerTask": 856.9
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.6664095364949257,
+      "costPerTaskUsd": 0.17391,
+      "tokensPerTask": 63396,
+      "secondsPerTask": 269.4
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.338383838383838,
+      "costPerTaskUsd": 0.88008,
+      "tokensPerTask": 218213,
+      "secondsPerTask": 927.4
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.284711616161616,
+      "costPerTaskUsd": 0.51885,
+      "tokensPerTask": 116102,
+      "secondsPerTask": 493.4
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 0.9,
+      "costPerTaskUsd": 0.00181,
+      "tokensPerTask": 1472,
+      "secondsPerTask": 6.3
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.172,
+      "costPerTaskUsd": 0.04234,
+      "tokensPerTask": 16372,
+      "secondsPerTask": 69.6
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.253,
+      "costPerTaskUsd": 0.06169,
+      "tokensPerTask": 51306,
+      "secondsPerTask": 218.1
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.24,
+      "costPerTaskUsd": 0.20003,
+      "tokensPerTask": 119220,
+      "secondsPerTask": 506.7
+    },
+    {
+      "family": "deepseek-v4-1-flash-1017",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.128571428571429,
+      "costPerTaskUsd": 1.98181,
+      "tokensPerTask": 321469,
+      "secondsPerTask": 1366.3
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1681.94,
+      "costPerTaskUsd": 6.27082,
+      "tokensPerTask": 113122,
+      "secondsPerTask": 892.4
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.6320677483186213,
+      "costPerTaskUsd": 0.69861,
+      "tokensPerTask": 16536,
+      "secondsPerTask": 130.5
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "high",
+      "eval": "terminalbench-4-0",
+      "score": 0.565656565656566,
+      "costPerTaskUsd": 5.11891,
+      "tokensPerTask": 100178,
+      "secondsPerTask": 790.3
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.359278535353535,
+      "costPerTaskUsd": 2.48848,
+      "tokensPerTask": 42739,
+      "secondsPerTask": 337.2
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 42.36666666666667,
+      "costPerTaskUsd": 0.00931,
+      "tokensPerTask": 430,
+      "secondsPerTask": 3.4
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.288,
+      "costPerTaskUsd": 0.82543,
+      "tokensPerTask": 5967,
+      "secondsPerTask": 47.1
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.556,
+      "costPerTaskUsd": 0.19355,
+      "tokensPerTask": 9493,
+      "secondsPerTask": 74.9
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.58,
+      "costPerTaskUsd": 0.3844,
+      "tokensPerTask": 14390,
+      "secondsPerTask": 113.5
+    },
+    {
+      "family": "claude-opus-5-5",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.49047619047619,
+      "costPerTaskUsd": 10.02323,
+      "tokensPerTask": 153973,
+      "secondsPerTask": 1214.7
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "max",
+      "eval": "aa-briefcase",
+      "score": 1658.65,
+      "costPerTaskUsd": 8.68367,
+      "tokensPerTask": 111829,
+      "secondsPerTask": 794
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "max",
+      "eval": "automationbench-aa",
+      "score": 0.6809455131207758,
+      "costPerTaskUsd": 0.71653,
+      "tokensPerTask": 18317,
+      "secondsPerTask": 130.1
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "max",
+      "eval": "terminalbench-4-0",
+      "score": 0.52020202020202,
+      "costPerTaskUsd": 12.2132,
+      "tokensPerTask": 167270,
+      "secondsPerTask": 1187.7
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "max",
+      "eval": "frontiercode-2-0",
+      "score": 0.27875303030303,
+      "costPerTaskUsd": 5.04207,
+      "tokensPerTask": 65384,
+      "secondsPerTask": 464.3
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "max",
+      "eval": "omniscience",
+      "score": 25.1,
+      "costPerTaskUsd": 0.04751,
+      "tokensPerTask": 2351,
+      "secondsPerTask": 16.7
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "max",
+      "eval": "gdp-pdf",
+      "score": 0.306,
+      "costPerTaskUsd": 0.72264,
+      "tokensPerTask": 11099,
+      "secondsPerTask": 78.8
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "max",
+      "eval": "hle-diamond",
+      "score": 0.39,
+      "costPerTaskUsd": 0.8418,
+      "tokensPerTask": 41978,
+      "secondsPerTask": 298.1
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "max",
+      "eval": "critpt-v2-hard",
+      "score": 0.48,
+      "costPerTaskUsd": 1.81356,
+      "tokensPerTask": 66386,
+      "secondsPerTask": 471.4
+    },
+    {
+      "family": "muse-wonder",
+      "effort": "max",
+      "eval": "terminal-bench-science",
+      "score": 0.257142857142857,
+      "costPerTaskUsd": 22.18155,
+      "tokensPerTask": 267295,
+      "secondsPerTask": 1897.9
+    }
+  ]
+}

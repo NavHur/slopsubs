@@ -3,11 +3,9 @@
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
+import { evalPoints, frontierCodePoints } from "../src/domain/leaderboards.ts";
 import {
-	codingPoints,
-	frontierCodePoints,
-} from "../src/domain/leaderboards.ts";
-import {
+	AaEvalsDataset,
 	BenchmarkDataset,
 	type BenchmarkPoint,
 	ChartData,
@@ -358,6 +356,11 @@ const onPlans = (points: BenchmarkPoint[]) =>
 const frontierCode = FrontierCodeDataset.parse(
 	await readJson("src/data/frontiercode.json"),
 );
+const aaEvals = AaEvalsDataset.parse(await readJson("src/data/aa-evals.json"));
+const evalBoard = (evalSlug: string) => ({
+	fetchedAt: aaEvals.fetchedAt,
+	models: onPlans(evalPoints(aaEvals.rows, models, evalSlug)),
+});
 const chart = ChartData.parse({
 	frontier: dataset.frontier,
 	leaderboards: {
@@ -366,10 +369,15 @@ const chart = ChartData.parse({
 			fetchedAt: frontierCode.fetchedAt,
 			models: onPlans(frontierCodePoints(frontierCode.rows, models)),
 		},
-		coding: {
-			fetchedAt: dataset.fetchedAt,
-			models: onPlans(codingPoints(models)),
-		},
+		"aa-briefcase": evalBoard("aa-briefcase"),
+		"automationbench-aa": evalBoard("automationbench-aa"),
+		"terminalbench-4-0": evalBoard("terminalbench-4-0"),
+		"frontiercode-2-0": evalBoard("frontiercode-2-0"),
+		omniscience: evalBoard("omniscience"),
+		"gdp-pdf": evalBoard("gdp-pdf"),
+		"hle-diamond": evalBoard("hle-diamond"),
+		"critpt-v2-hard": evalBoard("critpt-v2-hard"),
+		"terminal-bench-science": evalBoard("terminal-bench-science"),
 	},
 });
 await writeFile(

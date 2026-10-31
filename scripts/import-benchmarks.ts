@@ -118,17 +118,6 @@ function extract(source: string, anchor: RegExp): Literal {
 const ROUND = (value: unknown, digits: number) =>
 	typeof value === "number" ? Number(value.toFixed(digits)) : null;
 
-/** Slopalytics' coding score, or null where it never ran the coding evals. */
-function codingScore(code: Literal | undefined) {
-	if (!code || typeof code !== "object" || Array.isArray(code)) return null;
-	return {
-		score: ROUND(code.intelligence, 2),
-		costPerTaskUsd: ROUND(code.cost, 5),
-		tokensPerTask: ROUND(code.tokens, 0),
-		secondsPerTask: ROUND(code.time, 1),
-	};
-}
-
 async function main() {
 	const args = parseArgs(process.argv.slice(2));
 	const [bundle, aa] = await Promise.all([
@@ -160,7 +149,6 @@ async function main() {
 			secondsPerTask: ROUND(m.time, 1),
 			inputPricePerMTokUsd: m.inputPrice,
 			outputPricePerMTokUsd: m.outputPrice,
-			coding: codingScore(m.code),
 		})),
 	);
 	const plans = Plans.parse(JSON.parse(await readFile(PLANS, "utf8")));

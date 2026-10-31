@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vite-plus/test";
-import { codingPoints, frontierCodePoints } from "./leaderboards";
+import { evalPoints, frontierCodePoints } from "./leaderboards";
 import type {
+	AaEvalRow,
 	BenchmarkPoint,
-	CatalogPoint,
 	FamilyId,
 	FrontierCodeRow,
 } from "./model";
@@ -81,32 +81,58 @@ describe("frontierCodePoints", () => {
 	});
 });
 
-describe("codingPoints", () => {
-	const scored: CatalogPoint = {
-		...catalogPoint(OPUS, "max", "max", 60),
-		coding: { score: 44, costPerTaskUsd: 9, tokensPerTask: 80_000 },
-	};
-	const unscored: CatalogPoint = {
-		...catalogPoint(SOL, "none", "Non-reasoning", 0),
-		coding: null,
-	};
+describe("evalPoints", () => {
+	function evalRow(
+		family: string,
+		effort: string | null,
+		extra: Partial<AaEvalRow> = {},
+	): AaEvalRow {
+		return {
+			family: family as FamilyId,
+			effort: effort as AaEvalRow["effort"],
+			eval: "terminalbench-4-0",
+			score: 0.5,
+			costPerTaskUsd: 2,
+			tokensPerTask: 50_000,
+			secondsPerTask: 500,
+			...extra,
+		};
+	}
 
-	it("plots a point at its coding score, cost and tokens", () => {
-		const [point] = codingPoints([scored]);
+	it("scores and costs a point from the eval row, names it from the catalog", () => {
+		const [point] = evalPoints(
+			[evalRow(OPUS, "max")],
+			CATALOG,
+			"terminalbench-4-0",
+		);
 		expect(point).toMatchObject({
-			id: scored.id,
 			family: OPUS,
-			score: 44,
-			costPerTaskUsd: 9,
-			tokensPerTask: 80_000,
+			name: "CLAUDE-OPUS-5-5",
+			effort: "max",
+			score: 0.5,
+			costPerTaskUsd: 2,
+			tokensPerTask: 50_000,
+			secondsPerTask: 500,
 			inputPricePerMTokUsd: 2,
 		});
-		expect(point).not.toHaveProperty("coding");
 	});
 
-	it("drops points never run on the coding evals", () => {
-		expect(codingPoints([unscored, scored]).map((p) => p.family)).toEqual([
-			OPUS,
-		]);
+	it("resolves a null website effort to the family's sole catalog effort", () => {
+		const solo = [
+			catalogPoint("solo-fam" as FamilyId, "default", "Default", 35),
+		];
+		const [point] = evalPoints(
+			[evalRow("solo-fam", null)],
+			solo,
+			"terminalbench-4-0",
+		);
+		expect(point.effort).toBe("default");
+	});
+
+	it("refuses a family the catalog doesn't know", () => {
+		const unknown = "swe-2";
+		expect(() =>
+			evalPoints([evalRow(unknown, "max")], CATALOG, "terminalbench-4-0"),
+		).toThrow(unknown);
 	});
 });

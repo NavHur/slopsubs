@@ -3,10 +3,8 @@ import { frontier, plans } from "#/data";
 import {
 	BENCHMARK_IDS,
 	type Effort,
-	type BenchmarkId,
 	type FamilyId,
 	type Frontier,
-	type LeaderboardId,
 	type PlanId,
 } from "#/domain/model";
 
@@ -40,28 +38,10 @@ export const ViewSearch = z.object({
 	plans: z.array(z.string()).optional(),
 	families: z.array(z.string()).optional(),
 	hideReasoning: z.array(z.enum(REASONING_LEVELS)).optional(),
-	/** Score on the coding evals only, dropping models never run on them. */
-	code: z.boolean().default(false),
 	/** The section in view; unset is the top of the page. */
 	chart: z.enum(CHART_SECTIONS).optional(),
 });
 export type ViewSearch = z.infer<typeof ViewSearch>;
-
-/** The coding-only leaderboard Code only swaps in, per tab that has one. */
-const CODE_ONLY_LEADERBOARD: Partial<Record<BenchmarkId, LeaderboardId>> = {
-	// FrontierCode is a coding eval already, so it has no swap.
-	intelligence: "coding",
-};
-
-export function codeOnlyApplies(benchmark: BenchmarkId): boolean {
-	return CODE_ONLY_LEADERBOARD[benchmark] !== undefined;
-}
-
-/** The leaderboard the chart plots for the tab and the Code only switch. */
-export function plottedLeaderboard(view: ViewSearch): LeaderboardId {
-	const codeOnly = view.code ? CODE_ONLY_LEADERBOARD[view.benchmark] : null;
-	return codeOnly ?? view.benchmark;
-}
 
 // SAFETY: frontier keys are family ids from the same dataset.
 const FRONTIER = Object.keys(frontier) as FamilyId[];
@@ -108,12 +88,10 @@ export function hiddenReasoning(view: ViewSearch): ReasoningLevel[] {
 export const DEFAULT_MODELS_VIEW = {
 	families: undefined,
 	hideReasoning: undefined,
-	code: undefined,
 } satisfies Partial<ViewSearch>;
 
 export function isDefaultModelsView(view: ViewSearch): boolean {
 	return (
-		!view.code &&
 		sameMembers(selectedFamilies(view), DEFAULT_FAMILIES) &&
 		sameMembers(hiddenReasoning(view), DEFAULT_HIDDEN_REASONING)
 	);

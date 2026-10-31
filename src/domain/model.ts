@@ -42,22 +42,6 @@ const BenchmarkPoint = z.object({
 });
 export type BenchmarkPoint = z.infer<typeof BenchmarkPoint>;
 
-/**
- * Slopalytics' coding score for one catalog point: Terminal-Bench 4.0 and
- * FrontierCode 2.0 weighted equally, costed on those evals alone.
- */
-const CodingScore = z.object({
-	score: z.number(),
-	costPerTaskUsd: Usd.nullable(),
-	tokensPerTask: z.number().nullable(),
-});
-
-/** A catalog point, with its coding score where it was run on the evals. */
-const CatalogPoint = BenchmarkPoint.extend({
-	coding: CodingScore.nullable(),
-});
-export type CatalogPoint = z.infer<typeof CatalogPoint>;
-
 /** The frontier families' size tier and chart colour, by family id. */
 const Frontier = z.record(
 	z.string(),
@@ -70,7 +54,7 @@ export const BenchmarkDataset = z.object({
 	fetchedAt: z.iso.datetime(),
 	source: z.string(),
 	frontier: Frontier,
-	models: z.array(CatalogPoint),
+	models: z.array(BenchmarkPoint),
 });
 export type BenchmarkDataset = z.infer<typeof BenchmarkDataset>;
 
@@ -91,12 +75,45 @@ export const FrontierCodeDataset = z.object({
 	rows: z.array(FrontierCodeRow),
 });
 
+/** One Artificial Analysis Intelligence Index eval result, by release slug. */
+export const AaEvalRow = z.object({
+	family: FamilyId,
+	effort: Effort.nullable(),
+	eval: z.string().min(1),
+	score: z.number(),
+	costPerTaskUsd: Usd.nullable(),
+	tokensPerTask: z.number().nullable(),
+	secondsPerTask: z.number().nullable(),
+});
+export type AaEvalRow = z.infer<typeof AaEvalRow>;
+
+/** The nine Intelligence Index evals, as imported from the AA website. */
+export const AaEvalsDataset = z.object({
+	fetchedAt: z.iso.datetime(),
+	source: z.string(),
+	evals: z.array(z.string().min(1)),
+	rows: z.array(AaEvalRow),
+});
+export type AaEvalsDataset = z.infer<typeof AaEvalsDataset>;
+
 /** The benchmarks the chart can plot, in tab order. */
-export const BENCHMARK_IDS = ["intelligence", "frontiercode"] as const;
+export const BENCHMARK_IDS = [
+	"intelligence",
+	"frontiercode",
+	"aa-briefcase",
+	"automationbench-aa",
+	"terminalbench-4-0",
+	"frontiercode-2-0",
+	"omniscience",
+	"gdp-pdf",
+	"hle-diamond",
+	"critpt-v2-hard",
+	"terminal-bench-science",
+] as const;
 export type BenchmarkId = (typeof BENCHMARK_IDS)[number];
 
-/** What the chart can plot: each tab, and the coding score "Code only" swaps in. */
-export const LEADERBOARD_IDS = [...BENCHMARK_IDS, "coding"] as const;
+/** What the chart can plot: one leaderboard per tab. */
+export const LEADERBOARD_IDS = [...BENCHMARK_IDS] as const;
 export type LeaderboardId = (typeof LEADERBOARD_IDS)[number];
 
 const Leaderboard = z.object({
@@ -111,7 +128,15 @@ export const ChartData = z.object({
 	leaderboards: z.object({
 		intelligence: Leaderboard,
 		frontiercode: Leaderboard,
-		coding: Leaderboard,
+		"aa-briefcase": Leaderboard,
+		"automationbench-aa": Leaderboard,
+		"terminalbench-4-0": Leaderboard,
+		"frontiercode-2-0": Leaderboard,
+		omniscience: Leaderboard,
+		"gdp-pdf": Leaderboard,
+		"hle-diamond": Leaderboard,
+		"critpt-v2-hard": Leaderboard,
+		"terminal-bench-science": Leaderboard,
 	} satisfies Record<LeaderboardId, typeof Leaderboard>),
 });
 

@@ -1,4 +1,4 @@
-import type { BenchmarkPoint, CatalogPoint, FrontierCodeRow } from "./model";
+import type { AaEvalRow, BenchmarkPoint, FrontierCodeRow } from "./model";
 
 /**
  * FrontierCode rows as chart points, named, labelled and priced from the
@@ -31,13 +31,55 @@ export function frontierCodePoints(
 }
 
 /**
- * Catalog points rescored on their coding score, dropping those never run on
- * the coding evals.
+ * AA Intelligence Index eval rows as chart points, named, labelled and priced
+ * from the Artificial Analysis catalog. Every row's family must be in the
+ * catalog; a null website effort resolves to the family's sole effort, else
+ * to its none or default effort, failing loud when ambiguous.
  */
-export function codingPoints(
-	catalog: readonly CatalogPoint[],
+export function evalPoints(
+	rows: readonly AaEvalRow[],
+	catalog: readonly BenchmarkPoint[],
+	evalSlug: string,
 ): BenchmarkPoint[] {
-	return catalog.flatMap(({ coding, ...point }) =>
-		coding ? [{ ...point, ...coding }] : [],
-	);
+	const byFamily = new Map<string, BenchmarkPoint[]>();
+	for (const m of catalog) {
+		const list = byFamily.get(m.family) ?? [];
+		list.push(m);
+		byFamily.set(m.family, list);
+	}
+	return rows
+		.filter((row) => row.eval === evalSlug)
+		.map((row) => {
+			const candidates = byFamily.get(row.family);
+			if (!candidates) throw new Error(`No catalog model for ${row.family}`);
+			let model: BenchmarkPoint | undefined;
+			if (row.effort !== null) {
+				model = candidates.find((m) => m.effort === row.effort);
+				if (!model)
+					throw new Error(
+						`No catalog effort ${row.effort} for ${row.family} (has ${candidates.map((m) => m.effort).join(", ")})`,
+					);
+			} else if (candidates.length === 1) {
+				model = candidates[0];
+			} else {
+				model =
+					candidates.find((m) => m.effort === "none") ??
+					candidates.find((m) => m.effort === "default");
+				if (!model)
+					throw new Error(
+						`Ambiguous null effort for ${row.family} (has ${candidates.map((m) => m.effort).join(", ")})`,
+					);
+			}
+			return {
+				...model,
+				id: `${row.family}@${model.effort}`,
+				effort: model.effort,
+				effortLabel: model.effortLabel,
+				effortOrder: model.effortOrder,
+				score: row.score,
+				costPerTaskUsd: row.costPerTaskUsd,
+				tokensPerTask: row.tokensPerTask,
+				secondsPerTask: row.secondsPerTask,
+			};
+		});
 }

@@ -1,17 +1,13 @@
 import { describe, expect, it } from "vite-plus/test";
-import { leaderboards } from "#/data";
 import type { FamilyId } from "#/domain/model";
 import { familyMatches } from "./families";
 import {
 	allSelected,
-	codeOnlyApplies,
-	DEFAULT_MODELS_VIEW,
 	FRONTIER_FAMILIES,
 	frontierTier,
 	hiddenReasoning,
 	isDefaultModelsView,
 	NOTABLE_FAMILIES,
-	plottedLeaderboard,
 	selectedFamilies,
 	toggledGroup,
 	ViewSearch,
@@ -47,42 +43,15 @@ describe("labels", () => {
 	});
 });
 
-describe("code only", () => {
-	it("is off unless the URL turns it on", () => {
-		expect(view({}).code).toBe(false);
-		expect(view({ code: true }).code).toBe(true);
-	});
-
-	it("swaps the coding score in for the Intelligence Index", () => {
-		expect(plottedLeaderboard(view({}))).toBe("intelligence");
-		expect(plottedLeaderboard(view({ code: true }))).toBe("coding");
-	});
-
-	it("leaves FrontierCode alone, which is a coding eval already", () => {
-		const frontierCode = view({ benchmark: "frontiercode", code: true });
-		expect(codeOnlyApplies("frontiercode")).toBe(false);
-		expect(plottedLeaderboard(frontierCode)).toBe("frontiercode");
-	});
-
-	it("hides models never run on the coding evals", () => {
-		const scored = (id: "intelligence" | "coding") =>
-			new Set(leaderboards[id].models.map((m) => m.family));
-		expect(scored("intelligence").has(kimi)).toBe(true);
-		expect(scored("coding").has(kimi)).toBe(false);
-		expect(scored("coding").has(opus)).toBe(true);
-	});
-
-	it("counts as a model filter the reset clears", () => {
-		const codeOnly = view({ code: true });
-		expect(isDefaultModelsView(codeOnly)).toBe(false);
-		expect(view({ ...codeOnly, ...DEFAULT_MODELS_VIEW }).code).toBe(false);
-	});
-});
-
 describe("old shared links", () => {
 	it("still load when they carry the removed usage profile", () => {
 		expect(() => view({ profile: "heavy" })).not.toThrow();
 		expect(view({ profile: "heavy" })).toEqual(view({}));
+	});
+
+	it("still load when they carry the removed code-only switch", () => {
+		expect(() => view({ code: true })).not.toThrow();
+		expect(view({ code: true })).toEqual(view({}));
 	});
 });
 

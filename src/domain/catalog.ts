@@ -30,15 +30,6 @@ export type AaModel = z.infer<typeof AaModel>;
 /** The API wraps its rows in a status envelope the import ignores. */
 export const AaResponse = z.object({ data: z.array(AaModel) });
 
-/** Slopalytics' coding score for one point, kept as imported. */
-const CodingPoint = z.object({
-	score: z.number(),
-	costPerTaskUsd: z.number().nonnegative().nullable(),
-	tokensPerTask: z.number().nullable(),
-	secondsPerTask: z.number().nullable(),
-});
-export type CodingPoint = z.infer<typeof CodingPoint>;
-
 /** The fields the import keeps from one slopalytics bundle point. */
 const SlopaPointSchema = z.object({
 	id: z.string().min(1),
@@ -59,7 +50,6 @@ const SlopaPointSchema = z.object({
 	secondsPerTask: z.number().nullable(),
 	inputPricePerMTokUsd: z.number().nonnegative().nullable(),
 	outputPricePerMTokUsd: z.number().nonnegative().nullable(),
-	coding: CodingPoint.nullable(),
 });
 export type SlopaPoint = z.infer<typeof SlopaPointSchema>;
 export { SlopaPointSchema };
@@ -226,7 +216,6 @@ export function mergeCatalog(
 			secondsPerTask: null,
 			inputPricePerMTokUsd: aa.pricing.price_1m_input_tokens,
 			outputPricePerMTokUsd: aa.pricing.price_1m_output_tokens,
-			coding: null,
 		});
 		missingCost.push(aa.slug);
 	}

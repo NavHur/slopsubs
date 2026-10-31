@@ -25,11 +25,30 @@ const ARTIFICIAL_ANALYSIS = {
 	name: "Artificial Analysis",
 	url: "https://artificialanalysis.ai",
 };
-const SLOPALYTICS = { name: "Slopalytics", url: "https://slopalytics.com" };
 const COGNITION = {
 	name: "Cognition",
 	url: "https://cognition.com/frontiercode",
 };
+
+/** An Intelligence Index eval as a chart tab, scored on the AA website. */
+function aaEval(
+	id: LeaderboardId,
+	tabLabel: string,
+	scoreLabel: string,
+	percent: boolean,
+): BenchmarkView {
+	return {
+		id,
+		tabLabel,
+		chartTitle: `Effective cost vs ${tabLabel}`,
+		axisLabel: percent ? `${scoreLabel} (%)` : scoreLabel,
+		scoreLabel,
+		formatScore: percent ? formatPercent : formatIntelligence,
+		tokensLabel: "Output tokens per task",
+		source: ARTIFICIAL_ANALYSIS,
+		pointSource: () => ARTIFICIAL_ANALYSIS,
+	};
+}
 
 export const BENCHMARK_VIEWS: Record<LeaderboardId, BenchmarkView> = {
 	intelligence: {
@@ -57,16 +76,43 @@ export const BENCHMARK_VIEWS: Record<LeaderboardId, BenchmarkView> = {
 		source: COGNITION,
 		pointSource: () => ({ name: "FrontierCode 2.0", url: COGNITION.url }),
 	},
-	// Plotted in place of the Intelligence Index while Code only is on.
-	coding: {
-		id: "coding",
-		tabLabel: "Coding",
-		chartTitle: "Effective cost vs coding score",
-		axisLabel: "Coding score",
-		scoreLabel: "Coding score",
-		formatScore: formatIntelligence,
-		tokensLabel: "Tokens per task, coding evals",
-		source: SLOPALYTICS,
-		pointSource: () => SLOPALYTICS,
-	},
+	"aa-briefcase": aaEval("aa-briefcase", "AA Briefcase", "AA Briefcase", false),
+	"automationbench-aa": aaEval(
+		"automationbench-aa",
+		"AutomationBench",
+		"AutomationBench score",
+		true,
+	),
+	"terminalbench-4-0": aaEval(
+		"terminalbench-4-0",
+		"Terminal-Bench 4.0",
+		"Terminal-Bench 4.0 score",
+		true,
+	),
+	"frontiercode-2-0": aaEval(
+		"frontiercode-2-0",
+		"FrontierCode 2.0 (AA)",
+		"FrontierCode 2.0 score",
+		true,
+	),
+	omniscience: aaEval("omniscience", "Omniscience", "Omniscience", false),
+	"gdp-pdf": aaEval("gdp-pdf", "GDP.pdf", "GDP.pdf score", true),
+	"hle-diamond": aaEval(
+		"hle-diamond",
+		"HLE Diamond",
+		"HLE Diamond score",
+		true,
+	),
+	"critpt-v2-hard": aaEval(
+		"critpt-v2-hard",
+		"CritPt v2 Hard",
+		"CritPt v2 Hard score",
+		true,
+	),
+	"terminal-bench-science": aaEval(
+		"terminal-bench-science",
+		"Terminal-Bench Science",
+		"Terminal-Bench Science score",
+		true,
+	),
 };

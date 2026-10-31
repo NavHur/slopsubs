@@ -26,10 +26,11 @@ assets, configured in `wrangler.jsonc`) from CI on every push to `main`.
 
 ## Benchmark Data
 
-The charts ship generated data, refreshed by three scripts in this order:
+The charts ship generated data, refreshed by four scripts in this order:
 
 ```bash
 bun run import-benchmarks    # src/data/benchmarks.json
+bun run import-aa-evals      # src/data/aa-evals.json
 bun run import-frontiercode  # src/data/frontiercode.json
 bun run build-plans          # plans.json and chart-benchmarks.json
 ```
@@ -42,6 +43,14 @@ cost, tokens and wall-clock time per task that the free API does not publish,
 and the two sources are merged in `src/domain/catalog.ts`. A score they
 disagree on stops the import; a price they disagree on only warns, since a
 promo can explain the gap, and AA's list price wins.
+
+The nine Intelligence Index evals (Terminal-Bench 4.0, FrontierCode 2.0 and
+seven others) come from the AA website itself, not the data API, because the
+API omits their per-task cost, tokens and time. `import-aa-evals` fetches a
+model page, reconstructs its Next.js flight payload, and extracts each model's
+per-eval score, cost, tokens and time into `src/data/aa-evals.json`, resolved
+against the catalog (unknown families/efforts are skipped with a log; ambiguous
+ones stop the import).
 
 A model AA lists that slopalytics has not run yet makes the import stop, so
 the gap is deliberate rather than silent.
