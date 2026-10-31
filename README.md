@@ -30,8 +30,10 @@ assets, configured in `wrangler.jsonc`) from CI on every push to `main`.
 are generated, not hand-made:
 
 ```bash
-vp build && bun run render-brand-images
+bun run render-brand-images
 ```
+
+It builds the site first, so the card always matches the current source.
 
 The card is the chart's own "Download PNG" export of the default view, fitted
 onto 1200x630. The icon is `public/favicon.svg` drawn full bleed, since iOS

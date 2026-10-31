@@ -16,7 +16,7 @@
     "import-frontiercode": "node scripts/import-frontiercode.ts",
     "measure": "node scripts/measure.ts",
     "build-plans": "node scripts/build-plans.ts",
-    "render-brand-images": "node scripts/render-brand-images.ts",
+    "render-brand-images": "vp build && node scripts/render-brand-images.ts",
     "deploy": "vp run build && wrangler deploy"
   },
   "dependencies": {

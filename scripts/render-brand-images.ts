@@ -1,5 +1,5 @@
-// Regenerates public/og.png and public/apple-touch-icon.png from the built site.
-// Usage and prerequisites: README.md, "Brand Images".
+// Regenerates public/og.png and public/apple-touch-icon.png from dist/client.
+// `bun run render-brand-images` builds it first; see README.md, "Brand Images".
 
 import { readFile, writeFile } from "node:fs/promises";
 import { createServer, type Server } from "node:http";
@@ -71,11 +71,26 @@ async function exportDefaultChart(
 	});
 	const errors: Error[] = [];
 	page.on("pageerror", (error) => errors.push(error));
-	await page.goto(origin, { waitUntil: "networkidle" });
+	// The Download PNG button catches export failures and logs them here.
+	const consoleErrors: Error[] = [];
+	page.on("console", (message) => {
+		if (message.type() === "error")
+			consoleErrors.push(new Error(message.text()));
+	});
+	const response = await page.goto(origin, { waitUntil: "networkidle" });
+	if (!response?.ok()) {
+		throw new Error(`${origin} answered ${response?.status()}: build first`);
+	}
 	const [download] = await Promise.all([
 		page.waitForEvent("download"),
 		page.getByRole("button", { name: "Download PNG" }).click(),
-	]);
+	]).catch((waitFailure: unknown) => {
+		const causes = [...errors, ...consoleErrors];
+		if (causes.length === 0) throw waitFailure;
+		throw new AggregateError(causes, "The export failed", {
+			cause: waitFailure,
+		});
+	});
 	// Read before closing: the download's file goes with its page.
 	const png = await readFile(await download.path());
 	await page.close();
