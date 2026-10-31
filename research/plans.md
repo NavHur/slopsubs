@@ -1,21 +1,23 @@
-# Coding subscription plans: caveats (accessed 2026-10-17)
+# Coding subscription plans: caveats (accessed 2026-10-31)
 
 The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an access date and a confidence level (`primary`, `secondary` or `unverified`). Prices are in USD and exclude tax.
 
 ## Market changes in the last month
 
 - **Cursor and xAI merged their plans.** Since 2026-10-12, cursor.com/pricing sells "The X Subscription": Plus $8, Premium $30, Super $100 and Ultra $200. All four share one weekly AI usage pool across Cursor and Grok. That pool covers Grok models only, and third-party models (Claude, GPT, Gemini) are billed at API list price. New customers can no longer buy Cursor Pro, Pro+ or Ultra, or standalone SuperGrok. The legacy rows are kept and labelled as closed.
-- **OpenAI Pro changed on 2026-09-29.** Pro is now $100, $200 or $500. The $200 tier reopened with a smaller allowance than before; grandfathered subscribers keep the old one until 2026-10-29. Pro 500 adds Ultrafast. OpenAI publishes no multiplier for the current Pro 200 or Pro 500. The "5x Plus" figure for Pro 100 comes from the April launch.
+- **OpenAI Pro changed on 2026-09-29, then partly reverted.** Pro is now $100, $200 or $500, and Pro 500 adds Ultrafast. The $200 tier reopened with a smaller allowance, but on 2026-10-29 OpenAI cancelled the cut: every Pro 200 subscription now has the old allowance, and Pro 100 and Pro 500 doubled their Work and Codex allowance. Plus is unchanged. OpenAI publishes no multiplier; the "5x Plus" figure for Pro 100 comes from the April launch, before the doubling.
 - **Google retired Gemini CLI for consumer plans on 2026-06-18.** AI Pro and Ultra now cover Antigravity and Antigravity CLI. The Gemini CLI quota page still lists the old per-day numbers, which are stale.
-- **GitHub Copilot became credit-based on 2026-06-01.** 1 credit is $0.01. Plans include base plus "flex" credits worth 1.5x to 2x the price. New signups for Pro, Pro+ and Max were paused in April. I couldn't confirm whether they have reopened.
+- **GitHub Copilot became credit-based on 2026-06-01.** 1 credit is $0.01. Plans include base plus "flex" credits worth 1.5x to 2x the price. New signups for Pro, Pro+ and Max were paused in April and reopened gradually from 2026-06-17.
 - **Z.ai GLM Coding Plan moved from prompt counts to credits on 2026-07-30.** Pro and Max prices are secondary only, because the subscribe page renders prices client-side.
 - **MiniMax replaced Token Plan with M Plan (Go, Explore, Build).**
+- **Anthropic renamed Max 5x to Max and Max 20x to Ultra on 2026-10-30.** Ultra drops the 5-hour limit for verified accounts. The pricing page now states weekly multiples (Max 5x Pro, Ultra 10x Pro); reports say weekly limits did not change.
+- **Chutes stopped selling monthly plans.** Existing Plus and Pro subscriptions run to the end of their billing period, then fall back to pay-as-you-go. The rows are kept and labelled as discontinued.
 
 ## Limits are not comparable across vendors
 
-- **Rate-window plans** have a 5-hour window plus a weekly cap: Claude, ChatGPT Plus, Google, Z.ai, MiniMax, Alibaba, Volcengine, Kimi (5-hour only) and OpenCode Go. Vendors publish multipliers or message estimates, not tokens. The exceptions are Z.ai credits, Alibaba request counts and OpenCode per-model numbers.
+- **Rate-window plans** have a 5-hour window plus a weekly cap: Claude (Ultra weekly only, once verified), ChatGPT Plus, Google, Z.ai, MiniMax, Alibaba, Volcengine, Kimi (5-hour only) and OpenCode Go. Vendors publish multipliers or message estimates, not tokens. The exceptions are Z.ai credits, Alibaba request counts and OpenCode per-model numbers.
 - **Credit plans** pay a fixed dollar amount of usage at list rates. Copilot gives about 1.5x to 2x its price, Ollama 3x, JetBrains and Warp about 1x, and MiMo has a monthly credit quota. Their "subscription value" over the API is roughly the credit ratio, so the site should model them separately from rate-window plans.
-- **Bundled API credits:** Claude Max includes $100 (5x) or $200 (20x) a month of Claude Platform API credits. Google Ultra includes Google Cloud credits. Count these in value calculations.
+- **Bundled API credits:** Claude Max includes $100 and Ultra $200 a month of Claude Platform API credits. Google Ultra includes Google Cloud credits. Count these in value calculations.
 
 ## Third-party harness use (`thirdPartyHarnessAllowed`)
 
@@ -25,9 +27,9 @@ The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an
   - **Kimi** (but don't spoof the User-Agent).
   - **MiniMax and MiMo.**
   - **Alibaba**, for interactive use only.
-  - **OpenCode Go, Ollama, Synthetic and Chutes.**
+  - **OpenCode Go, Ollama, Synthetic and Chutes (discontinued).**
 - **Forbidden:**
-  - **Anthropic:** subscription OAuth is only for Claude Code and native apps, and third parties may not route requests through Free, Pro or Max credentials.
+  - **Anthropic:** subscription OAuth is only for Claude Code and native apps, and third parties may not route requests through Free, Pro, Max or Ultra credentials.
   - **Google:** marked false on the basis of reported Feb 2026 account suspensions for routing Antigravity OAuth through OpenCode or OpenClaw. I didn't find an explicit ToS clause.
   - **Cursor (legacy), Devin, Factory, JetBrains and Warp:** quotas only work inside the vendor's own product.
 - **Unclear:**
@@ -39,7 +41,7 @@ The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an
 - No annual price could be verified for ChatGPT, Google or Copilot. chatgpt.com/pricing and help.openai.com return 403 to scripted fetches; the help center was read through the r.jina.ai reader.
 - **xAI:** standalone SuperGrok prices are secondary only, since x.ai and grok.com were not fetchable.
 - **Volcengine and Tencent:** China-only, CNY prices converted at about 7.1 CNY/USD. Promo pricing dominates. Tencent is unverified.
-- **OpenCode Go (2026-10-26):** Hy4 preview, Qwen3.8 Flash and Beam Free have no Artificial Analysis benchmark yet, so the site leaves them off. AA's "Qwen3.8-Flash-Next" has the same price as Go's Qwen3.8 Flash but isn't confirmed to be the same model. The site counts Go's Gemini 4 Argon promo (50% off through 2026-11-30) in that model's value. After it ends, build-plans fails until its GO_PROMOS entry is removed.
+- **OpenCode Go (2026-10-31):** Hy4 preview, Qwen3.8 Flash, Beam Free and Iceman Contributor Free have no Artificial Analysis benchmark yet, so the site leaves them off. AA's "Qwen3.8-Flash-Next" has the same price as Go's Qwen3.8 Flash but isn't confirmed to be the same model. The site counts Go's Gemini 4 Argon promo (50% off through 2026-11-30) in that model's value. After it ends, build-plans fails until its GO_PROMOS entry is removed.
 - **DeepSeek:** no official subscription. "DeepSeek coding plan" sites appear to be resellers, so DeepSeek is excluded.
 - **Excluded:**
   - **Amp:** brings your own subscription or key.

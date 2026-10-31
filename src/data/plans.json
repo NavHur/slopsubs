@@ -14,16 +14,16 @@
       "claude-sonnet-5-5",
       "claude-haiku-5-5"
     ],
-    "limits": "\"Every plan has usage limits that reset on a rolling five-hour session window, and paid plans add weekly limits on top.\" \"Pro gives you at least 5x more usage per 5-hour session than Free.\" \"Your activity across Claude on web, desktop, mobile, and Claude Code all draws from the same pool.\"",
+    "limits": "\"More usage than Free, every 5 hours and every week*\" (pricing page). \"Your activity across Claude on web, desktop, mobile, and Claude Code all draws from the same pool.\" Max is \"5x Pro usage\" and Ultra \"10x Pro usage every week\".",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 92.3076923076923,
+      "weeklyCapApiUsd": 184.6153846153846,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
-      "basis": "A twentieth of Theo's Max 20x figure (Max 20x is 20x Pro)"
+      "basis": "A tenth of Theo's Ultra figure (Ultra is 10x Pro weekly)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -33,7 +33,7 @@
     "id": "claude-max-5x",
     "vendor": "Claude Code",
     "lab": "anthropic",
-    "label": "Claude Max 5x",
+    "label": "Claude Max",
     "monthlyPriceUsd": 100,
     "harnesses": [
       "Claude Code (CLI, IDE, desktop, web)",
@@ -45,16 +45,16 @@
       "claude-haiku-5-5",
       "claude-fable-5-1"
     ],
-    "limits": "\"Max gives you 5x or 20x more usage per 5-hour session than Pro.\" Help center: \"five times the Pro plan's per-session usage allowance\"; \"Your session-based usage limit will reset every five hours.\" \"Max plans also have a weekly usage limit that applies across all models.\" Fable: \"50% of weekly limits*\".",
+    "limits": "\"5x Pro usage every 5 hours and every week*\" (pricing page). Help center: \"Get five times the Pro plan's usage every five hours and every week.\" Fable: \"Fable included, up to half your weekly limit\".",
     "includedApiCreditUsd": 100,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 461.53846153846155,
+      "weeklyCapApiUsd": 923.0769230769231,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
-      "basis": "A quarter of Theo's Max 20x figure (Max 5x vs 20x of Pro)"
+      "basis": "Half Theo's Ultra figure (Max is 5x Pro weekly, Ultra 10x)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -64,7 +64,7 @@
     "id": "claude-max-20x",
     "vendor": "Claude Code",
     "lab": "anthropic",
-    "label": "Claude Max 20x",
+    "label": "Claude Ultra",
     "monthlyPriceUsd": 200,
     "harnesses": [
       "Claude Code (CLI, IDE, desktop, web)",
@@ -76,16 +76,16 @@
       "claude-haiku-5-5",
       "claude-fable-5-1"
     ],
-    "limits": "Help center: \"20 times the Pro plan's per-session usage allowance\"; \"Your session-based usage limit will reset every five hours.\" \"Max plans also have a weekly usage limit that applies across all models.\" Fable: \"50% of weekly limits*\".",
+    "limits": "\"No 5-hour limit‡\" and \"10x Pro usage every week*\"; \"‡No 5-hour limit for verified accounts.\" Fable: \"50% of weekly limits*\".",
     "includedApiCreditUsd": 200,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
-    "sourceUrl": "https://support.claude.com/en/articles/11049741-what-is-the-max-plan",
+    "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
       "weeklyCapApiUsd": 1846.1538461538462,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
-      "basis": "Theo: $200 in, $8,000 a month of API-priced inference out"
+      "basis": "Theo: $200 in, $8,000 a month of API-priced inference out (as Max 20x, now Ultra)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -129,7 +129,7 @@
       "weeklyCapApiUsd": 57.386,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
-      "basis": "A tenth of Theo's Pro 200 figure (Pro 200 is now 10x Plus)"
+      "basis": "A tenth of Theo's Pro 200 figure (Pro 200 was then 10x Plus)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -164,16 +164,16 @@
       "gpt-6-1-terra",
       "gpt-6-luna"
     ],
-    "limits": "\"Pro plans currently have no five-hour limit.\" Help center: \"Pro 200 includes more usage than Pro 100.\" Weekly limits apply. At launch (2026-04-09) OpenAI said: \"Pro $100 unlocks 5x higher usage than Plus\" (secondary report of the launch statement).",
+    "limits": "\"Pro plans currently have no five-hour limit.\" Help center: \"Pro 200 includes more usage than Pro 100.\" \"Pro 100 and Pro 500 now include twice their previous Work and Codex allowance.\" Weekly limits apply. At launch (2026-04-09) OpenAI said: \"Pro $100 unlocks 5x higher usage than Plus\" (secondary report of the launch statement).",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
     "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 286.93,
+      "weeklyCapApiUsd": 573.86,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
-      "basis": "5x Theo's Plus figure (OpenAI launched Pro 100 at 5x Plus)"
+      "basis": "10x Theo's Plus figure (launched at 5x Plus, then doubled)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -208,16 +208,16 @@
       "gpt-6-1-terra",
       "gpt-6-luna"
     ],
-    "limits": "\"Pro plans currently have no five-hour limit.\" \"Pro 200 includes more usage than Pro 100.\" \"New subscriptions that aren't eligible for grandfathering include a lower usage allowance than previously offered with Pro 200.\"",
+    "limits": "\"Pro plans currently have no five-hour limit.\" \"Pro 200 includes more usage than Pro 100.\" \"All Pro 200 subscriptions now include the same Work and Codex allowance.\" \"Plus usage is unchanged.\"",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
     "reportedCap": {
-      "weeklyCapApiUsd": 573.86,
+      "weeklyCapApiUsd": 1147.72,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1037s",
-      "basis": "Theo measured $573.86 of API-priced usage in one weekly cap"
+      "basis": "Twice Theo's measured $573.86 a week; OpenAI doubled the allowance on 2026-10-29"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -252,16 +252,16 @@
       "gpt-6-1-terra",
       "gpt-6-luna"
     ],
-    "limits": "\"Pro 500 offers the highest included usage of the three plans.\" \"Pro plans currently have no five-hour limit.\" Ultrafast \"uses your plan's included usage first at 8x the Standard rate for the selected model, then draws from your credit balance at 6x the Standard credit rate\".",
+    "limits": "\"Pro 500 offers the highest included usage of the three plans.\" \"Pro 100 and Pro 500 now include twice their previous Work and Codex allowance.\" \"Pro plans currently have no five-hour limit.\" Ultrafast \"uses your plan's included usage first at 8x the Standard rate for the selected model, then draws from your credit balance at 6x the Standard credit rate\".",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
     "reportedCap": {
-      "weeklyCapApiUsd": 1434.65,
+      "weeklyCapApiUsd": 2869.3,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
-      "basis": "2.5x Theo's Pro 200 figure (Pro 500 is 25x Plus, Pro 200 10x)"
+      "basis": "5x Theo's Pro 200 figure (25x Plus vs 10x, then doubled)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -305,7 +305,7 @@
       "deepseek-v4-pro",
       "grok-4-7"
     ],
-    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\"; the 5-hour window gets 20% of the monthly dollars and the weekly window 50%. E.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K3.1 Pro 147 / $15; Kimi K2.7 Code 1,350 / $60; LongCat-2.0 11,400 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 34,670 / $80. Beam Free is unlimited for a limited time.",
+    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\"; the 5-hour window gets 20% of the monthly dollars and the weekly window 50%. E.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K3.1 Pro 147 / $15; Kimi K2.7 Code 1,350 / $60; LongCat-2.0 11,400 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 43,330 / $100. Beam Free and Iceman Contributor Free are unlimited for a limited time.",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
@@ -336,7 +336,7 @@
         "mimo-v2-5-pro": 15.568965517241379,
         "mimo-v2-5-0424": 57,
         "hy3": 57.78,
-        "deepseek-v4-1-flash-1017": 80,
+        "deepseek-v4-1-flash-1017": 100,
         "deepseek-v4-pro": 15,
         "grok-4-7": 15
       },
@@ -393,7 +393,7 @@
       "deepseek-v4-pro",
       "grok-4-7"
     ],
-    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K3.1 Pro 588 / $60; Kimi K2.7 Code 4,050 / $180; LongCat-2.0 45,600 / $240; DeepSeek V4.1 Flash 69,330 / $160.",
+    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K3.1 Pro 588 / $60; Kimi K2.7 Code 4,050 / $180; LongCat-2.0 45,600 / $240; DeepSeek V4.1 Flash 86,670 / $200.",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
@@ -424,7 +424,7 @@
         "mimo-v2-5-pro": 62.275862068965516,
         "mimo-v2-5-0424": 114,
         "hy3": 231.12,
-        "deepseek-v4-1-flash-1017": 160,
+        "deepseek-v4-1-flash-1017": 200,
         "deepseek-v4-pro": 60,
         "grok-4-7": 60
       },

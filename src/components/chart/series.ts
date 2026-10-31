@@ -35,7 +35,7 @@ export type PricingStyle = {
 export type Series = {
 	id: string;
 	points: ValuePoint[];
-	/** "Haiku 5.5 · Claude Max 20x" */
+	/** "Haiku 5.5 · Claude Ultra" */
 	label: string;
 	modelId: FamilyId;
 	color: string;

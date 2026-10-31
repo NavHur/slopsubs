@@ -19,12 +19,12 @@
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
-        "url": "https://factory.ai/pricing",
-        "accessed": "2026-10-17"
+        "url": "https://factory.com/pricing",
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://docs.factory.com/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
@@ -49,8 +49,8 @@
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
-        "url": "https://factory.ai/pricing",
-        "accessed": "2026-10-17"
+        "url": "https://factory.com/pricing",
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
@@ -75,8 +75,8 @@
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
-        "url": "https://factory.ai/pricing",
-        "accessed": "2026-10-17"
+        "url": "https://factory.com/pricing",
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",

@@ -15,25 +15,25 @@
       "Claude Haiku",
       "Claude Fable (via paid usage credits only)"
     ],
-    "limits": "\"Every plan has usage limits that reset on a rolling five-hour session window, and paid plans add weekly limits on top.\" \"Pro gives you at least 5x more usage per 5-hour session than Free.\" \"Your activity across Claude on web, desktop, mobile, and Claude Code all draws from the same pool.\"",
+    "limits": "\"More usage than Free, every 5 hours and every week*\" (pricing page). \"Your activity across Claude on web, desktop, mobile, and Claude Code all draws from the same pool.\" Max is \"5x Pro usage\" and Ultra \"10x Pro usage every week\".",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
         "url": "https://claude.com/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://code.claude.com/docs/en/legal-and-compliance",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "Annual: $200 billed up front ($17/mo). Claude Code docs say OAuth is 'designed to support ordinary use of Claude Code and other native Anthropic applications', and 'Anthropic does not permit third-party developers to offer Claude.ai login into their own applications, or to route requests through Free, Pro, or Max plan credentials'. Usage credits (overage) are available on paid plans. The pricing page shows Fable as 'Usage credits' for Pro, meaning it isn't covered by the included allowance."
+    "notes": "Annual: $200 billed up front ($17/mo). Claude Code docs say OAuth is 'designed to support ordinary use of Claude Code and other native Anthropic applications', and 'Anthropic does not permit third-party developers to offer Claude.ai login into their own applications, or to route requests through Free, Pro, Max, or Ultra plan credentials'. Usage credits (overage) are available on paid plans. The pricing page shows Fable as 'Usage credits' for Pro, meaning it isn't covered by the included allowance."
   },
   {
     "vendor": "Anthropic",
     "planId": "claude-max-5x",
-    "label": "Claude Max 5x",
+    "label": "Claude Max",
     "monthlyPriceUsd": 100,
     "annualMonthlyPriceUsd": null,
     "harnesses": [
@@ -46,29 +46,29 @@
       "Claude Haiku",
       "Claude Fable (capped at 50% of weekly limits)"
     ],
-    "limits": "\"Max gives you 5x or 20x more usage per 5-hour session than Pro.\" Help center: \"five times the Pro plan's per-session usage allowance\"; \"Your session-based usage limit will reset every five hours.\" \"Max plans also have a weekly usage limit that applies across all models.\" Fable: \"50% of weekly limits*\".",
+    "limits": "\"5x Pro usage every 5 hours and every week*\" (pricing page). Help center: \"Get five times the Pro plan's usage every five hours and every week.\" Fable: \"Fable included, up to half your weekly limit\".",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
         "url": "https://claude.com/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://support.claude.com/en/articles/11049741-what-is-the-max-plan",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://code.claude.com/docs/en/legal-and-compliance",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "Billed monthly only. Includes $100/month in Claude Platform API credits (pricing page: '$100 to $200/month in API credits'; table: Max 5x $100/month). Account for these in value calculations: API credits can be spent from any harness via an API key. Mobile pricing may differ. Same third-party OAuth restriction as Pro."
+    "notes": "Called Max 5x until 2026-10-30, when Anthropic renamed it Max; the plan id keeps the old name. Billed monthly only. Includes $100/month in Claude Platform API credits (\"$100 a month in API credits to build on the Claude Platform\"). Secondary reports say the credits do not pay for Claude Code sessions or usage credits, but they can be spent from any harness via an API key. Mobile pricing may differ. Same third-party OAuth restriction as Pro."
   },
   {
     "vendor": "Anthropic",
     "planId": "claude-max-20x",
-    "label": "Claude Max 20x",
+    "label": "Claude Ultra",
     "monthlyPriceUsd": 200,
     "annualMonthlyPriceUsd": null,
     "harnesses": [
@@ -81,19 +81,19 @@
       "Claude Haiku",
       "Claude Fable (capped at 50% of weekly limits)"
     ],
-    "limits": "Help center: \"20 times the Pro plan's per-session usage allowance\"; \"Your session-based usage limit will reset every five hours.\" \"Max plans also have a weekly usage limit that applies across all models.\" Fable: \"50% of weekly limits*\".",
+    "limits": "\"No 5-hour limit‡\" and \"10x Pro usage every week*\"; \"‡No 5-hour limit for verified accounts.\" Fable: \"50% of weekly limits*\".",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
-        "url": "https://support.claude.com/en/articles/11049741-what-is-the-max-plan",
-        "accessed": "2026-10-17"
+        "url": "https://claude.com/pricing",
+        "accessed": "2026-10-31"
       },
       {
-        "url": "https://claude.com/pricing",
-        "accessed": "2026-10-17"
+        "url": "https://superpowerdaily.com/posts/anthropic-renames-its-200-claude-max-20x-plan-ultra-with-automatic-migration",
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "The pricing page shows only 'From $100' for Max. The $200 figure comes from the help center article ('Updated this week'). Includes $200/month in Claude Platform API credits per the pricing table. Monthly billing only. No newer individual tier above Max 20x was found. Mythos appears in site nav but isn't listed in any plan's model table."
+    "notes": "Max 20x was renamed Ultra on 2026-10-30, with automatic migration; the plan id keeps the old name. The old page gave \"20x Pro\" per 5-hour session; the new one gives the weekly multiple, 10x. Secondary reports say Anthropic left weekly limits unchanged, so this restates the plan rather than cutting it. New accounts get a temporary 5-hour limit until verified. Includes \"$200 a month in API credits, up from $100 on Max\". Monthly billing only; mobile pricing may differ. Mythos appears in site nav but isn't listed in any plan's model table."
   }
 ]

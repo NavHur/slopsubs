@@ -19,12 +19,12 @@
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
-        "url": "https://windsurf.com/pricing",
-        "accessed": "2026-10-17"
+        "url": "https://devin.ai/pricing",
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "windsurf.com/pricing now serves Devin's pricing page. The 'Free SWE-2 ... through October 16, 2026' promo has expired. No numeric quotas published. thirdPartyHarnessAllowed=false is inferred: the quota only applies inside Cognition's products."
+    "notes": "windsurf.com/pricing redirects to devin.ai/pricing. The 'Free SWE-2 ... through October 16, 2026' promo date is gone, but the page still lists 'Free use of SWE-2' with no end date. No numeric quotas published. thirdPartyHarnessAllowed=false is inferred: the quota only applies inside Cognition's products."
   },
   {
     "vendor": "Cognition (Devin Desktop, formerly Windsurf)",
@@ -44,11 +44,11 @@
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
-        "url": "https://windsurf.com/pricing",
-        "accessed": "2026-10-17"
+        "url": "https://devin.ai/pricing",
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "No multiplier published."
+    "notes": "No multiplier published. The concurrency column is ambiguous on the page, and a secondary source says Pro and Max are capped at 10 sessions since 2026-07-21, so 'Unlimited' may be stale."
   }
 ]

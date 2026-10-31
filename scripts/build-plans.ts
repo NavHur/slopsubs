@@ -19,7 +19,7 @@ const ROOT = new URL("..", import.meta.url);
 
 const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-1-terra", "gpt-6-luna"];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
-// Monthly usage on Go and Go Plus (opencode.ai/docs/go, 2026-10-26), in dollars
+// Monthly usage on Go and Go Plus (opencode.ai/docs/go, 2026-10-31), in dollars
 // at Go's token prices; GO_OFF_LIST_PRICES and GO_PROMOS cover those off list.
 const OPENCODE_DOCS = "https://opencode.ai/docs/go#usage-limits";
 const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
@@ -48,7 +48,7 @@ const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	hy3: [60, 240],
 	// Go serves V4.1 Flash's 1017 build since 2026-10-19 (research/plans/opencode.json).
 	// At peak prices, which match the list; off-peak usage goes twice as far.
-	"deepseek-v4-1-flash-1017": [80, 160],
+	"deepseek-v4-1-flash-1017": [100, 200],
 	"deepseek-v4-pro": [15, 60],
 	"grok-4-7": [15, 60],
 };
@@ -129,8 +129,8 @@ const PLAN_FAMILIES: Record<
 	{ lab: string; families: string[]; includedApiCreditUsd?: number }
 > = {
 	"claude-pro": { lab: "anthropic", families: CLAUDE },
-	// Max plans include Fable, capped at half the weekly limit, and monthly
-	// Claude Platform API credit (claude.com/pricing, 2026-10-17).
+	// Max and Ultra include Fable at half the weekly limit, plus API credit
+	// (claude.com/pricing, 2026-10-31); links keep their pre-rename ids.
 	"claude-max-5x": {
 		lab: "anthropic",
 		families: [...CLAUDE, "claude-fable-5-1"],
@@ -153,57 +153,62 @@ const PLAN_FAMILIES: Record<
 const THEO = "https://www.youtube.com/watch?v=nYA0yASgaZI";
 const at = (seconds: number) => `${THEO}&t=${seconds}s`;
 const WEEKS_PER_MONTH = 52 / 12;
-const MAX_20X_WEEKLY = 8000 / WEEKS_PER_MONTH;
+const ULTRA_WEEKLY = 8000 / WEEKS_PER_MONTH;
 const PRO_200_WEEKLY = 573.86;
+/** OpenAI cancelled the cut and doubled every Pro allowance on 2026-10-29,
+ * leaving Plus unchanged (help.openai.com/en/articles/9793128). */
+const PRO_DOUBLING = 2;
 
 /** Published weekly caps, used until a plan has measured samples. */
 const REPORTED_CAPS: Record<string, ReportedCap> = {
 	"claude-max-20x": {
-		weeklyCapApiUsd: MAX_20X_WEEKLY,
+		weeklyCapApiUsd: ULTRA_WEEKLY,
 		by: "Theo",
 		url: at(28),
-		basis: "Theo: $200 in, $8,000 a month of API-priced inference out",
+		basis:
+			"Theo: $200 in, $8,000 a month of API-priced inference out (as Max 20x, now Ultra)",
 	},
-	// Theo gives no figure for the smaller Claude tiers; Anthropic sizes Max
-	// 20x and 5x at 20 and 5 times Pro's per-session allowance.
+	// Theo gives no figure for the smaller Claude tiers; Anthropic sizes Ultra
+	// and Max at 10 and 5 times Pro's weekly usage.
 	"claude-max-5x": {
-		weeklyCapApiUsd: MAX_20X_WEEKLY / 4,
+		weeklyCapApiUsd: ULTRA_WEEKLY / 2,
 		by: "Theo",
 		url: at(28),
-		basis: "A quarter of Theo's Max 20x figure (Max 5x vs 20x of Pro)",
+		basis: "Half Theo's Ultra figure (Max is 5x Pro weekly, Ultra 10x)",
 	},
 	"claude-pro": {
-		weeklyCapApiUsd: MAX_20X_WEEKLY / 20,
+		weeklyCapApiUsd: ULTRA_WEEKLY / 10,
 		by: "Theo",
 		url: at(28),
-		basis: "A twentieth of Theo's Max 20x figure (Max 20x is 20x Pro)",
+		basis: "A tenth of Theo's Ultra figure (Ultra is 10x Pro weekly)",
 	},
-	"chatgpt-pro-200": {
-		weeklyCapApiUsd: PRO_200_WEEKLY,
-		by: "Theo",
-		url: at(1037),
-		basis: "Theo measured $573.86 of API-priced usage in one weekly cap",
-	},
-	// "The 20x plan is now 10x, but you can get the 25x plan" (24:34), in
-	// multiples of Plus.
+	// Theo measured Pro 200's reduced allowance: "The 20x plan is now 10x, but
+	// you can get the 25x plan" (24:34), in multiples of Plus.
 	"chatgpt-plus": {
 		weeklyCapApiUsd: PRO_200_WEEKLY / 10,
 		by: "Theo",
 		url: at(1474),
-		basis: "A tenth of Theo's Pro 200 figure (Pro 200 is now 10x Plus)",
+		basis: "A tenth of Theo's Pro 200 figure (Pro 200 was then 10x Plus)",
+	},
+	"chatgpt-pro-200": {
+		weeklyCapApiUsd: PRO_200_WEEKLY * PRO_DOUBLING,
+		by: "Theo",
+		url: at(1037),
+		basis:
+			"Twice Theo's measured $573.86 a week; OpenAI doubled the allowance on 2026-10-29",
 	},
 	"chatgpt-pro-500": {
-		weeklyCapApiUsd: PRO_200_WEEKLY * 2.5,
+		weeklyCapApiUsd: PRO_200_WEEKLY * 2.5 * PRO_DOUBLING,
 		by: "Theo",
 		url: at(1474),
-		basis: "2.5x Theo's Pro 200 figure (Pro 500 is 25x Plus, Pro 200 10x)",
+		basis: "5x Theo's Pro 200 figure (25x Plus vs 10x, then doubled)",
 	},
 	// Theo gives no Pro 100 figure; OpenAI launched it at 5x Plus.
 	"chatgpt-pro-100": {
-		weeklyCapApiUsd: (PRO_200_WEEKLY / 10) * 5,
+		weeklyCapApiUsd: (PRO_200_WEEKLY / 10) * 5 * PRO_DOUBLING,
 		by: "Theo",
 		url: at(1474),
-		basis: "5x Theo's Plus figure (OpenAI launched Pro 100 at 5x Plus)",
+		basis: "10x Theo's Plus figure (launched at 5x Plus, then doubled)",
 	},
 };
 

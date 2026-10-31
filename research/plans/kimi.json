@@ -18,6 +18,7 @@
     ],
     "models": [
       "Kimi K3 (k3, k3-256k; 1M context needs Pro+)",
+      "Kimi K3.1 Pro (k3.1-pro)",
       "K2.8 Preview (kimi-for-coding)"
     ],
     "limits": "New plans with Kimi Code access (Plus and higher) have a rolling 5-hour usage limit and no weekly limit... Exhausting the monthly shared credit pool also affects Kimi Code. Both monthly and annual subscriptions refresh credits monthly, with no rollover.",
@@ -25,15 +26,15 @@
     "sources": [
       {
         "url": "https://www.kimi.ai/help/membership/membership-pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://www.kimi.com/code/docs/en/",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://www.kimi.com/code/docs/en/kimi-code/membership.html",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
@@ -57,6 +58,8 @@
     ],
     "models": [
       "Kimi K3 (up to 1M context)",
+      "Kimi K3.1 Pro",
+      "Kimi K3.1 Pro Highspeed",
       "K2.8 Preview",
       "K2.7 Code HighSpeed (kimi-for-coding-highspeed)"
     ],
@@ -65,11 +68,11 @@
     "sources": [
       {
         "url": "https://www.kimi.ai/help/membership/membership-pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://www.kimi.com/code/docs/en/",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
@@ -93,6 +96,8 @@
     ],
     "models": [
       "Kimi K3 (1M)",
+      "Kimi K3.1 Pro",
+      "Kimi K3.1 Pro Highspeed",
       "K2.8 Preview",
       "K2.7 Code HighSpeed"
     ],
@@ -101,7 +106,7 @@
     "sources": [
       {
         "url": "https://www.kimi.ai/help/membership/membership-pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
@@ -125,6 +130,8 @@
     ],
     "models": [
       "Kimi K3 (1M)",
+      "Kimi K3.1 Pro",
+      "Kimi K3.1 Pro Highspeed",
       "K2.8 Preview",
       "K2.7 Code HighSpeed"
     ],
@@ -133,7 +140,7 @@
     "sources": [
       {
         "url": "https://www.kimi.ai/help/membership/membership-pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",

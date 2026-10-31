@@ -4,7 +4,7 @@
     "planId": "warp-build",
     "label": "Warp Build",
     "monthlyPriceUsd": 20,
-    "annualMonthlyPriceUsd": null,
+    "annualMonthlyPriceUsd": 18,
     "harnesses": [
       "Warp Terminal agent",
       "Warp Agent CLI",
@@ -18,18 +18,18 @@
     "sources": [
       {
         "url": "https://www.warp.dev/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "Credit at API rates (1:1), so no subsidy. An annual toggle exists but the price wasn't captured."
+    "notes": "Credit at API rates (1:1), so no subsidy. Annual billing: $18/mo."
   },
   {
     "vendor": "Warp",
     "planId": "warp-max",
     "label": "Warp Max",
     "monthlyPriceUsd": 200,
-    "annualMonthlyPriceUsd": null,
+    "annualMonthlyPriceUsd": 180,
     "harnesses": [
       "Warp Terminal agent",
       "Warp Agent CLI",
@@ -43,10 +43,10 @@
     "sources": [
       {
         "url": "https://www.warp.dev/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "1:1 credit."
+    "notes": "1:1 credit. Annual billing: $180/mo."
   }
 ]

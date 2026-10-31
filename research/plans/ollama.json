@@ -11,12 +11,12 @@
     "models": [
       "cloud open models: GLM-5.3, Kimi K3, Kimi K2.7 Code, DeepSeek V4/4.1, MiniMax M3, gpt-oss, Qwen, Mistral Large 4, etc."
     ],
-    "limits": "\"$60 of usage credits per month\"; \"Access to larger pro models\"; \"Run multiple models concurrently\"; resets monthly, no rollover; off-peak pricing outside 12:00-18:00 UTC weekdays.",
+    "limits": "\"$60 of usage credits per month\"; \"Access to larger pro models\"; \"Run multiple models concurrently\"; resets monthly, no rollover; off-peak pricing outside 12:00-18:00 UTC on weekdays and all day on weekends.",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
         "url": "https://ollama.com/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
@@ -39,7 +39,7 @@
     "sources": [
       {
         "url": "https://ollama.com/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
