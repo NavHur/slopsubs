@@ -82,9 +82,10 @@ function stringLiteralEnd(text: string, open: number): number {
 function decodeChunk(
 	html: string,
 	marker: number,
-): { text: string; next: number } | null {
+): { text: string; next: number } {
 	const open = html.indexOf('"', marker);
-	if (open < 0) return null;
+	if (open < 0)
+		throw new Error(`Flight chunk at offset ${marker} has no string literal`);
 	const close = stringLiteralEnd(html, open);
 	try {
 		return { text: JSON.parse(html.slice(open, close + 1)), next: close + 1 };
@@ -101,7 +102,6 @@ function flightFromHtml(html: string): string {
 	let marker = html.indexOf(CHUNK_MARKER);
 	while (marker >= 0) {
 		const chunk = decodeChunk(html, marker);
-		if (!chunk) break;
 		chunks.push(chunk.text);
 		marker = html.indexOf(CHUNK_MARKER, chunk.next);
 	}
@@ -161,7 +161,10 @@ function rowsAt(flight: string, keyIndex: number): EvalRow[] {
 	const effort = lastCapture(before, /"effort":\{"slug":"([^"]+)"/g);
 	const start = keyIndex + EVALS_KEY.length;
 	const end = arrayEnd(flight, start);
-	if (end < 0) return [];
+	if (end < 0)
+		throw new Error(
+			`Evals array for ${family} at offset ${start} does not close within ${MAX_ARRAY_LENGTH} characters`,
+		);
 	return parseEvals(flight.slice(start, end), family)
 		.filter((e) => EVAL_SLUGS.includes(e.slug))
 		.map((e) => toRow(family, effort, e));
