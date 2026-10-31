@@ -25,6 +25,7 @@ function catalogPoint(
 		score: 50,
 		costPerTaskUsd: 1,
 		tokensPerTask: 1000,
+		secondsPerTask: 120,
 		inputPricePerMTokUsd: 2,
 		outputPricePerMTokUsd: 10,
 	};
@@ -51,6 +52,11 @@ describe("frontierCodePoints", () => {
 			tokensPerTask: 900,
 			inputPricePerMTokUsd: 2,
 		});
+	});
+
+	it("leaves the catalog's time per task off, since FrontierCode has none", () => {
+		const [point] = frontierCodePoints([row(OPUS, "max")], CATALOG);
+		expect(point?.secondsPerTask).toBeNull();
 	});
 
 	it("labels an effort the family lacks in the catalog as other families do", () => {

@@ -24,6 +24,8 @@ export function frontierCodePoints(
 			score: row.score,
 			costPerTaskUsd: row.costPerTaskUsd,
 			tokensPerTask: row.tokensPerTask,
+			// The catalog's time is its own benchmark's; FrontierCode reports none.
+			secondsPerTask: null,
 		};
 	});
 }

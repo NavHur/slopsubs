@@ -47,6 +47,7 @@ function benchmark(family: FamilyId, order: number): PlottableBenchmark {
 		score: 40 + order,
 		costPerTaskUsd: order,
 		tokensPerTask: 1000,
+		secondsPerTask: 120,
 		inputPricePerMTokUsd: 5,
 		outputPricePerMTokUsd: 25,
 	};
