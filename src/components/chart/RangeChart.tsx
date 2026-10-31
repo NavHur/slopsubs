@@ -1,4 +1,7 @@
 import { type ReactNode, useState } from "react";
+import type { FamilyId } from "#/domain/model";
+import type { EffortValue } from "#/domain/ranges";
+import { familyColor, familyName } from "#/lib/families";
 import { useElementSize } from "#/lib/useElementSize";
 import {
 	COLUMN_GAP_PX,
@@ -24,6 +27,29 @@ export type RangeRow = {
 	/** Lowest effort first. */
 	dots: RangeDot[];
 };
+
+/** A model's row, from its efforts; the caller sets what differs by chart. */
+export function modelRow(
+	{
+		seriesId,
+		family,
+		efforts,
+	}: { seriesId: string; family: FamilyId; efforts: EffortValue[] },
+	{ note, hollow }: Pick<RangeRow, "note" | "hollow">,
+): RangeRow {
+	return {
+		id: seriesId,
+		label: familyName(family),
+		note,
+		color: familyColor(family),
+		hollow,
+		dots: efforts.map(({ benchmark, value }) => ({
+			id: benchmark.id,
+			label: benchmark.effortLabel,
+			value,
+		})),
+	};
+}
 
 export type RangeGroup = { id: string; heading?: ReactNode; rows: RangeRow[] };
 

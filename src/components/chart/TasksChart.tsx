@@ -1,9 +1,14 @@
 import type { Plan } from "#/domain/model";
 import type { PlanTasks, TaskRow } from "#/domain/ranges";
 import type { WeeklyAllowance } from "#/domain/value";
-import { familyColor, familyName } from "#/lib/families";
 import { formatCount, formatUsd } from "#/lib/format";
-import { RangeChart, type RangeGroup, type RangeUnits } from "./RangeChart";
+import {
+	modelRow,
+	RangeChart,
+	type RangeGroup,
+	type RangeRow,
+	type RangeUnits,
+} from "./RangeChart";
 
 const TASK_UNITS: RangeUnits = {
 	format: formatCount,
@@ -59,19 +64,12 @@ function shareNote(share: number): string | undefined {
 		: `${Math.round(share * 100)}% of the cap`;
 }
 
-function taskRow({ seriesId, family, allowance, efforts }: TaskRow) {
-	return {
-		id: seriesId,
-		label: familyName(family),
+function taskRow(row: TaskRow): RangeRow {
+	const { allowance } = row;
+	return modelRow(row, {
 		note: shareNote(allowance.share),
-		color: familyColor(family),
 		hollow: allowance.basis === "estimated",
-		dots: efforts.map(({ benchmark, value }) => ({
-			id: benchmark.id,
-			label: benchmark.effortLabel,
-			value,
-		})),
-	};
+	});
 }
 
 function planGroup({ plan, rows }: PlanTasks): RangeGroup {
