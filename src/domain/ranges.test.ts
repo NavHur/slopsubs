@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import type { BenchmarkPoint, FamilyId, Plan, PlanId } from "./model";
-import { tasksPerWeek } from "./ranges";
+import { rankedCost, tasksPerWeek } from "./ranges";
 import { valuePoints } from "./value";
 
 const opus = "claude-opus-5-5" as FamilyId;
@@ -77,8 +77,8 @@ const benchmarks = [
 	benchmark(fable, "low", 2),
 ];
 
-function tasksOf(plans: Plan[], showApi = false) {
-	const points = valuePoints({
+function pointsOf(plans: Plan[], showApi: boolean) {
+	return valuePoints({
 		benchmarks,
 		families: [opus, fable],
 		plans,
@@ -86,7 +86,10 @@ function tasksOf(plans: Plan[], showApi = false) {
 		showApi,
 		hiddenEfforts: [],
 	});
-	return tasksPerWeek(points).map(({ plan, rows }) => ({
+}
+
+function tasksOf(plans: Plan[], showApi = false) {
+	return tasksPerWeek(pointsOf(plans, showApi)).map(({ plan, rows }) => ({
 		plan: plan.id,
 		rows: rows.map((row) => ({
 			family: row.family,
@@ -130,5 +133,39 @@ describe("tasksPerWeek", () => {
 
 	it("leaves out API pricing, which has no weekly cap", () => {
 		expect(tasksOf([], true)).toEqual([]);
+	});
+});
+
+describe("rankedCost", () => {
+	function ranked(plans: Plan[], showApi: boolean) {
+		return rankedCost(pointsOf(plans, showApi)).map((row) => ({
+			id: row.seriesId,
+			costs: row.efforts.map((e) => [e.benchmark.effort, e.value]),
+		}));
+	}
+
+	it("ranks rows by their cheapest effort, plan and API alike", () => {
+		// Ultra's $100 weekly cap is $433 a month; with $200 of credit on a
+		// $200 plan that is 3.17x for Opus, and 2.08x on Fable's half cap.
+		const rows = ranked([ultra], true);
+		expect(rows.map((r) => r.id)).toEqual([
+			"claude-opus-5-5@claude-max-20x",
+			"claude-fable-5-1@claude-max-20x",
+			"claude-fable-5-1@api",
+			"claude-opus-5-5@api",
+		]);
+	});
+
+	it("keeps each row's efforts lowest first at their effective cost", () => {
+		const apiOpus = ranked([], true).find((r) => r.id.startsWith(opus));
+		expect(apiOpus?.costs).toEqual([
+			["low", 2],
+			["max", 4],
+		]);
+	});
+
+	it("breaks ties by series so the order is stable", () => {
+		const ids = ranked([], true).map((r) => r.id);
+		expect(ids).toEqual([...ids].sort());
 	});
 });

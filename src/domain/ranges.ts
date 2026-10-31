@@ -1,5 +1,10 @@
 import type { FamilyId, Plan } from "./model";
-import type { PlottableBenchmark, ValuePoint, WeeklyAllowance } from "./value";
+import type {
+	PlottableBenchmark,
+	Pricing,
+	ValuePoint,
+	WeeklyAllowance,
+} from "./value";
 
 /** One model at one effort, and the figure a range chart plots for it. */
 export type EffortValue = { benchmark: PlottableBenchmark; value: number };
@@ -41,4 +46,37 @@ export function tasksPerWeek(points: readonly ValuePoint[]): PlanTasks[] {
 		});
 	}
 	return [...byPlan.values()];
+}
+
+/** A model under one pricing, at the effective cost per task of each effort. */
+export type CostRow = {
+	seriesId: string;
+	family: FamilyId;
+	pricing: Pricing;
+	/** Lowest effort first; `value` is effective USD per task. */
+	efforts: EffortValue[];
+};
+
+/**
+ * Every model under every selected pricing, API included, cheapest first:
+ * rows sort by their cheapest effort, so a row's place says what its
+ * thriftiest setting costs.
+ */
+export function rankedCost(points: readonly ValuePoint[]): CostRow[] {
+	const rows = [...Map.groupBy(points, (p) => p.seriesId)].map(
+		([seriesId, members]): CostRow => ({
+			seriesId,
+			family: members[0].benchmark.family,
+			pricing: members[0].pricing,
+			efforts: members.map((p) => ({
+				benchmark: p.benchmark,
+				value: p.costPerTaskUsd,
+			})),
+		}),
+	);
+	const cheapest = (row: CostRow) =>
+		Math.min(...row.efforts.map((e) => e.value));
+	return rows.sort(
+		(a, b) => cheapest(a) - cheapest(b) || a.seriesId.localeCompare(b.seriesId),
+	);
 }
