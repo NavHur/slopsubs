@@ -129,8 +129,9 @@ const PLAN_FAMILIES: Record<
 	{ lab: string; families: string[]; includedApiCreditUsd?: number }
 > = {
 	"claude-pro": { lab: "anthropic", families: CLAUDE },
-	// Max plans include Fable, capped at half the weekly limit, and monthly
-	// Claude Platform API credit (claude.com/pricing, 2026-10-17).
+	// Max and Ultra include Fable, capped at half the weekly limit, and monthly
+	// Claude Platform API credit (claude.com/pricing, 2026-10-31). Their ids
+	// keep the names from before the 2026-10-30 rename, which links still use.
 	"claude-max-5x": {
 		lab: "anthropic",
 		families: [...CLAUDE, "claude-fable-5-1"],
@@ -153,30 +154,31 @@ const PLAN_FAMILIES: Record<
 const THEO = "https://www.youtube.com/watch?v=nYA0yASgaZI";
 const at = (seconds: number) => `${THEO}&t=${seconds}s`;
 const WEEKS_PER_MONTH = 52 / 12;
-const MAX_20X_WEEKLY = 8000 / WEEKS_PER_MONTH;
+const ULTRA_WEEKLY = 8000 / WEEKS_PER_MONTH;
 const PRO_200_WEEKLY = 573.86;
 
 /** Published weekly caps, used until a plan has measured samples. */
 const REPORTED_CAPS: Record<string, ReportedCap> = {
 	"claude-max-20x": {
-		weeklyCapApiUsd: MAX_20X_WEEKLY,
+		weeklyCapApiUsd: ULTRA_WEEKLY,
 		by: "Theo",
 		url: at(28),
-		basis: "Theo: $200 in, $8,000 a month of API-priced inference out",
+		basis:
+			"Theo: $200 in, $8,000 a month of API-priced inference out (as Max 20x, now Ultra)",
 	},
-	// Theo gives no figure for the smaller Claude tiers; Anthropic sizes Max
-	// 20x and 5x at 20 and 5 times Pro's per-session allowance.
+	// Theo gives no figure for the smaller Claude tiers; Anthropic sizes Ultra
+	// and Max at 10 and 5 times Pro's weekly usage.
 	"claude-max-5x": {
-		weeklyCapApiUsd: MAX_20X_WEEKLY / 4,
+		weeklyCapApiUsd: ULTRA_WEEKLY / 2,
 		by: "Theo",
 		url: at(28),
-		basis: "A quarter of Theo's Max 20x figure (Max 5x vs 20x of Pro)",
+		basis: "Half Theo's Ultra figure (Max is 5x Pro weekly, Ultra 10x)",
 	},
 	"claude-pro": {
-		weeklyCapApiUsd: MAX_20X_WEEKLY / 20,
+		weeklyCapApiUsd: ULTRA_WEEKLY / 10,
 		by: "Theo",
 		url: at(28),
-		basis: "A twentieth of Theo's Max 20x figure (Max 20x is 20x Pro)",
+		basis: "A tenth of Theo's Ultra figure (Ultra is 10x Pro weekly)",
 	},
 	"chatgpt-pro-200": {
 		weeklyCapApiUsd: PRO_200_WEEKLY,

@@ -15,7 +15,7 @@ The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an
 
 - **Rate-window plans** have a 5-hour window plus a weekly cap: Claude, ChatGPT Plus, Google, Z.ai, MiniMax, Alibaba, Volcengine, Kimi (5-hour only) and OpenCode Go. Vendors publish multipliers or message estimates, not tokens. The exceptions are Z.ai credits, Alibaba request counts and OpenCode per-model numbers.
 - **Credit plans** pay a fixed dollar amount of usage at list rates. Copilot gives about 1.5x to 2x its price, Ollama 3x, JetBrains and Warp about 1x, and MiMo has a monthly credit quota. Their "subscription value" over the API is roughly the credit ratio, so the site should model them separately from rate-window plans.
-- **Bundled API credits:** Claude Max includes $100 (5x) or $200 (20x) a month of Claude Platform API credits. Google Ultra includes Google Cloud credits. Count these in value calculations.
+- **Bundled API credits:** Claude Max includes $100 and Ultra $200 a month of Claude Platform API credits. Google Ultra includes Google Cloud credits. Count these in value calculations.
 
 ## Third-party harness use (`thirdPartyHarnessAllowed`)
 

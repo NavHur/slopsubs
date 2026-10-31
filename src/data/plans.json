@@ -14,16 +14,16 @@
       "claude-sonnet-5-5",
       "claude-haiku-5-5"
     ],
-    "limits": "\"Every plan has usage limits that reset on a rolling five-hour session window, and paid plans add weekly limits on top.\" \"Pro gives you at least 5x more usage per 5-hour session than Free.\" \"Your activity across Claude on web, desktop, mobile, and Claude Code all draws from the same pool.\"",
+    "limits": "\"More usage than Free, every 5 hours and every week*\" (pricing page). \"Your activity across Claude on web, desktop, mobile, and Claude Code all draws from the same pool.\" Max is \"5x Pro usage\" and Ultra \"10x Pro usage every week\".",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 92.3076923076923,
+      "weeklyCapApiUsd": 184.6153846153846,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
-      "basis": "A twentieth of Theo's Max 20x figure (Max 20x is 20x Pro)"
+      "basis": "A tenth of Theo's Ultra figure (Ultra is 10x Pro weekly)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -33,7 +33,7 @@
     "id": "claude-max-5x",
     "vendor": "Claude Code",
     "lab": "anthropic",
-    "label": "Claude Max 5x",
+    "label": "Claude Max",
     "monthlyPriceUsd": 100,
     "harnesses": [
       "Claude Code (CLI, IDE, desktop, web)",
@@ -45,16 +45,16 @@
       "claude-haiku-5-5",
       "claude-fable-5-1"
     ],
-    "limits": "\"Max gives you 5x or 20x more usage per 5-hour session than Pro.\" Help center: \"five times the Pro plan's per-session usage allowance\"; \"Your session-based usage limit will reset every five hours.\" \"Max plans also have a weekly usage limit that applies across all models.\" Fable: \"50% of weekly limits*\".",
+    "limits": "\"5x Pro usage every 5 hours and every week*\" (pricing page). Help center: \"Get five times the Pro plan's usage every five hours and every week.\" Fable: \"Fable included, up to half your weekly limit\".",
     "includedApiCreditUsd": 100,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 461.53846153846155,
+      "weeklyCapApiUsd": 923.0769230769231,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
-      "basis": "A quarter of Theo's Max 20x figure (Max 5x vs 20x of Pro)"
+      "basis": "Half Theo's Ultra figure (Max is 5x Pro weekly, Ultra 10x)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -64,7 +64,7 @@
     "id": "claude-max-20x",
     "vendor": "Claude Code",
     "lab": "anthropic",
-    "label": "Claude Max 20x",
+    "label": "Claude Ultra",
     "monthlyPriceUsd": 200,
     "harnesses": [
       "Claude Code (CLI, IDE, desktop, web)",
@@ -76,16 +76,16 @@
       "claude-haiku-5-5",
       "claude-fable-5-1"
     ],
-    "limits": "Help center: \"20 times the Pro plan's per-session usage allowance\"; \"Your session-based usage limit will reset every five hours.\" \"Max plans also have a weekly usage limit that applies across all models.\" Fable: \"50% of weekly limits*\".",
+    "limits": "\"No 5-hour limit‡\" and \"10x Pro usage every week*\"; \"‡No 5-hour limit for verified accounts.\" Fable: \"50% of weekly limits*\".",
     "includedApiCreditUsd": 200,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
-    "sourceUrl": "https://support.claude.com/en/articles/11049741-what-is-the-max-plan",
+    "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
       "weeklyCapApiUsd": 1846.1538461538462,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
-      "basis": "Theo: $200 in, $8,000 a month of API-priced inference out"
+      "basis": "Theo: $200 in, $8,000 a month of API-priced inference out (as Max 20x, now Ultra)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
