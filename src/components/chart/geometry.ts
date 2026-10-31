@@ -115,12 +115,17 @@ const LINEAR_TICK_COUNTS = [6, 5, 4, 3, 2, 1] as const;
  * then every decade, then every second or third decade and so on.
  */
 export function xTicks(x: XScale, scale: AxisScale): number[] {
-	const candidates =
-		scale === "linear" ? linearCandidates(x) : logCandidates(x.domain());
+	const candidates = (
+		scale === "linear" ? linearCandidates(x) : logCandidates(x.domain())
+	).filter((ticks) => ticks.length > 0);
 	const fitting = candidates.find((ticks) => labelsFit(ticks, x));
-	// The last candidate is a single tick or none, which always fits.
-	return fitting ?? candidates[candidates.length - 1];
+	// A lone label always fits. d3's own ticks cover a short log domain
+	// that holds none of the mantissas, such as 0.0021–0.0042.
+	return fitting ?? [middleOf(candidates.at(-1) ?? x.ticks())];
 }
+
+const middleOf = (ticks: readonly number[]) =>
+	ticks[Math.floor(ticks.length / 2)];
 
 function linearCandidates(x: XScale): number[][] {
 	return LINEAR_TICK_COUNTS.map((count) => x.ticks(count));

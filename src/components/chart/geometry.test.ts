@@ -50,6 +50,20 @@ describe("xTicks", () => {
 		expect(xTicks(x, "log")).toEqual([0.001, 0.1, 10]);
 	});
 
+	it("labels a short log domain that holds no 1-2-5 tick", () => {
+		// One plan at $0.003 gives a domain of 0.7× to 1.4× its cost.
+		const x = scaleLog().domain([0.0021, 0.0042]).range([56, 1020]);
+		const ticks = xTicks(x, "log");
+		expect(ticks).toHaveLength(1);
+		expect(ticks[0]).toBeGreaterThanOrEqual(0.0021);
+		expect(ticks[0]).toBeLessThanOrEqual(0.0042);
+	});
+
+	it("falls back to one label when no tick count fits", () => {
+		const x = scaleLinear().domain([0, 10]).range([36, 46]);
+		expect(xTicks(x, "linear")).toHaveLength(1);
+	});
+
 	const widths = [220, 300, 360, 480, 640, 760, 930, 1200, 1600];
 	const logDomains = [
 		[0.0007, 0.02],
