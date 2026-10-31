@@ -83,8 +83,8 @@ function decodeChunk(
 	html: string,
 	marker: number,
 ): { text: string; next: number } {
-	const open = html.indexOf('"', marker);
-	if (open < 0)
+	const open = marker + CHUNK_MARKER.length;
+	if (html[open] !== '"')
 		throw new Error(`Flight chunk at offset ${marker} has no string literal`);
 	const close = stringLiteralEnd(html, open);
 	try {
