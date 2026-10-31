@@ -24,6 +24,34 @@ vp run build
 `vp test` runs the tests. The site deploys to Cloudflare Workers (static
 assets, configured in `wrangler.jsonc`) from CI on every push to `main`.
 
+## Benchmark Data
+
+The charts ship generated data, refreshed by three scripts in this order:
+
+```bash
+bun run import-benchmarks    # src/data/benchmarks.json
+bun run import-frontiercode  # src/data/frontiercode.json
+bun run build-plans          # plans.json and chart-benchmarks.json
+```
+
+[Artificial Analysis](https://artificialanalysis.ai) is the source of the
+model list, Intelligence Index scores, list prices and release dates, through
+its data API. The API needs a key: put `AA_API_KEY=...` in `.env.local` (which
+git ignores) and `bun` passes it to the script. Slopalytics still supplies the
+cost, tokens and wall-clock time per task that the free API does not publish,
+and the two sources are merged in `src/domain/catalog.ts`. A score they
+disagree on stops the import; a price they disagree on only warns, since a
+promo can explain the gap, and AA's list price wins.
+
+A model AA lists that slopalytics has not run yet makes the import stop, so
+the gap is deliberate rather than silent.
+`bun run import-benchmarks -- --allow-missing-cost` writes it with a null cost
+instead; the cost chart leaves it out until slopalytics runs it.
+
+FrontierCode 2.0 comes from Cognition's own `data.json`, not a reseller.
+`build-plans` then keeps only the points some plan covers and writes the
+chart's copy.
+
 ## Brand Images
 
 `public/og.png` (the 1200x630 social card) and `public/apple-touch-icon.png`
