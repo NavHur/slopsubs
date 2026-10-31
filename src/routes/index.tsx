@@ -163,7 +163,7 @@ function ValueView() {
 		<div className="flex min-h-dvh flex-col bg-bg text-fg lg:h-dvh">
 			<header
 				inert={panelOpen}
-				className="flex h-[60px] shrink-0 items-center gap-8 border-b border-line px-4 sm:px-7"
+				className="flex h-(--header-h) shrink-0 items-center gap-8 border-b border-line px-4 sm:px-7"
 			>
 				<a href="/" className="text-[22px] font-semibold tracking-tight">
 					slop<span className="text-accent">subs</span>
@@ -199,7 +199,7 @@ function ValueView() {
 					<h1 className="sr-only">
 						slopsubs: what a task really costs on a subscription
 					</h1>
-					<div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-x-6 border-b border-line bg-bg px-4 sm:px-7">
+					<div className="sticky top-0 z-10 flex min-h-(--section-nav-h) flex-wrap items-center justify-between gap-x-6 border-b border-line bg-bg px-4 sm:px-7">
 						<SectionNav
 							sections={SECTION_LINKS}
 							active={nav.active}
@@ -218,7 +218,7 @@ function ValueView() {
 						title={benchmark.chartTitle}
 						canExport={points.length > 0}
 						onExport={exportValueChart}
-						className="lg:h-[calc(100dvh-60px-45px)] lg:min-h-[540px]"
+						className="lg:h-[calc(100dvh-var(--header-h)-var(--section-nav-h))] lg:min-h-[540px]"
 						controls={
 							<>
 								<Toggle
