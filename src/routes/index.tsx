@@ -279,18 +279,25 @@ function ValueView() {
 						title="Effective cost per task, cheapest first"
 						canExport={costRows.length > 0}
 						onExport={exportRankedChart}
+						controls={
+							<Toggle
+								label="API prices"
+								checked={view.api}
+								onChange={(api) => update({ api })}
+							/>
+						}
 					>
 						<p className="mb-3 max-w-[72ch] text-[13px] leading-5 text-muted">
-							Each model on each selected plan, and at API prices, from low to
-							max effort. Rows rank by their cheapest effort, so the top rows
-							are the cheapest way to run a task at all.
+							Each model on each selected plan, and at API prices when they are
+							on, from low to max effort. Rows rank by their cheapest effort, so
+							the top rows are the cheapest way to run a task at all.
 						</p>
 						<CapBasisKey solidLabel={RANKED_KEY} className="mb-3" />
 						{costRows.length > 0 ? (
 							<RankedChart rows={costRows} />
 						) : (
 							<p className="py-10 text-center text-sm text-muted">
-								Select a plan or API prices to rank their costs.
+								Select a plan, or turn on API prices above, to rank their costs.
 							</p>
 						)}
 					</ChartSection>
