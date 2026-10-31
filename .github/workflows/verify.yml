@@ -23,31 +23,28 @@ jobs:
       matrix:
         include:
           - name: Format & lint
-            command: pnpm check
+            command: vp check
           - name: Typecheck
-            command: pnpm typecheck
+            command: vp run typecheck
           - name: Tests
-            command: pnpm test
+            command: vp test run
           - name: Build
-            command: pnpm build
+            command: vp run build
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
 
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 11.28.6
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
+      # Installs vp, Node.js, and the bun pinned in package.json, then runs
+      # `vp install` against bun.lock.
+      - name: Set up Vite+
+        uses: voidzero-dev/setup-vp@v1
         with:
           node-version: 24
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          cache: true
+          run-install: |
+            args:
+              - --frozen-lockfile
 
       - name: ${{ matrix.name }}
         run: ${{ matrix.command }}
@@ -69,25 +66,22 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v7
 
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 11.28.6
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
+      # Installs vp, Node.js, and the bun pinned in package.json, then runs
+      # `vp install` against bun.lock.
+      - name: Set up Vite+
+        uses: voidzero-dev/setup-vp@v1
         with:
           node-version: 24
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          cache: true
+          run-install: |
+            args:
+              - --frozen-lockfile
 
       - name: Build
-        run: pnpm build
+        run: vp run build
 
       - name: Deploy to Cloudflare Workers
-        run: pnpm exec wrangler deploy --message "${GITHUB_SHA::7}"
+        run: vp exec wrangler deploy --message "${GITHUB_SHA::7}"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: 5ea4a6a34a596082ec675da8024215d1

@@ -198,7 +198,7 @@ export function PlanList({
 			{valued.length === 0 && (
 				<p className="mb-3 text-[12px] leading-5 text-muted">
 					No plan measured yet. Record <code>/usage</code> marks with{" "}
-					<code>pnpm measure</code> to plot one.
+					<code>bun run measure</code> to plot one.
 				</p>
 			)}
 			{[...Map.groupBy(valued, (p) => p.vendor)].map(([vendor, group]) => (

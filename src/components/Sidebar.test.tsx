@@ -1,5 +1,5 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
 import { familyName } from "#/lib/families";
 import { FRONTIER_FAMILIES } from "#/lib/view";

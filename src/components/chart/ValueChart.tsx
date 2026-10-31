@@ -32,8 +32,8 @@ import {
 	xTicks,
 } from "./geometry";
 import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
-import { PointTooltip } from "./PointTooltip";
 import { usePointDetails } from "./pointDetails";
+import { PointTooltip } from "./PointTooltip";
 import { buildSeries, groupByModel, modelEnd, type Series } from "./series";
 
 /**
@@ -179,10 +179,10 @@ export function ValueChart({
 
 	return (
 		<div ref={ref} className="relative lg:min-h-0 lg:flex-1">
-			{/* biome-ignore lint/a11y/useSemanticElements: an SVG root cannot be a fieldset; role=img would hide the buttons inside */}
 			<svg
 				width={width}
 				height={height}
+				// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- an SVG root cannot be a fieldset; role=img would hide the buttons inside
 				role="group"
 				aria-label={`Effective cost per task versus ${benchmark.scoreLabel}`}
 				className="block select-none"

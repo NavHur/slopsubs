@@ -48,6 +48,7 @@ export function Tabs<T extends string>({
 		document.getElementById(tabId(options[next].value))?.focus();
 	};
 	return (
+		// oxlint-disable-next-line jsx-a11y/interactive-supports-focus -- the tabs take focus (roving tabindex), not the list
 		<div
 			role="tablist"
 			aria-label={label}

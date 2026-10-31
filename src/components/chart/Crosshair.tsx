@@ -47,7 +47,7 @@ export function Crosshair({
 	const cx = px(readouts.at.x);
 	const cy = px(readouts.at.y);
 	return (
-		// biome-ignore lint/a11y/noAriaHiddenOnFocusable: an SVG group is not focusable; the point's own label already reads these values
+		// oxlint-disable-next-line jsx-a11y/no-aria-hidden-on-focusable -- an SVG group is not focusable; the point's own label already reads these values
 		<g
 			aria-hidden="true"
 			className="pointer-events-none text-[12px] tabular-nums"

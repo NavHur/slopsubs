@@ -19,6 +19,7 @@ import { type Box, tooltipPlacement } from "./geometry";
 function useBorderBox<T extends HTMLElement>() {
 	const ref = useRef<T>(null);
 	const [box, setBox] = useState<Box | null>(null);
+	// oxlint-disable-next-line react-hooks/exhaustive-deps -- runs after every render on purpose; the size check stops the loop
 	useLayoutEffect(() => {
 		const node = ref.current;
 		if (!node) return;

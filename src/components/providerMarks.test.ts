@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import { familyLabId } from "#/lib/families";
 import { COVERED_FAMILIES } from "#/lib/view";
 import { PROVIDER_MARKS } from "./providerMarks";
