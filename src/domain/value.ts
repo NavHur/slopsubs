@@ -59,12 +59,16 @@ function unsampledCapacity(plan: Plan): PlanCapacity {
 }
 
 /** How a plan's weekly cap is known. */
-export type CapBasis = "measured" | "published" | "estimated";
+export type CapSource =
+	| { basis: "measured" }
+	/** `source` is the vendor's own description of the allowance. */
+	| { basis: "published"; source: string }
+	/** `source` is how the reported figure was reached. */
+	| { basis: "estimated"; source: string };
 
 /** API-priced usage one family may spend in a sustained week on a plan. */
-export type WeeklyAllowance = {
+export type WeeklyAllowance = CapSource & {
 	apiUsd: number;
-	basis: CapBasis;
 	/** Below 1 when the family only gets part of the cap. */
 	share: number;
 };
@@ -87,7 +91,7 @@ export function weeklyAllowance(
 function wholeWeeklyAllowance(
 	capacity: PlanCapacity,
 	family: FamilyId,
-): Omit<WeeklyAllowance, "share"> | null {
+): (CapSource & { apiUsd: number }) | null {
 	switch (capacity.kind) {
 		case "unmeasured":
 			return null;
@@ -95,10 +99,18 @@ function wholeWeeklyAllowance(
 			const monthly = capacity.allowance.apiUsdPerMonthByFamily[family];
 			return monthly === undefined
 				? null
-				: { apiUsd: monthly / WEEKS_PER_MONTH, basis: "published" };
+				: {
+						apiUsd: monthly / WEEKS_PER_MONTH,
+						basis: "published",
+						source: capacity.allowance.basis,
+					};
 		}
 		case "reported":
-			return { apiUsd: capacity.weeklyCapApiUsd, basis: "estimated" };
+			return {
+				apiUsd: capacity.weeklyCapApiUsd,
+				basis: "estimated",
+				source: capacity.report.basis,
+			};
 		case "measured":
 			return { apiUsd: capacity.weeklyCapApiUsd, basis: "measured" };
 	}

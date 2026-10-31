@@ -1,6 +1,6 @@
 import type { Plan } from "#/domain/model";
 import type { PlanTasks, TaskRow } from "#/domain/ranges";
-import type { CapBasis, WeeklyAllowance } from "#/domain/value";
+import type { WeeklyAllowance } from "#/domain/value";
 import { familyColor, familyName } from "#/lib/families";
 import { formatCount, formatUsd } from "#/lib/format";
 import { RangeChart, type RangeGroup, type RangeUnits } from "./RangeChart";
@@ -12,12 +12,12 @@ const TASK_UNITS: RangeUnits = {
 };
 
 /** Where a cap comes from, shown under the plan's heading. */
-function capSource(plan: Plan, basis: CapBasis): string {
-	switch (basis) {
+function capSource(allowance: WeeklyAllowance): string {
+	switch (allowance.basis) {
 		case "estimated":
-			return `${plan.reportedCap?.basis}. Not measured yet.`;
+			return `${allowance.source}. Not measured yet.`;
 		case "published":
-			return `${plan.publishedAllowance?.basis}, averaged over the weeks of a month`;
+			return `${allowance.source}, averaged over the weeks of a month`;
 		case "measured":
 			return "Measured from our own usage samples";
 	}
@@ -46,7 +46,7 @@ function PlanHeading({
 				</span>
 			</p>
 			<p className="mt-0.5 text-[12px] text-subtle [overflow-wrap:anywhere]">
-				{capSource(plan, allowance.basis)}
+				{capSource(allowance)}
 			</p>
 		</>
 	);

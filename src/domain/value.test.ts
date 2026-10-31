@@ -139,6 +139,7 @@ describe("weeklyAllowance", () => {
 		expect(weeklyAllowance(plan, reported, opus)).toEqual({
 			apiUsd: 1000,
 			basis: "estimated",
+			source: "estimate",
 			share: 1,
 		});
 	});
@@ -148,6 +149,7 @@ describe("weeklyAllowance", () => {
 		expect(weeklyAllowance(capped, reported, fable)).toEqual({
 			apiUsd: 500,
 			basis: "estimated",
+			source: "estimate",
 			share: 0.5,
 		});
 	});
@@ -164,6 +166,7 @@ describe("weeklyAllowance", () => {
 		expect(weeklyAllowance(plan, published, opus)).toEqual({
 			apiUsd: 12,
 			basis: "published",
+			source: "monthly usage by model",
 			share: 1,
 		});
 		expect(weeklyAllowance(plan, published, fable)).toBeNull();
