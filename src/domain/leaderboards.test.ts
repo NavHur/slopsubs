@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vite-plus/test";
-import { frontierCodePoints } from "./leaderboards";
-import type { BenchmarkPoint, FamilyId, FrontierCodeRow } from "./model";
+import { codingPoints, frontierCodePoints } from "./leaderboards";
+import type {
+	BenchmarkPoint,
+	CatalogPoint,
+	FamilyId,
+	FrontierCodeRow,
+} from "./model";
 
 // SAFETY: test ids stand in for branded family ids.
 const OPUS = "claude-opus-5-5" as FamilyId;
@@ -73,5 +78,35 @@ describe("frontierCodePoints", () => {
 		expect(() => frontierCodePoints([row(unknown, "max")], CATALOG)).toThrow(
 			"swe-2",
 		);
+	});
+});
+
+describe("codingPoints", () => {
+	const scored: CatalogPoint = {
+		...catalogPoint(OPUS, "max", "max", 60),
+		coding: { score: 44, costPerTaskUsd: 9, tokensPerTask: 80_000 },
+	};
+	const unscored: CatalogPoint = {
+		...catalogPoint(SOL, "none", "Non-reasoning", 0),
+		coding: null,
+	};
+
+	it("plots a point at its coding score, cost and tokens", () => {
+		const [point] = codingPoints([scored]);
+		expect(point).toMatchObject({
+			id: scored.id,
+			family: OPUS,
+			score: 44,
+			costPerTaskUsd: 9,
+			tokensPerTask: 80_000,
+			inputPricePerMTokUsd: 2,
+		});
+		expect(point).not.toHaveProperty("coding");
+	});
+
+	it("drops points never run on the coding evals", () => {
+		expect(codingPoints([unscored, scored]).map((p) => p.family)).toEqual([
+			OPUS,
+		]);
 	});
 });

@@ -3,7 +3,10 @@
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
-import { frontierCodePoints } from "../src/domain/leaderboards.ts";
+import {
+	codingPoints,
+	frontierCodePoints,
+} from "../src/domain/leaderboards.ts";
 import {
 	BenchmarkDataset,
 	type BenchmarkPoint,
@@ -362,6 +365,10 @@ const chart = ChartData.parse({
 		frontiercode: {
 			fetchedAt: frontierCode.fetchedAt,
 			models: onPlans(frontierCodePoints(frontierCode.rows, models)),
+		},
+		coding: {
+			fetchedAt: dataset.fetchedAt,
+			models: onPlans(codingPoints(models)),
 		},
 	},
 });

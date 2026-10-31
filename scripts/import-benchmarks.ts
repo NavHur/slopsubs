@@ -74,6 +74,18 @@ function extract(source: string, anchor: RegExp): Literal {
 const ROUND = (value: unknown, digits: number) =>
 	typeof value === "number" ? Number(value.toFixed(digits)) : null;
 
+// Slopalytics' "Code only" scores: Terminal-Bench 4.0 and FrontierCode 2.0,
+// weighted equally, with the cost and tokens of running just those evals.
+function codingScore(code: Literal | undefined) {
+	if (!code || typeof code !== "object" || Array.isArray(code)) return null;
+	return {
+		score: ROUND(code.intelligence, 2),
+		costPerTaskUsd: ROUND(code.cost, 5),
+		tokensPerTask: ROUND(code.tokens, 0),
+		secondsPerTask: ROUND(code.time, 1),
+	};
+}
+
 async function main() {
 	const bundle = await loadBundle(process.argv[2]);
 	const dataset = extract(bundle, /=\{fetchedAt:/) as Record<string, Literal>;
@@ -100,6 +112,7 @@ async function main() {
 		secondsPerTask: ROUND(m.time, 1),
 		inputPricePerMTokUsd: m.inputPrice,
 		outputPricePerMTokUsd: m.outputPrice,
+		coding: codingScore(m.code),
 	}));
 	const output = {
 		fetchedAt: dataset.fetchedAt,

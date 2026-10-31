@@ -1,4 +1,4 @@
-import type { BenchmarkPoint, FrontierCodeRow } from "./model";
+import type { BenchmarkPoint, CatalogPoint, FrontierCodeRow } from "./model";
 
 /**
  * FrontierCode rows as chart points, named, labelled and priced from the
@@ -28,4 +28,16 @@ export function frontierCodePoints(
 			secondsPerTask: null,
 		};
 	});
+}
+
+/**
+ * Catalog points rescored on their coding score, dropping those never run on
+ * the coding evals.
+ */
+export function codingPoints(
+	catalog: readonly CatalogPoint[],
+): BenchmarkPoint[] {
+	return catalog.flatMap(({ coding, ...point }) =>
+		coding ? [{ ...point, ...coding }] : [],
+	);
 }

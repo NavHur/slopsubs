@@ -42,6 +42,22 @@ const BenchmarkPoint = z.object({
 });
 export type BenchmarkPoint = z.infer<typeof BenchmarkPoint>;
 
+/**
+ * Slopalytics' coding score for one catalog point: Terminal-Bench 4.0 and
+ * FrontierCode 2.0 weighted equally, costed on those evals alone.
+ */
+const CodingScore = z.object({
+	score: z.number(),
+	costPerTaskUsd: Usd.nullable(),
+	tokensPerTask: z.number().nullable(),
+});
+
+/** A catalog point, with its coding score where it was run on the evals. */
+const CatalogPoint = BenchmarkPoint.extend({
+	coding: CodingScore.nullable(),
+});
+export type CatalogPoint = z.infer<typeof CatalogPoint>;
+
 /** The frontier families' size tier and chart colour, by family id. */
 const Frontier = z.record(
 	z.string(),
@@ -54,7 +70,7 @@ export const BenchmarkDataset = z.object({
 	fetchedAt: z.iso.datetime(),
 	source: z.string(),
 	frontier: Frontier,
-	models: z.array(BenchmarkPoint),
+	models: z.array(CatalogPoint),
 });
 export type BenchmarkDataset = z.infer<typeof BenchmarkDataset>;
 
@@ -79,6 +95,10 @@ export const FrontierCodeDataset = z.object({
 export const BENCHMARK_IDS = ["intelligence", "frontiercode"] as const;
 export type BenchmarkId = (typeof BENCHMARK_IDS)[number];
 
+/** What the chart can plot: each tab, and the coding score "Code only" swaps in. */
+export const LEADERBOARD_IDS = [...BENCHMARK_IDS, "coding"] as const;
+export type LeaderboardId = (typeof LEADERBOARD_IDS)[number];
+
 const Leaderboard = z.object({
 	fetchedAt: z.iso.datetime(),
 	models: z.array(BenchmarkPoint),
@@ -91,7 +111,8 @@ export const ChartData = z.object({
 	leaderboards: z.object({
 		intelligence: Leaderboard,
 		frontiercode: Leaderboard,
-	} satisfies Record<BenchmarkId, typeof Leaderboard>),
+		coding: Leaderboard,
+	} satisfies Record<LeaderboardId, typeof Leaderboard>),
 });
 
 /** A weekly cap someone else published, used until we measure our own. */
