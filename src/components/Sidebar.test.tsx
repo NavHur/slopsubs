@@ -12,11 +12,10 @@ function rows() {
 	const html = renderToStaticMarkup(
 		<FamilyList
 			selected={[]}
-			hiddenReasoning={[]}
+			filters={null}
 			isDefault
 			coverage={{ benchmarkName, scored: new Set([scored]) }}
 			onSelect={() => {}}
-			onHideReasoning={() => {}}
 			onReset={() => {}}
 		/>,
 	);

@@ -23,14 +23,13 @@ import {
 	FRONTIER_TIERS,
 	frontierTier,
 	NOTABLE_FAMILIES,
-	REASONING_LEVELS,
-	type ReasoningLevel,
 	toggled,
 	toggledGroup,
 } from "#/lib/view";
 import { PricingSwatch, SwatchSpace } from "./chart/PricingKey";
 import type { PricingId, PricingStyle } from "./chart/series";
 import { ProviderLogo } from "./ProviderLogo";
+import { Chip } from "./Segmented";
 
 /** "12×", or "1.5–6×" when the multiple differs by model. */
 function multipleText(plan: Plan, capacity: PlanCapacity): string {
@@ -373,59 +372,6 @@ function ResetButton({
 	);
 }
 
-/** A small text toggle, dimmed when off. */
-function Chip({
-	label,
-	on,
-	onClick,
-	className = "",
-}: {
-	label: string;
-	on: boolean;
-	onClick: () => void;
-	className?: string;
-}) {
-	return (
-		<button
-			type="button"
-			aria-pressed={on}
-			onClick={onClick}
-			className={`text-[12px] text-subtle hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[14px] ${className}`}
-		>
-			{label}
-		</button>
-	);
-}
-
-function ReasoningFilter({
-	hidden,
-	onChange,
-}: {
-	hidden: readonly ReasoningLevel[];
-	onChange: (hidden: ReasoningLevel[]) => void;
-}) {
-	const toggle = (level: ReasoningLevel) => {
-		const next = toggled(hidden, level);
-		onChange(REASONING_LEVELS.filter((l) => next.includes(l)));
-	};
-	return (
-		<fieldset aria-label="Reasoning" className="mb-4">
-			<h3 className="mb-1 text-[12px] font-medium text-subtle">Reasoning</h3>
-			<div className="flex flex-wrap gap-x-2.5 max-lg:gap-x-4">
-				{REASONING_LEVELS.map((level) => (
-					<Chip
-						key={level}
-						label={level}
-						on={!hidden.includes(level)}
-						onClick={() => toggle(level)}
-						className="line-through aria-pressed:no-underline"
-					/>
-				))}
-			</div>
-		</fieldset>
-	);
-}
-
 /** The benchmark on the chart, and the families it has a score for. */
 export type Coverage = {
 	benchmarkName: string;
@@ -556,19 +502,18 @@ function FrontierTierChips({ selection }: { selection: Selection }) {
 
 export function FamilyList({
 	selected,
-	hiddenReasoning,
+	filters,
 	isDefault,
 	coverage,
 	onSelect,
-	onHideReasoning,
 	onReset,
 }: {
 	selected: readonly FamilyId[];
-	hiddenReasoning: readonly ReasoningLevel[];
+	/** Controls that narrow what the chart plots, above the model list. */
+	filters: ReactNode;
 	isDefault: boolean;
 	coverage: Coverage;
 	onSelect: (families: FamilyId[]) => void;
-	onHideReasoning: (hidden: ReasoningLevel[]) => void;
 	onReset: () => void;
 }) {
 	const [query, setQuery] = useState("");
@@ -585,7 +530,7 @@ export function FamilyList({
 				<ResetButton disabled={isDefault} onReset={onReset} />
 			</div>
 			<ModelSearch query={query} onChange={setQuery} />
-			<ReasoningFilter hidden={hiddenReasoning} onChange={onHideReasoning} />
+			{filters}
 			{query.trim() === "" ? (
 				<>
 					<FamilyGroup
