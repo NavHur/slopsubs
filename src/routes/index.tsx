@@ -4,21 +4,21 @@ import type { AxisScale } from "#/components/chart/geometry";
 import { PricingKey } from "#/components/chart/PricingKey";
 import { buildSeries, pricingStyles } from "#/components/chart/series";
 import { ValueChart } from "#/components/chart/ValueChart";
-import {
-	ChartSettingsMenu,
-	DownloadPngButton,
-	ThemeToggle,
-} from "#/components/HeaderActions";
+import { ChartSection } from "#/components/ChartSection";
+import { ChartSettingsMenu, ThemeToggle } from "#/components/HeaderActions";
+import { PageFooter } from "#/components/PageFooter";
+import { SectionNav } from "#/components/SectionNav";
 import { Segmented, Toggle } from "#/components/Segmented";
 import { type Coverage, FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
-import { Tabs, tabId } from "#/components/Tabs";
 import { leaderboards, plans, samples } from "#/data";
 import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/model";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
-import { formatDay } from "#/lib/format";
+import { useSectionNav } from "#/lib/useSectionNav";
 import {
+	CHART_SECTIONS,
+	type ChartSectionId,
 	DEFAULT_MODELS_VIEW,
 	hiddenReasoning,
 	isDefaultModelsView,
@@ -33,9 +33,17 @@ export const Route = createFileRoute("/")({
 	component: ValueView,
 });
 
-const BENCHMARK_TABS = BENCHMARK_IDS.map((id) => ({
+const BENCHMARK_OPTIONS = BENCHMARK_IDS.map((id) => ({
 	value: id,
 	label: BENCHMARK_VIEWS[id].tabLabel,
+}));
+
+const SECTION_LABELS: Record<ChartSectionId, string> = {
+	"cost-vs-score": "Cost vs score",
+};
+const SECTION_LINKS = CHART_SECTIONS.map((id) => ({
+	id,
+	label: SECTION_LABELS[id],
 }));
 
 function coverageOf(id: BenchmarkId): Coverage {
@@ -51,33 +59,14 @@ const COVERAGE: Record<BenchmarkId, Coverage> = {
 	frontiercode: coverageOf("frontiercode"),
 };
 
-const CHART_PANEL = "chart-panel";
-
 const SCALE_OPTIONS = [
 	{ value: "linear", label: "Linear" },
 	{ value: "log", label: "Log" },
 ] as const satisfies readonly { value: AxisScale; label: string }[];
 
-function FooterLink({
-	href,
-	title,
-	children,
-}: {
-	href: string;
-	title?: string;
-	children: string;
-}) {
-	return (
-		<a
-			href={href}
-			title={title}
-			target="_blank"
-			rel="noreferrer"
-			className="underline decoration-dotted underline-offset-2 hover:text-fg"
-		>
-			{children}
-		</a>
-	);
+/** Loaded on demand so visitors who never export skip the code. */
+async function exporter() {
+	return (await import("#/lib/exportPng")).downloadChartPng;
 }
 
 function ValueView() {
@@ -86,7 +75,14 @@ function ValueView() {
 	const [panelOpen, setPanelOpen] = useState(false);
 	const closePanel = useCallback(() => setPanelOpen(false), []);
 	const update = (patch: Partial<ViewSearch>) =>
-		navigate({ search: (prev) => ({ ...prev, ...patch }), replace: true });
+		navigate({
+			search: (prev) => ({ ...prev, ...patch }),
+			replace: true,
+			resetScroll: false,
+		});
+	const nav = useSectionNav(CHART_SECTIONS, view.chart, (chart) =>
+		update({ chart }),
+	);
 
 	const benchmark = BENCHMARK_VIEWS[view.benchmark];
 	const leaderboard = leaderboards[view.benchmark];
@@ -103,18 +99,8 @@ function ValueView() {
 
 	const styles = pricingStyles(buildSeries(points));
 
-	const chart = (
-		<ValueChart
-			points={points}
-			scale={view.scale}
-			showPareto={view.pareto}
-			showLabels={view.labels}
-			benchmark={benchmark}
-		/>
-	);
-	const downloadPng = async () => {
-		// Loaded on demand so visitors who never export skip the code.
-		const { downloadChartPng } = await import("#/lib/exportPng");
+	const exportValueChart = async () => {
+		const downloadChartPng = await exporter();
 		await downloadChartPng({
 			// Labelled whatever the Labels setting: the image leaves the page,
 			// and colour alone cannot tell its models apart.
@@ -148,12 +134,6 @@ function ValueView() {
 					What a task really costs on a subscription
 				</p>
 				<div className="-mr-2 ml-auto flex items-center gap-1">
-					<div className="max-sm:hidden">
-						<DownloadPngButton
-							disabled={points.length === 0}
-							onDownload={downloadPng}
-						/>
-					</div>
 					<ThemeToggle />
 					<div className="max-sm:hidden">
 						<ChartSettingsMenu
@@ -178,26 +158,30 @@ function ValueView() {
 					inert={panelOpen}
 					className="flex min-w-0 flex-col lg:overflow-y-auto"
 				>
-					<div className="border-b border-line px-4 sm:px-7">
-						<Tabs
-							label="Benchmark"
-							options={BENCHMARK_TABS}
+					<h1 className="sr-only">
+						slopsubs: what a task really costs on a subscription
+					</h1>
+					<div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-x-6 border-b border-line bg-bg px-4 sm:px-7">
+						<SectionNav
+							sections={SECTION_LINKS}
+							active={nav.active}
+							onSelect={nav.scrollTo}
+						/>
+						<Segmented
+							label="Benchmark that defines a task"
+							options={BENCHMARK_OPTIONS}
 							value={view.benchmark}
-							panelId={CHART_PANEL}
 							onChange={(id) => update({ benchmark: id })}
 						/>
 					</div>
-					<section
-						id={CHART_PANEL}
-						role="tabpanel"
-						aria-labelledby={tabId(view.benchmark)}
-						className="flex flex-col px-4 pt-5 pb-6 sm:px-7 lg:min-h-0 lg:flex-1 lg:pb-3"
-					>
-						<div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-							<h1 className="text-[17px] font-semibold">
-								{benchmark.chartTitle}
-							</h1>
-							<div className="flex items-center gap-x-6 max-sm:w-full max-sm:justify-between">
+					<ChartSection
+						id="cost-vs-score"
+						title={benchmark.chartTitle}
+						canExport={points.length > 0}
+						onExport={exportValueChart}
+						className="lg:h-[calc(100dvh-60px-45px)] lg:min-h-[540px]"
+						controls={
+							<>
 								<Toggle
 									label="API prices"
 									checked={view.api}
@@ -214,46 +198,23 @@ function ValueView() {
 									value={view.scale}
 									onChange={(scale) => update({ scale })}
 								/>
-							</div>
-						</div>
-						{chart}
+							</>
+						}
+					>
+						<ValueChart
+							points={points}
+							scale={view.scale}
+							showPareto={view.pareto}
+							showLabels={view.labels}
+							benchmark={benchmark}
+						/>
 						{/* From lg the side panel shows each plan's line style; the PNG draws its own key. */}
 						<PricingKey
 							pricings={[...styles.values()]}
 							className="mt-3 lg:hidden"
 						/>
-					</section>
-					<footer className="mt-auto flex flex-wrap justify-between gap-x-6 border-t border-line px-4 py-3 text-[12px] leading-5 text-muted sm:px-7">
-						<span>
-							Data from{" "}
-							<FooterLink href={benchmark.source.url}>
-								{benchmark.source.name}
-							</FooterLink>
-							{benchmark.via && (
-								<>
-									{" "}
-									via{" "}
-									<FooterLink href={benchmark.via.url}>
-										{benchmark.via.name}
-									</FooterLink>
-								</>
-							)}{" "}
-							· estimated caps from{" "}
-							<FooterLink
-								href="https://www.youtube.com/watch?v=nYA0yASgaZI"
-								title="Weekly caps from Theo's numbers until we measure them"
-							>
-								Theo
-							</FooterLink>
-						</span>
-						<time
-							dateTime={leaderboard.fetchedAt}
-							title="When the benchmarks were fetched"
-							className="text-subtle"
-						>
-							Updated {formatDay(leaderboard.fetchedAt)}
-						</time>
-					</footer>
+					</ChartSection>
+					<PageFooter benchmark={benchmark} fetchedAt={leaderboard.fetchedAt} />
 				</main>
 				<SidePanel title="Plans & models" open={panelOpen} onClose={closePanel}>
 					<PlanList
