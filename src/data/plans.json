@@ -305,7 +305,7 @@
       "deepseek-v4-pro",
       "grok-4-7"
     ],
-    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\"; the 5-hour window gets 20% of the monthly dollars and the weekly window 50%. E.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K3.1 Pro 147 / $15; Kimi K2.7 Code 1,350 / $60; LongCat-2.0 11,400 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 34,670 / $80. Beam Free is unlimited for a limited time.",
+    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\"; the 5-hour window gets 20% of the monthly dollars and the weekly window 50%. E.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K3.1 Pro 147 / $15; Kimi K2.7 Code 1,350 / $60; LongCat-2.0 11,400 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 43,330 / $100. Beam Free and Iceman Contributor Free are unlimited for a limited time.",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
@@ -336,7 +336,7 @@
         "mimo-v2-5-pro": 15.568965517241379,
         "mimo-v2-5-0424": 57,
         "hy3": 57.78,
-        "deepseek-v4-1-flash-1017": 80,
+        "deepseek-v4-1-flash-1017": 100,
         "deepseek-v4-pro": 15,
         "grok-4-7": 15
       },
@@ -393,7 +393,7 @@
       "deepseek-v4-pro",
       "grok-4-7"
     ],
-    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K3.1 Pro 588 / $60; Kimi K2.7 Code 4,050 / $180; LongCat-2.0 45,600 / $240; DeepSeek V4.1 Flash 69,330 / $160.",
+    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K3.1 Pro 588 / $60; Kimi K2.7 Code 4,050 / $180; LongCat-2.0 45,600 / $240; DeepSeek V4.1 Flash 86,670 / $200.",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
@@ -424,7 +424,7 @@
         "mimo-v2-5-pro": 62.275862068965516,
         "mimo-v2-5-0424": 114,
         "hy3": 231.12,
-        "deepseek-v4-1-flash-1017": 160,
+        "deepseek-v4-1-flash-1017": 200,
         "deepseek-v4-pro": 60,
         "grok-4-7": 60
       },

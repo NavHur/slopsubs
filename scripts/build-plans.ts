@@ -19,7 +19,7 @@ const ROOT = new URL("..", import.meta.url);
 
 const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-1-terra", "gpt-6-luna"];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
-// Monthly usage on Go and Go Plus (opencode.ai/docs/go, 2026-10-26), in dollars
+// Monthly usage on Go and Go Plus (opencode.ai/docs/go, 2026-10-31), in dollars
 // at Go's token prices; GO_OFF_LIST_PRICES and GO_PROMOS cover those off list.
 const OPENCODE_DOCS = "https://opencode.ai/docs/go#usage-limits";
 const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
@@ -48,7 +48,7 @@ const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	hy3: [60, 240],
 	// Go serves V4.1 Flash's 1017 build since 2026-10-19 (research/plans/opencode.json).
 	// At peak prices, which match the list; off-peak usage goes twice as far.
-	"deepseek-v4-1-flash-1017": [80, 160],
+	"deepseek-v4-1-flash-1017": [100, 200],
 	"deepseek-v4-pro": [15, 60],
 	"grok-4-7": [15, 60],
 };
