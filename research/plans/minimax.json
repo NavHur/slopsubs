@@ -17,7 +17,7 @@
       "other tools via Subscription Key"
     ],
     "models": [
-      "MiniMax M3.1 Flash Preview",
+      "MiniMax M3.1 Flash",
       "image and audio models"
     ],
     "limits": "Usage relative to Go: 1x (baseline). Text, image, audio: 'Subject to a 5-hour window and a weekly window.' 'Both windows start with your first use: the 5-hour window lasts 5 hours, and the weekly window lasts 7 days.' No absolute numbers published.",
@@ -25,23 +25,23 @@
     "sources": [
       {
         "url": "https://platform.minimax.io/docs/m-plan/intro",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://platform.minimax.io/docs/m-plan/faq.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://platform.minimax.io/docs/m-plan/usage-rules.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://platform.minimax.io/docs/m-plan/monthly-offer.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "$22/mo regular price comes from the launch-offer doc, whose 50% first-month offer ran 'through October 14'. Annual: 'pay for 10 months and get 2 months free', so $220/yr = $18.33/mo by my calculation. M Plan replaced Token Plan (Plus/Max/Ultra, now closed to new buyers). Separate Subscription Key; pay-as-you-go keys aren't interchangeable."
+    "notes": "$22/mo regular price comes from the launch-offer doc, whose 50% first-month offer ended on 2026-10-14. Annual: 'pay for 10 months and get 2 months free', so $220/yr = $18.33/mo by my calculation. M3.1 Flash Preview was retired and its name now routes to M3.1 Flash. M Plan replaced Token Plan (Plus/Max/Ultra, now closed to new buyers). Separate M Plan API key; pay-as-you-go keys aren't interchangeable."
   },
   {
     "vendor": "MiniMax",
@@ -60,7 +60,7 @@
       "OpenClaw"
     ],
     "models": [
-      "MiniMax M3.1 Flash Preview",
+      "MiniMax M3.1 Flash",
       "H3 video",
       "image and audio models"
     ],
@@ -69,11 +69,11 @@
     "sources": [
       {
         "url": "https://platform.minimax.io/docs/m-plan/faq.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://platform.minimax.io/docs/m-plan/monthly-offer.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
@@ -96,7 +96,7 @@
       "OpenClaw"
     ],
     "models": [
-      "MiniMax M3.1 Flash Preview",
+      "MiniMax M3.1 Flash",
       "H3 video",
       "image and audio models"
     ],
@@ -105,11 +105,11 @@
     "sources": [
       {
         "url": "https://platform.minimax.io/docs/m-plan/faq.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://platform.minimax.io/docs/m-plan/monthly-offer.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",

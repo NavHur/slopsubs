@@ -13,14 +13,11 @@
       "Codex",
       "OpenClaw",
       "Hermes Agent",
-      "Kilo Code",
-      "third-party via OpenAI/Anthropic-compatible endpoint"
+      "Kilo Code"
     ],
     "models": [
       "mimo-v2.6-pro",
       "mimo-v2.6-flash",
-      "mimo-v2.5-pro (retires 2026-10-21)",
-      "mimo-v2.5 (retires 2026-10-21)",
       "mimo-v2.5-asr",
       "mimo-v2.5-tts"
     ],
@@ -29,19 +26,19 @@
     "sources": [
       {
         "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://mimo.mi.com/static/docs/tokenplan/Token%20Plan/subscription.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://mimo.mi.com/static/docs/quick-start/faq/token-plan/Plans&Pricing.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "¥39/mo. Annual: $63.36/yr (¥411.84). Monthly quota only, with no 5-hour or weekly window in the docs. 12% first-purchase discount. No refunds. Xiaomi documents integrations for several third-party tools and I found no supported-tools-only clause, but I didn't read the full ToS."
+    "notes": "¥39/mo. Annual: $63.36/yr (¥411.84). Monthly quota only, with no 5-hour or weekly window in the docs. 12% first-purchase discount. No refunds. MiMo-V2.5-Pro and MiMo-V2.5 were retired on 2026-10-21; every tier now has 'mimo-v2.6-pro, mimo-v2.6-flash, as well as ASR and TTS models'. Xiaomi documents integrations for several third-party tools, but the subscription terms prohibit 'API calls for request behaviors in obvious non-coding scenarios', such as automated scripts and custom application backends. The page's CNY annual prices are ¥408, ¥1,044, ¥3,468 and ¥6,948, slightly below the converted figures in these notes."
   },
   {
     "vendor": "Xiaomi MiMo",
@@ -70,7 +67,7 @@
     "sources": [
       {
         "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
@@ -103,7 +100,7 @@
     "sources": [
       {
         "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
@@ -136,7 +133,7 @@
     "sources": [
       {
         "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",

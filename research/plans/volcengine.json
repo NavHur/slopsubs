@@ -19,9 +19,7 @@
       "Doubao-Seed-Evolving",
       "DeepSeek-V4.1-Flash",
       "GLM-5.3 series",
-      "Kimi-K3",
-      "Kimi-K2.8-Preview",
-      "MiniMax",
+      "Kimi-K3.1-pro",
       "Auto mode"
     ],
     "limits": "About 1,200 requests per 5 hours, about 9,000 per week, about 18,000 per subscription month (Volcengine articles). 5-hour window counted from first request; weekly resets Monday 00:00; monthly from purchase date.",
@@ -29,19 +27,19 @@
     "sources": [
       {
         "url": "https://www.volcengine.com/activity/codingplan",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://www.volcengine.com/article/37156",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://codingplan.org/plans/volcengine",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "secondary",
-    "notes": "The official page loads prices dynamically ('价格查询中'); it only states '限时 9.9 元起'. The ¥40/mo list price is secondary. USD is my conversion at about 7.1 CNY/USD. Promo: first two months at 25% of list (¥9.9) until 2026-11-08 (secondary). China region only. Volcengine articles say quota works only in supported coding tools and API use outside them may be treated as abuse."
+    "notes": "The official page loads prices dynamically ('价格查询中'); it only states '限时 9.9 元起'. The ¥40/mo list price is secondary. USD is my conversion at about 7.1 CNY/USD. Promo: first two months at 25% of list (¥9.9); a secondary source said until 2026-11-08, but Volcengine's own article says '首两月2.5折优惠截止到2026年9月30日', so it may have ended. The activity page still says '限时 9.9 元起'. Model list as of 2026-10-31: 'Deepseek-V4.1-Flash、GLM-5.3 系列、Doubao-Seed-Evolving、Kimi-K3.1-pro'; Kimi-K3, K2.8-Preview and MiniMax are gone. China region only. Volcengine articles say quota works only in supported coding tools and API use outside them may be treated as abuse."
   },
   {
     "vendor": "ByteDance Volcengine (Ark)",
@@ -63,21 +61,19 @@
       "Doubao-Seed-Evolving",
       "DeepSeek-V4.1-Flash",
       "GLM-5.3 series",
-      "Kimi-K3",
-      "Kimi-K2.8-Preview",
-      "MiniMax",
+      "Kimi-K3.1-pro",
       "Auto mode"
     ],
-    "limits": "'5 倍于 Lite 套餐的用量' (official page); about 6,000 per 5 hours, 45,000 per week, 90,000 per month (Volcengine articles).",
+    "limits": "'5 倍于 Lite 套餐的用量' (official page); about 6,000 per 5 hours, 45,000 per week, 90,000 per month, derived from Lite (the articles say only 5x Lite).",
     "thirdPartyHarnessAllowed": "unclear",
     "sources": [
       {
         "url": "https://www.volcengine.com/activity/codingplan",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://www.volcengine.com/article/37156",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "secondary",

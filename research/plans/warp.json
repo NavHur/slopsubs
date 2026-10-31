@@ -4,7 +4,7 @@
     "planId": "warp-build",
     "label": "Warp Build",
     "monthlyPriceUsd": 20,
-    "annualMonthlyPriceUsd": null,
+    "annualMonthlyPriceUsd": 18,
     "harnesses": [
       "Warp Terminal agent",
       "Warp Agent CLI",
@@ -18,7 +18,7 @@
     "sources": [
       {
         "url": "https://www.warp.dev/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
@@ -29,7 +29,7 @@
     "planId": "warp-max",
     "label": "Warp Max",
     "monthlyPriceUsd": 200,
-    "annualMonthlyPriceUsd": null,
+    "annualMonthlyPriceUsd": 180,
     "harnesses": [
       "Warp Terminal agent",
       "Warp Agent CLI",
@@ -43,7 +43,7 @@
     "sources": [
       {
         "url": "https://www.warp.dev/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",

@@ -20,23 +20,23 @@
     "sources": [
       {
         "url": "https://github.com/features/copilot/plans",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://docs.github.com/en/copilot/get-started/plans",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://github.blog/changelog/2026-01-16-github-copilot-now-supports-opencode/",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://github.blog/changelog/2026-04-20-changes-to-github-copilot-plans-for-individuals/",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "Usage-based since 2026-06-01: credits are drawn at per-model rates, so this behaves like a ~1.5x prepaid credit, not a rate window. OpenCode is officially supported for paid plans (changelog 2026-01-16). Third-party agents (Claude, Codex) inside Copilot need Pro+ or higher. New signups for Pro/Pro+/Max were paused on 2026-04-20 and still paused per the 2026-06-01 changelog; current signup status wasn't verified. Per the April changelog, Opus was removed from Pro. Annual price not shown on current pages."
+    "notes": "Usage-based since 2026-06-01: credits are drawn at per-model rates, so this behaves like a ~1.5x prepaid credit, not a rate window. OpenCode is officially supported for paid plans (changelog 2026-01-16). Third-party agents (Claude, Codex) inside Copilot need Pro+ or higher per the features page, though the plans docs table marks them 'Included' for Pro. New signups for Pro/Pro+/Max were paused on 2026-04-20 and reopened gradually from 2026-06-17 ('We're reopening sign-ups for GitHub Copilot Student, Pro, Pro+, and Max plans'); the plans page shows 'Get started' on every plan. Per the April changelog, Opus was removed from Pro. Annual price not shown on current pages."
   },
   {
     "vendor": "GitHub",
@@ -60,19 +60,19 @@
     "sources": [
       {
         "url": "https://github.com/features/copilot/plans",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://docs.github.com/en/copilot/get-started/plans",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://github.blog/changelog/2026-01-16-github-copilot-now-supports-opencode/",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "Credit plan worth ~1.8x its price at list model rates. Signups may still be paused (see Pro)."
+    "notes": "Credit plan worth ~1.8x its price at list model rates. Signups reopened from 2026-06-17 (see Pro)."
   },
   {
     "vendor": "GitHub",
@@ -96,15 +96,15 @@
     "sources": [
       {
         "url": "https://github.com/features/copilot/plans",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://docs.github.com/en/copilot/get-started/plans",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://github.blog/changelog/2026-06-01-updates-to-github-copilot-billing-and-plans/",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",

@@ -2,7 +2,7 @@
   {
     "vendor": "Chutes",
     "planId": "chutes-plus",
-    "label": "Chutes Plus",
+    "label": "Chutes Plus (discontinued)",
     "monthlyPriceUsd": 10,
     "annualMonthlyPriceUsd": null,
     "harnesses": [
@@ -16,16 +16,16 @@
     "sources": [
       {
         "url": "https://chutes.ai/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "Daily request quota size is not on the pricing page ('View plan limits' link not fetched)."
+    "notes": "Discontinued: \"Monthly plans are no longer sold on chutes.ai. If you already have one, it stays active until the end of your current billing period and then does not renew.\" Chutes is now pay-as-you-go only; no end date is given. Daily request quota size is not on the pricing page ('View plan limits' link not fetched)."
   },
   {
     "vendor": "Chutes",
     "planId": "chutes-pro",
-    "label": "Chutes Pro",
+    "label": "Chutes Pro (discontinued)",
     "monthlyPriceUsd": 20,
     "annualMonthlyPriceUsd": null,
     "harnesses": [
@@ -39,10 +39,10 @@
     "sources": [
       {
         "url": "https://chutes.ai/pricing",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       }
     ],
     "confidence": "primary",
-    "notes": "Quota size unverified."
+    "notes": "Discontinued: \"Monthly plans are no longer sold on chutes.ai. If you already have one, it stays active until the end of your current billing period and then does not renew.\" Chutes is now pay-as-you-go only; no end date is given. Quota size unverified."
   }
 ]
