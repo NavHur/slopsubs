@@ -1,8 +1,10 @@
 import { scaleLinear, scaleLog } from "d3-scale";
 import { describe, expect, it } from "vite-plus/test";
+import { formatUsd } from "#/lib/format";
 import {
 	axisReadouts,
 	chartLayout,
+	MIN_TICK_LABEL_GAP_PX,
 	overlaps,
 	tooltipPlacement,
 	xTickLabelBox,
@@ -10,27 +12,103 @@ import {
 	yTickLabelBox,
 } from "./geometry";
 
-const minGap = (ticks: number[], x: (t: number) => number) =>
-	Math.min(...ticks.slice(1).map((t, i) => x(t) - x(ticks[i])));
+const axisLayout = chartLayout({ width: 1200, height: 620 }, { labels: true });
+
+/** Smallest clear space between neighbouring tick labels' boxes. */
+const minLabelGap = (ticks: number[], x: (t: number) => number) =>
+	Math.min(
+		...ticks.slice(1).map((t, i) => {
+			const prev = xTickLabelBox(formatUsd(ticks[i]), x(ticks[i]), axisLayout);
+			const next = xTickLabelBox(formatUsd(t), x(t), axisLayout);
+			return next.left - (prev.left + prev.width);
+		}),
+	);
 
 describe("xTicks", () => {
-	it("keeps every log tick when the axis is wide", () => {
-		const x = scaleLog().domain([0.001, 10]).range([56, 760]);
+	it("keeps 1-2-5 log ticks when they have room", () => {
+		const x = scaleLog().domain([0.001, 1]).range([56, 1020]);
 		expect(xTicks(x, "log")).toEqual([
-			0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10,
+			0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1,
 		]);
 	});
 
-	it("thins a narrow log axis to decades spaced apart", () => {
-		const x = scaleLog().domain([0.001, 10]).range([36, 360]);
-		const ticks = xTicks(x, "log");
-		expect(ticks).toEqual([0.001, 0.01, 0.1, 1, 10]);
-		expect(minGap(ticks, x)).toBeGreaterThanOrEqual(44);
+	it("drops to 1-3 when 1-2-5 would crowd a desktop axis", () => {
+		// A ~930px chart beside the label column, spanning five decades.
+		const x = scaleLog().domain([0.0007, 70]).range([56, 750]);
+		expect(xTicks(x, "log")).toEqual([
+			0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30,
+		]);
 	});
 
-	it("asks a narrow linear axis for fewer ticks", () => {
-		const x = scaleLinear().domain([0, 10]).range([36, 200]);
-		expect(minGap(xTicks(x, "linear"), x)).toBeGreaterThanOrEqual(44);
+	it("thins a narrow log axis to decades", () => {
+		const x = scaleLog().domain([0.001, 10]).range([36, 360]);
+		expect(xTicks(x, "log")).toEqual([0.001, 0.01, 0.1, 1, 10]);
+	});
+
+	it("skips decades when even those would crowd", () => {
+		const x = scaleLog().domain([0.001, 100]).range([36, 220]);
+		expect(xTicks(x, "log")).toEqual([0.001, 0.1, 10]);
+	});
+
+	it("labels a short log domain that holds no 1-2-5 tick", () => {
+		// One plan at $0.003 gives a domain of 0.7× to 1.4× its cost.
+		const x = scaleLog().domain([0.0021, 0.0042]).range([56, 1020]);
+		const ticks = xTicks(x, "log");
+		expect(ticks).toHaveLength(1);
+		expect(ticks[0]).toBeGreaterThanOrEqual(0.0021);
+		expect(ticks[0]).toBeLessThanOrEqual(0.0042);
+	});
+
+	it("labels a log domain that holds no 1, 2, 3 or 5 tick", () => {
+		const x = scaleLog().domain([0.0036, 0.0048]).range([56, 1020]);
+		const ticks = xTicks(x, "log");
+		expect(ticks).toHaveLength(1);
+		expect(ticks[0]).toBeGreaterThanOrEqual(0.0036);
+		expect(ticks[0]).toBeLessThanOrEqual(0.0048);
+	});
+
+	it("falls back to one label when no tick count fits", () => {
+		const x = scaleLinear().domain([0, 10]).range([36, 46]);
+		expect(xTicks(x, "linear")).toHaveLength(1);
+	});
+
+	const widths = [220, 300, 360, 480, 640, 760, 930, 1200, 1600];
+	const logDomains = [
+		[0.0007, 0.02],
+		[0.0007, 70],
+		[0.003, 4],
+		[0.02, 900],
+		[0.5, 30],
+	];
+	const linearDomains = [
+		[0, 0.03],
+		[0, 1.5],
+		[0, 70],
+		[0, 1250],
+	];
+	it.each(widths)("never lets labels collide on a %ipx axis", (width) => {
+		const axes = [
+			...logDomains.map((d) => ({
+				scale: "log" as const,
+				x: scaleLog().domain(d),
+			})),
+			...linearDomains.map((d) => ({
+				scale: "linear" as const,
+				x: scaleLinear().domain(d),
+			})),
+		];
+		for (const { scale, x } of axes) {
+			x.range([36, width]);
+			const ticks = xTicks(x, scale);
+			const axis = `${scale} ${x.domain().join("–")} at ${width}px`;
+			expect(ticks.length, axis).toBeGreaterThan(0);
+			if (ticks.length > 1) {
+				expect(
+					minLabelGap(ticks, x),
+					`${axis}: ${ticks.join(", ")}`,
+				).toBeGreaterThanOrEqual(MIN_TICK_LABEL_GAP_PX);
+			}
+		}
 	});
 });
 
