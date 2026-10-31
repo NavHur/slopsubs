@@ -59,6 +59,14 @@ describe("xTicks", () => {
 		expect(ticks[0]).toBeLessThanOrEqual(0.0042);
 	});
 
+	it("labels a log domain that holds no 1, 2, 3 or 5 tick", () => {
+		const x = scaleLog().domain([0.0036, 0.0048]).range([56, 1020]);
+		const ticks = xTicks(x, "log");
+		expect(ticks).toHaveLength(1);
+		expect(ticks[0]).toBeGreaterThanOrEqual(0.0036);
+		expect(ticks[0]).toBeLessThanOrEqual(0.0048);
+	});
+
 	it("falls back to one label when no tick count fits", () => {
 		const x = scaleLinear().domain([0, 10]).range([36, 46]);
 		expect(xTicks(x, "linear")).toHaveLength(1);

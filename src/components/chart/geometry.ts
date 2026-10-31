@@ -120,7 +120,7 @@ export function xTicks(x: XScale, scale: AxisScale): number[] {
 	).filter((ticks) => ticks.length > 0);
 	const fitting = candidates.find((ticks) => labelsFit(ticks, x));
 	// A lone label always fits. d3's own ticks cover a short log domain
-	// that holds none of the mantissas, such as 0.0021–0.0042.
+	// that holds none of the mantissas, such as 0.0036–0.0048.
 	return fitting ?? [middleOf(candidates.at(-1) ?? x.ticks())];
 }
 
@@ -132,14 +132,15 @@ function linearCandidates(x: XScale): number[][] {
 }
 
 function logCandidates([lo, hi]: number[]): number[][] {
-	const sub = LOG_TICK_MANTISSAS.map((mantissas) =>
+	const byMantissas = LOG_TICK_MANTISSAS.map((mantissas) =>
 		logTicks(lo, hi, mantissas),
 	);
-	const decades = sub[sub.length - 1];
-	const strided = decades
-		.slice(1)
-		.map((_, i) => decades.filter((__, j) => j % (i + 2) === 0));
-	return [...sub, ...strided];
+	const decades = logTicks(lo, hi, [1]);
+	const strides = Array.from({ length: decades.length - 1 }, (_, i) => i + 2);
+	const everyNthDecade = strides.map((stride) =>
+		decades.filter((_, i) => i % stride === 0),
+	);
+	return [...byMantissas, ...everyNthDecade];
 }
 
 function logTicks(
@@ -163,14 +164,11 @@ function logTicks(
 }
 
 /** Whether each tick label clears the next by MIN_TICK_LABEL_GAP_PX. */
-export function labelsFit(ticks: readonly number[], x: XScale): boolean {
+function labelsFit(ticks: readonly number[], x: XScale): boolean {
 	return ticks.slice(1).every((tick, i) => {
-		const prev = ticks[i];
-		const clear =
-			x(tick) -
-			textWidth(formatUsd(tick)) / 2 -
-			(x(prev) + textWidth(formatUsd(prev)) / 2);
-		return clear >= MIN_TICK_LABEL_GAP_PX;
+		const prev = xTickLabelSpan(formatUsd(ticks[i]), x(ticks[i]));
+		const next = xTickLabelSpan(formatUsd(tick), x(tick));
+		return next.left - (prev.left + prev.width) >= MIN_TICK_LABEL_GAP_PX;
 	});
 }
 
@@ -312,16 +310,20 @@ export const X_TICK_LABEL_DROP_PX = 22;
 /** Gap between the y-axis tick labels and the plot. */
 export const Y_TICK_LABEL_GAP_PX = 12;
 
+/** Horizontal extent of an x-axis tick label centred on its tick. */
+function xTickLabelSpan(label: string, centerX: number) {
+	const width = textWidth(label);
+	return { left: centerX - width / 2, width };
+}
+
 export function xTickLabelBox(
 	label: string,
 	centerX: number,
 	{ height, margin }: ChartLayout,
 ): Rect {
-	const width = textWidth(label);
 	return {
-		left: centerX - width / 2,
+		...xTickLabelSpan(label, centerX),
 		top: height - margin.bottom + X_TICK_LABEL_DROP_PX - TICK_LABEL_ASCENT_PX,
-		width,
 		height: TICK_LABEL_HEIGHT_PX,
 	};
 }
