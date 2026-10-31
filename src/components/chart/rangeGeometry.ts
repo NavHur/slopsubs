@@ -16,7 +16,8 @@ export type RangeLayout = {
 	compact: boolean;
 	/** Width of the strip the dots are drawn on. */
 	trackWidth: number;
-	/** CSS grid columns of a row: label, track, value; or one column. */
+	/** CSS grid columns of a row: label, track, value; or label and
+	 * value over a full-width track when compact. */
 	columns: string;
 };
 
@@ -61,11 +62,17 @@ export function rangeTicks(x: RangeScale): number[] {
 	const fit = Math.max(2, Math.floor((right - left) / MIN_TICK_SPACING_PX));
 	for (const multiples of TICK_MULTIPLES) {
 		const ticks = roundValues(lo, hi, multiples);
-		if (ticks.length <= fit) return ticks;
+		if (ticks.length > 0 && ticks.length <= fit) return ticks;
 	}
+	// A domain inside one decade can hold none of the round multiples.
 	const decades = roundValues(lo, hi, [1]);
-	const stride = Math.ceil(decades.length / fit);
-	return decades.filter((_, i) => i % stride === 0);
+	return thin(decades.length > 0 ? decades : x.ticks(fit), fit);
+}
+
+/** Every nth value, so at most `limit` remain. */
+function thin(values: number[], limit: number): number[] {
+	const stride = Math.ceil(values.length / limit);
+	return values.filter((_, i) => i % stride === 0);
 }
 
 function roundValues(lo: number, hi: number, multiples: number[]): number[] {
