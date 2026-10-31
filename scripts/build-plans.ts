@@ -123,10 +123,18 @@ const SHORT_LABELS: Record<string, string> = {
 	"opencode-go-plus": "OpenCode Go Plus",
 };
 
+/** "Fable included, up to half your weekly limit" (claude.com/pricing). */
+const FABLE_HALF = { "claude-fable-5-1": 0.5 };
+
 /** Benchmarked families each plan includes. */
 const PLAN_FAMILIES: Record<
 	string,
-	{ lab: string; families: string[]; includedApiCreditUsd?: number }
+	{
+		lab: string;
+		families: string[];
+		includedApiCreditUsd?: number;
+		weeklyShareByFamily?: Record<string, number>;
+	}
 > = {
 	"claude-pro": { lab: "anthropic", families: CLAUDE },
 	// Max and Ultra include Fable at half the weekly limit, plus API credit
@@ -135,11 +143,13 @@ const PLAN_FAMILIES: Record<
 		lab: "anthropic",
 		families: [...CLAUDE, "claude-fable-5-1"],
 		includedApiCreditUsd: 100,
+		weeklyShareByFamily: FABLE_HALF,
 	},
 	"claude-max-20x": {
 		lab: "anthropic",
 		families: [...CLAUDE, "claude-fable-5-1"],
 		includedApiCreditUsd: 200,
+		weeklyShareByFamily: FABLE_HALF,
 	},
 	"chatgpt-plus": { lab: "openai", families: OPENAI },
 	"chatgpt-pro-100": { lab: "openai", families: OPENAI },
@@ -306,6 +316,7 @@ const plans = Plans.parse(
 				lab,
 				families,
 				includedApiCreditUsd = 0,
+				weeklyShareByFamily = {},
 			} = PLAN_FAMILIES[p.planId];
 			const unknown = families.filter((f) => !benchmarked.has(f));
 			if (unknown.length)
@@ -325,6 +336,7 @@ const plans = Plans.parse(
 				sourceUrl: p.sources[0].url,
 				reportedCap: REPORTED_CAPS[p.planId] ?? null,
 				publishedAllowance: publishedAllowance(p.planId),
+				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
 				promotionByFamily: lab === "opencode" ? OPENCODE_PROMOTIONS : {},
 			};

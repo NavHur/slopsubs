@@ -21,6 +21,7 @@ const basePlan: Plan = {
 	sourceUrl: "https://example.com/pricing",
 	reportedCap: null,
 	publishedAllowance: null,
+	weeklyShareByFamily: {},
 	maxEffortByFamily: {},
 	promotionByFamily: {},
 };
@@ -29,6 +30,7 @@ function plan(id: string, label: string): Pricing {
 	return {
 		kind: "plan",
 		plan: { ...basePlan, id: id as PlanId, label },
+		allowance: { apiUsd: 100, basis: "estimated", share: 1 },
 		valueMultiple: 1,
 	};
 }

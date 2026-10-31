@@ -142,6 +142,11 @@ const Plan = z.object({
 	sourceUrl: z.url(),
 	reportedCap: ReportedCap.nullable(),
 	publishedAllowance: PublishedAllowance.nullable(),
+	/**
+	 * Fraction of the weekly cap a family may use, where below the whole cap:
+	 * Claude Max and Ultra give Fable "up to half your weekly limit".
+	 */
+	weeklyShareByFamily: z.record(z.string(), z.number().gt(0).lte(1)),
 	/** Highest effort the plan serves for a family, where below its maximum. */
 	maxEffortByFamily: z.record(z.string(), Effort),
 	/** Promotions included in the plan's value, by family. */
