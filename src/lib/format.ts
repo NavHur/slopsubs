@@ -44,19 +44,20 @@ export function formatTokens(value: number): string {
 
 const SECONDS_PER_MINUTE = 60;
 const SECONDS_PER_HOUR = 3600;
+const MINUTES_PER_HOUR = 60;
 
-/** A task's duration to the second: "42s", "11m 51s", "1h 5m". */
+/**
+ * A task's duration: to the second under an hour ("42s", "11m 51s"), to the
+ * minute from an hour up ("1h 5m").
+ */
 export function formatDuration(seconds: number): string {
 	const whole = Math.round(seconds);
 	if (whole < SECONDS_PER_MINUTE) return `${whole}s`;
 	if (whole < SECONDS_PER_HOUR) {
 		return `${Math.floor(whole / SECONDS_PER_MINUTE)}m ${whole % SECONDS_PER_MINUTE}s`;
 	}
-	const minutes = Math.round((whole % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
-	const hours = Math.floor(whole / SECONDS_PER_HOUR);
-	return minutes === SECONDS_PER_MINUTE
-		? `${hours + 1}h 0m`
-		: `${hours}h ${minutes}m`;
+	const totalMinutes = Math.round(whole / SECONDS_PER_MINUTE);
+	return `${Math.floor(totalMinutes / MINUTES_PER_HOUR)}h ${totalMinutes % MINUTES_PER_HOUR}m`;
 }
 
 /**
