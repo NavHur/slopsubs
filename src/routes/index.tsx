@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { PricingKey } from "#/components/chart/PricingKey";
+import { RankedChart } from "#/components/chart/RankedChart";
 import { buildSeries, pricingStyles } from "#/components/chart/series";
 import { CapBasisKey, TasksChart } from "#/components/chart/TasksChart";
 import { ValueChart } from "#/components/chart/ValueChart";
@@ -14,7 +15,7 @@ import { type Coverage, FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
 import { leaderboards, plans, samples } from "#/data";
 import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/model";
-import { tasksPerWeek } from "#/domain/ranges";
+import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
 import { useSectionNav } from "#/lib/useSectionNav";
@@ -43,7 +44,10 @@ const BENCHMARK_OPTIONS = BENCHMARK_IDS.map((id) => ({
 const SECTION_LABELS: Record<ChartSectionId, string> = {
 	"cost-vs-score": "Cost vs score",
 	"tasks-per-week": "Tasks per week",
+	"ranked-cost": "Cost per task",
 };
+/** On the ranked chart, solid dots cover API prices too. */
+const RANKED_KEY = "API price, or a published or measured cap";
 const SECTION_LINKS = CHART_SECTIONS.map((id) => ({
 	id,
 	label: SECTION_LABELS[id],
@@ -102,6 +106,7 @@ function ValueView() {
 
 	const styles = pricingStyles(buildSeries(points));
 	const planTasks = tasksPerWeek(points);
+	const costRows = rankedCost(points);
 
 	const exportValueChart = async () => {
 		const downloadChartPng = await exporter();
@@ -132,6 +137,17 @@ function ValueView() {
 			legend: <CapBasisKey className="justify-end" />,
 			title: `${benchmark.tabLabel} tasks per week on each plan`,
 			fileName: `slopsubs-tasks-per-week-${benchmark.id}.png`,
+			height: "content",
+		});
+	};
+
+	const exportRankedChart = async () => {
+		const downloadChartPng = await exporter();
+		await downloadChartPng({
+			chart: <RankedChart rows={costRows} />,
+			legend: <CapBasisKey solidLabel={RANKED_KEY} className="justify-end" />,
+			title: `Effective cost per ${benchmark.tabLabel} task, cheapest first`,
+			fileName: `slopsubs-ranked-cost-${benchmark.id}.png`,
 			height: "content",
 		});
 	};
@@ -247,6 +263,26 @@ function ValueView() {
 						) : (
 							<p className="py-10 text-center text-sm text-muted">
 								No selected plan has a known cap for these models.
+							</p>
+						)}
+					</ChartSection>
+					<ChartSection
+						id="ranked-cost"
+						title="Effective cost per task, cheapest first"
+						canExport={costRows.length > 0}
+						onExport={exportRankedChart}
+					>
+						<p className="mb-3 max-w-[72ch] text-[13px] leading-5 text-muted">
+							Each model on each selected plan, and at API prices, from low to
+							max effort. Rows rank by their cheapest effort, so the top rows
+							are the cheapest way to run a task at all.
+						</p>
+						<CapBasisKey solidLabel={RANKED_KEY} className="mb-3" />
+						{costRows.length > 0 ? (
+							<RankedChart rows={costRows} />
+						) : (
+							<p className="py-10 text-center text-sm text-muted">
+								Select a plan or API prices to rank their costs.
 							</p>
 						)}
 					</ChartSection>

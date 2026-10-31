@@ -86,12 +86,19 @@ export function TasksChart({ plans }: { plans: readonly PlanTasks[] }) {
 }
 
 /** Tells hollow dots, which rest on estimated caps, from solid ones. */
-export function CapBasisKey({ className = "" }: { className?: string }) {
+export function CapBasisKey({
+	solidLabel = "Published or measured cap",
+	className = "",
+}: {
+	/** What a solid dot rests on. */
+	solidLabel?: string;
+	className?: string;
+}) {
 	return (
 		<div
 			className={`flex flex-wrap items-center gap-x-4 text-[12px] text-muted ${className}`}
 		>
-			<KeyDot hollow={false} label="Published or measured cap" />
+			<KeyDot hollow={false} label={solidLabel} />
 			<KeyDot hollow label="Estimated cap" />
 		</div>
 	);
