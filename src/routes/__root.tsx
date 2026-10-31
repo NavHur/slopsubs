@@ -32,7 +32,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		// The theme script sets data-theme before hydration.
 		<html lang="en" suppressHydrationWarning>
 			<head>
-				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: static script, no user input */}
+				{/* oxlint-disable-next-line react/no-danger -- static script, no user input */}
 				<script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
 				<HeadContent />
 			</head>

@@ -200,9 +200,9 @@ export function SeriesLine({
 				opacity={isApi ? 0.6 : 1}
 			/>
 			{series.points.map((p) => (
-				// biome-ignore lint/a11y/useSemanticElements: SVG has no native button; the point needs focus to expose its tooltip
 				<g
 					key={p.benchmark.id}
+					// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- SVG has no native button; the point needs focus to expose its tooltip
 					role="button"
 					tabIndex={0}
 					aria-label={pointLabel(series, p, benchmark)}
@@ -306,8 +306,8 @@ function ModelTag({
 		[modelId, onHighlight],
 	);
 	return (
-		// biome-ignore lint/a11y/useSemanticElements: SVG has no native button; the label toggles its model's highlight
 		<g
+			// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- SVG has no native button; the label toggles its model's highlight
 			role="button"
 			tabIndex={0}
 			aria-pressed={pinned}
