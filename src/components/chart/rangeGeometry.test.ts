@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
+import { formatCount } from "#/lib/format";
 import { rangeLayout, rangeScale, rangeTicks } from "./rangeGeometry";
 
 describe("rangeLayout", () => {
@@ -40,6 +41,18 @@ describe("rangeTicks", () => {
 		expect(ticks.length).toBeGreaterThan(0);
 		expect(ticks.length).toBeLessThanOrEqual(10);
 	});
+
+	it.each([600, 746])(
+		"labels a single 13 with exact whole ticks at %spx",
+		(width) => {
+			const ticks = rangeTicks(rangeScale([13], width));
+			expect(ticks.length).toBeGreaterThan(0);
+			for (const tick of ticks) {
+				expect(formatCount(tick)).toBe(String(tick));
+			}
+			expect(new Set(ticks.map(formatCount)).size).toBe(ticks.length);
+		},
+	);
 
 	it("keeps ticks inside a sub-dollar domain", () => {
 		expect(rangeTicks(rangeScale([0.004, 0.09], 600))).toEqual([

@@ -66,7 +66,20 @@ export function rangeTicks(x: RangeScale): number[] {
 	}
 	// A domain inside one decade can hold none of the round multiples.
 	const decades = roundValues(lo, hi, [1]);
-	return thin(decades.length > 0 ? decades : x.ticks(fit), fit);
+	return thin(decades.length > 0 ? decades : twoDigitValues(lo, hi), fit);
+}
+
+/**
+ * Values of two significant digits in [lo, hi], which every axis format
+ * prints exactly; the padded domain is always wide enough to hold one.
+ */
+function twoDigitValues(lo: number, hi: number): number[] {
+	const step = 10 ** (Math.floor(Math.log10(hi)) - 1);
+	const values: number[] = [];
+	for (let k = Math.ceil(lo / step); k * step <= hi; k++) {
+		values.push(Number((k * step).toPrecision(2)));
+	}
+	return values;
 }
 
 /** Every nth value, so at most `limit` remain. */
