@@ -8,7 +8,7 @@ import { CapBasisKey, TasksChart } from "#/components/chart/TasksChart";
 import { ValueChart } from "#/components/chart/ValueChart";
 import { ChartSection } from "#/components/ChartSection";
 import { ChartSettingsMenu, ThemeToggle } from "#/components/HeaderActions";
-import { ReasoningFilter } from "#/components/ModelFilters";
+import { CodeOnlyFilter, ReasoningFilter } from "#/components/ModelFilters";
 import { PageFooter } from "#/components/PageFooter";
 import { SectionNav } from "#/components/SectionNav";
 import { Segmented, Toggle } from "#/components/Segmented";
@@ -23,6 +23,7 @@ import { useSectionNav } from "#/lib/useSectionNav";
 import {
 	CHART_SECTIONS,
 	type ChartSectionId,
+	codeOnlyApplies,
 	DEFAULT_MODELS_VIEW,
 	hiddenReasoning,
 	isDefaultModelsView,
@@ -320,6 +321,11 @@ function ValueView() {
 						selected={families}
 						filters={
 							<>
+								<CodeOnlyFilter
+									checked={view.code}
+									applies={codeOnlyApplies(view.benchmark)}
+									onChange={(code) => update({ code })}
+								/>
 								<ReasoningFilter
 									hidden={hiddenReasoning(view)}
 									onChange={(hideReasoning) => update({ hideReasoning })}
