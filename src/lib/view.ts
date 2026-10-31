@@ -19,6 +19,14 @@ export const REASONING_LEVELS = [
 ] as const satisfies readonly Effort[];
 export type ReasoningLevel = (typeof REASONING_LEVELS)[number];
 
+/** The page's chart sections, top to bottom. */
+export const CHART_SECTIONS = [
+	"cost-vs-score",
+	"tasks-per-week",
+	"ranked-cost",
+] as const;
+export type ChartSectionId = (typeof CHART_SECTIONS)[number];
+
 /** Chart state, kept in the URL so every view is shareable. */
 export const ViewSearch = z.object({
 	benchmark: z.enum(BENCHMARK_IDS).default("intelligence"),
@@ -30,6 +38,8 @@ export const ViewSearch = z.object({
 	plans: z.array(z.string()).optional(),
 	families: z.array(z.string()).optional(),
 	hideReasoning: z.array(z.enum(REASONING_LEVELS)).optional(),
+	/** The section in view; unset is the top of the page. */
+	chart: z.enum(CHART_SECTIONS).optional(),
 });
 export type ViewSearch = z.infer<typeof ViewSearch>;
 

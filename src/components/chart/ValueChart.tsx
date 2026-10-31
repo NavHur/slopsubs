@@ -178,7 +178,11 @@ export function ValueChart({
 	};
 
 	return (
-		<div ref={ref} className="relative lg:min-h-0 lg:flex-1">
+		<div
+			ref={ref}
+			data-chart-width={width}
+			className="relative lg:min-h-0 lg:flex-1"
+		>
 			<svg
 				width={width}
 				height={height}

@@ -60,6 +60,14 @@ export function formatDuration(seconds: number): string {
 	return `${Math.floor(totalMinutes / MINUTES_PER_HOUR)}h ${totalMinutes % MINUTES_PER_HOUR}m`;
 }
 
+/** A count of tasks: 0.4, 38, 1.2K. */
+export function formatCount(value: number): string {
+	// Rounding first keeps 999.6 on the thousands branch, as "1K".
+	if (Math.round(value) >= 1000) return compactCount.format(value);
+	if (value >= 10) return String(Math.round(value));
+	return String(Number(value.toPrecision(2)));
+}
+
 /**
  * How a plan compares with paying per token for the same work, from its value
  * multiple: "2.0× cheaper than API", "Same cost as API".

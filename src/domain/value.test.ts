@@ -6,7 +6,12 @@ import type {
 	Plan,
 	PlanId,
 } from "./model";
-import { planCapacity, valueMultiple, valuePoints } from "./value";
+import {
+	planCapacity,
+	valueMultiple,
+	valuePoints,
+	weeklyAllowance,
+} from "./value";
 
 const opus = "claude-opus-5-5" as FamilyId;
 const maxPlan = "claude-max-20x" as PlanId;
@@ -26,6 +31,7 @@ const plan: Plan = {
 	sourceUrl: "https://example.com/pricing",
 	reportedCap: null,
 	publishedAllowance: null,
+	weeklyShareByFamily: {},
 	maxEffortByFamily: {},
 	promotionByFamily: {},
 };
@@ -116,18 +122,73 @@ describe("planCapacity", () => {
 	});
 });
 
+describe("weeklyAllowance", () => {
+	const fable = "claude-fable-5-1" as FamilyId;
+	const reported = {
+		kind: "reported",
+		weeklyCapApiUsd: 1000,
+		report: {
+			weeklyCapApiUsd: 1000,
+			by: "Theo",
+			url: "https://example.com/video",
+			basis: "estimate",
+		},
+	} as const;
+
+	it("gives a family the whole reported cap, as an estimate", () => {
+		expect(weeklyAllowance(plan, reported, opus)).toEqual({
+			apiUsd: 1000,
+			basis: "estimated",
+			source: "estimate",
+			share: 1,
+		});
+	});
+
+	it("gives a capped family only its share of the weekly cap", () => {
+		const capped = { ...plan, weeklyShareByFamily: { [fable]: 0.5 } };
+		expect(weeklyAllowance(capped, reported, fable)).toEqual({
+			apiUsd: 500,
+			basis: "estimated",
+			source: "estimate",
+			share: 0.5,
+		});
+	});
+
+	it("averages a published monthly allowance over the weeks of a month", () => {
+		const published = {
+			kind: "published",
+			allowance: {
+				apiUsdPerMonthByFamily: { [opus]: 52 },
+				url: "https://example.com/limits",
+				basis: "monthly usage by model",
+			},
+		} as const;
+		expect(weeklyAllowance(plan, published, opus)).toEqual({
+			apiUsd: 12,
+			basis: "published",
+			source: "monthly usage by model",
+			share: 1,
+		});
+		expect(weeklyAllowance(plan, published, fable)).toBeNull();
+	});
+
+	it("is unknown for an unmeasured plan", () => {
+		expect(weeklyAllowance(plan, { kind: "unmeasured" }, opus)).toBeNull();
+	});
+});
+
 describe("valueMultiple", () => {
-	it("divides the monthly usage by the subscription price", () => {
-		expect(valueMultiple({ plan, apiUsdPerMonth: 5200 })).toBeCloseTo(
-			5200 / 200,
-		);
+	const allowance = { apiUsd: 1200, basis: "measured", share: 1 } as const;
+
+	it("divides a month of weekly usage by the subscription price", () => {
+		expect(valueMultiple({ plan, allowance })).toBeCloseTo(5200 / 200);
 	});
 
 	it("counts bundled API credit as usage", () => {
 		const withCredit = { ...plan, includedApiCreditUsd: 200 };
-		expect(
-			valueMultiple({ plan: withCredit, apiUsdPerMonth: 5200 }),
-		).toBeCloseTo((5200 + 200) / 200);
+		expect(valueMultiple({ plan: withCredit, allowance })).toBeCloseTo(
+			(5200 + 200) / 200,
+		);
 	});
 });
 

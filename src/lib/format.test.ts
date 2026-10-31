@@ -8,6 +8,7 @@ vi.hoisted(() => {
 
 import {
 	formatApiComparison,
+	formatCount,
 	formatDay,
 	formatDuration,
 	formatIntelligence,
@@ -37,6 +38,26 @@ describe("formatPercent", () => {
 	it("shows a percentage to one decimal, with its sign", () => {
 		expect(formatPercent(45.45)).toBe("45.5%");
 		expect(formatPercent(4)).toBe("4.0%");
+	});
+});
+
+describe("formatCount", () => {
+	it("keeps a decimal below ten, whole numbers below a thousand", () => {
+		expect([0.42, 7.25, 38.4, 999.4].map(formatCount)).toEqual([
+			"0.42",
+			"7.3",
+			"38",
+			"999",
+		]);
+	});
+
+	it("abbreviates thousands", () => {
+		expect(formatCount(12_345)).toBe("12.3K");
+	});
+
+	it("does not print 1000 for a count that rounds up to it", () => {
+		expect(formatCount(999.6)).toBe("1K");
+		expect(formatCount(1000.4)).toBe("1K");
 	});
 });
 

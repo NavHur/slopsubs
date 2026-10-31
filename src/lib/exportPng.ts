@@ -3,9 +3,9 @@ import { createRoot } from "react-dom/client";
 import { DEFAULT_HEIGHT } from "#/components/chart/geometry";
 
 /** The chart lays out at this size for export, whatever the screen size, so
- * phones export the wide desktop layout too, not their compact one. Height is
- * the chart's default so it is stable whether or not the host fills the
- * screen. */
+ * phones export the wide desktop layout too, not their compact one. A chart
+ * that fills its box gets the default height, stable whether or not the host
+ * fills the screen; one sized by its content keeps its own height. */
 const CHART_SIZE = { width: 1200, height: DEFAULT_HEIGHT };
 const PADDING_PX = 32;
 const TITLE_FONT = '600 20px "DM Sans", sans-serif';
@@ -49,21 +49,24 @@ type Rendered = {
  * Renders `chart` offscreen and downloads it as a PNG titled `title`, with
  * `legend` right-aligned beside the title, wrapping onto more rows when it
  * would not fit: a downloaded image has no side panel to explain the chart's
- * lines.
+ * lines. The chart's root marks its laid-out width with `data-chart-width`.
  */
 export async function downloadChartPng({
 	chart,
 	legend,
 	title,
 	fileName,
+	height = "fill",
 }: {
 	chart: ReactNode;
 	legend: ReactNode;
 	title: string;
 	fileName: string;
+	/** Whether the chart fills a box of the default height or sizes itself. */
+	height?: "fill" | "content";
 }): Promise<void> {
 	const [rendered, fontCss] = await Promise.all([
-		renderOffscreen({ chart, legend, title }),
+		renderOffscreen({ chart, legend, title, height }),
 		embeddedFontCss(),
 	]);
 	const blob = await rasterize(rendered, fontCss);
@@ -107,10 +110,12 @@ async function renderOffscreen({
 	chart,
 	legend,
 	title,
+	height,
 }: {
 	chart: ReactNode;
 	legend: ReactNode;
 	title: string;
+	height: "fill" | "content";
 }): Promise<Rendered> {
 	const host = document.createElement("div");
 	host.inert = true;
@@ -134,7 +139,8 @@ async function renderOffscreen({
 					"div",
 					{
 						className: "flex flex-col",
-						style: { height: CHART_SIZE.height },
+						style:
+							height === "fill" ? { height: CHART_SIZE.height } : undefined,
 					},
 					chart,
 				),
@@ -160,10 +166,8 @@ async function renderOffscreen({
 async function waitForLayout(host: HTMLElement): Promise<void> {
 	for (let frame = 0; frame < MAX_LAYOUT_FRAMES; frame++) {
 		await new Promise(requestAnimationFrame);
-		const svgs = [...host.querySelectorAll("svg")];
-		if (svgs.some((svg) => svg.width.baseVal.value === CHART_SIZE.width)) {
-			return;
-		}
+		const laidOut = `[data-chart-width="${CHART_SIZE.width}"]`;
+		if (host.querySelector(laidOut)) return;
 	}
 	throw new Error("The chart never laid out at its export size");
 }

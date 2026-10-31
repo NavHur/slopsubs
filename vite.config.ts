@@ -65,9 +65,15 @@ const config = defineConfig({
 	resolve: { tsconfigPaths: true },
 	plugins: lazyPlugins(() => [
 		tailwindcss(),
-		// The site is static data, so every page is prerendered and served as
-		// plain assets from a Cloudflare Worker.
-		tanstackStart({ prerender: { enabled: true, crawlLinks: true } }),
+		// Every page is prerendered as static assets; query strings are view
+		// state on one page, so the crawler skips them (they would loop).
+		tanstackStart({
+			prerender: {
+				enabled: true,
+				crawlLinks: true,
+				filter: ({ path }) => !path.includes("?"),
+			},
+		}),
 		viteReact(),
 	]),
 });

@@ -60,7 +60,8 @@ function serveSite(): Promise<Server> {
 	);
 }
 
-/** Clicks the page's Download PNG button and returns the exported image. */
+/** Clicks the cost-vs-score chart's Download PNG button and returns the
+ * exported image. */
 async function exportDefaultChart(
 	browser: Browser,
 	origin: string,
@@ -83,7 +84,10 @@ async function exportDefaultChart(
 	}
 	const [download] = await Promise.all([
 		page.waitForEvent("download"),
-		page.getByRole("button", { name: "Download PNG" }).click(),
+		page
+			.locator("#cost-vs-score")
+			.getByRole("button", { name: "Download PNG" })
+			.click(),
 	]).catch((waitFailure: unknown) => {
 		const causes = [...errors, ...consoleErrors];
 		if (causes.length === 0) throw waitFailure;

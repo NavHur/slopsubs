@@ -2,10 +2,10 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import { samples } from "#/data";
 import type { FamilyId, Plan, PlanId } from "#/domain/model";
 import {
-	apiUsdPerMonth,
 	type PlanCapacity,
 	planCapacity,
 	valueMultiple,
+	weeklyAllowance,
 } from "#/domain/value";
 import {
 	familyColor,
@@ -35,9 +35,9 @@ import { ProviderLogo } from "./ProviderLogo";
 /** "12×", or "1.5–6×" when the multiple differs by model. */
 function multipleText(plan: Plan, capacity: PlanCapacity): string {
 	const multiples = plan.families
-		.map((family) => apiUsdPerMonth(capacity, family))
-		.filter((usd) => usd !== null)
-		.map((usd) => valueMultiple({ plan, apiUsdPerMonth: usd }));
+		.map((family) => weeklyAllowance(plan, capacity, family))
+		.filter((allowance) => allowance !== null)
+		.map((allowance) => valueMultiple({ plan, allowance }));
 	const low = Math.min(...multiples);
 	const high = Math.max(...multiples);
 	if (formatMultiple(low) === formatMultiple(high)) return formatMultiple(low);
