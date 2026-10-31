@@ -11,7 +11,7 @@ const TASK_UNITS: RangeUnits = {
 	spoken: "tasks a week",
 };
 
-/** Where a cap comes from, for the plan's tag and its tooltip. */
+/** Where a cap comes from, shown under the plan's heading. */
 function capSource(plan: Plan, basis: CapBasis): string {
 	switch (basis) {
 		case "estimated":
@@ -37,16 +37,18 @@ function PlanHeading({
 	allowance: WeeklyAllowance;
 }) {
 	return (
-		<p className="flex flex-wrap items-baseline gap-x-2">
-			<span className="font-medium">{plan.label}</span>
-			<span className="text-muted">{capText(allowance)}</span>
-			<span
-				title={capSource(plan, allowance.basis)}
-				className="rounded-sm border border-line px-1 text-[11px] text-subtle"
-			>
-				{`${allowance.basis} cap`}
-			</span>
-		</p>
+		<>
+			<p className="flex flex-wrap items-baseline gap-x-2">
+				<span className="font-medium">{plan.label}</span>
+				<span className="text-muted">{capText(allowance)}</span>
+				<span className="rounded-sm border border-line px-1 text-[11px] text-subtle">
+					{`${allowance.basis} cap`}
+				</span>
+			</p>
+			<p className="mt-0.5 text-[12px] text-subtle [overflow-wrap:anywhere]">
+				{capSource(plan, allowance.basis)}
+			</p>
+		</>
 	);
 }
 
