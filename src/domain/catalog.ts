@@ -124,6 +124,116 @@ export type MergedCatalog = {
 	skipped: string[];
 };
 
+type EffortLabel = { label: string; order: number };
+
+/** Throws when the two sources disagree on a point's Intelligence Index. */
+function checkScore(point: SlopaPoint, aaScore: number | null): void {
+	if (point.score === null) return;
+	if (aaScore === null)
+		throw new Error(
+			`${point.id}: slopalytics scores ${point.score}, AA has no index`,
+		);
+	if (Math.abs(aaScore - point.score) > SCORE_TOLERANCE)
+		throw new Error(
+			`${point.id}: AA index ${aaScore}, slopalytics ${point.score}`,
+		);
+}
+
+/** One warning per price AA and slopalytics disagree on. */
+function priceWarnings(point: SlopaPoint, aa: AaModel): string[] {
+	const prices: [string, number | null, number | null][] = [
+		["input", point.inputPricePerMTokUsd, aa.pricing.price_1m_input_tokens],
+		["output", point.outputPricePerMTokUsd, aa.pricing.price_1m_output_tokens],
+	];
+	return prices
+		.filter(([, ours, theirs]) => priceDiffers(ours, theirs))
+		.map(
+			([label, ours, theirs]) =>
+				`${point.id}: ${label} $${ours}/MTok on slopalytics, $${theirs} on AA; using AA`,
+		);
+}
+
+/** A slopalytics point carrying AA's score, prices and release date. */
+function mergePoint(
+	point: SlopaPoint,
+	aaById: ReadonlyMap<string, AaModel>,
+	warnings: string[],
+): SlopaPoint {
+	const aa = aaById.get(AA_ALIASES[point.id] ?? point.id);
+	if (!aa) throw new Error(`AA has no model for ${point.id} (${point.name})`);
+	const aaScore = aa.evaluations.artificial_analysis_intelligence_index;
+	checkScore(point, aaScore);
+	warnings.push(...priceWarnings(point, aa));
+	return {
+		...point,
+		released: aa.release_date,
+		score: round(aaScore, 2),
+		inputPricePerMTokUsd: aa.pricing.price_1m_input_tokens,
+		outputPricePerMTokUsd: aa.pricing.price_1m_output_tokens,
+	};
+}
+
+/** Whether a plan covers the family this slug is, or is a variant of. */
+function inCoveredFamily(slug: string, covered: ReadonlySet<string>): boolean {
+	return (
+		covered.has(slug) || [...covered].some((f) => slug.startsWith(`${f}-`))
+	);
+}
+
+/** An AA-only model as a point with no cost data. */
+function aaOnlyPoint(
+	aa: AaModel,
+	derived: { family: string; effort: Effort },
+	effortOf: ReadonlyMap<Effort, EffortLabel>,
+): SlopaPoint {
+	const effort = effortOf.get(derived.effort);
+	if (!effort)
+		throw new Error(`No effort label for ${aa.slug}'s ${derived.effort}`);
+	const name = displayName(aa.name);
+	return {
+		id: aa.slug,
+		family: derived.family,
+		name,
+		variant: name,
+		lab: aa.model_creator.slug,
+		labName: aa.model_creator.name,
+		released: aa.release_date,
+		open: false,
+		deprecated: false,
+		effort: derived.effort,
+		effortLabel: effort.label,
+		effortOrder: effort.order,
+		score: round(aa.evaluations.artificial_analysis_intelligence_index, 2),
+		costPerTaskUsd: null,
+		tokensPerTask: null,
+		secondsPerTask: null,
+		inputPricePerMTokUsd: aa.pricing.price_1m_input_tokens,
+		outputPricePerMTokUsd: aa.pricing.price_1m_output_tokens,
+	};
+}
+
+/**
+ * The point for an AA-only model, or null when no plan covers its family.
+ * A covered family's model with no readable effort stops the import.
+ */
+function aaOnlyModel(
+	aa: AaModel,
+	coveredFamilies: ReadonlySet<string>,
+	effortOf: ReadonlyMap<Effort, EffortLabel>,
+): SlopaPoint | null {
+	const derived = deriveModel(aa);
+	if (!derived) {
+		if (inCoveredFamily(aa.slug, coveredFamilies))
+			throw new Error(
+				`AA's ${aa.slug} (${aa.name}) is in a family a plan covers, but cannot read an effort from its name`,
+			);
+		return null;
+	}
+	return coveredFamilies.has(derived.family)
+		? aaOnlyPoint(aa, derived, effortOf)
+		: null;
+}
+
 /**
  * Artificial Analysis wins on scores, prices and release dates; slopalytics
  * supplies cost, tokens and time. A score disagreement is an error, since it
@@ -139,42 +249,9 @@ export function mergeCatalog(
 	const warnings: string[] = [];
 	const missingCost: string[] = [];
 	const skipped: string[] = [];
-
-	const models = slopaPoints.map((point) => {
-		const aa = aaById.get(AA_ALIASES[point.id] ?? point.id);
-		if (!aa) throw new Error(`AA has no model for ${point.id} (${point.name})`);
-
-		const aaScore = aa.evaluations.artificial_analysis_intelligence_index;
-		if (point.score !== null) {
-			if (aaScore === null)
-				throw new Error(
-					`${point.id}: slopalytics scores ${point.score}, AA has no index`,
-				);
-			if (Math.abs(aaScore - point.score) > SCORE_TOLERANCE)
-				throw new Error(
-					`${point.id}: AA index ${aaScore}, slopalytics ${point.score}`,
-				);
-		}
-
-		const input = aa.pricing.price_1m_input_tokens;
-		const output = aa.pricing.price_1m_output_tokens;
-		for (const [label, ours, theirs] of [
-			["input", point.inputPricePerMTokUsd, input],
-			["output", point.outputPricePerMTokUsd, output],
-		] as const)
-			if (priceDiffers(ours, theirs))
-				warnings.push(
-					`${point.id}: ${label} $${ours}/MTok on slopalytics, $${theirs} on AA; using AA`,
-				);
-
-		return {
-			...point,
-			released: aa.release_date,
-			score: round(aaScore, 2),
-			inputPricePerMTokUsd: input,
-			outputPricePerMTokUsd: output,
-		};
-	});
+	const models = slopaPoints.map((point) =>
+		mergePoint(point, aaById, warnings),
+	);
 
 	const effortOf = new Map(
 		slopaPoints.map((point) => [
@@ -182,41 +259,17 @@ export function mergeCatalog(
 			{ label: point.effortLabel, order: point.effortOrder },
 		]),
 	);
-	const knownIds = new Set(slopaPoints.map((point) => point.id));
-	/** AA slugs our own ids already claim through AA_ALIASES. */
-	const claimedByAlias = new Set(Object.values(AA_ALIASES));
-
-	for (const aa of aaModels) {
-		if (knownIds.has(aa.slug) || claimedByAlias.has(aa.slug)) continue;
-		const derived = deriveModel(aa);
-		if (!derived || !coveredFamilies.has(derived.family)) {
+	const known = new Set([
+		...slopaPoints.map((point) => point.id),
+		...Object.values(AA_ALIASES),
+	]);
+	for (const aa of aaModels.filter((model) => !known.has(model.slug))) {
+		const added = aaOnlyModel(aa, coveredFamilies, effortOf);
+		if (!added) {
 			skipped.push(aa.slug);
 			continue;
 		}
-		const effort = effortOf.get(derived.effort);
-		if (!effort)
-			throw new Error(`No effort label for ${aa.slug}'s ${derived.effort}`);
-		const name = displayName(aa.name);
-		models.push({
-			id: aa.slug,
-			family: derived.family,
-			name,
-			variant: name,
-			lab: aa.model_creator.slug,
-			labName: aa.model_creator.name,
-			released: aa.release_date,
-			open: false,
-			deprecated: false,
-			effort: derived.effort,
-			effortLabel: effort.label,
-			effortOrder: effort.order,
-			score: round(aa.evaluations.artificial_analysis_intelligence_index, 2),
-			costPerTaskUsd: null,
-			tokensPerTask: null,
-			secondsPerTask: null,
-			inputPricePerMTokUsd: aa.pricing.price_1m_input_tokens,
-			outputPricePerMTokUsd: aa.pricing.price_1m_output_tokens,
-		});
+		models.push(added);
 		missingCost.push(aa.slug);
 	}
 

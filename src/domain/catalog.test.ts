@@ -245,6 +245,16 @@ describe("mergeCatalog", () => {
 		expect(merged.skipped).toEqual(["gemini-4-carbon"]);
 	});
 
+	it("refuses a covered family's model whose effort it cannot read", () => {
+		for (const slug of ["claude-opus-5-5-preview", "claude-opus-5-5"]) {
+			expect(() =>
+				mergeCatalog([aaModel(slug, "Claude Opus 5.5 Preview")], [], {
+					coveredFamilies: covered,
+				}),
+			).toThrow(new RegExp(`${slug} .*cannot read an effort`));
+		}
+	});
+
 	it("follows AA's new slug for a model we already import", () => {
 		const merged = mergeCatalog(
 			[
