@@ -5,17 +5,15 @@ import {
 	scaleLog,
 } from "d3-scale";
 import type { ValuePoint } from "#/domain/value";
+import { formatUsd } from "#/lib/format";
 import type { Size } from "#/lib/useElementSize";
 import type { PointMarker } from "./series";
 
 export const LABEL_GAP = 22;
-export const LOG_TICKS = [
-	0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50,
-];
 /** Below this width series labels leave the plot for a legend underneath. */
 const COMPACT_WIDTH = 640;
-/** Narrowest gap between x-axis tick centres before labels collide. */
-const MIN_TICK_SPACING_PX = 44;
+/** Narrowest clear space between neighbouring x-axis tick labels. */
+export const MIN_TICK_LABEL_GAP_PX = 12;
 
 export type ChartLayout = {
 	height: number;
@@ -103,21 +101,73 @@ export function makeScales(
 	return { x, y, right };
 }
 
-/** Ticks spaced far enough apart that their labels never overlap. */
+/**
+ * Mantissas of the log ticks within each decade, densest first: 1-2-5, then
+ * the near-even 1-3, then decades alone.
+ */
+const LOG_TICK_MANTISSAS = [[1, 2, 5], [1, 3], [1]] as const;
+/** Linear tick counts tried, most first; d3 treats each as a hint. */
+const LINEAR_TICK_COUNTS = [6, 5, 4, 3, 2, 1] as const;
+
+/**
+ * The densest ticks whose labels, at their estimated widths, keep at least
+ * MIN_TICK_LABEL_GAP_PX apart: on a log axis 1-2-5 per decade, then 1-3,
+ * then every decade, then every second or third decade and so on.
+ */
 export function xTicks(x: XScale, scale: AxisScale): number[] {
-	const [left, right] = x.range();
-	const fit = Math.max(2, Math.floor((right - left) / MIN_TICK_SPACING_PX));
-	if (scale === "linear") return x.ticks(Math.min(6, fit));
-	const [lo, hi] = x.domain();
-	const inRange = LOG_TICKS.filter((t) => t >= lo && t <= hi);
-	if (inRange.length <= fit) return inRange;
-	const decades = inRange.filter(isPowerOfTen);
-	const stride = Math.ceil(decades.length / fit);
-	return decades.filter((_, i) => i % stride === 0);
+	const candidates =
+		scale === "linear" ? linearCandidates(x) : logCandidates(x.domain());
+	const fitting = candidates.find((ticks) => labelsFit(ticks, x));
+	// The last candidate is a single tick or none, which always fits.
+	return fitting ?? candidates[candidates.length - 1];
 }
 
-const isPowerOfTen = (value: number) =>
-	Math.abs(Math.log10(value) - Math.round(Math.log10(value))) < 1e-9;
+function linearCandidates(x: XScale): number[][] {
+	return LINEAR_TICK_COUNTS.map((count) => x.ticks(count));
+}
+
+function logCandidates([lo, hi]: number[]): number[][] {
+	const sub = LOG_TICK_MANTISSAS.map((mantissas) =>
+		logTicks(lo, hi, mantissas),
+	);
+	const decades = sub[sub.length - 1];
+	const strided = decades
+		.slice(1)
+		.map((_, i) => decades.filter((__, j) => j % (i + 2) === 0));
+	return [...sub, ...strided];
+}
+
+function logTicks(
+	lo: number,
+	hi: number,
+	mantissas: readonly number[],
+): number[] {
+	const ticks: number[] = [];
+	for (
+		let e = Math.floor(Math.log10(lo));
+		e <= Math.ceil(Math.log10(hi));
+		e++
+	) {
+		for (const m of mantissas) {
+			// toPrecision drops float noise such as 3 * 10 ** -3 = 0.0030000000000000005.
+			const tick = Number((m * 10 ** e).toPrecision(12));
+			if (tick >= lo && tick <= hi) ticks.push(tick);
+		}
+	}
+	return ticks;
+}
+
+/** Whether each tick label clears the next by MIN_TICK_LABEL_GAP_PX. */
+export function labelsFit(ticks: readonly number[], x: XScale): boolean {
+	return ticks.slice(1).every((tick, i) => {
+		const prev = ticks[i];
+		const clear =
+			x(tick) -
+			textWidth(formatUsd(tick)) / 2 -
+			(x(prev) + textWidth(formatUsd(prev)) / 2);
+		return clear >= MIN_TICK_LABEL_GAP_PX;
+	});
+}
 
 /** Tenth-pixel precision; also keeps SSR and client floats identical. */
 export const px = (value: number) => Math.round(value * 10) / 10;
