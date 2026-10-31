@@ -54,6 +54,11 @@ describe("formatCount", () => {
 	it("abbreviates thousands", () => {
 		expect(formatCount(12_345)).toBe("12.3K");
 	});
+
+	it("does not print 1000 for a count that rounds up to it", () => {
+		expect(formatCount(999.6)).toBe("1K");
+		expect(formatCount(1000.4)).toBe("1K");
+	});
 });
 
 describe("formatTokens", () => {

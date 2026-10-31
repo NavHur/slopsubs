@@ -62,7 +62,8 @@ export function formatDuration(seconds: number): string {
 
 /** A count of tasks: 0.4, 38, 1.2K. */
 export function formatCount(value: number): string {
-	if (value >= 1000) return compactCount.format(value);
+	// Rounding first keeps 999.6 on the thousands branch, as "1K".
+	if (Math.round(value) >= 1000) return compactCount.format(value);
 	if (value >= 10) return String(Math.round(value));
 	return String(Number(value.toPrecision(2)));
 }
