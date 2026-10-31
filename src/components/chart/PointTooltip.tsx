@@ -6,6 +6,7 @@ import { familyColor, familyLabId, familyName } from "#/lib/families";
 import {
 	formatApiComparison,
 	formatDay,
+	formatDuration,
 	formatTokens,
 	formatUsd,
 } from "#/lib/format";
@@ -91,6 +92,12 @@ export function PointTooltip({
 					<Metric
 						label={view.tokensLabel}
 						value={formatTokens(benchmark.tokensPerTask)}
+					/>
+				)}
+				{benchmark.secondsPerTask !== null && (
+					<Metric
+						label="Time per task"
+						value={formatDuration(benchmark.secondsPerTask)}
 					/>
 				)}
 			</dl>
