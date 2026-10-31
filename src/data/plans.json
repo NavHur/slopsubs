@@ -129,7 +129,7 @@
       "weeklyCapApiUsd": 57.386,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
-      "basis": "A tenth of Theo's Pro 200 figure (Pro 200 is now 10x Plus)"
+      "basis": "A tenth of Theo's Pro 200 figure (Pro 200 was then 10x Plus)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -164,16 +164,16 @@
       "gpt-6-1-terra",
       "gpt-6-luna"
     ],
-    "limits": "\"Pro plans currently have no five-hour limit.\" Help center: \"Pro 200 includes more usage than Pro 100.\" Weekly limits apply. At launch (2026-04-09) OpenAI said: \"Pro $100 unlocks 5x higher usage than Plus\" (secondary report of the launch statement).",
+    "limits": "\"Pro plans currently have no five-hour limit.\" Help center: \"Pro 200 includes more usage than Pro 100.\" \"Pro 100 and Pro 500 now include twice their previous Work and Codex allowance.\" Weekly limits apply. At launch (2026-04-09) OpenAI said: \"Pro $100 unlocks 5x higher usage than Plus\" (secondary report of the launch statement).",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
     "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 286.93,
+      "weeklyCapApiUsd": 573.86,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
-      "basis": "5x Theo's Plus figure (OpenAI launched Pro 100 at 5x Plus)"
+      "basis": "10x Theo's Plus figure (launched at 5x Plus, then doubled)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -208,16 +208,16 @@
       "gpt-6-1-terra",
       "gpt-6-luna"
     ],
-    "limits": "\"Pro plans currently have no five-hour limit.\" \"Pro 200 includes more usage than Pro 100.\" \"New subscriptions that aren't eligible for grandfathering include a lower usage allowance than previously offered with Pro 200.\"",
+    "limits": "\"Pro plans currently have no five-hour limit.\" \"Pro 200 includes more usage than Pro 100.\" \"All Pro 200 subscriptions now include the same Work and Codex allowance.\" \"Plus usage is unchanged.\"",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
     "reportedCap": {
-      "weeklyCapApiUsd": 573.86,
+      "weeklyCapApiUsd": 1147.72,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1037s",
-      "basis": "Theo measured $573.86 of API-priced usage in one weekly cap"
+      "basis": "Twice Theo's measured $573.86 a week; OpenAI doubled the allowance on 2026-10-29"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},
@@ -252,16 +252,16 @@
       "gpt-6-1-terra",
       "gpt-6-luna"
     ],
-    "limits": "\"Pro 500 offers the highest included usage of the three plans.\" \"Pro plans currently have no five-hour limit.\" Ultrafast \"uses your plan's included usage first at 8x the Standard rate for the selected model, then draws from your credit balance at 6x the Standard credit rate\".",
+    "limits": "\"Pro 500 offers the highest included usage of the three plans.\" \"Pro 100 and Pro 500 now include twice their previous Work and Codex allowance.\" \"Pro plans currently have no five-hour limit.\" Ultrafast \"uses your plan's included usage first at 8x the Standard rate for the selected model, then draws from your credit balance at 6x the Standard credit rate\".",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
     "reportedCap": {
-      "weeklyCapApiUsd": 1434.65,
+      "weeklyCapApiUsd": 2869.3,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
-      "basis": "2.5x Theo's Pro 200 figure (Pro 500 is 25x Plus, Pro 200 10x)"
+      "basis": "5x Theo's Pro 200 figure (25x Plus vs 10x, then doubled)"
     },
     "publishedAllowance": null,
     "maxEffortByFamily": {},

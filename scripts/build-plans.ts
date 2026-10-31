@@ -156,6 +156,8 @@ const at = (seconds: number) => `${THEO}&t=${seconds}s`;
 const WEEKS_PER_MONTH = 52 / 12;
 const ULTRA_WEEKLY = 8000 / WEEKS_PER_MONTH;
 const PRO_200_WEEKLY = 573.86;
+/** OpenAI doubled every Pro plan's Work and Codex allowance on 2026-10-29. */
+const PRO_DOUBLING = 2;
 
 /** Published weekly caps, used until a plan has measured samples. */
 const REPORTED_CAPS: Record<string, ReportedCap> = {
@@ -180,32 +182,35 @@ const REPORTED_CAPS: Record<string, ReportedCap> = {
 		url: at(28),
 		basis: "A tenth of Theo's Ultra figure (Ultra is 10x Pro weekly)",
 	},
-	"chatgpt-pro-200": {
-		weeklyCapApiUsd: PRO_200_WEEKLY,
-		by: "Theo",
-		url: at(1037),
-		basis: "Theo measured $573.86 of API-priced usage in one weekly cap",
-	},
-	// "The 20x plan is now 10x, but you can get the 25x plan" (24:34), in
-	// multiples of Plus.
+	// Theo measured Pro 200's reduced allowance, "The 20x plan is now 10x, but
+	// you can get the 25x plan" (24:34), in multiples of Plus. On 2026-10-29
+	// OpenAI cancelled the cut and doubled every Pro allowance's Work and Codex
+	// usage, leaving Plus unchanged (help.openai.com/en/articles/9793128).
 	"chatgpt-plus": {
 		weeklyCapApiUsd: PRO_200_WEEKLY / 10,
 		by: "Theo",
 		url: at(1474),
-		basis: "A tenth of Theo's Pro 200 figure (Pro 200 is now 10x Plus)",
+		basis: "A tenth of Theo's Pro 200 figure (Pro 200 was then 10x Plus)",
+	},
+	"chatgpt-pro-200": {
+		weeklyCapApiUsd: PRO_200_WEEKLY * PRO_DOUBLING,
+		by: "Theo",
+		url: at(1037),
+		basis:
+			"Twice Theo's measured $573.86 a week; OpenAI doubled the allowance on 2026-10-29",
 	},
 	"chatgpt-pro-500": {
-		weeklyCapApiUsd: PRO_200_WEEKLY * 2.5,
+		weeklyCapApiUsd: PRO_200_WEEKLY * 2.5 * PRO_DOUBLING,
 		by: "Theo",
 		url: at(1474),
-		basis: "2.5x Theo's Pro 200 figure (Pro 500 is 25x Plus, Pro 200 10x)",
+		basis: "5x Theo's Pro 200 figure (25x Plus vs 10x, then doubled)",
 	},
 	// Theo gives no Pro 100 figure; OpenAI launched it at 5x Plus.
 	"chatgpt-pro-100": {
-		weeklyCapApiUsd: (PRO_200_WEEKLY / 10) * 5,
+		weeklyCapApiUsd: (PRO_200_WEEKLY / 10) * 5 * PRO_DOUBLING,
 		by: "Theo",
 		url: at(1474),
-		basis: "5x Theo's Plus figure (OpenAI launched Pro 100 at 5x Plus)",
+		basis: "10x Theo's Plus figure (launched at 5x Plus, then doubled)",
 	},
 };
 
