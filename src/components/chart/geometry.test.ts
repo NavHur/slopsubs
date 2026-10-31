@@ -1,5 +1,5 @@
 import { scaleLinear, scaleLog } from "d3-scale";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import {
 	axisReadouts,
 	chartLayout,

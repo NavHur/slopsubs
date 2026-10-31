@@ -6,21 +6,20 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "dev": "vp dev --port 3000",
     "generate-routes": "tsr generate",
-    "build": "vite build",
-    "preview": "vite preview",
+    "preview": "vp preview",
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
-    "test": "vitest run",
+    "test": "vp test run",
     "typecheck": "tsrs --noEmit",
     "typecheck:tsc": "tsc --noEmit",
     "import-benchmarks": "node scripts/import-benchmarks.ts",
     "import-frontiercode": "node scripts/import-frontiercode.ts",
     "measure": "node scripts/measure.ts",
     "build-plans": "node scripts/build-plans.ts",
-    "deploy": "pnpm build && wrangler deploy"
+    "deploy": "vp run build && wrangler deploy"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -42,8 +41,12 @@
     "@vitejs/plugin-react": "^6.0.1",
     "tsrs": "0.18.0-ts7.1.0-dev.20260929",
     "typescript": "^6.0.2",
-    "vite": "^8.0.0",
-    "vitest": "^5.0.5",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0",
+    "vite-plus": "1.4.0",
     "wrangler": "4.149.0"
-  }
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0"
+  },
+  "packageManager": "bun@1.4.4"
 }

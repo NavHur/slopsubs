@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import type { FamilyId, Plan, PlanId } from "#/domain/model";
 import type { PlottableBenchmark, Pricing, ValuePoint } from "#/domain/value";
 import { buildSeries, groupByModel, modelEnd, pricingStyles } from "./series";
