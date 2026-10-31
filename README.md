@@ -2,11 +2,12 @@ Welcome to your new TanStack Start app!
 
 # Getting Started
 
-To run this application:
+This project uses [Vite+](https://viteplus.dev/) (`vp`) with bun as its
+package manager. To run this application:
 
 ```bash
-pnpm install
-pnpm dev
+vp install
+vp dev
 ```
 
 # Building For Production
@@ -14,8 +15,14 @@ pnpm dev
 To build this application for production:
 
 ```bash
-pnpm build
+vp run build
 ```
+
+`vp run build` caches the build: a repeat with unchanged sources replays
+`dist/` instead of rebuilding. `vp build` always rebuilds.
+
+`vp test` runs the tests. The site deploys to Cloudflare Workers (static
+assets, configured in `wrangler.jsonc`) from CI on every push to `main`.
 
 ## Styling
 
@@ -32,13 +39,13 @@ If you prefer not to use Tailwind CSS:
 
 ## Linting & Formatting
 
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
-
+This project uses oxlint and oxfmt through Vite+, configured in the `lint` and
+`fmt` blocks of `vite.config.ts`:
 
 ```bash
-pnpm lint
-pnpm format
-pnpm check
+vp lint
+vp fmt
+vp check # format, lint, and type-aware checks together
 ```
 
 
