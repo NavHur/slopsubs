@@ -129,9 +129,8 @@ const PLAN_FAMILIES: Record<
 	{ lab: string; families: string[]; includedApiCreditUsd?: number }
 > = {
 	"claude-pro": { lab: "anthropic", families: CLAUDE },
-	// Max and Ultra include Fable, capped at half the weekly limit, and monthly
-	// Claude Platform API credit (claude.com/pricing, 2026-10-31). Their ids
-	// keep the names from before the 2026-10-30 rename, which links still use.
+	// Max and Ultra include Fable at half the weekly limit, plus API credit
+	// (claude.com/pricing, 2026-10-31); links keep their pre-rename ids.
 	"claude-max-5x": {
 		lab: "anthropic",
 		families: [...CLAUDE, "claude-fable-5-1"],
@@ -156,7 +155,8 @@ const at = (seconds: number) => `${THEO}&t=${seconds}s`;
 const WEEKS_PER_MONTH = 52 / 12;
 const ULTRA_WEEKLY = 8000 / WEEKS_PER_MONTH;
 const PRO_200_WEEKLY = 573.86;
-/** OpenAI doubled every Pro plan's Work and Codex allowance on 2026-10-29. */
+/** OpenAI cancelled the cut and doubled every Pro allowance on 2026-10-29,
+ * leaving Plus unchanged (help.openai.com/en/articles/9793128). */
 const PRO_DOUBLING = 2;
 
 /** Published weekly caps, used until a plan has measured samples. */
@@ -182,10 +182,8 @@ const REPORTED_CAPS: Record<string, ReportedCap> = {
 		url: at(28),
 		basis: "A tenth of Theo's Ultra figure (Ultra is 10x Pro weekly)",
 	},
-	// Theo measured Pro 200's reduced allowance, "The 20x plan is now 10x, but
-	// you can get the 25x plan" (24:34), in multiples of Plus. On 2026-10-29
-	// OpenAI cancelled the cut and doubled every Pro allowance's Work and Codex
-	// usage, leaving Plus unchanged (help.openai.com/en/articles/9793128).
+	// Theo measured Pro 200's reduced allowance: "The 20x plan is now 10x, but
+	// you can get the 25x plan" (24:34), in multiples of Plus.
 	"chatgpt-plus": {
 		weeklyCapApiUsd: PRO_200_WEEKLY / 10,
 		by: "Theo",
