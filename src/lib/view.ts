@@ -20,7 +20,7 @@ export const REASONING_LEVELS = [
 export type ReasoningLevel = (typeof REASONING_LEVELS)[number];
 
 /** The page's chart sections, top to bottom. */
-export const CHART_SECTIONS = ["cost-vs-score"] as const;
+export const CHART_SECTIONS = ["cost-vs-score", "tasks-per-week"] as const;
 export type ChartSectionId = (typeof CHART_SECTIONS)[number];
 
 /** Chart state, kept in the URL so every view is shareable. */

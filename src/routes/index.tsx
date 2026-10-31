@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { PricingKey } from "#/components/chart/PricingKey";
 import { buildSeries, pricingStyles } from "#/components/chart/series";
+import { CapBasisKey, TasksChart } from "#/components/chart/TasksChart";
 import { ValueChart } from "#/components/chart/ValueChart";
 import { ChartSection } from "#/components/ChartSection";
 import { ChartSettingsMenu, ThemeToggle } from "#/components/HeaderActions";
@@ -13,6 +14,7 @@ import { type Coverage, FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
 import { leaderboards, plans, samples } from "#/data";
 import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/model";
+import { tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
 import { useSectionNav } from "#/lib/useSectionNav";
@@ -40,6 +42,7 @@ const BENCHMARK_OPTIONS = BENCHMARK_IDS.map((id) => ({
 
 const SECTION_LABELS: Record<ChartSectionId, string> = {
 	"cost-vs-score": "Cost vs score",
+	"tasks-per-week": "Tasks per week",
 };
 const SECTION_LINKS = CHART_SECTIONS.map((id) => ({
 	id,
@@ -98,6 +101,7 @@ function ValueView() {
 	});
 
 	const styles = pricingStyles(buildSeries(points));
+	const planTasks = tasksPerWeek(points);
 
 	const exportValueChart = async () => {
 		const downloadChartPng = await exporter();
@@ -118,6 +122,17 @@ function ValueView() {
 			),
 			title: benchmark.chartTitle,
 			fileName: `slopsubs-effective-cost-${benchmark.id}.png`,
+		});
+	};
+
+	const exportTasksChart = async () => {
+		const downloadChartPng = await exporter();
+		await downloadChartPng({
+			chart: <TasksChart plans={planTasks} />,
+			legend: <CapBasisKey className="justify-end" />,
+			title: `${benchmark.tabLabel} tasks per week on each plan`,
+			fileName: `slopsubs-tasks-per-week-${benchmark.id}.png`,
+			height: "content",
 		});
 	};
 
@@ -213,6 +228,27 @@ function ValueView() {
 							pricings={[...styles.values()]}
 							className="mt-3 lg:hidden"
 						/>
+					</ChartSection>
+					<ChartSection
+						id="tasks-per-week"
+						title="Tasks per week on each plan"
+						canExport={planTasks.length > 0}
+						onExport={exportTasksChart}
+					>
+						<p className="mb-3 max-w-[72ch] text-[13px] leading-5 text-muted">
+							How many {benchmark.tabLabel} tasks a plan's weekly cap pays for
+							when spent on one model at one effort: the cap in API-priced
+							dollars over the task's API price. A plan's rows are alternatives,
+							not a sum, and bundled API credit is left out.
+						</p>
+						<CapBasisKey className="mb-3" />
+						{planTasks.length > 0 ? (
+							<TasksChart plans={planTasks} />
+						) : (
+							<p className="py-10 text-center text-sm text-muted">
+								No selected plan has a known cap for these models.
+							</p>
+						)}
 					</ChartSection>
 					<PageFooter benchmark={benchmark} fetchedAt={leaderboard.fetchedAt} />
 				</main>
