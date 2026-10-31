@@ -1,11 +1,11 @@
-import type { BenchmarkId, BenchmarkPoint } from "#/domain/model";
+import type { BenchmarkPoint, LeaderboardId } from "#/domain/model";
 import { formatIntelligence, formatPercent } from "./format";
 
 type Link = { name: string; url: string };
 
 /** How the chart titles, reads and credits one benchmark. */
 export type BenchmarkView = {
-	id: BenchmarkId;
+	id: LeaderboardId;
 	tabLabel: string;
 	chartTitle: string;
 	/** The y axis, whose ticks are bare numbers, so it names the unit. */
@@ -26,12 +26,13 @@ const ARTIFICIAL_ANALYSIS = {
 	name: "Artificial Analysis",
 	url: "https://artificialanalysis.ai",
 };
+const SLOPALYTICS = { name: "Slopalytics", url: "https://slopalytics.com" };
 const COGNITION = {
 	name: "Cognition",
 	url: "https://cognition.com/frontiercode",
 };
 
-export const BENCHMARK_VIEWS: Record<BenchmarkId, BenchmarkView> = {
+export const BENCHMARK_VIEWS: Record<LeaderboardId, BenchmarkView> = {
 	intelligence: {
 		id: "intelligence",
 		tabLabel: "Intelligence Index",
@@ -60,5 +61,17 @@ export const BENCHMARK_VIEWS: Record<BenchmarkId, BenchmarkView> = {
 			url: "https://mypriors.com/benchmarks/frontiercode-2.0-main",
 		},
 		pointSource: () => ({ name: "FrontierCode 2.0", url: COGNITION.url }),
+	},
+	// Plotted in place of the Intelligence Index while Code only is on.
+	coding: {
+		id: "coding",
+		tabLabel: "Coding",
+		chartTitle: "Effective cost vs coding score",
+		axisLabel: "Coding score",
+		scoreLabel: "Coding score",
+		formatScore: formatIntelligence,
+		tokensLabel: "Tokens per task, coding evals",
+		source: SLOPALYTICS,
+		pointSource: () => SLOPALYTICS,
 	},
 };

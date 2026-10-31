@@ -14,7 +14,7 @@ import { Segmented, Toggle } from "#/components/Segmented";
 import { type Coverage, FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
 import { leaderboards, plans, samples } from "#/data";
-import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/model";
+import { BENCHMARK_IDS, type LeaderboardId } from "#/domain/model";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
@@ -25,6 +25,7 @@ import {
 	DEFAULT_MODELS_VIEW,
 	hiddenReasoning,
 	isDefaultModelsView,
+	plottedLeaderboard,
 	selectedFamilies,
 	selectedPlans,
 	toggled,
@@ -53,17 +54,18 @@ const SECTION_LINKS = CHART_SECTIONS.map((id) => ({
 	label: SECTION_LABELS[id],
 }));
 
-function coverageOf(id: BenchmarkId): Coverage {
+function coverageOf(id: LeaderboardId): Coverage {
 	return {
 		benchmarkName: BENCHMARK_VIEWS[id].tabLabel,
 		scored: new Set(leaderboards[id].models.map((m) => m.family)),
 	};
 }
 
-// Built once per benchmark, not per render or row.
-const COVERAGE: Record<BenchmarkId, Coverage> = {
+// Built once per leaderboard, not per render or row.
+const COVERAGE: Record<LeaderboardId, Coverage> = {
 	intelligence: coverageOf("intelligence"),
 	frontiercode: coverageOf("frontiercode"),
+	coding: coverageOf("coding"),
 };
 
 const SCALE_OPTIONS = [
@@ -98,8 +100,9 @@ function ValueView() {
 			search: { ...view, chart: id === CHART_SECTIONS[0] ? undefined : id },
 		}).href;
 
-	const benchmark = BENCHMARK_VIEWS[view.benchmark];
-	const leaderboard = leaderboards[view.benchmark];
+	const plotted = plottedLeaderboard(view);
+	const benchmark = BENCHMARK_VIEWS[plotted];
+	const leaderboard = leaderboards[plotted];
 	const planIds = selectedPlans(view);
 	const families = selectedFamilies(view);
 	const points = valuePoints({
@@ -316,7 +319,7 @@ function ValueView() {
 						selected={families}
 						hiddenReasoning={hiddenReasoning(view)}
 						isDefault={isDefaultModelsView(view)}
-						coverage={COVERAGE[view.benchmark]}
+						coverage={COVERAGE[plotted]}
 						onSelect={(next) => update({ families: next })}
 						onHideReasoning={(hideReasoning) => update({ hideReasoning })}
 						onReset={() => update(DEFAULT_MODELS_VIEW)}
