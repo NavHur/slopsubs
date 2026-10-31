@@ -1,7 +1,5 @@
-// Imports Cognition's FrontierCode 2.0 leaderboard from its own data file into
-// src/data/frontiercode.json, under Artificial Analysis family ids.
-//
-// Usage: bun scripts/import-frontiercode.ts
+// Imports Cognition's FrontierCode 2.0 leaderboard into src/data/frontiercode.json,
+// under Artificial Analysis family ids.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";

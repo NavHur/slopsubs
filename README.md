@@ -52,6 +52,10 @@ per-eval score, cost, tokens and time into `src/data/aa-evals.json`, resolved
 against the catalog (unknown families/efforts are skipped with a log; ambiguous
 ones stop the import).
 
+Each script takes cached input for offline runs: `import-benchmarks` accepts
+`--bundle <bundle.js>` and `--aa <models.json>`, and `import-aa-evals` accepts
+`--html <page.html>`. `import-frontiercode` has no flags.
+
 A model AA lists that slopalytics has not run yet makes the import stop, so
 the gap is deliberate rather than silent.
 `bun run import-benchmarks -- --allow-missing-cost` writes it with a null cost

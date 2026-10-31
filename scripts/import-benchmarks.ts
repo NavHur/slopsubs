@@ -1,13 +1,5 @@
-// Imports per-model, per-effort benchmark points into src/data/benchmarks.json.
-//
-// Artificial Analysis is the source of the model list, Intelligence Index
-// scores, list prices and release dates. Its free data API needs a key, read
-// from AA_API_KEY (.env.local, which bun loads). Slopalytics still supplies
-// cost and tokens per task, which the free API does not publish; the merge
-// refuses to write when the two disagree on a score.
-//
-// Usage: bun scripts/import-benchmarks.ts [--bundle <bundle.js>]
-//        [--aa <models.json>] [--allow-missing-cost]
+// Merges Artificial Analysis (scores, prices, releases) with slopalytics (cost
+// and tokens per task) into src/data/benchmarks.json.
 
 import { readFile, writeFile } from "node:fs/promises";
 import {
