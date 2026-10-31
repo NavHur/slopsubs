@@ -24,6 +24,21 @@ vp run build
 `vp test` runs the tests. The site deploys to Cloudflare Workers (static
 assets, configured in `wrangler.jsonc`) from CI on every push to `main`.
 
+## Brand Images
+
+`public/og.png` (the 1200x630 social card) and `public/apple-touch-icon.png`
+are generated, not hand-made:
+
+```bash
+vp build && bun run render-brand-images
+```
+
+The card is the chart's own "Download PNG" export of the default view, fitted
+onto 1200x630. The icon is `public/favicon.svg` drawn full bleed, since iOS
+rounds its corners itself. The script needs Chromium for `playwright-core`
+(`bunx playwright-core install chromium`) and network access for the web font
+the export embeds.
+
 ## Styling
 
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.

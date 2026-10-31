@@ -1,20 +1,14 @@
-// Regenerates the social card and the apple-touch-icon from the built site.
-//
-//   bun run build && bun run render-brand-images
-//
-// The card is the chart's own "Download PNG" export of the default view,
-// fitted onto 1200x630. The icon is public/favicon.svg drawn full bleed, since
-// iOS rounds its corners itself. Needs Chromium for playwright-core
-// (`bunx playwright-core install chromium`) and network access for the web
-// font the export embeds.
+// Regenerates public/og.png and public/apple-touch-icon.png from the built site.
+// Usage and prerequisites: README.md, "Brand Images".
 
 import { readFile, writeFile } from "node:fs/promises";
 import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { extname, join, normalize } from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium, type Browser } from "playwright-core";
 
-const ROOT = new URL("..", import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const SITE_DIR = join(ROOT, "dist/client");
 const CARD_PATH = join(ROOT, "public/og.png");
 const ICON_PATH = join(ROOT, "public/apple-touch-icon.png");
@@ -32,6 +26,12 @@ const CONTENT_TYPES: Record<string, string> = {
 	".json": "application/json",
 };
 
+/** A request for a path the build lacks: a 404, not a failure. */
+function isMissingFile(error: unknown): boolean {
+	const code = (error as NodeJS.ErrnoException).code;
+	return code === "ENOENT" || code === "EISDIR";
+}
+
 /** Serves the prerendered build, with / mapped to index.html. */
 function serveSite(): Promise<Server> {
 	const server = createServer(async (request, response) => {
@@ -47,7 +47,11 @@ function serveSite(): Promise<Server> {
 					CONTENT_TYPES[extname(file)] ?? "application/octet-stream",
 			});
 			response.end(body);
-		} catch {
+		} catch (error) {
+			if (!isMissingFile(error)) {
+				response.writeHead(500).end();
+				throw error;
+			}
 			response.writeHead(404).end();
 		}
 	});
