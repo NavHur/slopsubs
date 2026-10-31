@@ -15,9 +15,8 @@ export type BenchmarkView = {
 	formatScore: (score: number) => string;
 	/** What a point's token count measures, in its details. */
 	tokensLabel: string;
-	/** Who publishes the scores, and who we fetch them from if not them. */
+	/** Who publishes the scores. */
 	source: Link;
-	via?: Link;
 	/** The source page behind one point's figures. */
 	pointSource: (point: BenchmarkPoint) => Link;
 };
@@ -56,10 +55,6 @@ export const BENCHMARK_VIEWS: Record<LeaderboardId, BenchmarkView> = {
 		formatScore: formatPercent,
 		tokensLabel: "Output tokens per task",
 		source: COGNITION,
-		via: {
-			name: "Priors",
-			url: "https://mypriors.com/benchmarks/frontiercode-2.0-main",
-		},
 		pointSource: () => ({ name: "FrontierCode 2.0", url: COGNITION.url }),
 	},
 	// Plotted in place of the Intelligence Index while Code only is on.

@@ -37,16 +37,7 @@ export function PageFooter({
 				Data from{" "}
 				<FooterLink href={benchmark.source.url}>
 					{benchmark.source.name}
-				</FooterLink>
-				{benchmark.via && (
-					<>
-						{" "}
-						via{" "}
-						<FooterLink href={benchmark.via.url}>
-							{benchmark.via.name}
-						</FooterLink>
-					</>
-				)}{" "}
+				</FooterLink>{" "}
 				· estimated caps from{" "}
 				<FooterLink
 					href="https://www.youtube.com/watch?v=nYA0yASgaZI"
