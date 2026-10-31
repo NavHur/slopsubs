@@ -12,7 +12,7 @@
     ],
     "models": [
       "Tencent HY 2.0",
-      "GLM-5",
+      "GLM-5 (offline since 2026-10-09 per coding-plan.org)",
       "Kimi-K2.5",
       "MiniMax-M2.5"
     ],
@@ -21,14 +21,14 @@
     "sources": [
       {
         "url": "https://coding-plan.org/plans/tencentcloud",
-        "accessed": "2026-10-17"
+        "accessed": "2026-10-31"
       },
       {
         "url": "https://www.huangxiaolong.net/read/3322.html",
-        "accessed": "2026-10-31"
+        "accessed": "2026-10-17"
       }
     ],
     "confidence": "unverified",
-    "notes": "Reportedly ¥40/mo list (¥7.9 first month), Pro ¥200/mo. One aggregator reported both tiers sold out on 2026-08-26. No primary source checked. As of 2026-10-14 the coding-plan.org aggregator (secondary) says Lite offers only smart routing ('仅提供智能路由（参数 tc-code-latest），无法指定模型') and that GLM-5 went offline on 10-09. The official page cloud.tencent.com/act/pro/codingplan returned 404 on 2026-10-31."
+    "notes": "Reportedly ¥40/mo list (¥7.9 first month), Pro ¥200/mo. One aggregator reported both tiers sold out on 2026-08-26. No primary source checked. As of 2026-10-14 the coding-plan.org aggregator (secondary) says the whole Coding Plan, Pro included, offers only smart routing ('仅提供智能路由（参数 tc-code-latest），无法指定模型') with no public model list, and that GLM-5 went offline on 10-09. The official page cloud.tencent.com/act/pro/codingplan returned 404 on 2026-10-31."
   }
 ]

@@ -22,7 +22,7 @@
       }
     ],
     "confidence": "primary",
-    "notes": "Credit at API rates (1:1), so no subsidy. An annual toggle exists but the price wasn't captured."
+    "notes": "Credit at API rates (1:1), so no subsidy. Annual billing: $18/mo."
   },
   {
     "vendor": "Warp",
@@ -47,6 +47,6 @@
       }
     ],
     "confidence": "primary",
-    "notes": "1:1 credit."
+    "notes": "1:1 credit. Annual billing: $180/mo."
   }
 ]

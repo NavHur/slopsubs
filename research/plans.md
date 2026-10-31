@@ -15,7 +15,7 @@ The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an
 
 ## Limits are not comparable across vendors
 
-- **Rate-window plans** have a 5-hour window plus a weekly cap: Claude, ChatGPT Plus, Google, Z.ai, MiniMax, Alibaba, Volcengine, Kimi (5-hour only) and OpenCode Go. Vendors publish multipliers or message estimates, not tokens. The exceptions are Z.ai credits, Alibaba request counts and OpenCode per-model numbers.
+- **Rate-window plans** have a 5-hour window plus a weekly cap: Claude (Ultra weekly only, once verified), ChatGPT Plus, Google, Z.ai, MiniMax, Alibaba, Volcengine, Kimi (5-hour only) and OpenCode Go. Vendors publish multipliers or message estimates, not tokens. The exceptions are Z.ai credits, Alibaba request counts and OpenCode per-model numbers.
 - **Credit plans** pay a fixed dollar amount of usage at list rates. Copilot gives about 1.5x to 2x its price, Ollama 3x, JetBrains and Warp about 1x, and MiMo has a monthly credit quota. Their "subscription value" over the API is roughly the credit ratio, so the site should model them separately from rate-window plans.
 - **Bundled API credits:** Claude Max includes $100 and Ultra $200 a month of Claude Platform API credits. Google Ultra includes Google Cloud credits. Count these in value calculations.
 
@@ -29,7 +29,7 @@ The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an
   - **Alibaba**, for interactive use only.
   - **OpenCode Go, Ollama, Synthetic and Chutes (discontinued).**
 - **Forbidden:**
-  - **Anthropic:** subscription OAuth is only for Claude Code and native apps, and third parties may not route requests through Free, Pro or Max credentials.
+  - **Anthropic:** subscription OAuth is only for Claude Code and native apps, and third parties may not route requests through Free, Pro, Max or Ultra credentials.
   - **Google:** marked false on the basis of reported Feb 2026 account suspensions for routing Antigravity OAuth through OpenCode or OpenClaw. I didn't find an explicit ToS clause.
   - **Cursor (legacy), Devin, Factory, JetBrains and Warp:** quotas only work inside the vendor's own product.
 - **Unclear:**
