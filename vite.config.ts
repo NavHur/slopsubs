@@ -66,8 +66,17 @@ const config = defineConfig({
 	plugins: lazyPlugins(() => [
 		tailwindcss(),
 		// The site is static data, so every page is prerendered and served as
-		// plain assets from a Cloudflare Worker.
-		tanstackStart({ prerender: { enabled: true, crawlLinks: true } }),
+		// plain assets from a Cloudflare Worker. A query string is client view
+		// state on the same page, so crawled ?chart= links are skipped: each one
+		// would overwrite index.html, and the crawler re-escapes their &amp;
+		// into ever longer URLs.
+		tanstackStart({
+			prerender: {
+				enabled: true,
+				crawlLinks: true,
+				filter: ({ path }) => !path.includes("?"),
+			},
+		}),
 		viteReact(),
 	]),
 });
