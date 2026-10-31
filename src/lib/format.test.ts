@@ -9,6 +9,7 @@ vi.hoisted(() => {
 import {
 	formatApiComparison,
 	formatDay,
+	formatDuration,
 	formatIntelligence,
 	formatPercent,
 	formatTokens,
@@ -61,5 +62,21 @@ describe("formatApiComparison", () => {
 	it("calls a plan the same cost when it rounds to the API price", () => {
 		expect(formatApiComparison(1.02)).toBe("Same cost as API");
 		expect(formatApiComparison(0.98)).toBe("Same cost as API");
+	});
+});
+
+describe("formatDuration", () => {
+	it("shows seconds alone under a minute", () => {
+		expect(formatDuration(42.4)).toBe("42s");
+	});
+
+	it("shows minutes and seconds under an hour", () => {
+		expect(formatDuration(711.4)).toBe("11m 51s");
+		expect(formatDuration(59.6)).toBe("1m 0s");
+	});
+
+	it("shows hours and minutes from an hour up", () => {
+		expect(formatDuration(3900)).toBe("1h 5m");
+		expect(formatDuration(7170)).toBe("2h 0m");
 	});
 });
