@@ -1,33 +1,83 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 
-/**
- * The band, as viewport margins, that a section must cross to count as the
- * one in view: a thin line 40% of the way down.
- */
-const READING_LINE = "-40% 0px -59% 0px";
+/** How far down the viewport a section's top must have risen to count as in view. */
+const READING_LINE = 0.4;
 /** Longest a smooth scroll to a section takes; the spy waits it out. */
 const JUMP_MS = 1000;
+/** Sub-pixel slack when deciding a scroller has reached its end. */
+const END_SLACK_PX = 1;
 
-/** Calls `onCross` with the id of the section crossing the reading line. */
-function useReadingLine<T extends string>(
+interface Scroller {
+	scrollTop: number;
+	clientHeight: number;
+	scrollHeight: number;
+}
+
+/** Whether a scroller that can scroll has been scrolled all the way down. */
+export function isAtEnd(s: Scroller) {
+	if (s.scrollHeight <= s.clientHeight) return false;
+	return s.scrollHeight - s.scrollTop - s.clientHeight <= END_SLACK_PX;
+}
+
+/**
+ * The section in view: the last one whose top has reached the reading line, or
+ * the last one at all once the scroller is at its end (a short last section
+ * can never bring its top up to the line).
+ */
+export function sectionInView<T extends string>(
+	sections: readonly { id: T; top: number }[],
+	line: number,
+	atEnd: boolean,
+): T | undefined {
+	if (atEnd) return sections.at(-1)?.id;
+	const reached = sections.filter((section) => section.top <= line);
+	return (reached.at(-1) ?? sections[0])?.id;
+}
+
+/** The nearest ancestor that scrolls on its own, else the page. */
+function scrollerOf(el: HTMLElement): Scroller {
+	for (let p = el.parentElement; p; p = p.parentElement) {
+		const { overflowY } = getComputedStyle(p);
+		if (overflowY === "auto" || overflowY === "scroll") return p;
+	}
+	return document.scrollingElement ?? document.documentElement;
+}
+
+/** The rendered section of `ids` in view on the page now. */
+function readSectionInView<T extends string>(ids: readonly T[]): T | undefined {
+	const elements = ids.flatMap((id) => {
+		const el = document.getElementById(id);
+		return el ? [{ id, el }] : [];
+	});
+	const first = elements[0];
+	if (!first) return undefined;
+	return sectionInView(
+		elements.map(({ id, el }) => ({ id, top: el.getBoundingClientRect().top })),
+		window.innerHeight * READING_LINE,
+		isAtEnd(scrollerOf(first.el)),
+	);
+}
+
+/** Calls `onCross` with the section in view whenever it changes. */
+function useScrollSpy<T extends string>(
 	ids: readonly T[],
 	onCross: (id: T) => void,
 ) {
 	const cross = useEffectEvent(onCross);
 	useEffect(() => {
-		const observer = new IntersectionObserver(
-			(entries) => {
-				const crossing = entries.find((entry) => entry.isIntersecting);
-				// SAFETY: only elements with an id from `ids` are observed.
-				if (crossing) cross(crossing.target.id as T);
-			},
-			{ rootMargin: READING_LINE },
-		);
-		for (const id of ids) {
-			const section = document.getElementById(id);
-			if (section) observer.observe(section);
-		}
-		return () => observer.disconnect();
+		let reported: T | undefined;
+		const onScroll = () => {
+			const id = readSectionInView(ids);
+			if (id === undefined || id === reported) return;
+			reported = id;
+			cross(id);
+		};
+		// Capture: an element's scroll events do not bubble to the window.
+		window.addEventListener("scroll", onScroll, {
+			capture: true,
+			passive: true,
+		});
+		return () => window.removeEventListener("scroll", onScroll, true);
 	}, [ids]);
 }
 
@@ -57,15 +107,21 @@ function revealSection(section: HTMLElement) {
 	section.querySelector("h2")?.focus({ preventScroll: true });
 }
 
-/** Scrolls to the section named by the URL once, after the prerendered top. */
+/**
+ * Scrolls to the section named by the URL once, after the prerendered top.
+ * `beginJump` runs first so the spy ignores the scroll this causes.
+ */
 function useInitialScroll<T extends string>(
 	current: T | undefined,
 	onFound: (id: T) => void,
+	beginJump: () => void,
 ) {
 	const initial = useRef(current);
 	const found = useEffectEvent(onFound);
+	const begin = useEffectEvent(beginJump);
 	useEffect(() => {
 		if (!initial.current) return;
+		begin();
 		found(initial.current);
 		document.getElementById(initial.current)?.scrollIntoView();
 	}, []);
@@ -91,10 +147,10 @@ export function useSectionNav<T extends string>(
 		if (next !== current) onChange(next);
 	};
 
-	useReadingLine(ids, (id) => {
+	useScrollSpy(ids, (id) => {
 		if (!jump.isOpen()) select(id);
 	});
-	useInitialScroll(current, setActive);
+	useInitialScroll(current, setActive, jump.begin);
 
 	const scrollTo = (id: T) => {
 		const section = document.getElementById(id);
