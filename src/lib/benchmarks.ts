@@ -1,3 +1,4 @@
+import { AA_EVAL_UNITS, type AaEvalId } from "#/domain/eval-units";
 import type { BenchmarkPoint, LeaderboardId } from "#/domain/model";
 import { formatIntelligence, formatPercent } from "./format";
 
@@ -32,11 +33,11 @@ const COGNITION = {
 
 /** An Intelligence Index eval as a chart tab, scored on the AA website. */
 function aaEval(
-	id: LeaderboardId,
+	id: AaEvalId,
 	tabLabel: string,
 	scoreLabel: string,
-	percent: boolean,
 ): BenchmarkView {
+	const percent = AA_EVAL_UNITS[id] === "percent";
 	return {
 		id,
 		tabLabel,
@@ -76,43 +77,33 @@ export const BENCHMARK_VIEWS: Record<LeaderboardId, BenchmarkView> = {
 		source: COGNITION,
 		pointSource: () => ({ name: "FrontierCode 2.0", url: COGNITION.url }),
 	},
-	"aa-briefcase": aaEval("aa-briefcase", "AA Briefcase", "AA Briefcase", false),
+	"aa-briefcase": aaEval("aa-briefcase", "AA Briefcase", "AA Briefcase"),
 	"automationbench-aa": aaEval(
 		"automationbench-aa",
 		"AutomationBench",
 		"AutomationBench score",
-		true,
 	),
 	"terminalbench-4-0": aaEval(
 		"terminalbench-4-0",
 		"Terminal-Bench 4.0",
 		"Terminal-Bench 4.0 score",
-		true,
 	),
 	"frontiercode-2-0": aaEval(
 		"frontiercode-2-0",
 		"FrontierCode 2.0 (AA)",
 		"FrontierCode 2.0 score",
-		true,
 	),
-	omniscience: aaEval("omniscience", "Omniscience", "Omniscience", false),
-	"gdp-pdf": aaEval("gdp-pdf", "GDP.pdf", "GDP.pdf score", true),
-	"hle-diamond": aaEval(
-		"hle-diamond",
-		"HLE Diamond",
-		"HLE Diamond score",
-		true,
-	),
+	omniscience: aaEval("omniscience", "Omniscience", "Omniscience"),
+	"gdp-pdf": aaEval("gdp-pdf", "GDP.pdf", "GDP.pdf score"),
+	"hle-diamond": aaEval("hle-diamond", "HLE Diamond", "HLE Diamond score"),
 	"critpt-v2-hard": aaEval(
 		"critpt-v2-hard",
 		"CritPt v2 Hard",
 		"CritPt v2 Hard score",
-		true,
 	),
 	"terminal-bench-science": aaEval(
 		"terminal-bench-science",
 		"Terminal-Bench Science",
 		"Terminal-Bench Science score",
-		true,
 	),
 };

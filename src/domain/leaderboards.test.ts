@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
+import type { AaEvalId } from "./eval-units";
 import { evalPoints, frontierCodePoints } from "./leaderboards";
 import type {
 	AaEvalRow,
@@ -84,7 +85,7 @@ describe("frontierCodePoints", () => {
 describe("evalPoints", () => {
 	function evalRow(
 		family: string,
-		effort: string | null,
+		effort: string,
 		extra: Partial<AaEvalRow> = {},
 	): AaEvalRow {
 		return {
@@ -109,7 +110,7 @@ describe("evalPoints", () => {
 			family: OPUS,
 			name: "CLAUDE-OPUS-5-5",
 			effort: "max",
-			score: 0.5,
+			score: 50,
 			costPerTaskUsd: 2,
 			tokensPerTask: 50_000,
 			secondsPerTask: 500,
@@ -117,16 +118,16 @@ describe("evalPoints", () => {
 		});
 	});
 
-	it("resolves a null website effort to the family's sole catalog effort", () => {
-		const solo = [
-			catalogPoint("solo-fam" as FamilyId, "default", "Default", 35),
-		];
-		const [point] = evalPoints(
-			[evalRow("solo-fam", null)],
-			solo,
-			"terminalbench-4-0",
-		);
-		expect(point.effort).toBe("default");
+	it("converts a percent eval's fraction to points and leaves index evals as is", () => {
+		const score = (evalId: AaEvalRow["eval"]) =>
+			evalPoints(
+				[evalRow(OPUS, "max", { eval: evalId, score: 0.5707 })],
+				CATALOG,
+				evalId as AaEvalId,
+			)[0].score;
+		expect(score("terminalbench-4-0")).toBe(57.07);
+		expect(score("omniscience")).toBe(0.5707);
+		expect(score("aa-briefcase")).toBe(0.5707);
 	});
 
 	it("refuses a family the catalog doesn't know", () => {

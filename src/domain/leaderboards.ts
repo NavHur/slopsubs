@@ -1,3 +1,4 @@
+import { type AaEvalId, chartScore } from "./eval-units.ts";
 import type { AaEvalRow, BenchmarkPoint, FrontierCodeRow } from "./model";
 
 /**
@@ -32,51 +33,27 @@ export function frontierCodePoints(
 
 /**
  * AA Intelligence Index eval rows as chart points, named, labelled and priced
- * from the Artificial Analysis catalog. Every row's family must be in the
- * catalog; a null website effort resolves to the family's sole effort, else
- * to its none or default effort, failing loud when ambiguous.
+ * from the Artificial Analysis catalog, scored in the eval's chart unit. Every
+ * row's (family, effort) must be in the catalog.
  */
 export function evalPoints(
 	rows: readonly AaEvalRow[],
 	catalog: readonly BenchmarkPoint[],
-	evalSlug: string,
+	evalId: AaEvalId,
 ): BenchmarkPoint[] {
-	const byFamily = new Map<string, BenchmarkPoint[]>();
-	for (const m of catalog) {
-		const list = byFamily.get(m.family) ?? [];
-		list.push(m);
-		byFamily.set(m.family, list);
-	}
+	const modelOf = new Map<string, BenchmarkPoint>(
+		catalog.map((m) => [`${m.family}@${m.effort}`, m]),
+	);
 	return rows
-		.filter((row) => row.eval === evalSlug)
+		.filter((row) => row.eval === evalId)
 		.map((row) => {
-			const candidates = byFamily.get(row.family);
-			if (!candidates) throw new Error(`No catalog model for ${row.family}`);
-			let model: BenchmarkPoint | undefined;
-			if (row.effort !== null) {
-				model = candidates.find((m) => m.effort === row.effort);
-				if (!model)
-					throw new Error(
-						`No catalog effort ${row.effort} for ${row.family} (has ${candidates.map((m) => m.effort).join(", ")})`,
-					);
-			} else if (candidates.length === 1) {
-				model = candidates[0];
-			} else {
-				model =
-					candidates.find((m) => m.effort === "none") ??
-					candidates.find((m) => m.effort === "default");
-				if (!model)
-					throw new Error(
-						`Ambiguous null effort for ${row.family} (has ${candidates.map((m) => m.effort).join(", ")})`,
-					);
-			}
+			const id = `${row.family}@${row.effort}`;
+			const model = modelOf.get(id);
+			if (!model) throw new Error(`No catalog model for ${id}`);
 			return {
 				...model,
-				id: `${row.family}@${model.effort}`,
-				effort: model.effort,
-				effortLabel: model.effortLabel,
-				effortOrder: model.effortOrder,
-				score: row.score,
+				id,
+				score: chartScore(evalId, row.score),
 				costPerTaskUsd: row.costPerTaskUsd,
 				tokensPerTask: row.tokensPerTask,
 				secondsPerTask: row.secondsPerTask,

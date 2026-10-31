@@ -78,7 +78,7 @@ export const FrontierCodeDataset = z.object({
 /** One Artificial Analysis Intelligence Index eval result, by release slug. */
 export const AaEvalRow = z.object({
 	family: FamilyId,
-	effort: Effort.nullable(),
+	effort: Effort,
 	eval: z.string().min(1),
 	score: z.number(),
 	costPerTaskUsd: Usd.nullable(),

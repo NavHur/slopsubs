@@ -3,6 +3,7 @@
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
+import type { AaEvalId } from "../src/domain/eval-units.ts";
 import { evalPoints, frontierCodePoints } from "../src/domain/leaderboards.ts";
 import {
 	AaEvalsDataset,
@@ -357,7 +358,7 @@ const frontierCode = FrontierCodeDataset.parse(
 	await readJson("src/data/frontiercode.json"),
 );
 const aaEvals = AaEvalsDataset.parse(await readJson("src/data/aa-evals.json"));
-const evalBoard = (evalSlug: string) => ({
+const evalBoard = (evalSlug: AaEvalId) => ({
 	fetchedAt: aaEvals.fetchedAt,
 	models: onPlans(evalPoints(aaEvals.rows, models, evalSlug)),
 });
