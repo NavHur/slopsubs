@@ -80,27 +80,7 @@ export function PointTooltip({
 				{benchmark.effortLabel} ·{" "}
 				{pricing.kind === "api" ? "Pay per token (API)" : pricing.plan.label}
 			</p>
-			<dl className="mt-2 grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 tabular-nums">
-				<Metric label={view.scoreLabel} value={view.formatScore(point.score)} />
-				<Metric
-					label={
-						pricing.kind === "api" ? "Cost per task" : "Effective cost per task"
-					}
-					value={formatUsd(point.costPerTaskUsd)}
-				/>
-				{benchmark.tokensPerTask !== null && (
-					<Metric
-						label={view.tokensLabel}
-						value={formatTokens(benchmark.tokensPerTask)}
-					/>
-				)}
-				{benchmark.secondsPerTask !== null && (
-					<Metric
-						label="Time per task"
-						value={formatDuration(benchmark.secondsPerTask)}
-					/>
-				)}
-			</dl>
+			<PointMetrics point={point} view={view} />
 			{pricing.kind === "plan" && (
 				<p className="mt-2 border-t border-line pt-2">
 					<span className="font-medium text-fg">
@@ -139,6 +119,40 @@ function PromotionNote({ promotion }: { promotion: Promotion }) {
 			</span>{" "}
 			{promotion.summary}.
 		</p>
+	);
+}
+
+/** The point's score, cost, and the token and time figures it has. */
+function PointMetrics({
+	point,
+	view,
+}: {
+	point: ValuePoint;
+	view: BenchmarkView;
+}) {
+	const { benchmark, pricing } = point;
+	return (
+		<dl className="mt-2 grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 tabular-nums">
+			<Metric label={view.scoreLabel} value={view.formatScore(point.score)} />
+			<Metric
+				label={
+					pricing.kind === "api" ? "Cost per task" : "Effective cost per task"
+				}
+				value={formatUsd(point.costPerTaskUsd)}
+			/>
+			{benchmark.tokensPerTask !== null && (
+				<Metric
+					label={view.tokensLabel}
+					value={formatTokens(benchmark.tokensPerTask)}
+				/>
+			)}
+			{benchmark.secondsPerTask !== null && (
+				<Metric
+					label="Time per task"
+					value={formatDuration(benchmark.secondsPerTask)}
+				/>
+			)}
+		</dl>
 	);
 }
 
