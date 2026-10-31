@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { PricingKey } from "#/components/chart/PricingKey";
@@ -79,6 +79,7 @@ async function exporter() {
 function ValueView() {
 	const view = Route.useSearch();
 	const navigate = Route.useNavigate();
+	const router = useRouter();
 	const [panelOpen, setPanelOpen] = useState(false);
 	const closePanel = useCallback(() => setPanelOpen(false), []);
 	const update = (patch: Partial<ViewSearch>) =>
@@ -90,6 +91,12 @@ function ValueView() {
 	const nav = useSectionNav(CHART_SECTIONS, view.chart, (chart) =>
 		update({ chart }),
 	);
+
+	const sectionHref = (id: ChartSectionId) =>
+		router.buildLocation({
+			to: "/",
+			search: { ...view, chart: id === CHART_SECTIONS[0] ? undefined : id },
+		}).href;
 
 	const benchmark = BENCHMARK_VIEWS[view.benchmark];
 	const leaderboard = leaderboards[view.benchmark];
@@ -196,6 +203,7 @@ function ValueView() {
 						<SectionNav
 							sections={SECTION_LINKS}
 							active={nav.active}
+							hrefFor={sectionHref}
 							onSelect={nav.scrollTo}
 						/>
 						<Segmented
