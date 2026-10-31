@@ -22,6 +22,7 @@ const point: ValuePoint = {
 		score: 45.45,
 		costPerTaskUsd: 12.821,
 		tokensPerTask: 201919,
+		secondsPerTask: 711.4,
 		inputPricePerMTokUsd: 5,
 		outputPricePerMTokUsd: 25,
 	},
@@ -30,10 +31,10 @@ const point: ValuePoint = {
 	pricing: { kind: "api" },
 };
 
-function tooltipText(view: BenchmarkView) {
+function tooltipText(view: BenchmarkView, shown: ValuePoint = point) {
 	const html = renderToStaticMarkup(
 		<PointTooltip
-			point={point}
+			point={shown}
 			anchor={{ x: 0, y: 0 }}
 			bounds={{ width: 800, height: 600 }}
 			pinned={false}
@@ -48,6 +49,22 @@ describe("point tooltip", () => {
 	it("names FrontierCode's token count as output tokens", () => {
 		expect(tooltipText(BENCHMARK_VIEWS.frontiercode)).toContain(
 			"Output tokens per task",
+		);
+	});
+
+	it("shows how long the task took where the benchmark timed it", () => {
+		expect(tooltipText(BENCHMARK_VIEWS.intelligence)).toMatch(
+			/Time per task\s+11m 51s/,
+		);
+	});
+
+	it("leaves out the time where the benchmark did not time the task", () => {
+		const untimed = {
+			...point,
+			benchmark: { ...point.benchmark, secondsPerTask: null },
+		};
+		expect(tooltipText(BENCHMARK_VIEWS.intelligence, untimed)).not.toContain(
+			"Time per task",
 		);
 	});
 });

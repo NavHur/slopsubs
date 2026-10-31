@@ -35,6 +35,8 @@ const BenchmarkPoint = z.object({
 	score: z.number().nullable(),
 	costPerTaskUsd: Usd.nullable(),
 	tokensPerTask: z.number().nullable(),
+	/** Wall-clock time to finish one task, where the benchmark measured it. */
+	secondsPerTask: z.number().nullable(),
 	inputPricePerMTokUsd: Usd.nullable(),
 	outputPricePerMTokUsd: Usd.nullable(),
 });
