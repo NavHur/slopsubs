@@ -1,9 +1,9 @@
 // Measures how much API-equivalent spend fills a subscription's weekly cap.
 //
-//   pnpm measure mark <planId> <usedPercent> <resetsAt>
+//   bun run measure mark <planId> <usedPercent> <resetsAt>
 //     Record the weekly gauge from /usage, e.g.
-//     pnpm measure mark claude-max-20x 37 2026-10-20T16:00
-//   pnpm measure build [--claude-dir <projects dir>]...
+//     bun run measure mark claude-max-20x 37 2026-10-20T16:00
+//   bun run measure build [--claude-dir <projects dir>]...
 //     Price the Claude Code logs between consecutive marks of the same weekly
 //     window and write src/data/samples.json.
 //
