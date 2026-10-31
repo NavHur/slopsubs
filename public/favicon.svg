@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .tile { fill: #fbfaf8; } .slop { fill: #20201e; } .subs { fill: #7a6a00; }
+    @media (prefers-color-scheme: dark) {
+      .tile { fill: #000; } .slop { fill: #f4f1ee; } .subs { fill: #e2d45c; }
+    }
+  </style>
+  <defs><path id="s" d="M272 -12Q203 -12 152 10Q101 32 72 71Q43 110 39 159H173Q178 140 190 125Q202 109 222 100Q242 91 270 91Q297 91 314 99Q331 106 340 119Q348 132 348 146Q348 167 336 178Q324 190 301 197Q278 204 245 211Q209 218 175 228Q140 239 113 255Q86 271 70 296Q54 321 54 358Q54 403 78 438Q102 474 148 495Q194 516 259 516Q350 516 403 475Q456 434 466 362H339Q333 385 312 399Q292 412 258 412Q222 412 203 399Q184 386 184 365Q184 351 197 340Q209 329 232 321Q255 314 288 307Q346 295 390 280Q434 264 459 236Q484 207 484 153Q484 105 458 67Q432 30 385 9Q337 -12 272 -12Z"/></defs>
+  <rect class="tile" width="32" height="32" rx="7"/>
+  <use class="slop" href="#s" transform="translate(1.47 23.43) scale(0.0295 -0.0295)"/>
+  <use class="subs" href="#s" transform="translate(15.12 23.43) scale(0.0295 -0.0295)"/>
+</svg>
