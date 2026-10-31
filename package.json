@@ -16,6 +16,7 @@
     "import-frontiercode": "node scripts/import-frontiercode.ts",
     "measure": "node scripts/measure.ts",
     "build-plans": "node scripts/build-plans.ts",
+    "render-brand-images": "vp build && node scripts/render-brand-images.ts",
     "deploy": "vp run build && wrangler deploy"
   },
   "dependencies": {
@@ -35,6 +36,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
+    "playwright-core": "1.62.1",
     "tsrs": "0.18.0-ts7.1.0-dev.20260929",
     "typescript": "^6.0.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0",
