@@ -49,9 +49,8 @@ const config = defineConfig({
 		options: { typeAware: true, typeCheck: true },
 	},
 	run: {
-		// Cached: a repeat build replays dist/ instead of rebuilding. Vite lists
-		// dist/ before emptying it, so dist/ is left out of the inputs; a hit
-		// then restores a deleted dist/ rather than missing.
+		// Cached: a hit replays dist/. dist/ is left out of the inputs because Vite
+		// lists it before emptying it, so a deleted dist/ restores from cache.
 		tasks: {
 			build: {
 				command: "vp build",
