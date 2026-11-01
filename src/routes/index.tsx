@@ -15,7 +15,7 @@ import { Segmented, Toggle } from "#/components/Segmented";
 import { type Coverage, FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
 import { leaderboards, plans, samples } from "#/data";
-import { BENCHMARK_IDS, type LeaderboardId } from "#/domain/model";
+import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/model";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
@@ -54,7 +54,7 @@ const SECTION_LINKS = CHART_SECTIONS.map((id) => ({
 	label: SECTION_LABELS[id],
 }));
 
-function coverageOf(id: LeaderboardId): Coverage {
+function coverageOf(id: BenchmarkId): Coverage {
 	return {
 		benchmarkName: BENCHMARK_VIEWS[id].tabLabel,
 		scored: new Set(leaderboards[id].models.map((m) => m.family)),
@@ -62,9 +62,9 @@ function coverageOf(id: LeaderboardId): Coverage {
 }
 
 // Built once per leaderboard, not per render or row.
-const COVERAGE: Record<LeaderboardId, Coverage> = Object.fromEntries(
+const COVERAGE: Record<BenchmarkId, Coverage> = Object.fromEntries(
 	BENCHMARK_IDS.map((id) => [id, coverageOf(id)]),
-) as Record<LeaderboardId, Coverage>;
+) as Record<BenchmarkId, Coverage>;
 
 const SCALE_OPTIONS = [
 	{ value: "linear", label: "Linear" },
@@ -98,9 +98,8 @@ function ValueView() {
 			search: { ...view, chart: id === CHART_SECTIONS[0] ? undefined : id },
 		}).href;
 
-	const plotted = view.benchmark;
-	const benchmark = BENCHMARK_VIEWS[plotted];
-	const leaderboard = leaderboards[plotted];
+	const benchmark = BENCHMARK_VIEWS[view.benchmark];
+	const leaderboard = leaderboards[view.benchmark];
 	const planIds = selectedPlans(view);
 	const families = selectedFamilies(view);
 	const points = valuePoints({
@@ -322,7 +321,7 @@ function ValueView() {
 							/>
 						}
 						isDefault={isDefaultModelsView(view)}
-						coverage={COVERAGE[plotted]}
+						coverage={COVERAGE[view.benchmark]}
 						onSelect={(next) => update({ families: next })}
 						onReset={() => update(DEFAULT_MODELS_VIEW)}
 					/>

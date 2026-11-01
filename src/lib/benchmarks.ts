@@ -1,12 +1,12 @@
 import { AA_EVAL_UNITS, type AaEvalId } from "#/domain/eval-units";
-import type { BenchmarkPoint, LeaderboardId } from "#/domain/model";
+import type { BenchmarkId, BenchmarkPoint } from "#/domain/model";
 import { formatIntelligence, formatPercent } from "./format";
 
 type Link = { name: string; url: string };
 
 /** How the chart titles, reads and credits one benchmark. */
 export type BenchmarkView = {
-	id: LeaderboardId;
+	id: BenchmarkId;
 	tabLabel: string;
 	chartTitle: string;
 	/** The y axis, whose ticks are bare numbers, so it names the unit. */
@@ -51,7 +51,7 @@ function aaEval(
 	};
 }
 
-export const BENCHMARK_VIEWS: Record<LeaderboardId, BenchmarkView> = {
+export const BENCHMARK_VIEWS: Record<BenchmarkId, BenchmarkView> = {
 	intelligence: {
 		id: "intelligence",
 		tabLabel: "Intelligence Index",

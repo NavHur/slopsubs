@@ -1,7 +1,7 @@
-import type { BenchmarkId } from "./model";
+import type { AA_EVAL_IDS } from "./model";
 
 /** The AA Intelligence Index evals, which the chart plots from the AA website. */
-export type AaEvalId = Exclude<BenchmarkId, "intelligence" | "frontiercode">;
+export type AaEvalId = (typeof AA_EVAL_IDS)[number];
 
 /** A score's unit: "percent" is a 0-1 fraction shown as points, "index" is as is. */
 export type EvalUnit = "percent" | "index";

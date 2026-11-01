@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vite-plus/test";
-import type { AaEvalId } from "./eval-units";
 import { evalPoints, frontierCodePoints } from "./leaderboards";
 import type {
 	AaEvalRow,
@@ -123,7 +122,7 @@ describe("evalPoints", () => {
 			evalPoints(
 				[evalRow(OPUS, "max", { eval: evalId, score: 0.5707 })],
 				CATALOG,
-				evalId as AaEvalId,
+				evalId,
 			)[0].score;
 		expect(score("terminalbench-4-0")).toBe(57.07);
 		expect(score("omniscience")).toBe(0.5707);

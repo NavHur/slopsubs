@@ -6,6 +6,7 @@ import { z } from "zod";
 import type { AaEvalId } from "../src/domain/eval-units.ts";
 import { evalPoints, frontierCodePoints } from "../src/domain/leaderboards.ts";
 import {
+	AA_EVAL_IDS,
 	AaEvalsDataset,
 	BenchmarkDataset,
 	type BenchmarkPoint,
@@ -362,6 +363,9 @@ const evalBoard = (evalSlug: AaEvalId) => ({
 	fetchedAt: aaEvals.fetchedAt,
 	models: onPlans(evalPoints(aaEvals.rows, models, evalSlug)),
 });
+const evalBoards = Object.fromEntries(
+	AA_EVAL_IDS.map((id) => [id, evalBoard(id)]),
+) as Record<AaEvalId, ReturnType<typeof evalBoard>>;
 const chart = ChartData.parse({
 	frontier: dataset.frontier,
 	leaderboards: {
@@ -370,15 +374,7 @@ const chart = ChartData.parse({
 			fetchedAt: frontierCode.fetchedAt,
 			models: onPlans(frontierCodePoints(frontierCode.rows, models)),
 		},
-		"aa-briefcase": evalBoard("aa-briefcase"),
-		"automationbench-aa": evalBoard("automationbench-aa"),
-		"terminalbench-4-0": evalBoard("terminalbench-4-0"),
-		"frontiercode-2-0": evalBoard("frontiercode-2-0"),
-		omniscience: evalBoard("omniscience"),
-		"gdp-pdf": evalBoard("gdp-pdf"),
-		"hle-diamond": evalBoard("hle-diamond"),
-		"critpt-v2-hard": evalBoard("critpt-v2-hard"),
-		"terminal-bench-science": evalBoard("terminal-bench-science"),
+		...evalBoards,
 	},
 });
 await writeFile(

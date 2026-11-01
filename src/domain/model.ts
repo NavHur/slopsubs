@@ -75,11 +75,24 @@ export const FrontierCodeDataset = z.object({
 	rows: z.array(FrontierCodeRow),
 });
 
+/** The Intelligence Index evals the chart plots from the AA website. */
+export const AA_EVAL_IDS = [
+	"aa-briefcase",
+	"automationbench-aa",
+	"terminalbench-4-0",
+	"frontiercode-2-0",
+	"omniscience",
+	"gdp-pdf",
+	"hle-diamond",
+	"critpt-v2-hard",
+	"terminal-bench-science",
+] as const;
+
 /** One Artificial Analysis Intelligence Index eval result, by release slug. */
 export const AaEvalRow = z.object({
 	family: FamilyId,
 	effort: Effort,
-	eval: z.string().min(1),
+	eval: z.enum(AA_EVAL_IDS),
 	score: z.number(),
 	costPerTaskUsd: Usd.nullable(),
 	tokensPerTask: z.number().nullable(),
@@ -91,7 +104,7 @@ export type AaEvalRow = z.infer<typeof AaEvalRow>;
 export const AaEvalsDataset = z.object({
 	fetchedAt: z.iso.datetime(),
 	source: z.string(),
-	evals: z.array(z.string().min(1)),
+	evals: z.array(z.enum(AA_EVAL_IDS)),
 	rows: z.array(AaEvalRow),
 });
 export type AaEvalsDataset = z.infer<typeof AaEvalsDataset>;
@@ -100,21 +113,9 @@ export type AaEvalsDataset = z.infer<typeof AaEvalsDataset>;
 export const BENCHMARK_IDS = [
 	"intelligence",
 	"frontiercode",
-	"aa-briefcase",
-	"automationbench-aa",
-	"terminalbench-4-0",
-	"frontiercode-2-0",
-	"omniscience",
-	"gdp-pdf",
-	"hle-diamond",
-	"critpt-v2-hard",
-	"terminal-bench-science",
+	...AA_EVAL_IDS,
 ] as const;
 export type BenchmarkId = (typeof BENCHMARK_IDS)[number];
-
-/** What the chart can plot: one leaderboard per tab. */
-export const LEADERBOARD_IDS = [...BENCHMARK_IDS] as const;
-export type LeaderboardId = (typeof LEADERBOARD_IDS)[number];
 
 const Leaderboard = z.object({
 	fetchedAt: z.iso.datetime(),
@@ -122,22 +123,14 @@ const Leaderboard = z.object({
 });
 export type Leaderboard = z.infer<typeof Leaderboard>;
 
+const LEADERBOARD_SHAPE = Object.fromEntries(
+	BENCHMARK_IDS.map((id) => [id, Leaderboard]),
+) as Record<BenchmarkId, typeof Leaderboard>;
+
 /** What the site ships: each benchmark's points for the families on plans. */
 export const ChartData = z.object({
 	frontier: Frontier,
-	leaderboards: z.object({
-		intelligence: Leaderboard,
-		frontiercode: Leaderboard,
-		"aa-briefcase": Leaderboard,
-		"automationbench-aa": Leaderboard,
-		"terminalbench-4-0": Leaderboard,
-		"frontiercode-2-0": Leaderboard,
-		omniscience: Leaderboard,
-		"gdp-pdf": Leaderboard,
-		"hle-diamond": Leaderboard,
-		"critpt-v2-hard": Leaderboard,
-		"terminal-bench-science": Leaderboard,
-	} satisfies Record<LeaderboardId, typeof Leaderboard>),
+	leaderboards: z.object(LEADERBOARD_SHAPE),
 });
 
 /** A weekly cap someone else published, used until we measure our own. */
