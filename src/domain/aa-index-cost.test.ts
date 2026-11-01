@@ -13,7 +13,7 @@ function modelRecord({ slug, cost, selected = false }: Fixture, index: number) {
 		id: uuidOf(index),
 		slug,
 		chartDefaultSelected: selected,
-		creator: { id: uuidOf(900 + index), slug: "lab", name: "Lab {x}" },
+		creator: { id: uuidOf(900 + index), slug: "lab", name: 'Lab "{x}' },
 		intelligenceIndex: cost === undefined ? null : 30,
 		intelligenceIndexTimePerTask: cost === undefined ? null : 412.345,
 		intelligenceIndexCostPerTask:

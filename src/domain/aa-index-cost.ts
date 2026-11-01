@@ -28,16 +28,19 @@ const SiteModel = z.object({
 });
 type SiteModel = z.infer<typeof SiteModel>;
 
+/** Index of the quote closing the string that opens at `quote`. */
+function stringClose(text: string, quote: number): number {
+	let i = quote + 1;
+	while (i < text.length && text[i] !== '"') i += text[i] === "\\" ? 2 : 1;
+	return i;
+}
+
 /** End of the object starting at `start`, skipping braces inside strings. */
 function objectEnd(text: string, start: number): number {
 	let depth = 0;
 	for (let i = start; i < text.length; i++) {
-		if (text[i] === '"') {
-			i++;
-			while (i < text.length && text[i] !== '"') i += text[i] === "\\" ? 2 : 1;
-			continue;
-		}
-		depth += BRACE_DELTA[text[i]] ?? 0;
+		if (text[i] === '"') i = stringClose(text, i);
+		else depth += BRACE_DELTA[text[i]] ?? 0;
 		if (depth === 0) return i + 1;
 	}
 	throw new Error(`Object at offset ${start} never closes`);

@@ -1,6 +1,5 @@
-// Merges Artificial Analysis (scores, prices, releases) with slopalytics (cost
-// and tokens per task) into src/data/benchmarks.json. AA's website costs the
-// points slopalytics hasn't run.
+// Merges AA (scores, prices, releases) and slopalytics (cost, tokens per task)
+// into src/data/benchmarks.json; AA's site costs points slopalytics hasn't run.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { flightFromHtml } from "../src/domain/aa-evals.ts";
