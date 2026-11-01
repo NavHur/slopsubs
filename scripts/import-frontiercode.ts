@@ -1,9 +1,11 @@
 // Imports Cognition's FrontierCode 2.0 leaderboard into src/data/frontiercode.json,
 // under Artificial Analysis family ids.
 
-import { readFile, writeFile } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import { z } from "zod";
-import { BenchmarkDataset, EFFORTS } from "../src/domain/model.ts";
+import { EFFORTS } from "../src/domain/model.ts";
+import { roundedOrNull } from "../src/domain/rounding.ts";
+import { loadCatalogByFamily } from "./catalog-by-family.ts";
 
 const ROOT = new URL("..", import.meta.url);
 const SOURCE = "https://cognition.com/data/frontier-code-2.0/data.json";
@@ -25,14 +27,6 @@ const Leaderboard = z.object({
 	data: z.record(z.string(), z.record(z.string(), z.object({ main: Result }))),
 });
 
-async function knownFamilies(): Promise<Set<string>> {
-	const path = new URL("src/data/benchmarks.json", ROOT);
-	const { models } = BenchmarkDataset.parse(
-		JSON.parse(await readFile(path, "utf8")),
-	);
-	return new Set(models.map((m) => m.family));
-}
-
 /** "GPT-6.1 Sol" -> "gpt-6-1-sol", the slug our catalog uses. */
 function slugify(name: string): string {
 	return name
@@ -41,14 +35,11 @@ function slugify(name: string): string {
 		.replace(/^-+|-+$/g, "");
 }
 
-const ROUND = (value: number | null, digits: number) =>
-	value === null ? null : Number(value.toFixed(digits));
-
 const response = await fetch(SOURCE);
 if (!response.ok) throw new Error(`${SOURCE}: HTTP ${response.status}`);
 const leaderboard = Leaderboard.parse(await response.json());
 
-const families = await knownFamilies();
+const families = await loadCatalogByFamily(ROOT);
 const skippedFamilies = new Set<string>();
 const skippedEfforts = new Set<string>();
 const seen = new Set<string>();
@@ -71,8 +62,8 @@ for (const [name, efforts] of Object.entries(leaderboard.data)) {
 		rows.push({
 			family,
 			effort: known,
-			score: ROUND(subsets.main.new_score * 100, 2),
-			costPerTaskUsd: ROUND(subsets.main.cost, 5),
+			score: roundedOrNull(subsets.main.new_score * 100, 2),
+			costPerTaskUsd: roundedOrNull(subsets.main.cost, 5),
 			tokensPerTask: subsets.main.tokens,
 		});
 	}

@@ -6,9 +6,10 @@ import {
 	type AaModel,
 	AaResponse,
 	mergeCatalog,
-	SlopaPointSchema,
+	SlopaPoint,
 } from "../src/domain/catalog.ts";
 import { Plans } from "../src/domain/model.ts";
+import { roundedOrNull } from "../src/domain/rounding.ts";
 
 const SITE = "https://slopalytics.com";
 const AA_API = "https://artificialanalysis.ai/api/v2/data/llms/models";
@@ -107,9 +108,6 @@ function extract(source: string, anchor: RegExp): Literal {
 	);
 }
 
-const ROUND = (value: unknown, digits: number) =>
-	typeof value === "number" ? Number(value.toFixed(digits)) : null;
-
 async function main() {
 	const args = parseArgs(process.argv.slice(2));
 	const [bundle, aa] = await Promise.all([
@@ -121,7 +119,7 @@ async function main() {
 		string,
 		Literal
 	>;
-	const slopa = SlopaPointSchema.array().parse(
+	const slopa = SlopaPoint.array().parse(
 		(dataset.models as Record<string, Literal>[]).map((m) => ({
 			id: m.id,
 			family: m.family,
@@ -135,10 +133,10 @@ async function main() {
 			effort: m.effort,
 			effortLabel: m.effortLabel,
 			effortOrder: m.effortOrder,
-			score: ROUND(m.intelligence, 2),
-			costPerTaskUsd: ROUND(m.cost, 5),
-			tokensPerTask: ROUND(m.tokens, 0),
-			secondsPerTask: ROUND(m.time, 1),
+			score: roundedOrNull(m.intelligence, 2),
+			costPerTaskUsd: roundedOrNull(m.cost, 5),
+			tokensPerTask: roundedOrNull(m.tokens, 0),
+			secondsPerTask: roundedOrNull(m.time, 1),
 			inputPricePerMTokUsd: m.inputPrice,
 			outputPricePerMTokUsd: m.outputPrice,
 		})),
@@ -146,8 +144,13 @@ async function main() {
 	const plans = Plans.parse(JSON.parse(await readFile(PLANS, "utf8")));
 	const merged = mergeCatalog(aa, slopa, {
 		coveredFamilies: new Set(plans.flatMap((plan) => plan.families)),
-		allowMissingCost: args.allowMissingCost,
 	});
+	if (merged.missingCost.length && !args.allowMissingCost)
+		throw new Error(
+			`AA lists ${merged.missingCost.join(", ")} with no cost data from slopalytics. ` +
+				"Update the bundle, or pass --allow-missing-cost to publish them as " +
+				'"No cost data".',
+		);
 	const output = {
 		fetchedAt: new Date().toISOString(),
 		source:

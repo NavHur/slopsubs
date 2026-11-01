@@ -1,12 +1,6 @@
 import { z } from "zod";
 import { EFFORTS, type Effort } from "./model";
-
-/**
- * Artificial Analysis' free data API gives the model list, Intelligence Index
- * scores, list prices and release dates, but not the cost or tokens per task
- * the chart's x axis needs. Slopalytics still supplies those, so the import
- * merges the two and refuses to write when they disagree.
- */
+import { roundedOrNull } from "./rounding";
 
 /** One model as Artificial Analysis' data API returns it. */
 const AaModel = z.object({
@@ -31,7 +25,7 @@ export type AaModel = z.infer<typeof AaModel>;
 export const AaResponse = z.object({ data: z.array(AaModel) });
 
 /** The fields the import keeps from one slopalytics bundle point. */
-const SlopaPointSchema = z.object({
+export const SlopaPoint = z.object({
 	id: z.string().min(1),
 	family: z.string().min(1),
 	name: z.string().min(1),
@@ -51,8 +45,7 @@ const SlopaPointSchema = z.object({
 	inputPricePerMTokUsd: z.number().nonnegative().nullable(),
 	outputPricePerMTokUsd: z.number().nonnegative().nullable(),
 });
-export type SlopaPoint = z.infer<typeof SlopaPointSchema>;
-export { SlopaPointSchema };
+export type SlopaPoint = z.infer<typeof SlopaPoint>;
 
 /**
  * Our id where Artificial Analysis now uses the same slug for another effort:
@@ -66,11 +59,8 @@ export const AA_ALIASES: Record<string, string> = {
 /** Two sources rounding to one decimal still agree within this. */
 export const SCORE_TOLERANCE = 0.06;
 
-/** A per-token gap under a tenth of a cent can't move the cost chart. */
+/** A gap under a tenth of a cent per million tokens can't move the cost chart. */
 const PRICE_TOLERANCE = 0.001;
-
-const round = (value: number | null, digits: number) =>
-	value === null ? null : Number(value.toFixed(digits));
 
 /** Whether two prices differ by more than rounding noise. */
 const priceDiffers = (ours: number | null, theirs: number | null) =>
@@ -110,8 +100,6 @@ function displayName(name: string): string {
 export type MergeOptions = {
 	/** Families a plan covers, so an AA-only model is one that would ship. */
 	coveredFamilies: ReadonlySet<string>;
-	/** Write AA-only models with no cost data instead of refusing to run. */
-	allowMissingCost?: boolean;
 };
 
 export type MergedCatalog = {
@@ -167,7 +155,7 @@ function mergePoint(
 	return {
 		...point,
 		released: aa.release_date,
-		score: round(aaScore, 2),
+		score: roundedOrNull(aaScore, 2),
 		inputPricePerMTokUsd: aa.pricing.price_1m_input_tokens,
 		outputPricePerMTokUsd: aa.pricing.price_1m_output_tokens,
 	};
@@ -203,7 +191,10 @@ function aaOnlyPoint(
 		effort: derived.effort,
 		effortLabel: effort.label,
 		effortOrder: effort.order,
-		score: round(aa.evaluations.artificial_analysis_intelligence_index, 2),
+		score: roundedOrNull(
+			aa.evaluations.artificial_analysis_intelligence_index,
+			2,
+		),
 		costPerTaskUsd: null,
 		tokensPerTask: null,
 		secondsPerTask: null,
@@ -243,7 +234,7 @@ function aaOnlyModel(
 export function mergeCatalog(
 	aaModels: readonly AaModel[],
 	slopaPoints: readonly SlopaPoint[],
-	{ coveredFamilies, allowMissingCost = false }: MergeOptions,
+	{ coveredFamilies }: MergeOptions,
 ): MergedCatalog {
 	const aaById = new Map(aaModels.map((model) => [model.slug, model]));
 	const warnings: string[] = [];
@@ -272,13 +263,6 @@ export function mergeCatalog(
 		models.push(added);
 		missingCost.push(aa.slug);
 	}
-
-	if (missingCost.length && !allowMissingCost)
-		throw new Error(
-			`AA lists ${missingCost.join(", ")} with no cost data from slopalytics. ` +
-				"Update the bundle, or pass --allow-missing-cost to publish them as " +
-				'"No cost data".',
-		);
 
 	return { models, warnings, missingCost, skipped };
 }

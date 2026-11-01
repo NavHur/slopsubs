@@ -204,7 +204,6 @@ describe("mergeCatalog", () => {
 	it("adds an AA-only point on a plan with no cost data", () => {
 		const merged = mergeCatalog(DEEPSEEK_AA, DEEPSEEK_SLOPA, {
 			coveredFamilies: covered,
-			allowMissingCost: true,
 		});
 		const added = merged.models.at(-1);
 		expect(added).toMatchObject({
@@ -219,20 +218,6 @@ describe("mergeCatalog", () => {
 		expect(merged.missingCost).toEqual([
 			"deepseek-v4-1-flash-1017-non-reasoning",
 		]);
-	});
-
-	it("refuses missing cost unless asked to publish the gap", () => {
-		expect(() =>
-			mergeCatalog(DEEPSEEK_AA, DEEPSEEK_SLOPA, {
-				coveredFamilies: covered,
-			}),
-		).toThrow(/--allow-missing-cost/);
-		expect(() =>
-			mergeCatalog(DEEPSEEK_AA, DEEPSEEK_SLOPA, {
-				coveredFamilies: covered,
-				allowMissingCost: true,
-			}),
-		).not.toThrow();
 	});
 
 	it("leaves out an AA-only model no plan covers", () => {
