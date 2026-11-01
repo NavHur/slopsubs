@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-01T00:03:14.435Z",
+  "fetchedAt": "2026-11-01T00:07:08.567Z",
   "source": "Artificial Analysis website (model page flight payload)",
   "evals": [
     "aa-briefcase",
@@ -2364,7 +2364,7 @@
     },
     {
       "family": "mistral-small-4",
-      "effort": "none",
+      "effort": "default",
       "eval": "aa-briefcase",
       "score": 241.47,
       "costPerTaskUsd": 0.0218,
@@ -2373,7 +2373,7 @@
     },
     {
       "family": "mistral-small-4",
-      "effort": "none",
+      "effort": "default",
       "eval": "automationbench-aa",
       "score": 0.009635410038882158,
       "costPerTaskUsd": 0.01111,
@@ -2382,7 +2382,7 @@
     },
     {
       "family": "mistral-small-4",
-      "effort": "none",
+      "effort": "default",
       "eval": "terminalbench-4-0",
       "score": 0,
       "costPerTaskUsd": 0.06241,
@@ -2391,7 +2391,7 @@
     },
     {
       "family": "mistral-small-4",
-      "effort": "none",
+      "effort": "default",
       "eval": "frontiercode-2-0",
       "score": 0,
       "costPerTaskUsd": 0.13942,
@@ -2400,7 +2400,7 @@
     },
     {
       "family": "mistral-small-4",
-      "effort": "none",
+      "effort": "default",
       "eval": "omniscience",
       "score": -30.966666666666665,
       "costPerTaskUsd": 0.00043,
@@ -2409,7 +2409,7 @@
     },
     {
       "family": "mistral-small-4",
-      "effort": "none",
+      "effort": "default",
       "eval": "gdp-pdf",
       "score": 0,
       "costPerTaskUsd": 0.00258,
@@ -2418,7 +2418,7 @@
     },
     {
       "family": "mistral-small-4",
-      "effort": "none",
+      "effort": "default",
       "eval": "hle-diamond",
       "score": 0.044,
       "costPerTaskUsd": 0.00635,
@@ -2427,7 +2427,7 @@
     },
     {
       "family": "mistral-small-4",
-      "effort": "none",
+      "effort": "default",
       "eval": "critpt-v2-hard",
       "score": 0,
       "costPerTaskUsd": 0.00775,
@@ -2436,7 +2436,7 @@
     },
     {
       "family": "mistral-small-4",
-      "effort": "none",
+      "effort": "default",
       "eval": "terminal-bench-science",
       "score": 0,
       "costPerTaskUsd": 0.04884,

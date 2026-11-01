@@ -7,7 +7,12 @@ import {
 } from "./aa-evals";
 import type { BenchmarkPoint } from "./model";
 
-type Fixture = { release: string; effort?: string; score: number };
+type Fixture = {
+	release: string;
+	effort?: string;
+	reasons?: boolean;
+	score: number;
+};
 
 /** A model id in the payload's 36-character uuid form. */
 const uuidOf = (index: number) =>
@@ -15,7 +20,7 @@ const uuidOf = (index: number) =>
 
 /** One model record as the flight payload lays it out, evals key last. */
 function modelRecord(
-	{ release, effort, score }: Fixture,
+	{ release, effort, reasons = true, score }: Fixture,
 	index: number,
 ): string {
 	const effortJson = effort ? `"effort":{"slug":"${effort}"},` : "";
@@ -24,7 +29,7 @@ function modelRecord(
 		{ slug: "not-a-chart-eval", score: 1 },
 	]);
 	return (
-		`{"id":"${uuidOf(index)}","slug":"${release}","name":"x",${effortJson}"release":{"slug":"${release}"},` +
+		`{"id":"${uuidOf(index)}","slug":"${release}","name":"x","isReasoning":${reasons},${effortJson}"release":{"slug":"${release}"},` +
 		`"intelligenceIndexEvaluations":${evals}}`
 	);
 }
@@ -48,6 +53,11 @@ describe("extractEvals", () => {
 			["alpha", "high"],
 			["beta", null],
 		]);
+	});
+
+	it("reads an effortless model that does not reason as effort none", () => {
+		const [row] = rowsOf([{ release: "beta", reasons: false, score: 0.4 }]);
+		expect(row.effort).toBe("none");
 	});
 
 	it("reads a model's own effort and rounds its cost", () => {
@@ -123,6 +133,22 @@ describe("resolveRows", () => {
 		const { rows, skips } = resolveRows(raw, byFamily);
 		expect(rows).toEqual([]);
 		expect([...skips.efforts]).toEqual(["beta (medium)", "beta (high)"]);
+	});
+
+	it("files effortless reasoning and non-reasoning models by their mode", () => {
+		const raw = rowsOf([
+			{ release: "gamma", reasons: true, score: 0.5 },
+			{ release: "gamma", reasons: false, score: 0.3 },
+		]);
+		const gamma = [
+			catalogModel("gamma", "default"),
+			catalogModel("gamma", "none"),
+		];
+		const { rows } = resolveRows(raw, new Map([["gamma", gamma]]));
+		expect(rows.map((r) => [r.effort, r.score])).toEqual([
+			["default", 0.5],
+			["none", 0.3],
+		]);
 	});
 
 	it("throws on two rows for one family, effort and eval", () => {

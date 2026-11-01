@@ -14,6 +14,7 @@ const CHUNK_MARKER = "__next_f.push([1,";
 const EVALS_KEY = '"intelligenceIndexEvaluations":';
 const RELEASE_PATTERN = /"release":\{"slug":"([^"]+)"/g;
 const EFFORT_PATTERN = /"effort":\{"slug":"([^"]+)"/g;
+const REASONING_PATTERN = /"isReasoning":(true|false)/g;
 const MODEL_START_PATTERN = /\{"id":"[0-9a-f-]{36}","slug":"/g;
 /** How far before an evals array its model's record starts. */
 const LOOKBACK = 8000;
@@ -100,6 +101,16 @@ function lastMatch(text: string, pattern: RegExp): RegExpExecArray | null {
 	return [...text.matchAll(pattern)].at(-1) ?? null;
 }
 
+/** A record's own effort slug: `none` for an effortless model that does not
+ * reason, null for one that does, which the catalog files as `default`. */
+function recordEffort(record: string, family: string): string | null {
+	const effort = lastMatch(record, EFFORT_PATTERN)?.[1];
+	if (effort) return effort;
+	const reasons = lastMatch(record, REASONING_PATTERN)?.[1];
+	if (!reasons) throw new Error(`No effort or isReasoning for ${family}`);
+	return reasons === "true" ? null : "none";
+}
+
 /** Family and own effort of the model whose evals sit at `keyIndex`, read only
  * from its record (`{"id":…` to `"release"`), since an effortless one has none. */
 function modelBefore(
@@ -114,7 +125,7 @@ function modelBefore(
 	if (!start)
 		throw new Error(`No model record starts before the evals of ${family}`);
 	const record = before.slice(start.index, release.index);
-	return { family, effort: lastMatch(record, EFFORT_PATTERN)?.[1] ?? null };
+	return { family, effort: recordEffort(record, family) };
 }
 
 function toRow(
@@ -163,7 +174,8 @@ export function extractEvals(flight: string): EvalRow[] {
 	);
 }
 
-/** The catalog model a website effort names; null when the catalog lacks it. */
+/** The catalog model a website effort names; null when the catalog lacks it.
+ * A null effort is a reasoning model with no named effort. */
 export function pickModel(
 	candidates: BenchmarkPoint[],
 	effort: string | null,
@@ -172,9 +184,7 @@ export function pickModel(
 	if (effort !== null)
 		return candidates.find((m) => m.effort === effort) ?? null;
 	if (candidates.length === 1) return candidates[0];
-	const fallback =
-		candidates.find((m) => m.effort === "none") ??
-		candidates.find((m) => m.effort === "default");
+	const fallback = candidates.find((m) => m.effort === "default");
 	if (!fallback) throw new Error(`Ambiguous null effort for ${family}`);
 	return fallback;
 }
@@ -198,12 +208,10 @@ const catalogFamily = (r: EvalRow) => FAMILY_ALIASES[r.family] ?? r.family;
 /** The family's one default model, when the website lists it at one effort. */
 function soleDefault(
 	candidates: BenchmarkPoint[],
-	family: string,
-	{ siteEfforts }: Resolution,
+	siteEffortCount: number,
 ): BenchmarkPoint | null {
 	const [only, ...rest] = candidates;
-	const oneSiteEffort = siteEfforts.get(family)?.size === 1;
-	return oneSiteEffort && !rest.length && only.effort === "default"
+	return siteEffortCount === 1 && !rest.length && only.effort === "default"
 		? only
 		: null;
 }
@@ -218,7 +226,8 @@ function resolveRow(r: EvalRow, resolution: Resolution): ResolvedRow | null {
 		return null;
 	}
 	const exact = pickModel(candidates, r.effort, family);
-	const match = exact ?? soleDefault(candidates, family, resolution);
+	const siteEffortCount = resolution.siteEfforts.get(family)?.size ?? 0;
+	const match = exact ?? soleDefault(candidates, siteEffortCount);
 	if (!match) {
 		// The website carries efforts the catalog can't price; they skip the chart.
 		skips.efforts.add(`${r.family} (${r.effort})`);
