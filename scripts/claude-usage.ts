@@ -81,6 +81,23 @@ export async function readClaudeMessages(
 	return [...seen.values()];
 }
 
+/** A dated snapshot's date, as in `claude-opus-5-5-20261001`. */
+const DATED_SNAPSHOT_SUFFIX = /-\d{8}$/;
+
+/** What a message would have cost through the API; null when no benchmark
+ * prices its model. */
+function apiUsd(
+	message: ClaudeMessage,
+	benchmarks: BenchmarkPoint[],
+): number | null {
+	try {
+		return claudeMessageUsd(message.usage, priceFor(message.model, benchmarks));
+	} catch (error) {
+		if (error instanceof UnpricedModelError) return null;
+		throw error;
+	}
+}
+
 export function priceWindow(
 	[start, end]: [Mark, Mark],
 	messages: ClaudeMessage[],
@@ -90,16 +107,14 @@ export function priceWindow(
 	const from = Date.parse(start.at);
 	const to = Date.parse(end.at);
 	const byFamily: Record<string, number> = {};
-	for (const m of messages) {
-		if (m.at < from || m.at >= to) continue;
-		try {
-			const usd = claudeMessageUsd(m.usage, priceFor(m.model, benchmarks));
-			const family = m.model.replace(/-\d{8}$/, "");
-			byFamily[family] = (byFamily[family] ?? 0) + usd;
-		} catch (error) {
-			if (!(error instanceof UnpricedModelError)) throw error;
+	for (const m of messages.filter(({ at }) => at >= from && at < to)) {
+		const usd = apiUsd(m, benchmarks);
+		if (usd === null) {
 			unpriced.add(m.model);
+			continue;
 		}
+		const family = m.model.replace(DATED_SNAPSHOT_SUFFIX, "");
+		byFamily[family] = (byFamily[family] ?? 0) + usd;
 	}
 	return {
 		// SAFETY: LimitSamples.parse below brands and validates every sample.
