@@ -38,6 +38,14 @@ export function PageFooter({
 				<FooterLink href={benchmark.source.url}>
 					{benchmark.source.name}
 				</FooterLink>{" "}
+				{benchmark.costSource && (
+					<>
+						· costs from{" "}
+						<FooterLink href={benchmark.costSource.url}>
+							{benchmark.costSource.name}
+						</FooterLink>{" "}
+					</>
+				)}
 				· estimated caps from{" "}
 				<FooterLink
 					href="https://www.youtube.com/watch?v=nYA0yASgaZI"

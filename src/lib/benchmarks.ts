@@ -18,6 +18,8 @@ export type BenchmarkView = {
 	tokensLabel: string;
 	/** Who publishes the scores. */
 	source: Link;
+	/** Who measured cost and tokens per task, when not the score source. */
+	costSource?: Link;
 	/** The source page behind one point's figures. */
 	pointSource: (point: BenchmarkPoint) => Link;
 };
@@ -26,6 +28,7 @@ const ARTIFICIAL_ANALYSIS = {
 	name: "Artificial Analysis",
 	url: "https://artificialanalysis.ai",
 };
+const SLOPALYTICS = { name: "Slopalytics", url: "https://slopalytics.com" };
 const COGNITION = {
 	name: "Cognition",
 	url: "https://cognition.com/frontiercode",
@@ -47,6 +50,7 @@ function aaEval(
 		formatScore: percent ? formatPercent : formatIntelligence,
 		tokensLabel: "Output tokens per task",
 		source: ARTIFICIAL_ANALYSIS,
+		costSource: SLOPALYTICS,
 		pointSource: () => ARTIFICIAL_ANALYSIS,
 	};
 }
@@ -61,6 +65,7 @@ export const BENCHMARK_VIEWS: Record<BenchmarkId, BenchmarkView> = {
 		formatScore: formatIntelligence,
 		tokensLabel: "Tokens per task",
 		source: ARTIFICIAL_ANALYSIS,
+		costSource: SLOPALYTICS,
 		pointSource: (point) => ({
 			name: ARTIFICIAL_ANALYSIS.name,
 			url: `${ARTIFICIAL_ANALYSIS.url}/models/${point.id}`,
