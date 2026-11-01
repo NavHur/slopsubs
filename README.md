@@ -54,13 +54,15 @@ ones stop the import). A family the catalog has only as `default` takes the
 website's row when the site lists it at one effort, and the log names it.
 
 Each script takes cached input for offline runs: `import-benchmarks` accepts
-`--bundle <bundle.js>` and `--aa <models.json>`, and `import-aa-evals` accepts
-`--html <page.html>`. `import-frontiercode` has no flags.
+`--bundle <bundle.js>`, `--aa <models.json>` and `--html <page.html>`, and
+`import-aa-evals` accepts `--html <page.html>`. `import-frontiercode` has no flags.
 
-A model AA lists that slopalytics has not run yet makes the import stop, so
-the gap is deliberate rather than silent.
+A point slopalytics has not costed takes AA's own cost, tokens and time per
+task from the same model page `import-aa-evals` reads. A model AA lists that
+neither source has costed makes the import stop, so the gap is deliberate
+rather than silent.
 `bun run import-benchmarks -- --allow-missing-cost` writes it with a null cost
-instead; the cost chart leaves it out until slopalytics runs it.
+instead; the cost chart leaves it out until either source costs it.
 
 FrontierCode 2.0 comes from Cognition's own `data.json`, not a reseller.
 `build-plans` then keeps only the points some plan covers and writes the

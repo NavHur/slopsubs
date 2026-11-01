@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { TaskCost } from "./aa-index-cost";
 import { EFFORTS, type Effort } from "./model";
 import { roundedOrNull } from "./rounding";
 
@@ -100,13 +101,15 @@ function displayName(name: string): string {
 export type MergeOptions = {
 	/** Families a plan covers, so an AA-only model is one that would ship. */
 	coveredFamilies: ReadonlySet<string>;
+	/** AA's own cost per task by slug, for points slopalytics hasn't costed. */
+	siteCosts: ReadonlyMap<string, TaskCost>;
 };
 
 export type MergedCatalog = {
 	models: SlopaPoint[];
 	/** Disagreements that do not stop the import. */
 	warnings: string[];
-	/** AA-only points published without cost or token data. */
+	/** AA-only points published without cost data from either source. */
 	missingCost: string[];
 	/** AA models left out because no plan covers their family. */
 	skipped: string[];
@@ -141,19 +144,24 @@ function priceWarnings(point: SlopaPoint, aa: AaModel): string[] {
 		);
 }
 
-/** A slopalytics point carrying AA's score, prices and release date. */
+/** A slopalytics point carrying AA's score, prices and release date, and
+ * AA's own cost when slopalytics has none. */
 function mergePoint(
 	point: SlopaPoint,
 	aaById: ReadonlyMap<string, AaModel>,
+	siteCosts: ReadonlyMap<string, TaskCost>,
 	warnings: string[],
 ): SlopaPoint {
-	const aa = aaById.get(AA_ALIASES[point.id] ?? point.id);
+	const slug = AA_ALIASES[point.id] ?? point.id;
+	const aa = aaById.get(slug);
 	if (!aa) throw new Error(`AA has no model for ${point.id} (${point.name})`);
 	const aaScore = aa.evaluations.artificial_analysis_intelligence_index;
 	checkScore(point, aaScore);
 	warnings.push(...priceWarnings(point, aa));
+	const siteCost = point.costPerTaskUsd === null ? siteCosts.get(slug) : null;
 	return {
 		...point,
+		...siteCost,
 		released: aa.release_date,
 		score: roundedOrNull(aaScore, 2),
 		inputPricePerMTokUsd: aa.pricing.price_1m_input_tokens,
@@ -168,11 +176,12 @@ function inCoveredFamily(slug: string, covered: ReadonlySet<string>): boolean {
 	);
 }
 
-/** An AA-only model as a point with no cost data. */
+/** An AA-only model as a point, with AA's own cost when it has one. */
 function aaOnlyPoint(
 	aa: AaModel,
 	derived: { family: string; effort: Effort },
 	effortOf: ReadonlyMap<Effort, EffortLabel>,
+	siteCost: TaskCost | undefined,
 ): SlopaPoint {
 	const effort = effortOf.get(derived.effort);
 	if (!effort)
@@ -198,6 +207,7 @@ function aaOnlyPoint(
 		costPerTaskUsd: null,
 		tokensPerTask: null,
 		secondsPerTask: null,
+		...siteCost,
 		inputPricePerMTokUsd: aa.pricing.price_1m_input_tokens,
 		outputPricePerMTokUsd: aa.pricing.price_1m_output_tokens,
 	};
@@ -209,7 +219,7 @@ function aaOnlyPoint(
  */
 function aaOnlyModel(
 	aa: AaModel,
-	coveredFamilies: ReadonlySet<string>,
+	{ coveredFamilies, siteCosts }: MergeOptions,
 	effortOf: ReadonlyMap<Effort, EffortLabel>,
 ): SlopaPoint | null {
 	const derived = deriveModel(aa);
@@ -221,27 +231,28 @@ function aaOnlyModel(
 		return null;
 	}
 	return coveredFamilies.has(derived.family)
-		? aaOnlyPoint(aa, derived, effortOf)
+		? aaOnlyPoint(aa, derived, effortOf, siteCosts.get(aa.slug))
 		: null;
 }
 
 /**
  * Artificial Analysis wins on scores, prices and release dates; slopalytics
- * supplies cost, tokens and time. A score disagreement is an error, since it
+ * supplies cost, tokens and time, and AA's website fills them in for points
+ * slopalytics hasn't costed. A score disagreement is an error, since it
  * means one side changed its benchmark. A price disagreement is only a
  * warning: AA's list price is what we plot, but a promo can explain the gap.
  */
 export function mergeCatalog(
 	aaModels: readonly AaModel[],
 	slopaPoints: readonly SlopaPoint[],
-	{ coveredFamilies }: MergeOptions,
+	options: MergeOptions,
 ): MergedCatalog {
 	const aaById = new Map(aaModels.map((model) => [model.slug, model]));
 	const warnings: string[] = [];
 	const missingCost: string[] = [];
 	const skipped: string[] = [];
 	const models = slopaPoints.map((point) =>
-		mergePoint(point, aaById, warnings),
+		mergePoint(point, aaById, options.siteCosts, warnings),
 	);
 
 	const effortOf = new Map(
@@ -255,13 +266,13 @@ export function mergeCatalog(
 		...Object.values(AA_ALIASES),
 	]);
 	for (const aa of aaModels.filter((model) => !known.has(model.slug))) {
-		const added = aaOnlyModel(aa, coveredFamilies, effortOf);
+		const added = aaOnlyModel(aa, options, effortOf);
 		if (!added) {
 			skipped.push(aa.slug);
 			continue;
 		}
 		models.push(added);
-		missingCost.push(aa.slug);
+		if (added.costPerTaskUsd === null) missingCost.push(aa.slug);
 	}
 
 	return { models, warnings, missingCost, skipped };
