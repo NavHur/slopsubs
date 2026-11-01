@@ -85,6 +85,28 @@ rounds its corners itself. The script needs Chromium for `playwright-core`
 (`bunx playwright-core install chromium`) and network access for the web font
 the export embeds.
 
+## Profiling The Home Page
+
+```bash
+bun run profile-page --out profile.json
+```
+
+It builds the site unminified, so component and function names survive
+(React stays in production mode), and serves `dist/client`. In Chromium it
+wheels the page to its end and back at desktop, phone and tall desktop sizes,
+follows each nav link and a deep link, and hovers each chart's points. It
+reports:
+
+- which components rendered, counted through the React DevTools hook, and how
+  often the page read layout (`getBoundingClientRect`, `getComputedStyle`);
+- script time over the scroll pass under 4x CPU throttling, split into React's
+  render and commit work and the page's layout reads (`getBoundingClientRect`,
+  `getComputedStyle`), the median of five runs;
+- the section the nav marks and the URL's `chart` after every step, so two
+  builds' JSON reports show whether the nav behaves the same.
+
+The unminified build replaces `dist/`; build again before deploying.
+
 ## Styling
 
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.

@@ -4,61 +4,102 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 const READING_LINE = 0.4;
 /** Longest a smooth scroll to a section takes; the spy waits it out. */
 const JUMP_MS = 1000;
-/** Sub-pixel slack when deciding a scroller has reached its end. */
-const END_SLACK_PX = 1;
 
-interface Scroller {
-	scrollTop: number;
-	clientHeight: number;
-	scrollHeight: number;
-}
-
-/** Whether a scroller that can scroll has been scrolled all the way down. */
-export function isAtEnd(s: Scroller) {
-	if (s.scrollHeight <= s.clientHeight) return false;
-	return s.scrollHeight - s.scrollTop - s.clientHeight <= END_SLACK_PX;
-}
+/**
+ * What the observers last saw: whether each rendered section's top has
+ * reached the reading line, and whether the scroller is at its end.
+ */
+export type Sighting<T extends string> = {
+	reached: ReadonlyMap<T, boolean>;
+	atEnd: boolean;
+};
 
 /**
  * The section in view: the last one whose top has reached the reading line, or
  * the last one at all once the scroller is at its end (a short last section
- * can never bring its top up to the line).
+ * can never bring its top up to the line). Sections not seen are not rendered.
  */
 export function sectionInView<T extends string>(
-	sections: readonly { id: T; top: number }[],
-	line: number,
-	atEnd: boolean,
+	ids: readonly T[],
+	seen: Sighting<T>,
 ): T | undefined {
-	if (atEnd) return sections.at(-1)?.id;
-	const reached = sections.filter((section) => section.top <= line);
-	return (reached.at(-1) ?? sections[0])?.id;
+	const shown = ids.filter((id) => seen.reached.has(id));
+	if (seen.atEnd) return shown.at(-1);
+	return shown.filter((id) => seen.reached.get(id)).at(-1) ?? shown[0];
 }
 
-/** The nearest ancestor that scrolls on its own, else the page. */
-function scrollerOf(el: HTMLElement): Scroller {
+/** Whether the nearest ancestor that scrolls on its own, else the page, can. */
+function canScroll(el: Element): boolean {
 	for (let p = el.parentElement; p; p = p.parentElement) {
 		const { overflowY } = getComputedStyle(p);
-		if (overflowY === "auto" || overflowY === "scroll") return p;
+		if (overflowY === "auto" || overflowY === "scroll") {
+			return p.scrollHeight > p.clientHeight;
+		}
 	}
-	return document.scrollingElement ?? document.documentElement;
+	const page = document.scrollingElement ?? document.documentElement;
+	return page.scrollHeight > page.clientHeight;
 }
 
-/** The rendered section of `ids` in view on the page now. */
-function readSectionInView<T extends string>(ids: readonly T[]): T | undefined {
-	const elements = ids.flatMap((id) => {
-		const el = document.getElementById(id);
-		return el ? [{ id, el }] : [];
-	});
-	const first = elements[0];
-	if (!first) return undefined;
-	return sectionInView(
-		elements.map(({ id, el }) => ({ id, top: el.getBoundingClientRect().top })),
-		window.innerHeight * READING_LINE,
-		isAtEnd(scrollerOf(first.el)),
+/**
+ * The element at the very end of the scrolling content, a pixel high: it
+ * intersects the viewport once the scroller is within a pixel of its end.
+ */
+export const SCROLL_END_ID = "sections-end";
+
+/**
+ * Keeps a Sighting of the sections of `ids` current from IntersectionObserver
+ * entries, so nothing reads layout, and calls `onChange` after each update.
+ */
+function observeSections<T extends string>(
+	ids: readonly T[],
+	onChange: (seen: Sighting<T>) => void,
+) {
+	const reached = new Map<T, boolean>();
+	const seen = { reached, atEnd: false };
+	const idOf = new Map<Element, T>();
+	// The viewport above the reading line. A section's top crosses the line
+	// exactly when the section enters or leaves this band from below, so each
+	// section's last entry says whether its top has reached the line.
+	const aboveLine = new IntersectionObserver(
+		(entries) => {
+			const line = window.innerHeight * READING_LINE;
+			for (const { target, boundingClientRect } of entries) {
+				const id = idOf.get(target);
+				if (id) reached.set(id, boundingClientRect.top <= line);
+			}
+			onChange(seen);
+		},
+		{ rootMargin: `0px 0px -${Math.round((1 - READING_LINE) * 100)}% 0px` },
 	);
+	const end = new IntersectionObserver((entries) => {
+		const marker = entries.at(-1);
+		if (!marker) return;
+		seen.atEnd = marker.isIntersecting && canScroll(marker.target);
+		onChange(seen);
+	});
+	for (const id of ids) {
+		const section = document.getElementById(id);
+		if (!section) continue;
+		idOf.set(section, id);
+		aboveLine.observe(section);
+	}
+	const endMarker = document.getElementById(SCROLL_END_ID);
+	if (endMarker) end.observe(endMarker);
+	return {
+		seen,
+		stop: () => {
+			aboveLine.disconnect();
+			end.disconnect();
+		},
+	};
 }
 
-/** Calls `onCross` with the section in view whenever it changes. */
+/**
+ * Calls `onCross` with the section in view whenever it changes, from the
+ * reader's first scroll on. IntersectionObservers report each crossing of
+ * the reading line and of the scroller's end, the only moments the section
+ * in view can change, so nothing runs on the scroll events in between.
+ */
 function useScrollSpy<T extends string>(
 	ids: readonly T[],
 	onCross: (id: T) => void,
@@ -66,18 +107,31 @@ function useScrollSpy<T extends string>(
 	const cross = useEffectEvent(onCross);
 	useEffect(() => {
 		let reported: T | undefined;
-		const onScroll = () => {
-			const id = readSectionInView(ids);
+		let scrolled = false;
+		const report = (seen: Sighting<T>) => {
+			if (!scrolled) return;
+			const id = sectionInView(ids, seen);
 			if (id === undefined || id === reported) return;
 			reported = id;
 			cross(id);
 		};
+		const sections = observeSections(ids, report);
+		// Quiet until the reader first scrolls: a tall screen keeps its URL on
+		// load even when a later section starts in view.
+		const onFirstScroll = () => {
+			scrolled = true;
+			report(sections.seen);
+		};
 		// Capture: an element's scroll events do not bubble to the window.
-		window.addEventListener("scroll", onScroll, {
+		window.addEventListener("scroll", onFirstScroll, {
 			capture: true,
 			passive: true,
+			once: true,
 		});
-		return () => window.removeEventListener("scroll", onScroll, true);
+		return () => {
+			window.removeEventListener("scroll", onFirstScroll, true);
+			sections.stop();
+		};
 	}, [ids]);
 }
 
