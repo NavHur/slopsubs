@@ -84,7 +84,7 @@ export function hiddenReasoning(view: ViewSearch): ReasoningLevel[] {
 	return view.hideReasoning ?? DEFAULT_HIDDEN_REASONING;
 }
 
-/** The URL patch that restores the default models and reasoning efforts. */
+/** The URL patch that restores the default models and their filters. */
 export const DEFAULT_MODELS_VIEW = {
 	families: undefined,
 	hideReasoning: undefined,

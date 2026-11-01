@@ -8,6 +8,7 @@ import { CapBasisKey, TasksChart } from "#/components/chart/TasksChart";
 import { ValueChart } from "#/components/chart/ValueChart";
 import { ChartSection } from "#/components/ChartSection";
 import { ChartSettingsMenu, ThemeToggle } from "#/components/HeaderActions";
+import { ReasoningFilter } from "#/components/ModelFilters";
 import { PageFooter } from "#/components/PageFooter";
 import { SectionNav } from "#/components/SectionNav";
 import { Segmented, Toggle } from "#/components/Segmented";
@@ -60,11 +61,10 @@ function coverageOf(id: BenchmarkId): Coverage {
 	};
 }
 
-// Built once per benchmark, not per render or row.
-const COVERAGE: Record<BenchmarkId, Coverage> = {
-	intelligence: coverageOf("intelligence"),
-	frontiercode: coverageOf("frontiercode"),
-};
+// Built once per leaderboard, not per render or row.
+const COVERAGE: Record<BenchmarkId, Coverage> = Object.fromEntries(
+	BENCHMARK_IDS.map((id) => [id, coverageOf(id)]),
+) as Record<BenchmarkId, Coverage>;
 
 const SCALE_OPTIONS = [
 	{ value: "linear", label: "Linear" },
@@ -314,11 +314,15 @@ function ValueView() {
 					/>
 					<FamilyList
 						selected={families}
-						hiddenReasoning={hiddenReasoning(view)}
+						filters={
+							<ReasoningFilter
+								hidden={hiddenReasoning(view)}
+								onChange={(hideReasoning) => update({ hideReasoning })}
+							/>
+						}
 						isDefault={isDefaultModelsView(view)}
 						coverage={COVERAGE[view.benchmark]}
 						onSelect={(next) => update({ families: next })}
-						onHideReasoning={(hideReasoning) => update({ hideReasoning })}
 						onReset={() => update(DEFAULT_MODELS_VIEW)}
 					/>
 				</SidePanel>

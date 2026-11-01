@@ -1,103 +1,84 @@
-// Imports Cognition's FrontierCode 2.0 leaderboard from mypriors.com's public
-// tool API into src/data/frontiercode.json, under Artificial Analysis family ids.
+// Imports Cognition's FrontierCode 2.0 leaderboard into src/data/frontiercode.json,
+// under Artificial Analysis family ids.
 
-import { readFile, writeFile } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import { z } from "zod";
-import { BenchmarkDataset, EFFORTS } from "../src/domain/model.ts";
+import { EFFORTS } from "../src/domain/model.ts";
+import { roundedOrNull } from "../src/domain/rounding.ts";
+import { loadCatalogByFamily } from "./catalog-by-family.ts";
 
 const ROOT = new URL("..", import.meta.url);
-const API = "https://mypriors.com/api/tools/get_benchmark";
-const BENCHMARK = "frontiercode-2.0-main";
-/** More than the leaderboard holds, so one request returns every row. */
-const ROW_LIMIT = 1000;
+const SOURCE = "https://cognition.com/data/frontier-code-2.0/data.json";
 
-/** Priors model ids whose normalized form isn't our family id. */
+/** Cognition names whose normalized form isn't our family id. */
 const FAMILY_ALIASES: Record<string, string> = {
-	// Priors lists "Gemini 4 Argon" among this model's aliases.
-	"gemini-4": "gemini-4-argon",
+	// Cognition's "Muse Wonder 1.0" is the family we chart as muse-wonder.
+	"muse-wonder-1-0": "muse-wonder",
 };
 
+const Result = z.object({
+	correct: z.number(),
+	new_score: z.number(),
+	tokens: z.number().nullable(),
+	cost: z.number().nonnegative().nullable(),
+});
+
 const Leaderboard = z.object({
-	benchmark: z.object({ name: z.string() }),
-	total: z.number(),
-	rows: z.array(
-		z.object({
-			modelId: z.string(),
-			effort: z.enum(EFFORTS),
-			value: z.number(),
-			costUsd: z.number().nonnegative().nullable(),
-			outputTokens: z.number().nullable(),
-		}),
-	),
+	data: z.record(z.string(), z.record(z.string(), z.object({ main: Result }))),
 });
 
-async function fetchLeaderboard() {
-	const response = await fetch(API, {
-		method: "POST",
-		body: JSON.stringify({ benchmark: BENCHMARK, limit: ROW_LIMIT }),
-	});
-	if (!response.ok) throw new Error(`${API}: HTTP ${response.status}`);
-	const leaderboard = Leaderboard.parse(await response.json());
-	if (leaderboard.rows.length !== leaderboard.total)
-		throw new Error(
-			`Got ${leaderboard.rows.length} of ${leaderboard.total} rows`,
-		);
-	return leaderboard;
+/** "GPT-6.1 Sol" -> "gpt-6-1-sol", the slug our catalog uses. */
+function slugify(name: string): string {
+	return name
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");
 }
 
-async function knownFamilies(): Promise<Set<string>> {
-	const path = new URL("src/data/benchmarks.json", ROOT);
-	const { models } = BenchmarkDataset.parse(
-		JSON.parse(await readFile(path, "utf8")),
-	);
-	return new Set(models.map((m) => m.family));
-}
+const response = await fetch(SOURCE);
+if (!response.ok) throw new Error(`${SOURCE}: HTTP ${response.status}`);
+const leaderboard = Leaderboard.parse(await response.json());
 
-/**
- * Our family id for a Priors model id: dashes for dots, and without the "aa-"
- * Priors gives models it only knows from Artificial Analysis.
- */
-function normalizedId(modelId: string): string {
-	return modelId.replace(/^aa-/, "").replaceAll(".", "-");
-}
-
-const ROUND = (value: number | null, digits: number) =>
-	value === null ? null : Number(value.toFixed(digits));
-
-const [leaderboard, families] = await Promise.all([
-	fetchLeaderboard(),
-	knownFamilies(),
-]);
-const skipped = new Set<string>();
+const families = await loadCatalogByFamily(ROOT);
+const skippedFamilies = new Set<string>();
+const skippedEfforts = new Set<string>();
 const seen = new Set<string>();
-const rows = leaderboard.rows.flatMap((row) => {
-	const family = FAMILY_ALIASES[row.modelId] ?? normalizedId(row.modelId);
-	if (!families.has(family)) {
-		skipped.add(row.modelId);
-		return [];
-	}
-	const key = `${family}@${row.effort}`;
-	if (seen.has(key)) throw new Error(`Two rows for ${key}`);
-	seen.add(key);
-	return [
-		{
+const rows = [];
+for (const [name, efforts] of Object.entries(leaderboard.data)) {
+	const family = FAMILY_ALIASES[slugify(name)] ?? slugify(name);
+	for (const [effort, subsets] of Object.entries(efforts)) {
+		const known = EFFORTS.find((e) => e === effort);
+		if (!known) {
+			skippedEfforts.add(`${name} (${effort})`);
+			continue;
+		}
+		if (!families.has(family)) {
+			skippedFamilies.add(name);
+			continue;
+		}
+		const key = `${family}@${known}`;
+		if (seen.has(key)) throw new Error(`Two rows for ${key}`);
+		seen.add(key);
+		rows.push({
 			family,
-			effort: row.effort,
-			score: ROUND(row.value, 2),
-			costPerTaskUsd: ROUND(row.costUsd, 5),
-			tokensPerTask: row.outputTokens,
-		},
-	];
-});
+			effort: known,
+			score: roundedOrNull(subsets.main.new_score * 100, 2),
+			costPerTaskUsd: roundedOrNull(subsets.main.cost, 5),
+			tokensPerTask: subsets.main.tokens,
+		});
+	}
+}
 const output = {
 	fetchedAt: new Date().toISOString(),
-	source: `Cognition's ${leaderboard.benchmark.name} via mypriors.com`,
+	source: "Cognition's FrontierCode 2.0",
 	rows,
 };
 await writeFile(
 	new URL("src/data/frontiercode.json", ROOT),
 	`${JSON.stringify(output, null, 2)}\n`,
 );
-console.log(
-	`Wrote ${rows.length} of ${leaderboard.total} rows; no family for ${[...skipped].join(", ")}`,
-);
+console.log(`Wrote ${rows.length} rows`);
+if (skippedFamilies.size)
+	console.log(`No family for ${[...skippedFamilies].join(", ")}`);
+if (skippedEfforts.size)
+	console.log(`No effort for ${[...skippedEfforts].join(", ")}`);

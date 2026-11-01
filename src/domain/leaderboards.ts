@@ -1,4 +1,5 @@
-import type { BenchmarkPoint, FrontierCodeRow } from "./model";
+import { type AaEvalId, chartScore } from "./eval-units.ts";
+import type { AaEvalRow, BenchmarkPoint, FrontierCodeRow } from "./model";
 
 /**
  * FrontierCode rows as chart points, named, labelled and priced from the
@@ -28,4 +29,34 @@ export function frontierCodePoints(
 			secondsPerTask: null,
 		};
 	});
+}
+
+/**
+ * AA Intelligence Index eval rows as chart points, named, labelled and priced
+ * from the Artificial Analysis catalog, scored in the eval's chart unit. Every
+ * row's (family, effort) must be in the catalog.
+ */
+export function evalPoints(
+	rows: readonly AaEvalRow[],
+	catalog: readonly BenchmarkPoint[],
+	evalId: AaEvalId,
+): BenchmarkPoint[] {
+	const modelOf = new Map<string, BenchmarkPoint>(
+		catalog.map((m) => [`${m.family}@${m.effort}`, m]),
+	);
+	return rows
+		.filter((row) => row.eval === evalId)
+		.map((row) => {
+			const id = `${row.family}@${row.effort}`;
+			const model = modelOf.get(id);
+			if (!model) throw new Error(`No catalog model for ${id}`);
+			return {
+				...model,
+				id,
+				score: chartScore(evalId, row.score),
+				costPerTaskUsd: row.costPerTaskUsd,
+				tokensPerTask: row.tokensPerTask,
+				secondsPerTask: row.secondsPerTask,
+			};
+		});
 }

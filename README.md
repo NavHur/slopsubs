@@ -24,6 +24,48 @@ vp run build
 `vp test` runs the tests. The site deploys to Cloudflare Workers (static
 assets, configured in `wrangler.jsonc`) from CI on every push to `main`.
 
+## Benchmark Data
+
+The charts ship generated data, refreshed by four scripts in this order:
+
+```bash
+bun run import-benchmarks    # src/data/benchmarks.json
+bun run import-aa-evals      # src/data/aa-evals.json
+bun run import-frontiercode  # src/data/frontiercode.json
+bun run build-plans          # plans.json and chart-benchmarks.json
+```
+
+[Artificial Analysis](https://artificialanalysis.ai) is the source of the
+model list, Intelligence Index scores, list prices and release dates, through
+its data API. The API needs a key: put `AA_API_KEY=...` in `.env.local` (which
+git ignores) and `bun` passes it to the script. Slopalytics still supplies the
+cost, tokens and wall-clock time per task that the free API does not publish,
+and the two sources are merged in `src/domain/catalog.ts`. A score they
+disagree on stops the import; a price they disagree on only warns, since a
+promo can explain the gap, and AA's list price wins.
+
+The nine Intelligence Index evals (Terminal-Bench 4.0, FrontierCode 2.0 and
+seven others) come from the AA website itself, not the data API, because the
+API omits their per-task cost, tokens and time. `import-aa-evals` fetches a
+model page, reconstructs its Next.js flight payload, and extracts each model's
+per-eval score, cost, tokens and time into `src/data/aa-evals.json`, resolved
+against the catalog (unknown families/efforts are skipped with a log; ambiguous
+ones stop the import). A family the catalog has only as `default` takes the
+website's row when the site lists it at one effort, and the log names it.
+
+Each script takes cached input for offline runs: `import-benchmarks` accepts
+`--bundle <bundle.js>` and `--aa <models.json>`, and `import-aa-evals` accepts
+`--html <page.html>`. `import-frontiercode` has no flags.
+
+A model AA lists that slopalytics has not run yet makes the import stop, so
+the gap is deliberate rather than silent.
+`bun run import-benchmarks -- --allow-missing-cost` writes it with a null cost
+instead; the cost chart leaves it out until slopalytics runs it.
+
+FrontierCode 2.0 comes from Cognition's own `data.json`, not a reseller.
+`build-plans` then keeps only the points some plan covers and writes the
+chart's copy.
+
 ## Brand Images
 
 `public/og.png` (the 1200x630 social card) and `public/apple-touch-icon.png`

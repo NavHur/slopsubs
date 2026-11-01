@@ -1,3 +1,4 @@
+import { AA_EVAL_UNITS, type AaEvalId } from "#/domain/eval-units";
 import type { BenchmarkId, BenchmarkPoint } from "#/domain/model";
 import { formatIntelligence, formatPercent } from "./format";
 
@@ -15,9 +16,8 @@ export type BenchmarkView = {
 	formatScore: (score: number) => string;
 	/** What a point's token count measures, in its details. */
 	tokensLabel: string;
-	/** Who publishes the scores, and who we fetch them from if not them. */
+	/** Who publishes the scores. */
 	source: Link;
-	via?: Link;
 	/** The source page behind one point's figures. */
 	pointSource: (point: BenchmarkPoint) => Link;
 };
@@ -30,6 +30,26 @@ const COGNITION = {
 	name: "Cognition",
 	url: "https://cognition.com/frontiercode",
 };
+
+/** An Intelligence Index eval as a chart tab, scored on the AA website. */
+function aaEval(
+	id: AaEvalId,
+	tabLabel: string,
+	scoreLabel: string,
+): BenchmarkView {
+	const percent = AA_EVAL_UNITS[id] === "percent";
+	return {
+		id,
+		tabLabel,
+		chartTitle: `Effective cost vs ${tabLabel}`,
+		axisLabel: percent ? `${scoreLabel} (%)` : scoreLabel,
+		scoreLabel,
+		formatScore: percent ? formatPercent : formatIntelligence,
+		tokensLabel: "Output tokens per task",
+		source: ARTIFICIAL_ANALYSIS,
+		pointSource: () => ARTIFICIAL_ANALYSIS,
+	};
+}
 
 export const BENCHMARK_VIEWS: Record<BenchmarkId, BenchmarkView> = {
 	intelligence: {
@@ -55,10 +75,35 @@ export const BENCHMARK_VIEWS: Record<BenchmarkId, BenchmarkView> = {
 		formatScore: formatPercent,
 		tokensLabel: "Output tokens per task",
 		source: COGNITION,
-		via: {
-			name: "Priors",
-			url: "https://mypriors.com/benchmarks/frontiercode-2.0-main",
-		},
 		pointSource: () => ({ name: "FrontierCode 2.0", url: COGNITION.url }),
 	},
+	"aa-briefcase": aaEval("aa-briefcase", "AA Briefcase", "AA Briefcase"),
+	"automationbench-aa": aaEval(
+		"automationbench-aa",
+		"AutomationBench",
+		"AutomationBench score",
+	),
+	"terminalbench-4-0": aaEval(
+		"terminalbench-4-0",
+		"Terminal-Bench 4.0",
+		"Terminal-Bench 4.0 score",
+	),
+	"frontiercode-2-0": aaEval(
+		"frontiercode-2-0",
+		"FrontierCode 2.0 (AA)",
+		"FrontierCode 2.0 score",
+	),
+	omniscience: aaEval("omniscience", "Omniscience", "Omniscience"),
+	"gdp-pdf": aaEval("gdp-pdf", "GDP.pdf", "GDP.pdf score"),
+	"hle-diamond": aaEval("hle-diamond", "HLE Diamond", "HLE Diamond score"),
+	"critpt-v2-hard": aaEval(
+		"critpt-v2-hard",
+		"CritPt v2 Hard",
+		"CritPt v2 Hard score",
+	),
+	"terminal-bench-science": aaEval(
+		"terminal-bench-science",
+		"Terminal-Bench Science",
+		"Terminal-Bench Science score",
+	),
 };

@@ -47,3 +47,27 @@ export function Toggle({
 		</label>
 	);
 }
+
+/** A small text toggle, dimmed when off. */
+export function Chip({
+	label,
+	on,
+	onClick,
+	className = "",
+}: {
+	label: string;
+	on: boolean;
+	onClick: () => void;
+	className?: string;
+}) {
+	return (
+		<button
+			type="button"
+			aria-pressed={on}
+			onClick={onClick}
+			className={`text-[12px] text-subtle hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[14px] ${className}`}
+		>
+			{label}
+		</button>
+	);
+}

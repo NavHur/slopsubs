@@ -75,8 +75,46 @@ export const FrontierCodeDataset = z.object({
 	rows: z.array(FrontierCodeRow),
 });
 
+/** The Intelligence Index evals the chart plots from the AA website. */
+export const AA_EVAL_IDS = [
+	"aa-briefcase",
+	"automationbench-aa",
+	"terminalbench-4-0",
+	"frontiercode-2-0",
+	"omniscience",
+	"gdp-pdf",
+	"hle-diamond",
+	"critpt-v2-hard",
+	"terminal-bench-science",
+] as const;
+
+/** One Artificial Analysis Intelligence Index eval result, by release slug. */
+export const AaEvalRow = z.object({
+	family: FamilyId,
+	effort: Effort,
+	eval: z.enum(AA_EVAL_IDS),
+	score: z.number(),
+	costPerTaskUsd: Usd.nullable(),
+	tokensPerTask: z.number().nullable(),
+	secondsPerTask: z.number().nullable(),
+});
+export type AaEvalRow = z.infer<typeof AaEvalRow>;
+
+/** The nine Intelligence Index evals, as imported from the AA website. */
+export const AaEvalsDataset = z.object({
+	fetchedAt: z.iso.datetime(),
+	source: z.string(),
+	evals: z.array(z.enum(AA_EVAL_IDS)),
+	rows: z.array(AaEvalRow),
+});
+export type AaEvalsDataset = z.infer<typeof AaEvalsDataset>;
+
 /** The benchmarks the chart can plot, in tab order. */
-export const BENCHMARK_IDS = ["intelligence", "frontiercode"] as const;
+export const BENCHMARK_IDS = [
+	"intelligence",
+	"frontiercode",
+	...AA_EVAL_IDS,
+] as const;
 export type BenchmarkId = (typeof BENCHMARK_IDS)[number];
 
 const Leaderboard = z.object({
@@ -85,13 +123,14 @@ const Leaderboard = z.object({
 });
 export type Leaderboard = z.infer<typeof Leaderboard>;
 
+const LEADERBOARD_SHAPE = Object.fromEntries(
+	BENCHMARK_IDS.map((id) => [id, Leaderboard]),
+) as Record<BenchmarkId, typeof Leaderboard>;
+
 /** What the site ships: each benchmark's points for the families on plans. */
 export const ChartData = z.object({
 	frontier: Frontier,
-	leaderboards: z.object({
-		intelligence: Leaderboard,
-		frontiercode: Leaderboard,
-	} satisfies Record<BenchmarkId, typeof Leaderboard>),
+	leaderboards: z.object(LEADERBOARD_SHAPE),
 });
 
 /** A weekly cap someone else published, used until we measure our own. */

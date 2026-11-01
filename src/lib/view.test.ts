@@ -48,6 +48,11 @@ describe("old shared links", () => {
 		expect(() => view({ profile: "heavy" })).not.toThrow();
 		expect(view({ profile: "heavy" })).toEqual(view({}));
 	});
+
+	it("still load when they carry the removed code-only switch", () => {
+		expect(() => view({ code: true })).not.toThrow();
+		expect(view({ code: true })).toEqual(view({}));
+	});
 });
 
 describe("isDefaultModelsView", () => {

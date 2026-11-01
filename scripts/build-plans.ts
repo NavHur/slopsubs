@@ -3,8 +3,11 @@
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
-import { frontierCodePoints } from "../src/domain/leaderboards.ts";
+import type { AaEvalId } from "../src/domain/eval-units.ts";
+import { evalPoints, frontierCodePoints } from "../src/domain/leaderboards.ts";
 import {
+	AA_EVAL_IDS,
+	AaEvalsDataset,
 	BenchmarkDataset,
 	type BenchmarkPoint,
 	ChartData,
@@ -355,6 +358,14 @@ const onPlans = (points: BenchmarkPoint[]) =>
 const frontierCode = FrontierCodeDataset.parse(
 	await readJson("src/data/frontiercode.json"),
 );
+const aaEvals = AaEvalsDataset.parse(await readJson("src/data/aa-evals.json"));
+const evalBoard = (evalSlug: AaEvalId) => ({
+	fetchedAt: aaEvals.fetchedAt,
+	models: onPlans(evalPoints(aaEvals.rows, models, evalSlug)),
+});
+const evalBoards = Object.fromEntries(
+	AA_EVAL_IDS.map((id) => [id, evalBoard(id)]),
+) as Record<AaEvalId, ReturnType<typeof evalBoard>>;
 const chart = ChartData.parse({
 	frontier: dataset.frontier,
 	leaderboards: {
@@ -363,6 +374,7 @@ const chart = ChartData.parse({
 			fetchedAt: frontierCode.fetchedAt,
 			models: onPlans(frontierCodePoints(frontierCode.rows, models)),
 		},
+		...evalBoards,
 	},
 });
 await writeFile(
