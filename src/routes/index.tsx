@@ -20,7 +20,7 @@ import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/model";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
-import { useSectionNav } from "#/lib/useSectionNav";
+import { SCROLL_END_ID, useSectionNav } from "#/lib/useSectionNav";
 import {
 	CHART_SECTIONS,
 	type ChartSectionId,
@@ -313,6 +313,12 @@ function ValueView() {
 						)}
 					</ChartSection>
 					<PageFooter benchmark={benchmark} fetchedAt={leaderboard.fetchedAt} />
+					{/* Overlaps the footer's last pixel, so it adds no height. */}
+					<div
+						id={SCROLL_END_ID}
+						aria-hidden
+						className="-mt-px h-px shrink-0"
+					/>
 				</main>
 				<SidePanel title="Plans & models" open={panelOpen} onClose={closePanel}>
 					<PlanList

@@ -58,7 +58,42 @@ function readSectionInView<T extends string>(ids: readonly T[]): T | undefined {
 	);
 }
 
-/** Calls `onCross` with the section in view whenever it changes. */
+/**
+ * The element at the very end of the scrolling content: it intersects the
+ * viewport once the scroller is within a pixel of its end.
+ */
+export const SCROLL_END_ID = "sections-end";
+
+/**
+ * Calls `onCrossing` when a section's top crosses the reading line, or the
+ * scroller reaches or leaves its end. Returns the cleanup.
+ */
+function observeCrossings(ids: readonly string[], onCrossing: () => void) {
+	// The viewport above the reading line: a section's top crosses the line
+	// exactly when the section enters or leaves this band from below.
+	const aboveLine = new IntersectionObserver(onCrossing, {
+		rootMargin: `0px 0px -${Math.round((1 - READING_LINE) * 100)}% 0px`,
+	});
+	const end = new IntersectionObserver(onCrossing);
+	for (const id of ids) {
+		const section = document.getElementById(id);
+		if (section) aboveLine.observe(section);
+	}
+	const endMarker = document.getElementById(SCROLL_END_ID);
+	if (endMarker) end.observe(endMarker);
+	return () => {
+		aboveLine.disconnect();
+		end.disconnect();
+	};
+}
+
+/**
+ * Calls `onCross` with the section in view whenever it changes, from the
+ * reader's first scroll on. The section in view only changes when a
+ * section's top crosses the reading line or the scroller reaches or leaves
+ * its end, so after that first scroll it is read at those crossings, which
+ * IntersectionObservers report, not on every scroll event.
+ */
 function useScrollSpy<T extends string>(
 	ids: readonly T[],
 	onCross: (id: T) => void,
@@ -66,18 +101,33 @@ function useScrollSpy<T extends string>(
 	const cross = useEffectEvent(onCross);
 	useEffect(() => {
 		let reported: T | undefined;
-		const onScroll = () => {
+		let scrolled = false;
+		const report = () => {
 			const id = readSectionInView(ids);
 			if (id === undefined || id === reported) return;
 			reported = id;
 			cross(id);
 		};
+		const onCrossing = () => {
+			if (scrolled) report();
+		};
+		// Quiet until the reader first scrolls, then read once: a tall screen
+		// keeps its URL on load even when a later section starts in view.
+		const onFirstScroll = () => {
+			scrolled = true;
+			report();
+		};
 		// Capture: an element's scroll events do not bubble to the window.
-		window.addEventListener("scroll", onScroll, {
+		window.addEventListener("scroll", onFirstScroll, {
 			capture: true,
 			passive: true,
+			once: true,
 		});
-		return () => window.removeEventListener("scroll", onScroll, true);
+		const stopObserving = observeCrossings(ids, onCrossing);
+		return () => {
+			window.removeEventListener("scroll", onFirstScroll, true);
+			stopObserving();
+		};
 	}, [ids]);
 }
 
