@@ -106,7 +106,7 @@ function useRevealSelected(
 
 /**
  * A single line of controls that scrolls sideways instead of widening the
- * page, fading the edge that hides more, and bringing the pressed control
+ * page, fading each edge that hides content, and bringing the pressed control
  * into view whenever `selectedKey` changes.
  */
 export function ScrollRow({
