@@ -2,6 +2,7 @@
 // out of an AA model page's flight payload, for models slopalytics hasn't run.
 
 import { z } from "zod";
+import { MODEL_START_PATTERN, stringLiteralEnd } from "./flight";
 import { roundedOrNull } from "./rounding";
 
 /** What one Intelligence Index task costs a model, at AA's prices. */
@@ -11,7 +12,6 @@ export type TaskCost = {
 	secondsPerTask: number | null;
 };
 
-const MODEL_START_PATTERN = /\{"id":"[0-9a-f-]{36}","slug":"/g;
 const BRACE_DELTA: Record<string, number> = { "{": 1, "}": -1 };
 
 /** The fields read from one model record; the page carries many more. */
@@ -28,18 +28,11 @@ const SiteModel = z.object({
 });
 type SiteModel = z.infer<typeof SiteModel>;
 
-/** Index of the quote closing the string that opens at `quote`. */
-function stringClose(text: string, quote: number): number {
-	let i = quote + 1;
-	while (i < text.length && text[i] !== '"') i += text[i] === "\\" ? 2 : 1;
-	return i;
-}
-
 /** End of the object starting at `start`, skipping braces inside strings. */
 function objectEnd(text: string, start: number): number {
 	let depth = 0;
 	for (let i = start; i < text.length; i++) {
-		if (text[i] === '"') i = stringClose(text, i);
+		if (text[i] === '"') i = stringLiteralEnd(text, i);
 		else depth += BRACE_DELTA[text[i]] ?? 0;
 		if (depth === 0) return i + 1;
 	}

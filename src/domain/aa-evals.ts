@@ -2,6 +2,7 @@
 // flight payload and files them under the catalog's families and efforts.
 
 import type { AaEvalId } from "./eval-units";
+import { MODEL_START_PATTERN, stringLiteralEnd } from "./flight";
 import { AA_EVAL_IDS, type BenchmarkPoint, type Effort } from "./model";
 import { roundedOrNull } from "./rounding";
 
@@ -15,7 +16,6 @@ const EVALS_KEY = '"intelligenceIndexEvaluations":';
 const RELEASE_PATTERN = /"release":\{"slug":"([^"]+)"/g;
 const EFFORT_PATTERN = /"effort":\{"slug":"([^"]+)"/g;
 const REASONING_PATTERN = /"isReasoning":(true|false)/g;
-const MODEL_START_PATTERN = /\{"id":"[0-9a-f-]{36}","slug":"/g;
 /** How far before an evals array its model's record starts. */
 const LOOKBACK = 8000;
 /** The longest evals array the scan will follow. */
@@ -47,13 +47,6 @@ type RawEval = {
 
 const isAaEvalId = (slug: string): slug is AaEvalId =>
 	(AA_EVAL_IDS as readonly string[]).includes(slug);
-
-/** Index of the quote closing the string literal opened at `open`. */
-function stringLiteralEnd(text: string, open: number): number {
-	let i = open + 1;
-	while (i < text.length && text[i] !== '"') i += text[i] === "\\" ? 2 : 1;
-	return i;
-}
 
 /** The string literal of the push chunk starting at `marker`, decoded. */
 function decodeChunk(
