@@ -92,11 +92,13 @@ vp build && bun run measure-paint
 ```
 
 serves `dist/client` and loads `/` cold five times (`--runs N` for more) on a
-phone viewport, throttled like Lighthouse's mobile profile. It prints the
-median first paint, first contentful paint, largest contentful paint,
-cumulative layout shift, and when the last web font arrived. It then opens
-each `?benchmark=` view and fails if the selected benchmark ends up under the
-benchmark picker's edge fade once the fonts have loaded.
+phone viewport, throttled like Lighthouse's mobile preset (`--throttle
+desktop` for the desktop one). The first request to any other origin waits
+three round trips for DNS, TCP, and TLS, which Chromium's throttle leaves out.
+It prints the median first paint, first contentful paint, largest contentful
+paint, cumulative layout shift, and when the last web font arrived. It then
+opens each `?benchmark=` view and fails if the selected benchmark ends up
+under the benchmark picker's edge fade once the fonts have loaded.
 
 ## Styling
 

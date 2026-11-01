@@ -2,10 +2,13 @@
 // and checks that the benchmark picker keeps the selected benchmark in view
 // once the fonts have loaded. Build first; see README.md, "Paint Metrics".
 //
-//   bun run measure-paint [--runs 5]
+//   bun run measure-paint [--runs 5] [--throttle mobile|desktop]
 //
 // Each load gets a fresh browser context (cold cache) on a phone viewport,
-// throttled like Lighthouse's mobile profile.
+// throttled like one of Lighthouse's presets (mobile by default).
+// ceiling: Chromium's throttle shares bandwidth evenly, where an HTTP/2 host
+// sends render-blocking CSS ahead of a preloaded font; a WebPageTest run on
+// the deployed site is the upgrade.
 
 import { parseArgs } from "node:util";
 import { type Browser, chromium, type Page } from "playwright-core";
@@ -13,13 +16,44 @@ import { BENCHMARK_IDS } from "../src/domain/model.ts";
 import { originOf, serveSite } from "./serve-site.ts";
 
 const PHONE = { width: 390, height: 844 };
-/** Lighthouse's simulated mobile network and CPU. */
-const THROTTLE = {
-	latencyMs: 150,
-	downloadBytesPerSec: (1.6 * 1024 * 1024) / 8,
-	uploadBytesPerSec: (750 * 1024) / 8,
-	cpuSlowdown: 4,
+type Throttle = {
+	latencyMs: number;
+	downloadBytesPerSec: number;
+	uploadBytesPerSec: number;
+	cpuSlowdown: number;
 };
+const KBPS = 1024 / 8;
+/** Lighthouse's simulated networks and CPUs. */
+const THROTTLES: Record<string, Throttle> = {
+	mobile: {
+		latencyMs: 150,
+		downloadBytesPerSec: 1638 * KBPS,
+		uploadBytesPerSec: 750 * KBPS,
+		cpuSlowdown: 4,
+	},
+	desktop: {
+		latencyMs: 40,
+		downloadBytesPerSec: 10240 * KBPS,
+		uploadBytesPerSec: 10240 * KBPS,
+		cpuSlowdown: 1,
+	},
+};
+const { values: args } = parseArgs({
+	options: {
+		runs: { type: "string", default: "5" },
+		throttle: { type: "string", default: "mobile" },
+	},
+});
+const runs = Number(args.runs);
+const throttle = THROTTLES[args.throttle];
+if (!throttle) {
+	throw new Error(`--throttle takes ${Object.keys(THROTTLES).join(" or ")}`);
+}
+
+/** DNS, TCP, and TLS before the first request to a new origin. Chromium's
+ * throttle adds latency per request only, which would make a third-party
+ * origin look free. */
+const CONNECT_RTTS = 3;
 /** Late shifts (a font swap) land after network idle; wait this long for them. */
 const SETTLE_MS = 1000;
 /** ScrollRow.tsx's FADE_PX; Node cannot load that JSX module. */
@@ -51,7 +85,27 @@ function observePaint() {
 	}).observe({ type: "largest-contentful-paint", buffered: true });
 }
 
-async function throttledPage(browser: Browser): Promise<Page> {
+/** Holds the first requests to each origin other than the site's for a
+ * connection setup; later requests reuse the connection. */
+async function chargeConnectionSetup(page: Page, siteOrigin: string) {
+	const setupMs = CONNECT_RTTS * throttle.latencyMs;
+	const connections = new Map<string, Promise<void>>();
+	await page.route(
+		(url) => url.origin !== siteOrigin,
+		async (route) => {
+			const { origin } = new URL(route.request().url());
+			let connected = connections.get(origin);
+			if (!connected) {
+				connected = new Promise((resolve) => setTimeout(resolve, setupMs));
+				connections.set(origin, connected);
+			}
+			await connected;
+			await route.continue();
+		},
+	);
+}
+
+async function throttledPage(browser: Browser, url: string): Promise<Page> {
 	const context = await browser.newContext({
 		viewport: PHONE,
 		colorScheme: "light",
@@ -60,13 +114,14 @@ async function throttledPage(browser: Browser): Promise<Page> {
 	const cdp = await context.newCDPSession(page);
 	await cdp.send("Network.emulateNetworkConditions", {
 		offline: false,
-		latency: THROTTLE.latencyMs,
-		downloadThroughput: THROTTLE.downloadBytesPerSec,
-		uploadThroughput: THROTTLE.uploadBytesPerSec,
+		latency: throttle.latencyMs,
+		downloadThroughput: throttle.downloadBytesPerSec,
+		uploadThroughput: throttle.uploadBytesPerSec,
 	});
 	await cdp.send("Emulation.setCPUThrottlingRate", {
-		rate: THROTTLE.cpuSlowdown,
+		rate: throttle.cpuSlowdown,
 	});
+	await chargeConnectionSetup(page, new URL(url).origin);
 	await page.addInitScript(observePaint);
 	return page;
 }
@@ -93,7 +148,7 @@ function recordFontArrivals(page: Page): number[] {
 }
 
 async function samplePaint(browser: Browser, url: string) {
-	const page = await throttledPage(browser);
+	const page = await throttledPage(browser, url);
 	const fontArrivals = recordFontArrivals(page);
 	try {
 		await loadSettled(page, url);
@@ -124,7 +179,7 @@ async function samplePaint(browser: Browser, url: string) {
 /** How far the pressed benchmark sits inside the picker's unfaded band;
  * negative means part of it is faded or hidden. */
 async function pickerClearance(browser: Browser, url: string) {
-	const page = await throttledPage(browser);
+	const page = await throttledPage(browser, url);
 	try {
 		await loadSettled(page, url);
 		return await page.evaluate(
@@ -173,11 +228,6 @@ function summarize(samples: PaintSample[]) {
 	);
 }
 
-const { values: args } = parseArgs({
-	options: { runs: { type: "string", default: "5" } },
-});
-const runs = Number(args.runs);
-
 const server = await serveSite();
 const browser = await chromium.launch();
 try {
@@ -186,7 +236,7 @@ try {
 	for (let run = 0; run < runs; run++) {
 		samples.push(await samplePaint(browser, origin));
 	}
-	console.log(`Paint over ${runs} cold loads of /:`);
+	console.log(`Paint over ${runs} cold loads of /, ${args.throttle} throttle:`);
 	console.table(summarize(samples));
 
 	const clearance: Record<string, number> = {};
