@@ -31,23 +31,42 @@ import type { PricingId, PricingStyle } from "./chart/series";
 import { ProviderLogo } from "./ProviderLogo";
 import { Chip } from "./Segmented";
 
+type KnownCapacity = Exclude<PlanCapacity, { kind: "unmeasured" }>;
+type ValuedPlan = { plan: Plan; capacity: KnownCapacity };
+
+/** Splits plans by whether their weekly cap is known, working each out once. */
+function byCapacity(plans: readonly Plan[]): {
+	valued: ValuedPlan[];
+	unmeasured: Plan[];
+} {
+	const valued: ValuedPlan[] = [];
+	const unmeasured: Plan[] = [];
+	for (const plan of plans) {
+		const capacity = planCapacity(plan, samples);
+		if (capacity.kind === "unmeasured") unmeasured.push(plan);
+		else valued.push({ plan, capacity });
+	}
+	return { valued, unmeasured };
+}
+
+/** Shown when the cap covers none of the plan's models, as a published
+ * allowance may: there is no multiple to give. */
+const NO_MULTIPLE = "—";
+
 /** "12×", or "1.5–6×" when the multiple differs by model. */
 function multipleText(plan: Plan, capacity: PlanCapacity): string {
 	const multiples = plan.families
 		.map((family) => weeklyAllowance(plan, capacity, family))
 		.filter((allowance) => allowance !== null)
 		.map((allowance) => valueMultiple({ plan, allowance }));
+	if (multiples.length === 0) return NO_MULTIPLE;
 	const low = Math.min(...multiples);
 	const high = Math.max(...multiples);
 	if (formatMultiple(low) === formatMultiple(high)) return formatMultiple(low);
 	return `${formatMultiple(low).replace("×", "")}–${formatMultiple(high)}`;
 }
 
-function PlanValue({ plan }: { plan: Plan }) {
-	const capacity = planCapacity(plan, samples);
-	if (capacity.kind === "unmeasured") {
-		return <span className="text-[11px] text-subtle">unmeasured</span>;
-	}
+function PlanValue({ plan, capacity }: ValuedPlan) {
 	const text = multipleText(plan, capacity);
 	if (capacity.kind === "measured") {
 		return (
@@ -73,10 +92,6 @@ function PlanValue({ plan }: { plan: Plan }) {
 			{text}
 		</a>
 	);
-}
-
-function hasCap(plan: Plan): boolean {
-	return planCapacity(plan, samples).kind !== "unmeasured";
 }
 
 function PlanPrice({ plan }: { plan: Plan }) {
@@ -176,8 +191,7 @@ export function PlanList({
 	onToggle: (plan: PlanId) => void;
 	onToggleApi: () => void;
 }) {
-	const valued = plans.filter(hasCap);
-	const unmeasured = plans.filter((p) => !hasCap(p));
+	const { valued, unmeasured } = byCapacity(plans);
 	return (
 		<section aria-labelledby="plans-heading">
 			<div className="flex items-baseline justify-between">
@@ -200,11 +214,11 @@ export function PlanList({
 					<code>bun run measure</code> to plot one.
 				</p>
 			)}
-			{[...Map.groupBy(valued, (p) => p.vendor)].map(([vendor, group]) => (
+			{[...Map.groupBy(valued, (v) => v.plan.vendor)].map(([vendor, group]) => (
 				<div key={vendor} className="mb-3">
 					<h3 className="mb-1 text-[12px] font-medium text-subtle">{vendor}</h3>
 					<ul>
-						{group.map((plan) => (
+						{group.map(({ plan, capacity }) => (
 							<li key={plan.id}>
 								<PricingRow
 									label={plan.label}
@@ -212,7 +226,7 @@ export function PlanList({
 									onChange={() => onToggle(plan.id)}
 									lineStyle={styles.get(plan.id)}
 									detail={<PlanPrice plan={plan} />}
-									value={<PlanValue plan={plan} />}
+									value={<PlanValue plan={plan} capacity={capacity} />}
 								/>
 							</li>
 						))}

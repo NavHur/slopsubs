@@ -17,6 +17,10 @@ const HEADER_GAP_PX = 16;
 const PIXEL_RATIO = 2;
 /** Frames to wait for the offscreen chart to measure itself and re-render. */
 const MAX_LAYOUT_FRAMES = 20;
+/** How long the PNG's blob URL outlives the download click. Safari cancels a
+ * download whose URL is revoked in the same task, and FileSaver.js waits this
+ * long for slow starts. */
+const DOWNLOAD_URL_LIFETIME_MS = 40_000;
 
 /** Styles that come from CSS classes and must be inlined, since an SVG
  * drawn as an image sees none of the page's stylesheets. */
@@ -75,7 +79,7 @@ export async function downloadChartPng({
 	link.href = url;
 	link.download = fileName;
 	link.click();
-	URL.revokeObjectURL(url);
+	setTimeout(() => URL.revokeObjectURL(url), DOWNLOAD_URL_LIFETIME_MS);
 }
 
 /** The title on the left and the legend on the right, which wraps within the
