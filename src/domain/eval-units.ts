@@ -4,7 +4,7 @@ import type { AA_EVAL_IDS } from "./model";
 export type AaEvalId = (typeof AA_EVAL_IDS)[number];
 
 /** A score's unit: "percent" is a 0-1 fraction shown as points, "index" is as is. */
-export type EvalUnit = "percent" | "index";
+type EvalUnit = "percent" | "index";
 
 export const AA_EVAL_UNITS: Record<AaEvalId, EvalUnit> = {
 	"aa-briefcase": "index",

@@ -53,12 +53,12 @@ export type SlopaPoint = z.infer<typeof SlopaPoint>;
  * our mistral-large-4 point is AA's Preview, while AA gave the bare slug to
  * its High variant.
  */
-export const AA_ALIASES: Record<string, string> = {
+const AA_ALIASES: Record<string, string> = {
 	"mistral-large-4": "mistral-large-4-preview",
 };
 
 /** Two sources rounding to one decimal still agree within this. */
-export const SCORE_TOLERANCE = 0.06;
+const SCORE_TOLERANCE = 0.06;
 
 /** A gap under a tenth of a cent per million tokens can't move the cost chart. */
 const PRICE_TOLERANCE = 0.001;
@@ -98,14 +98,14 @@ function displayName(name: string): string {
 	return name.replace(/\s*\([^)]*\)\s*$/, "");
 }
 
-export type MergeOptions = {
+type MergeOptions = {
 	/** Families a plan covers, so an AA-only model is one that would ship. */
 	coveredFamilies: ReadonlySet<string>;
 	/** AA's own cost per task by slug, for points slopalytics hasn't costed. */
 	siteCosts: ReadonlyMap<string, TaskCost>;
 };
 
-export type MergedCatalog = {
+type MergedCatalog = {
 	models: SlopaPoint[];
 	/** Disagreements that do not stop the import. */
 	warnings: string[];

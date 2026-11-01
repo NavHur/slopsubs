@@ -59,7 +59,7 @@ function unsampledCapacity(plan: Plan): PlanCapacity {
 }
 
 /** How a plan's weekly cap is known. */
-export type CapSource =
+type CapSource =
 	| { basis: "measured" }
 	/** `source` is the vendor's own description of the allowance. */
 	| { basis: "published"; source: string }

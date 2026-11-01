@@ -115,7 +115,7 @@ function sameMembers<T>(a: readonly T[], b: readonly T[]): boolean {
 	return a.length === b.length && a.every((x) => b.includes(x));
 }
 
-export type FrontierTier = Frontier[string]["tier"];
+type FrontierTier = Frontier[string]["tier"];
 export const FRONTIER_TIERS: readonly FrontierTier[] = [
 	"Small",
 	"Medium",

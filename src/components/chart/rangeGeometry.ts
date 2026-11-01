@@ -2,8 +2,8 @@ import { type ScaleLogarithmic, scaleLog } from "d3-scale";
 
 /** Below this width a row's label and value sit above its track. */
 const COMPACT_WIDTH = 640;
-export const LABEL_COLUMN_PX = 210;
-export const VALUE_COLUMN_PX = 120;
+const LABEL_COLUMN_PX = 210;
+const VALUE_COLUMN_PX = 120;
 export const COLUMN_GAP_PX = 12;
 /** Keeps the end dots whole inside the track. */
 const DOT_INSET_PX = 8;
