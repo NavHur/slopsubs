@@ -82,8 +82,22 @@ It builds the site first, so the card always matches the current source.
 The card is the chart's own "Download PNG" export of the default view, fitted
 onto 1200x630. The icon is `public/favicon.svg` drawn full bleed, since iOS
 rounds its corners itself. The script needs Chromium for `playwright-core`
-(`bunx playwright-core install chromium`) and network access for the web font
-the export embeds.
+(`bunx playwright-core install chromium`).
+
+## Paint Metrics
+
+```bash
+vp build && bun run measure-paint
+```
+
+serves `dist/client` and loads `/` cold five times (`--runs N` for more) on a
+phone viewport, throttled like Lighthouse's mobile preset (`--throttle
+desktop` for the desktop one). The first request to any other origin waits
+three round trips for DNS, TCP, and TLS, which Chromium's throttle leaves out.
+It prints the median first paint, first contentful paint, largest contentful
+paint, cumulative layout shift, and when the last web font arrived. It then
+opens each `?benchmark=` view and fails if the selected benchmark ends up
+under the benchmark picker's edge fade once the fonts have loaded.
 
 ## Styling
 
