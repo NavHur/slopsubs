@@ -1,8 +1,4 @@
-import {
-	createFileRoute,
-	useHydrated,
-	useRouter,
-} from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { PricingKey } from "#/components/chart/PricingKey";
@@ -25,12 +21,12 @@ import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/enums";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
+import { useRenderedView } from "#/lib/sharedLink";
 import { SCROLL_END_ID, useSectionNav } from "#/lib/useSectionNav";
 import {
 	CHART_SECTIONS,
 	type ChartSectionId,
 	DEFAULT_MODELS_VIEW,
-	DEFAULT_VIEW,
 	hiddenReasoning,
 	isDefaultModelsView,
 	selectedFamilies,
@@ -129,17 +125,6 @@ async function exporter() {
 	return (await import("#/lib/exportPng")).downloadChartPng;
 }
 
-/**
- * The view to render. The page is prerendered once, with the default view, so
- * hydration must render that view too; a shared link's own view follows
- * straight after, instead of failing hydration and re-rendering the page.
- */
-function useRenderedView(
-	linked: Omit<ViewSearch, "chart">,
-): Omit<ViewSearch, "chart"> {
-	return useHydrated() ? linked : DEFAULT_VIEW;
-}
-
 function ValueView() {
 	// Structural sharing keeps the selection's identity while only `chart`
 	// changes, so the charts and sidebar skip those renders.
@@ -224,7 +209,10 @@ function ValueView() {
 				<p className="text-[13px] text-muted max-sm:hidden">
 					What a task really costs on a subscription
 				</p>
-				<div className="-mr-2 ml-auto flex items-center gap-1">
+				<div
+					data-view-dependent
+					className="-mr-2 ml-auto flex items-center gap-1"
+				>
 					<ThemeToggle />
 					<div className="max-sm:hidden">
 						<ChartSettingsMenu
@@ -245,7 +233,10 @@ function ValueView() {
 					</button>
 				</div>
 			</header>
-			<div className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_288px]">
+			<div
+				data-view-dependent
+				className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_288px]"
+			>
 				<main
 					inert={panelOpen}
 					className="flex min-w-0 flex-col lg:overflow-y-auto"
