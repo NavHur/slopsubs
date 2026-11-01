@@ -27,19 +27,33 @@ export const CHART_SECTIONS = [
 ] as const;
 export type ChartSectionId = (typeof CHART_SECTIONS)[number];
 
-/** Chart state, kept in the URL so every view is shareable. */
+/** Keeps the list members this version knows, dropping the rest. */
+function knownMembers<T extends string>(known: readonly T[]) {
+	const isKnown = (item: unknown): item is T =>
+		known.some((value) => value === item);
+	return z.array(z.unknown()).transform((items) => items.filter(isKnown));
+}
+
+/**
+ * Chart state, kept in the URL so every view is shareable. A value this
+ * version does not know (a retired benchmark, a hand-edited link) falls back
+ * to its default instead of failing the page.
+ */
 export const ViewSearch = z.object({
-	benchmark: z.enum(BENCHMARK_IDS).default("intelligence"),
-	scale: z.enum(["log", "linear"]).default("log"),
-	pareto: z.boolean().default(false),
-	api: z.boolean().default(true),
+	benchmark: z
+		.enum(BENCHMARK_IDS)
+		.default("intelligence")
+		.catch("intelligence"),
+	scale: z.enum(["log", "linear"]).default("log").catch("log"),
+	pareto: z.boolean().default(false).catch(false),
+	api: z.boolean().default(true).catch(true),
 	/** Model names at the right end of each line; off gives the plot more room. */
-	labels: z.boolean().default(true),
-	plans: z.array(z.string()).optional(),
-	families: z.array(z.string()).optional(),
-	hideReasoning: z.array(z.enum(REASONING_LEVELS)).optional(),
+	labels: z.boolean().default(true).catch(true),
+	plans: z.array(z.string()).optional().catch(undefined),
+	families: z.array(z.string()).optional().catch(undefined),
+	hideReasoning: knownMembers(REASONING_LEVELS).optional().catch(undefined),
 	/** The section in view; unset is the top of the page. */
-	chart: z.enum(CHART_SECTIONS).optional(),
+	chart: z.enum(CHART_SECTIONS).optional().catch(undefined),
 });
 export type ViewSearch = z.infer<typeof ViewSearch>;
 

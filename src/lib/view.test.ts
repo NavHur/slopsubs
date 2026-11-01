@@ -31,8 +31,31 @@ describe("hiddenReasoning", () => {
 		expect(hiddenReasoning(view({ hideReasoning: [] }))).toEqual([]);
 	});
 
-	it("rejects efforts the panel cannot hide", () => {
-		expect(() => view({ hideReasoning: ["default"] })).toThrow();
+	it("drops efforts the panel cannot hide and keeps the rest", () => {
+		expect(
+			hiddenReasoning(view({ hideReasoning: ["default", "max"] })),
+		).toEqual(["max"]);
+	});
+});
+
+describe("stale or hand-edited links", () => {
+	it("fall back to the default view instead of failing", () => {
+		const parsed = view({
+			benchmark: "retired-bench",
+			scale: "cubic",
+			pareto: "yes",
+			labels: 3,
+			hideReasoning: "max",
+			chart: "nowhere",
+		});
+		expect(parsed).toMatchObject({
+			benchmark: "intelligence",
+			scale: "log",
+			pareto: false,
+			labels: true,
+			chart: undefined,
+		});
+		expect(hiddenReasoning(parsed)).toEqual(["none"]);
 	});
 });
 
