@@ -103,6 +103,13 @@ describe("pickModel", () => {
 		expect(pickModel([catalogModel("beta", "none")], null, "beta")).toBeNull();
 	});
 
+	it("throws for a null effort against a none and one reasoning variant", () => {
+		const models = [catalogModel("beta", "none"), catalogModel("beta", "high")];
+		expect(() => pickModel(models, null, "beta")).toThrow(
+			/Ambiguous null effort for beta/,
+		);
+	});
+
 	it("throws when a null effort fits several models and no fallback", () => {
 		const models = [catalogModel("beta", "low"), catalogModel("beta", "high")];
 		expect(() => pickModel(models, null, "beta")).toThrow(
@@ -153,6 +160,13 @@ describe("resolveRows", () => {
 			["default", 0.5],
 			["none", 0.3],
 		]);
+	});
+
+	it("logs an effortless reasoning model skipped for a sole none family", () => {
+		const onlyNone = new Map([["beta", [catalogModel("beta", "none")]]]);
+		const { rows, skips } = resolveRows([row("beta", null)], onlyNone);
+		expect(rows).toEqual([]);
+		expect([...skips.efforts]).toEqual(["beta (reasoning)"]);
 	});
 
 	it("throws on two rows for one family, effort and eval", () => {

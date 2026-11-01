@@ -103,7 +103,7 @@ function lastMatch(text: string, pattern: RegExp): RegExpExecArray | null {
 }
 
 /** A record's own effort slug: `none` for an effortless model that does not
- * reason, null for one that does, which the catalog files as `default`. */
+ * reason, null for one that does, filed under the family's default or only variant. */
 function recordEffort(record: string, family: string): string | null {
 	const effort = lastMatch(record, EFFORT_PATTERN)?.[1];
 	if (effort) return effort;
@@ -184,9 +184,9 @@ export function pickModel(
 ): BenchmarkPoint | null {
 	if (effort !== null)
 		return candidates.find((m) => m.effort === effort) ?? null;
-	const reasoning = candidates.filter((m) => m.effort !== "none");
-	if (reasoning.length <= 1) return reasoning[0] ?? null;
-	const fallback = reasoning.find((m) => m.effort === "default");
+	const [only, ...rest] = candidates;
+	if (!rest.length) return only.effort === "none" ? null : only;
+	const fallback = candidates.find((m) => m.effort === "default");
 	if (!fallback) throw new Error(`Ambiguous null effort for ${family}`);
 	return fallback;
 }
@@ -232,7 +232,7 @@ function resolveRow(r: EvalRow, resolution: Resolution): ResolvedRow | null {
 	const match = exact ?? soleDefault(candidates, siteEffortCount);
 	if (!match) {
 		// The website carries efforts the catalog can't price; they skip the chart.
-		skips.efforts.add(`${r.family} (${r.effort})`);
+		skips.efforts.add(`${r.family} (${r.effort ?? "reasoning"})`);
 		return null;
 	}
 	if (!exact) skips.mappedToDefault.add(`${r.family} (${r.effort})`);
