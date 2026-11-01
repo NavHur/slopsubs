@@ -18,6 +18,7 @@
     "measure": "node scripts/measure.ts",
     "build-plans": "node scripts/build-plans.ts",
     "render-brand-images": "vp build && node scripts/render-brand-images.ts",
+    "profile-page": "vp build --minify false && node scripts/profile-page.ts",
     "deploy": "vp run build && wrangler deploy"
   },
   "dependencies": {
