@@ -6,7 +6,9 @@
 //
 // Scrolls the page down to the end and back with the wheel, at a desktop and
 // a phone width, follows each nav link and a deep link, then hovers each
-// chart's points. Render counts come from a probe on the React DevTools hook.
+// chart's points. Render counts come from a probe on the React DevTools hook;
+// scroll timings (scroll-timing.ts) from separate, unprobed pages, so the
+// probe's own cost stays out.
 
 import { writeFile } from "node:fs/promises";
 import type { AddressInfo } from "node:net";
@@ -20,6 +22,7 @@ import {
 	VIEWPORTS,
 	type ViewportName,
 } from "./page-session.ts";
+import { CPU_SLOWDOWN, scrollTimings } from "./scroll-timing.ts";
 import { serveSite } from "./serve-site.ts";
 
 const WHEEL_STEP_PX = 120;
@@ -194,11 +197,13 @@ try {
 	const report: Record<string, unknown> = {};
 	for (const viewport of Object.keys(VIEWPORTS) as ViewportName[]) {
 		const counted = await countedScroll(browser, origin, viewport);
-		report[`scroll-${viewport}`] = counted;
+		const timed = await scrollTimings(browser, origin, viewport, counted.wheel);
+		report[`scroll-${viewport}`] = { ...counted, timed };
 		summarize(`scroll, ${viewport}`, counted.probe, {
 			steps: counted.steps.length,
 			sectionChanges: sectionChanges(counted.steps),
 		});
+		console.log(`  timed at ${CPU_SLOWDOWN}x slowdown:`, timed);
 	}
 	report.jumps = await navJumps(browser, origin);
 	console.log("\nnav jumps", report.jumps);
