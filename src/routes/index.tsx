@@ -10,6 +10,7 @@ import { ChartSection } from "#/components/ChartSection";
 import { ChartSettingsMenu, ThemeToggle } from "#/components/HeaderActions";
 import { ReasoningFilter } from "#/components/ModelFilters";
 import { PageFooter } from "#/components/PageFooter";
+import { ScrollRow } from "#/components/ScrollRow";
 import { SectionNav } from "#/components/SectionNav";
 import { Segmented, Toggle } from "#/components/Segmented";
 import { type Coverage, FamilyList, PlanList } from "#/components/Sidebar";
@@ -199,19 +200,29 @@ function ValueView() {
 					<h1 className="sr-only">
 						slopsubs: what a task really costs on a subscription
 					</h1>
-					<div className="sticky top-0 z-10 flex min-h-(--section-nav-h) flex-wrap items-center justify-between gap-x-6 border-b border-line bg-bg px-4 sm:px-7">
+					<div className="@container sticky top-0 z-10 flex min-h-(--section-nav-h) shrink-0 flex-wrap items-center gap-x-6 border-b border-line bg-bg px-4 sm:px-7">
 						<SectionNav
 							sections={SECTION_LINKS}
 							active={nav.active}
 							hrefFor={sectionHref}
 							onSelect={nav.scrollTo}
 						/>
-						<Segmented
-							label="Benchmark that defines a task"
-							options={BENCHMARK_OPTIONS}
-							value={view.benchmark}
-							onChange={(id) => update({ benchmark: id })}
-						/>
+						<div className="flex min-w-0 flex-1 basis-[26rem] items-center gap-3 @min-[50rem]:border-l @min-[50rem]:border-line @min-[50rem]:pl-6">
+							<span aria-hidden className="shrink-0 text-[12px] text-subtle">
+								Benchmark
+							</span>
+							<ScrollRow
+								selectedKey={view.benchmark}
+								className="-mr-4 min-w-0 pr-4 sm:mr-0 sm:pr-0"
+							>
+								<Segmented
+									label="Benchmark that defines a task"
+									options={BENCHMARK_OPTIONS}
+									value={view.benchmark}
+									onChange={(id) => update({ benchmark: id })}
+								/>
+							</ScrollRow>
+						</div>
 					</div>
 					<ChartSection
 						id="cost-vs-score"
