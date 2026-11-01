@@ -57,7 +57,13 @@ export function ScrollRow({
 	useEffect(() => {
 		const row = ref.current;
 		if (!row) return;
-		const update = () => setOverflow(overflowOf(row));
+		// Only a changed edge re-renders, not every scrolled pixel.
+		const update = () => {
+			const next = overflowOf(row);
+			setOverflow((prev) =>
+				prev.start === next.start && prev.end === next.end ? prev : next,
+			);
+		};
 		update();
 		const observer = new ResizeObserver(update);
 		observer.observe(row);
