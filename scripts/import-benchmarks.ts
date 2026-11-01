@@ -1,7 +1,9 @@
-// Merges Artificial Analysis (scores, prices, releases) with slopalytics (cost
-// and tokens per task) into src/data/benchmarks.json.
+// Merges AA (scores, prices, releases) and slopalytics (cost, tokens per task)
+// into src/data/benchmarks.json; AA's site costs points slopalytics hasn't run.
 
 import { readFile, writeFile } from "node:fs/promises";
+import { flightFromHtml } from "../src/domain/aa-evals.ts";
+import { extractIndexCosts } from "../src/domain/aa-index-cost.ts";
 import {
 	type AaModel,
 	AaResponse,
@@ -10,6 +12,7 @@ import {
 } from "../src/domain/catalog.ts";
 import { Plans } from "../src/domain/model.ts";
 import { roundedOrNull } from "../src/domain/rounding.ts";
+import { loadAaPage } from "./aa-page.ts";
 
 const SITE = "https://slopalytics.com";
 const AA_API = "https://artificialanalysis.ai/api/v2/data/llms/models";
@@ -27,6 +30,7 @@ type Literal =
 type Args = {
 	bundle?: string;
 	aa?: string;
+	html?: string;
 	allowMissingCost: boolean;
 };
 
@@ -36,6 +40,7 @@ function parseArgs(argv: string[]): Args {
 		const arg = argv[i];
 		if (arg === "--bundle") args.bundle = argv[++i];
 		else if (arg === "--aa") args.aa = argv[++i];
+		else if (arg === "--html") args.html = argv[++i];
 		else if (arg === "--allow-missing-cost") args.allowMissingCost = true;
 		else throw new Error(`Unknown argument ${arg}`);
 	}
@@ -110,9 +115,10 @@ function extract(source: string, anchor: RegExp): Literal {
 
 async function main() {
 	const args = parseArgs(process.argv.slice(2));
-	const [bundle, aa] = await Promise.all([
+	const [bundle, aa, page] = await Promise.all([
 		loadBundle(args.bundle),
 		loadAa(args.aa),
+		loadAaPage(args.html),
 	]);
 	const dataset = extract(bundle, /=\{fetchedAt:/) as Record<string, Literal>;
 	const frontier = extract(bundle, /=\{"gpt-6-astra":\{tier:/) as Record<
@@ -144,17 +150,18 @@ async function main() {
 	const plans = Plans.parse(JSON.parse(await readFile(PLANS, "utf8")));
 	const merged = mergeCatalog(aa, slopa, {
 		coveredFamilies: new Set(plans.flatMap((plan) => plan.families)),
+		siteCosts: extractIndexCosts(flightFromHtml(page)),
 	});
 	if (merged.missingCost.length && !args.allowMissingCost)
 		throw new Error(
-			`AA lists ${merged.missingCost.join(", ")} with no cost data from slopalytics. ` +
+			`AA lists ${merged.missingCost.join(", ")} with no cost data from slopalytics or AA's site. ` +
 				"Update the bundle, or pass --allow-missing-cost to publish them as " +
 				'"No cost data".',
 		);
 	const output = {
 		fetchedAt: new Date().toISOString(),
 		source:
-			"Artificial Analysis (scores, prices, releases); Slopalytics (cost and tokens per task)",
+			"Artificial Analysis (scores, prices, releases); Slopalytics (cost and tokens per task), else AA's website",
 		frontier,
 		models: merged.models,
 	};

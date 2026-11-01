@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
+import type { TaskCost } from "./aa-index-cost";
 import {
 	type AaModel,
 	deriveModel,
@@ -49,6 +50,14 @@ const CLAUDE = aaModel(
 	"claude-opus-5-5",
 	"Claude Opus 5.5 (Max, Default Fallback)",
 );
+
+const NO_SITE_COSTS = new Map<string, TaskCost>();
+
+const SITE_COST: TaskCost = {
+	costPerTaskUsd: 0.58331,
+	tokensPerTask: 134205,
+	secondsPerTask: 1620.9,
+};
 
 const DEEPSEEK_AA = [
 	aaModel("deepseek-v4-1-flash-1017", "DeepSeek V4.1 Flash 1017 (Max)", {
@@ -135,6 +144,7 @@ describe("mergeCatalog", () => {
 	it("takes AA's score, price and release date", () => {
 		const merged = mergeCatalog([CLAUDE], [point()], {
 			coveredFamilies: covered,
+			siteCosts: NO_SITE_COSTS,
 		});
 		expect(merged.models[0]).toMatchObject({
 			score: 58.4,
@@ -164,7 +174,10 @@ describe("mergeCatalog", () => {
 					outputPricePerMTokUsd: 10,
 				}),
 			],
-			{ coveredFamilies: new Set(["gemini-4-argon"]) },
+			{
+				coveredFamilies: new Set(["gemini-4-argon"]),
+				siteCosts: NO_SITE_COSTS,
+			},
 		);
 		expect(merged.models[0].inputPricePerMTokUsd).toBe(4);
 		expect(merged.models[0].costPerTaskUsd).toBe(10.03641);
@@ -182,7 +195,7 @@ describe("mergeCatalog", () => {
 				}),
 			],
 			[point()],
-			{ coveredFamilies: covered },
+			{ coveredFamilies: covered, siteCosts: NO_SITE_COSTS },
 		);
 		expect(merged.warnings).toEqual([]);
 	});
@@ -191,19 +204,24 @@ describe("mergeCatalog", () => {
 		expect(() =>
 			mergeCatalog([CLAUDE], [point({ score: 59.2 })], {
 				coveredFamilies: covered,
+				siteCosts: NO_SITE_COSTS,
 			}),
 		).toThrow(/AA index 58.4, slopalytics 59.2/);
 	});
 
 	it("refuses a point AA does not list", () => {
 		expect(() =>
-			mergeCatalog([], [point()], { coveredFamilies: covered }),
+			mergeCatalog([], [point()], {
+				coveredFamilies: covered,
+				siteCosts: NO_SITE_COSTS,
+			}),
 		).toThrow(/AA has no model for claude-opus-5-5/);
 	});
 
 	it("adds an AA-only point on a plan with no cost data", () => {
 		const merged = mergeCatalog(DEEPSEEK_AA, DEEPSEEK_SLOPA, {
 			coveredFamilies: covered,
+			siteCosts: NO_SITE_COSTS,
 		});
 		const added = merged.models.at(-1);
 		expect(added).toMatchObject({
@@ -220,11 +238,62 @@ describe("mergeCatalog", () => {
 		]);
 	});
 
+	it("fills a cost slopalytics lacks from AA's site", () => {
+		const uncosted = point({
+			costPerTaskUsd: null,
+			tokensPerTask: null,
+			secondsPerTask: null,
+		});
+		const merged = mergeCatalog([CLAUDE], [uncosted], {
+			coveredFamilies: covered,
+			siteCosts: new Map([["claude-opus-5-5", SITE_COST]]),
+		});
+		expect(merged.models[0]).toMatchObject(SITE_COST);
+	});
+
+	it("keeps slopalytics' tokens and time when only its cost is missing", () => {
+		const partial = point({
+			costPerTaskUsd: null,
+			tokensPerTask: 88476,
+			secondsPerTask: null,
+		});
+		const merged = mergeCatalog([CLAUDE], [partial], {
+			coveredFamilies: covered,
+			siteCosts: new Map([
+				["claude-opus-5-5", { ...SITE_COST, tokensPerTask: null }],
+			]),
+		});
+		expect(merged.models[0]).toMatchObject({
+			costPerTaskUsd: SITE_COST.costPerTaskUsd,
+			tokensPerTask: 88476,
+			secondsPerTask: SITE_COST.secondsPerTask,
+		});
+	});
+
+	it("keeps slopalytics' cost over AA's site", () => {
+		const merged = mergeCatalog([CLAUDE], [point()], {
+			coveredFamilies: covered,
+			siteCosts: new Map([["claude-opus-5-5", SITE_COST]]),
+		});
+		expect(merged.models[0].costPerTaskUsd).toBe(10.03641);
+	});
+
+	it("costs an AA-only point from AA's site, so it is not missing", () => {
+		const merged = mergeCatalog(DEEPSEEK_AA, DEEPSEEK_SLOPA, {
+			coveredFamilies: covered,
+			siteCosts: new Map([
+				["deepseek-v4-1-flash-1017-non-reasoning", SITE_COST],
+			]),
+		});
+		expect(merged.models.at(-1)).toMatchObject(SITE_COST);
+		expect(merged.missingCost).toEqual([]);
+	});
+
 	it("leaves out an AA-only model no plan covers", () => {
 		const merged = mergeCatalog(
 			[CLAUDE, aaModel("gemini-4-carbon", "Gemini 4 Carbon (High)")],
 			[point()],
-			{ coveredFamilies: covered },
+			{ coveredFamilies: covered, siteCosts: NO_SITE_COSTS },
 		);
 		expect(merged.models).toHaveLength(1);
 		expect(merged.skipped).toEqual(["gemini-4-carbon"]);
@@ -235,6 +304,7 @@ describe("mergeCatalog", () => {
 			expect(() =>
 				mergeCatalog([aaModel(slug, "Claude Opus 5.5 Preview")], [], {
 					coveredFamilies: covered,
+					siteCosts: NO_SITE_COSTS,
 				}),
 			).toThrow(new RegExp(`${slug} .*cannot read an effort`));
 		}
@@ -257,7 +327,10 @@ describe("mergeCatalog", () => {
 					outputPricePerMTokUsd: 4.18,
 				}),
 			],
-			{ coveredFamilies: new Set(["mistral-large-4"]) },
+			{
+				coveredFamilies: new Set(["mistral-large-4"]),
+				siteCosts: NO_SITE_COSTS,
+			},
 		);
 		expect(merged.models[0].score).toBe(25.3);
 		expect(merged.models[0].inputPricePerMTokUsd).toBe(0.7);
