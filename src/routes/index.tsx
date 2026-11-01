@@ -1,4 +1,8 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	useHydrated,
+	useRouter,
+} from "@tanstack/react-router";
 import { useCallback, useRef, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { PricingKey } from "#/components/chart/PricingKey";
@@ -26,6 +30,7 @@ import {
 	CHART_SECTIONS,
 	type ChartSectionId,
 	DEFAULT_MODELS_VIEW,
+	DEFAULT_VIEW,
 	hiddenReasoning,
 	isDefaultModelsView,
 	selectedFamilies,
@@ -89,11 +94,12 @@ function useViewUpdate() {
  * The chart links. They own the section in view and the URL's `chart`, so
  * scrolling into another section re-renders the links, not the charts.
  */
-function ChartNav() {
-	const view = Route.useSearch();
+function ChartNav({ view }: { view: Omit<ViewSearch, "chart"> }) {
+	// The URL's section, not the rendered one: the jump to it is set up on mount.
+	const linkedChart = Route.useSearch({ select: (search) => search.chart });
 	const update = useViewUpdate();
 	const router = useRouter();
-	const nav = useSectionNav(CHART_SECTIONS, view.chart, (chart) =>
+	const nav = useSectionNav(CHART_SECTIONS, linkedChart, (chart) =>
 		update({ chart }),
 	);
 	const sectionHref = (id: ChartSectionId) =>
@@ -123,13 +129,23 @@ async function exporter() {
 	return (await import("#/lib/exportPng")).downloadChartPng;
 }
 
+/**
+ * The view to render. The page is prerendered once, with the default view, so
+ * hydration must render that view too; a shared link's own view follows
+ * straight after, instead of failing hydration and re-rendering the page.
+ */
+function useRenderedView(
+	linked: Omit<ViewSearch, "chart">,
+): Omit<ViewSearch, "chart"> {
+	return useHydrated() ? linked : DEFAULT_VIEW;
+}
+
 function ValueView() {
 	// Structural sharing keeps the selection's identity while only `chart`
 	// changes, so the charts and sidebar skip those renders.
-	const view = Route.useSearch({
-		select: withoutChart,
-		structuralSharing: true,
-	});
+	const view = useRenderedView(
+		Route.useSearch({ select: withoutChart, structuralSharing: true }),
+	);
 	const update = useViewUpdate();
 	const [panelOpen, setPanelOpen] = useState(false);
 	const panelOpenerRef = useRef<HTMLButtonElement>(null);
@@ -238,7 +254,7 @@ function ValueView() {
 						slopsubs: what a task really costs on a subscription
 					</h1>
 					<div className="@container sticky top-0 z-10 flex min-h-(--section-nav-h) shrink-0 flex-wrap items-center gap-x-6 border-b border-line bg-bg px-4 sm:px-7">
-						<ChartNav />
+						<ChartNav view={view} />
 						<div className="flex min-w-0 flex-1 basis-[26rem] items-center gap-3 @min-[50rem]:border-l @min-[50rem]:border-line @min-[50rem]:pl-6">
 							<span aria-hidden className="shrink-0 text-[12px] text-subtle">
 								Benchmark
