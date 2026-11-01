@@ -100,8 +100,8 @@ reports:
 - which components rendered, counted through the React DevTools hook, and how
   often the page read layout (`getBoundingClientRect`, `getComputedStyle`);
 - script time over the scroll pass under 4x CPU throttling, split into React's
-  render and commit work and the section tracker's reads, the median of five
-  runs;
+  render and commit work and the page's layout reads (`getBoundingClientRect`,
+  `getComputedStyle`), the median of five runs;
 - the section the nav marks and the URL's `chart` after every step, so two
   builds' JSON reports show whether the nav behaves the same.
 

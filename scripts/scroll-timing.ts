@@ -1,6 +1,6 @@
 // Times a wheel pass on the built page with Chrome's sampling CPU profiler,
-// splitting script time into React's render and commit work and the section
-// tracker's layout reads.
+// splitting script time into React's render and commit work and the page's
+// layout reads.
 
 import type { Browser } from "playwright-core";
 import { openPage, pointAtGutter, type ViewportName } from "./page-session.ts";
@@ -14,12 +14,13 @@ const SAMPLING_INTERVAL_US = 100;
 /** Samples spent outside script. */
 const NOT_SCRIPT = new Set(["(idle)", "(program)"]);
 /**
- * Functions whose time, callees included, the report breaks out. The build
- * must be unminified for these names to survive.
+ * Frames whose time, callees included, the report breaks out: React's render
+ * and commit work, and the DOM calls that read layout, whoever makes them.
+ * The build must be unminified for React's names to survive.
  */
 const BUCKETS = {
-	react: "performWorkOnRoot",
-	sectionReads: "readSectionInView",
+	react: ["performWorkOnRoot"],
+	layoutReads: ["getBoundingClientRect", "getComputedStyle"],
 } as const;
 
 /** The parts of a CDP Profiler.Profile the split reads. */
@@ -60,7 +61,7 @@ function stacksOf(profile: Profile) {
 /** Milliseconds of script, and of each bucket, in a profile. */
 function split(profile: Profile): Split {
 	const stackOf = stacksOf(profile);
-	const totals: Split = { script: 0, react: 0, sectionReads: 0 };
+	const totals: Split = { script: 0, react: 0, layoutReads: 0 };
 	const samples = profile.samples ?? [];
 	const deltas = profile.timeDeltas ?? [];
 	samples.forEach((id, i) => {
@@ -69,8 +70,9 @@ function split(profile: Profile): Split {
 		const [self, ...callers] = stackOf(id);
 		if (NOT_SCRIPT.has(self)) return;
 		totals.script += ms;
-		for (const [bucket, fn] of Object.entries(BUCKETS)) {
-			if (self === fn || callers.includes(fn)) {
+		const stack = [self, ...callers];
+		for (const [bucket, fns] of Object.entries(BUCKETS)) {
+			if (fns.some((fn) => stack.includes(fn))) {
 				totals[bucket as keyof typeof BUCKETS] += ms;
 			}
 		}
