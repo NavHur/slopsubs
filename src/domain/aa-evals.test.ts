@@ -99,6 +99,10 @@ describe("pickModel", () => {
 		expect(pickModel(models, "max", "beta")).toBeNull();
 	});
 
+	it("skips a reasoning model whose family has only a non-reasoning model", () => {
+		expect(pickModel([catalogModel("beta", "none")], null, "beta")).toBeNull();
+	});
+
 	it("throws when a null effort fits several models and no fallback", () => {
 		const models = [catalogModel("beta", "low"), catalogModel("beta", "high")];
 		expect(() => pickModel(models, null, "beta")).toThrow(

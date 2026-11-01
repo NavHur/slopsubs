@@ -22,7 +22,8 @@ const LOOKBACK = 8000;
 const MAX_ARRAY_LENGTH = 20000;
 const BRACKET_DELTA: Record<string, number> = { "[": 1, "]": -1 };
 
-/** A website row. `effort` is the website's slug, null when the model has none. */
+/** A website row. `effort` is the website's slug, `none` for an effortless model
+ * that does not reason, and null for one that does. */
 export type EvalRow = {
 	family: string;
 	effort: string | null;
@@ -183,8 +184,9 @@ export function pickModel(
 ): BenchmarkPoint | null {
 	if (effort !== null)
 		return candidates.find((m) => m.effort === effort) ?? null;
-	if (candidates.length === 1) return candidates[0];
-	const fallback = candidates.find((m) => m.effort === "default");
+	const reasoning = candidates.filter((m) => m.effort !== "none");
+	if (reasoning.length <= 1) return reasoning[0] ?? null;
+	const fallback = reasoning.find((m) => m.effort === "default");
 	if (!fallback) throw new Error(`Ambiguous null effort for ${family}`);
 	return fallback;
 }
