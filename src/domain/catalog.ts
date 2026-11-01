@@ -144,6 +144,17 @@ function priceWarnings(point: SlopaPoint, aa: AaModel): string[] {
 		);
 }
 
+/** AA's site cost for a point slopalytics hasn't costed, keeping the
+ * tokens and time slopalytics did measure. */
+function siteCostFill(point: SlopaPoint, siteCost: TaskCost | undefined) {
+	if (point.costPerTaskUsd !== null || !siteCost) return {};
+	return {
+		costPerTaskUsd: siteCost.costPerTaskUsd,
+		tokensPerTask: point.tokensPerTask ?? siteCost.tokensPerTask,
+		secondsPerTask: point.secondsPerTask ?? siteCost.secondsPerTask,
+	};
+}
+
 /** A slopalytics point carrying AA's score, prices and release date, and
  * AA's own cost when slopalytics has none. */
 function mergePoint(
@@ -158,10 +169,9 @@ function mergePoint(
 	const aaScore = aa.evaluations.artificial_analysis_intelligence_index;
 	checkScore(point, aaScore);
 	warnings.push(...priceWarnings(point, aa));
-	const siteCost = point.costPerTaskUsd === null ? siteCosts.get(slug) : null;
 	return {
 		...point,
-		...siteCost,
+		...siteCostFill(point, siteCosts.get(slug)),
 		released: aa.release_date,
 		score: roundedOrNull(aaScore, 2),
 		inputPricePerMTokUsd: aa.pricing.price_1m_input_tokens,

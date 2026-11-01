@@ -251,6 +251,25 @@ describe("mergeCatalog", () => {
 		expect(merged.models[0]).toMatchObject(SITE_COST);
 	});
 
+	it("keeps slopalytics' tokens and time when only its cost is missing", () => {
+		const partial = point({
+			costPerTaskUsd: null,
+			tokensPerTask: 88476,
+			secondsPerTask: null,
+		});
+		const merged = mergeCatalog([CLAUDE], [partial], {
+			coveredFamilies: covered,
+			siteCosts: new Map([
+				["claude-opus-5-5", { ...SITE_COST, tokensPerTask: null }],
+			]),
+		});
+		expect(merged.models[0]).toMatchObject({
+			costPerTaskUsd: SITE_COST.costPerTaskUsd,
+			tokensPerTask: 88476,
+			secondsPerTask: SITE_COST.secondsPerTask,
+		});
+	});
+
 	it("keeps slopalytics' cost over AA's site", () => {
 		const merged = mergeCatalog([CLAUDE], [point()], {
 			coveredFamilies: covered,
