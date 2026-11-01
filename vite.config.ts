@@ -15,7 +15,7 @@ const config = defineConfig({
 		ignorePatterns: [
 			"src/routeTree.gen.ts",
 			"src/styles.css",
-			"src/data/**",
+			"src/data/*.json",
 			"research/**",
 			"measurements/**",
 			"*.md",
@@ -49,7 +49,7 @@ const config = defineConfig({
 			"typescript/no-inferrable-types": "error",
 			"unicorn/prefer-node-protocol": "error",
 		},
-		ignorePatterns: ["src/routeTree.gen.ts", "src/data/**"],
+		ignorePatterns: ["src/routeTree.gen.ts", "src/data/*.json"],
 		options: { typeAware: true, typeCheck: true },
 	},
 	run: {
