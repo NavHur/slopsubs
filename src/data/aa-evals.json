@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-31T23:19:32.600Z",
+  "fetchedAt": "2026-10-31T23:54:49.981Z",
   "source": "Artificial Analysis website (model page flight payload)",
   "evals": [
     "aa-briefcase",
@@ -1553,6 +1553,87 @@
       "secondsPerTask": 1619.2
     },
     {
+      "family": "nemotron-3-5-lightning",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 506.86,
+      "costPerTaskUsd": 0.28356,
+      "tokensPerTask": 80038,
+      "secondsPerTask": 220.4
+    },
+    {
+      "family": "nemotron-3-5-lightning",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.008410069634719542,
+      "costPerTaskUsd": 0.02568,
+      "tokensPerTask": 19152,
+      "secondsPerTask": 52.7
+    },
+    {
+      "family": "nemotron-3-5-lightning",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0.00505050505050505,
+      "costPerTaskUsd": 0.31781,
+      "tokensPerTask": 84950,
+      "secondsPerTask": 234
+    },
+    {
+      "family": "nemotron-3-5-lightning",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0,
+      "costPerTaskUsd": 0.94179,
+      "tokensPerTask": 101386,
+      "secondsPerTask": 279.2
+    },
+    {
+      "family": "nemotron-3-5-lightning",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -15.7,
+      "costPerTaskUsd": 0.0006,
+      "tokensPerTask": 2945,
+      "secondsPerTask": 8.1
+    },
+    {
+      "family": "nemotron-3-5-lightning",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.03,
+      "costPerTaskUsd": 0.00502,
+      "tokensPerTask": 13731,
+      "secondsPerTask": 37.8
+    },
+    {
+      "family": "nemotron-3-5-lightning",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.045,
+      "costPerTaskUsd": 0.00353,
+      "tokensPerTask": 17567,
+      "secondsPerTask": 48.4
+    },
+    {
+      "family": "nemotron-3-5-lightning",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.015,
+      "costPerTaskUsd": 0.07305,
+      "tokensPerTask": 109385,
+      "secondsPerTask": 301.3
+    },
+    {
+      "family": "nemotron-3-5-lightning",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 0.43294,
+      "tokensPerTask": 96911,
+      "secondsPerTask": 266.9
+    },
+    {
       "family": "command-a-plus",
       "effort": "default",
       "eval": "aa-briefcase",
@@ -2685,6 +2766,87 @@
       "costPerTaskUsd": 7.03494,
       "tokensPerTask": 165157,
       "secondsPerTask": 2808.3
+    },
+    {
+      "family": "ling-3-1-flash-rc5",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 1521.7,
+      "costPerTaskUsd": 3.87962,
+      "tokensPerTask": 350030,
+      "secondsPerTask": null
+    },
+    {
+      "family": "ling-3-1-flash-rc5",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.6754660741517774,
+      "costPerTaskUsd": 0.15109,
+      "tokensPerTask": 46679,
+      "secondsPerTask": null
+    },
+    {
+      "family": "ling-3-1-flash-rc5",
+      "effort": "default",
+      "eval": "terminalbench-4-0",
+      "score": 0.328282828282828,
+      "costPerTaskUsd": 6.59139,
+      "tokensPerTask": 434059,
+      "secondsPerTask": null
+    },
+    {
+      "family": "ling-3-1-flash-rc5",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0.170090151515151,
+      "costPerTaskUsd": 2.35544,
+      "tokensPerTask": 148312,
+      "secondsPerTask": null
+    },
+    {
+      "family": "ling-3-1-flash-rc5",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -0.13333333333333333,
+      "costPerTaskUsd": 0.01044,
+      "tokensPerTask": 11549,
+      "secondsPerTask": null
+    },
+    {
+      "family": "ling-3-1-flash-rc5",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.126,
+      "costPerTaskUsd": 0.03426,
+      "tokensPerTask": 25438,
+      "secondsPerTask": null
+    },
+    {
+      "family": "ling-3-1-flash-rc5",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.172,
+      "costPerTaskUsd": 0.04308,
+      "tokensPerTask": 47772,
+      "secondsPerTask": null
+    },
+    {
+      "family": "ling-3-1-flash-rc5",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.375,
+      "costPerTaskUsd": 0.32029,
+      "tokensPerTask": 156614,
+      "secondsPerTask": null
+    },
+    {
+      "family": "ling-3-1-flash-rc5",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0.0428571428571429,
+      "costPerTaskUsd": 10.29052,
+      "tokensPerTask": 538511,
+      "secondsPerTask": null
     },
     {
       "family": "deepseek-v4-1-flash-1017",
