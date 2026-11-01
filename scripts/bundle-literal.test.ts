@@ -6,10 +6,11 @@ const ANCHOR = /=\{data:/;
 describe("extract", () => {
 	it("rewrites minified values as JSON", () => {
 		const bundle =
-			'var a=1;const d={data:{name:`Opus`,label:"say \\"hi\\"",open:!0,deprecated:!1,half:.5,big:1e6,neg:-2.5,none:null}};f(d)';
+			'var a=1;const d={data:{name:`Opus`,empty:``,label:"say \\"hi\\"",open:!0,deprecated:!1,half:.5,big:1e6,neg:-2.5,none:null}};f(d)';
 		expect(extract(bundle, ANCHOR)).toEqual({
 			data: {
 				name: "Opus",
+				empty: "",
 				label: 'say "hi"',
 				open: true,
 				deprecated: false,

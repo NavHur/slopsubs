@@ -24,20 +24,30 @@ function objectEnd(source: string, start: number): number {
 	throw new Error(`Unbalanced literal starting at ${start}`);
 }
 
-// Rewrites a minified JS data literal (bare keys, backtick strings, !0/!1,
-// .5 and 1e6 numbers) as JSON.
+/** Minified tokens: a backtick string, a double-quoted string (left as is), a
+ * !0/!1 boolean, a bare key, a .5 or 1e6 number, or any other character. */
+const TOKEN =
+	/`(?<backtick>[^`$\\]*)`|"(?:[^"\\]|\\.)*"|(?<boolean>!0|!1)|(?<key>[A-Za-z_$][\w$]*)(?=\s*:)|(?<number>-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)|[\s\S]/g;
+
+/** The JSON form of each rewritten token kind, by its group in TOKEN. */
+const TOKEN_TO_JSON: Record<string, (text: string) => string> = {
+	backtick: (text) => JSON.stringify(text),
+	boolean: (flag) => (flag === "!0" ? "true" : "false"),
+	key: (name) => JSON.stringify(name),
+	number: (digits) => String(Number(digits)),
+};
+
+function tokenToJson({ 0: token, groups = {} }: RegExpExecArray): string {
+	for (const [kind, toJson] of Object.entries(TOKEN_TO_JSON)) {
+		const text = groups[kind];
+		if (text !== undefined) return toJson(text);
+	}
+	return token;
+}
+
+/** Rewrites a minified JS data literal as JSON, token by token. */
 function literalToJson(literal: string): string {
-	const token =
-		/`([^`$\\]*)`|"((?:[^"\\]|\\.)*)"|!0|!1|([A-Za-z_$][\w$]*)(?=\s*:)|(-?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)|[\s\S]/g;
-	return literal.replace(token, (match, backtick, quoted, key, number) => {
-		if (backtick !== undefined) return JSON.stringify(backtick);
-		if (quoted !== undefined) return match;
-		if (match === "!0") return "true";
-		if (match === "!1") return "false";
-		if (key !== undefined) return JSON.stringify(key);
-		if (number !== undefined) return String(Number(number));
-		return match;
-	});
+	return Array.from(literal.matchAll(TOKEN), tokenToJson).join("");
 }
 
 /** The object literal the first match of `anchor` opens, as JSON data. */
