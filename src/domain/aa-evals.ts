@@ -103,7 +103,7 @@ function lastMatch(text: string, pattern: RegExp): RegExpExecArray | null {
 }
 
 /** A record's own effort slug: `none` for an effortless model that does not
- * reason, null for one that does, filed under the family's default or only variant. */
+ * reason; null for one that does, filed under its default or only reasoning variant. */
 function recordEffort(record: string, family: string): string | null {
 	const effort = lastMatch(record, EFFORT_PATTERN)?.[1];
 	if (effort) return effort;
