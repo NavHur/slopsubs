@@ -20,6 +20,7 @@ import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/model";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
+import { useRenderedView } from "#/lib/sharedLink";
 import { useSectionNav } from "#/lib/useSectionNav";
 import {
 	CHART_SECTIONS,
@@ -78,7 +79,7 @@ async function exporter() {
 }
 
 function ValueView() {
-	const view = Route.useSearch();
+	const view = useRenderedView(Route.useSearch());
 	const navigate = Route.useNavigate();
 	const router = useRouter();
 	const [panelOpen, setPanelOpen] = useState(false);
@@ -89,7 +90,9 @@ function ValueView() {
 			replace: true,
 			resetScroll: false,
 		});
-	const nav = useSectionNav(CHART_SECTIONS, view.chart, (chart) =>
+	// The URL's section, not the rendered one: the jump to it is set up on mount.
+	const linkedChart = Route.useSearch({ select: (search) => search.chart });
+	const nav = useSectionNav(CHART_SECTIONS, linkedChart, (chart) =>
 		update({ chart }),
 	);
 
@@ -172,7 +175,10 @@ function ValueView() {
 				<p className="text-[13px] text-muted max-sm:hidden">
 					What a task really costs on a subscription
 				</p>
-				<div className="-mr-2 ml-auto flex items-center gap-1">
+				<div
+					data-view-dependent
+					className="-mr-2 ml-auto flex items-center gap-1"
+				>
 					<ThemeToggle />
 					<div className="max-sm:hidden">
 						<ChartSettingsMenu
@@ -192,7 +198,10 @@ function ValueView() {
 					</button>
 				</div>
 			</header>
-			<div className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_288px]">
+			<div
+				data-view-dependent
+				className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_288px]"
+			>
 				<main
 					inert={panelOpen}
 					className="flex min-w-0 flex-col lg:overflow-y-auto"

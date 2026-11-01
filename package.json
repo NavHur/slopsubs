@@ -18,6 +18,7 @@
     "measure": "node scripts/measure.ts",
     "build-plans": "node scripts/build-plans.ts",
     "render-brand-images": "vp build && node scripts/render-brand-images.ts",
+    "check-shared-links": "vp build && node scripts/check-shared-links.ts",
     "deploy": "vp run build && wrangler deploy"
   },
   "dependencies": {

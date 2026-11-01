@@ -2,63 +2,18 @@
 // `bun run render-brand-images` builds it first; see README.md, "Brand Images".
 
 import { readFile, writeFile } from "node:fs/promises";
-import { createServer, type Server } from "node:http";
-import type { AddressInfo } from "node:net";
-import { extname, join, normalize } from "node:path";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, type Browser } from "playwright-core";
+import { serveSite } from "./serve-site.ts";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const SITE_DIR = join(ROOT, "dist/client");
 const CARD_PATH = join(ROOT, "public/og.png");
 const ICON_PATH = join(ROOT, "public/apple-touch-icon.png");
 const CARD_SIZE = { width: 1200, height: 630 };
 const ICON_PX = 180;
 /** The light theme's page background, from src/styles.css. */
 const LIGHT_BG = "#fbfaf8";
-
-const CONTENT_TYPES: Record<string, string> = {
-	".html": "text/html",
-	".js": "text/javascript",
-	".css": "text/css",
-	".svg": "image/svg+xml",
-	".png": "image/png",
-	".json": "application/json",
-};
-
-/** A request for a path the build lacks: a 404, not a failure. */
-function isMissingFile(error: unknown): boolean {
-	const code = (error as NodeJS.ErrnoException).code;
-	return code === "ENOENT" || code === "EISDIR";
-}
-
-/** Serves the prerendered build, with / mapped to index.html. */
-function serveSite(): Promise<Server> {
-	const server = createServer(async (request, response) => {
-		const path = normalize(new URL(request.url ?? "/", "http://x").pathname);
-		const file = join(
-			SITE_DIR,
-			path.endsWith("/") ? `${path}index.html` : path,
-		);
-		try {
-			const body = await readFile(file);
-			response.writeHead(200, {
-				"content-type":
-					CONTENT_TYPES[extname(file)] ?? "application/octet-stream",
-			});
-			response.end(body);
-		} catch (error) {
-			if (!isMissingFile(error)) {
-				response.writeHead(500).end();
-				throw error;
-			}
-			response.writeHead(404).end();
-		}
-	});
-	return new Promise((resolve) =>
-		server.listen(0, "127.0.0.1", () => resolve(server)),
-	);
-}
 
 /** Clicks the cost-vs-score chart's Download PNG button and returns the
  * exported image. */
@@ -161,11 +116,10 @@ async function renderIcon(browser: Browser): Promise<Buffer> {
 	return png;
 }
 
-const server = await serveSite();
+const site = await serveSite();
 const browser = await chromium.launch();
 try {
-	const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}/`;
-	const exported = await exportDefaultChart(browser, origin);
+	const exported = await exportDefaultChart(browser, site.origin);
 	await writeFile(
 		CARD_PATH,
 		await fitOnto(browser, exported, CARD_SIZE, LIGHT_BG),
@@ -174,5 +128,5 @@ try {
 	console.log(`Wrote ${CARD_PATH} and ${ICON_PATH}`);
 } finally {
 	await browser.close();
-	server.close();
+	site.close();
 }

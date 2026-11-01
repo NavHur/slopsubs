@@ -85,6 +85,22 @@ rounds its corners itself. The script needs Chromium for `playwright-core`
 (`bunx playwright-core install chromium`) and network access for the web font
 the export embeds.
 
+## Shared Links
+
+Every view lives in the URL, but the site is prerendered once, with the
+default view. A link that sets view params hydrates with that default and
+draws its own view straight after, hidden until it has, so it neither fails
+hydration nor shifts. To check a set of shared links against the build:
+
+```bash
+bun run check-shared-links
+```
+
+It builds first, opens each link at a desktop and a phone width, and fails on
+any console error (React's hydration error #418 among them), a view left
+hidden, or the wrong benchmark. It prints each link's layout shift too. Like
+the brand images, it needs Chromium for `playwright-core`.
+
 ## Styling
 
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
