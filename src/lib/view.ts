@@ -1,12 +1,7 @@
 import { z } from "zod";
 import { frontier, plans } from "#/data";
-import {
-	BENCHMARK_IDS,
-	type Effort,
-	type FamilyId,
-	type Frontier,
-	type PlanId,
-} from "#/domain/model";
+import { BENCHMARK_IDS } from "#/domain/enums";
+import type { Effort, FamilyId, Frontier, PlanId } from "#/domain/model";
 
 /** Reasoning efforts the Models panel can hide; "default" always shows. */
 export const REASONING_LEVELS = [

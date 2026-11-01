@@ -3,7 +3,7 @@
 
 import { writeFile } from "node:fs/promises";
 import { z } from "zod";
-import { EFFORTS } from "../src/domain/model.ts";
+import { EFFORTS } from "../src/domain/enums.ts";
 import { roundedOrNull } from "../src/domain/rounding.ts";
 import { loadCatalogByFamily } from "./catalog-by-family.ts";
 

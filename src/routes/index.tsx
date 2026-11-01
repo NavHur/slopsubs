@@ -16,7 +16,7 @@ import { Segmented, Toggle } from "#/components/Segmented";
 import { type Coverage, FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
 import { leaderboards, plans, samples } from "#/data";
-import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/model";
+import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/enums";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
