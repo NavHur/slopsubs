@@ -1,5 +1,6 @@
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
+import { PENDING_VIEW_SCRIPT } from "#/lib/sharedLink";
 import { THEME_SCRIPT } from "#/lib/theme";
 import appCss from "../styles.css?url";
 
@@ -52,11 +53,13 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		// The theme script sets data-theme before hydration.
+		// The head scripts set data-theme and data-view-pending before hydration.
 		<html lang="en" suppressHydrationWarning>
 			<head>
 				{/* oxlint-disable-next-line react/no-danger -- static script, no user input */}
 				<script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+				{/* oxlint-disable-next-line react/no-danger -- static script, no user input */}
+				<script dangerouslySetInnerHTML={{ __html: PENDING_VIEW_SCRIPT }} />
 				<HeadContent />
 			</head>
 			<body>
