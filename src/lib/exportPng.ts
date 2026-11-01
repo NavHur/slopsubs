@@ -1,6 +1,7 @@
 import { createElement, Fragment, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { DEFAULT_HEIGHT } from "#/components/chart/geometry";
+import { DM_SANS, DM_SANS_LATIN_URL } from "#/lib/webFont";
 
 /** The chart lays out at this size for export, whatever the screen size, so
  * phones export the wide desktop layout too, not their compact one. A chart
@@ -8,7 +9,7 @@ import { DEFAULT_HEIGHT } from "#/components/chart/geometry";
  * fills the screen; one sized by its content keeps its own height. */
 const CHART_SIZE = { width: 1200, height: DEFAULT_HEIGHT };
 const PADDING_PX = 32;
-const TITLE_FONT = '600 20px "DM Sans", sans-serif';
+const TITLE_FONT = `600 20px "${DM_SANS}", sans-serif`;
 /** One line of the header: the 20px title and a single-row legend both sit
  * level in it. A wrapped legend makes the header taller. */
 const HEADER_ROW_PX = 24;
@@ -235,36 +236,8 @@ function embeddedFontCss(): Promise<string> {
 }
 
 async function loadFontCss(): Promise<string> {
-	const link = document.querySelector<HTMLLinkElement>(
-		'link[rel="stylesheet"][href^="https://fonts.googleapis.com/"]',
-	);
-	if (!link) throw new Error("The web font stylesheet is missing");
-	const css = await (await fetchOk(link.href)).text();
-	const dataUrls = new Map<string, Promise<string>>();
-	const faces = basicLatinFontFaces(css).map(async (face) => {
-		const url = fontUrl(face);
-		let dataUrl = dataUrls.get(url);
-		if (!dataUrl) {
-			dataUrl = fetchDataUrl(url);
-			dataUrls.set(url, dataUrl);
-		}
-		return face.replace(url, await dataUrl);
-	});
-	return (await Promise.all(faces)).join("\n");
-}
-
-/** The @font-face rules whose unicode-range starts at U+0000 (Basic Latin),
- * which covers every glyph the chart draws. */
-export function basicLatinFontFaces(css: string): string[] {
-	return (css.match(/@font-face\s*\{[^}]*\}/g) ?? []).filter((face) =>
-		/unicode-range:\s*U\+0000-/i.test(face),
-	);
-}
-
-function fontUrl(face: string): string {
-	const url = face.match(/url\(\s*['"]?([^'")]+)['"]?\s*\)/)?.[1];
-	if (!url) throw new Error(`No font URL in ${face}`);
-	return url;
+	const dataUrl = await fetchDataUrl(DM_SANS_LATIN_URL);
+	return `@font-face { font-family: "${DM_SANS}"; font-weight: 100 1000; src: url(${dataUrl}) format("woff2"); }`;
 }
 
 async function fetchOk(url: string): Promise<Response> {

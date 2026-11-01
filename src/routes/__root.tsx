@@ -1,6 +1,7 @@
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
 import { THEME_SCRIPT } from "#/lib/theme";
+import { DM_SANS_LATIN_URL } from "#/lib/webFont";
 import appCss from "../styles.css?url";
 
 /** Social cards need absolute URLs, so they name the primary domain. */
@@ -39,10 +40,14 @@ export const Route = createRootRoute({
 		links: [
 			{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
 			{ rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-			{ rel: "preconnect", href: "https://fonts.googleapis.com" },
+			// Fonts always fetch in CORS mode, so the preload must too or the
+			// browser downloads the file twice.
 			{
-				rel: "stylesheet",
-				href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap",
+				rel: "preload",
+				href: DM_SANS_LATIN_URL,
+				as: "font",
+				type: "font/woff2",
+				crossOrigin: "anonymous",
 			},
 			{ rel: "stylesheet", href: appCss },
 		],

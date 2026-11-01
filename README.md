@@ -82,8 +82,7 @@ It builds the site first, so the card always matches the current source.
 The card is the chart's own "Download PNG" export of the default view, fitted
 onto 1200x630. The icon is `public/favicon.svg` drawn full bleed, since iOS
 rounds its corners itself. The script needs Chromium for `playwright-core`
-(`bunx playwright-core install chromium`) and network access for the web font
-the export embeds.
+(`bunx playwright-core install chromium`).
 
 ## Paint Metrics
 
