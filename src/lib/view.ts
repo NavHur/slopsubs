@@ -1,12 +1,7 @@
-import { z } from "zod";
+import * as z from "zod/mini";
 import { frontier, plans } from "#/data";
-import {
-	BENCHMARK_IDS,
-	type Effort,
-	type FamilyId,
-	type Frontier,
-	type PlanId,
-} from "#/domain/model";
+import { BENCHMARK_IDS } from "#/domain/enums";
+import type { Effort, FamilyId, Frontier, PlanId } from "#/domain/model";
 
 /** Reasoning efforts the Models panel can hide; "default" always shows. */
 export const REASONING_LEVELS = [
@@ -31,29 +26,43 @@ export type ChartSectionId = (typeof CHART_SECTIONS)[number];
 function knownMembers<T extends string>(known: readonly T[]) {
 	const isKnown = (item: unknown): item is T =>
 		known.some((value) => value === item);
-	return z.array(z.unknown()).transform((items) => items.filter(isKnown));
+	return z.pipe(
+		z.array(z.unknown()),
+		z.transform((items) => items.filter(isKnown)),
+	);
+}
+
+/** `schema`, or `fallback` when the value is missing or this version rejects it. */
+function withFallback<T extends z.ZodMiniType>(
+	schema: T,
+	fallback: Exclude<z.output<T>, undefined>,
+) {
+	return z.catch(z._default(schema, fallback), fallback);
+}
+
+/** `schema` when the value is present and valid, else unset. */
+function optionalValid<T extends z.ZodMiniType>(schema: T) {
+	return z.catch(z.optional(schema), undefined);
 }
 
 /**
  * Chart state, kept in the URL so every view is shareable. A value this
  * version does not know (a retired benchmark, a hand-edited link) falls back
- * to its default instead of failing the page.
+ * to its default instead of failing the page. zod/mini keeps this, the
+ * client's one runtime parse, from bundling all of zod.
  */
 export const ViewSearch = z.object({
-	benchmark: z
-		.enum(BENCHMARK_IDS)
-		.default("intelligence")
-		.catch("intelligence"),
-	scale: z.enum(["log", "linear"]).default("log").catch("log"),
-	pareto: z.boolean().default(false).catch(false),
-	api: z.boolean().default(true).catch(true),
+	benchmark: withFallback(z.enum(BENCHMARK_IDS), "intelligence"),
+	scale: withFallback(z.enum(["log", "linear"]), "log"),
+	pareto: withFallback(z.boolean(), false),
+	api: withFallback(z.boolean(), true),
 	/** Model names at the right end of each line; off gives the plot more room. */
-	labels: z.boolean().default(true).catch(true),
-	plans: z.array(z.string()).optional().catch(undefined),
-	families: z.array(z.string()).optional().catch(undefined),
-	hideReasoning: knownMembers(REASONING_LEVELS).optional().catch(undefined),
+	labels: withFallback(z.boolean(), true),
+	plans: optionalValid(z.array(z.string())),
+	families: optionalValid(z.array(z.string())),
+	hideReasoning: optionalValid(knownMembers(REASONING_LEVELS)),
 	/** The section in view; unset is the top of the page. */
-	chart: z.enum(CHART_SECTIONS).optional().catch(undefined),
+	chart: optionalValid(z.enum(CHART_SECTIONS)),
 });
 export type ViewSearch = z.infer<typeof ViewSearch>;
 

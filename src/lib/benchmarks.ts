@@ -1,5 +1,6 @@
+import type { BenchmarkId } from "#/domain/enums";
 import { AA_EVAL_UNITS, type AaEvalId } from "#/domain/eval-units";
-import type { BenchmarkId, BenchmarkPoint } from "#/domain/model";
+import type { BenchmarkPoint } from "#/domain/model";
 import { formatIntelligence, formatPercent } from "./format";
 
 type Link = { name: string; url: string };

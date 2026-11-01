@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { TaskCost } from "./aa-index-cost";
-import { EFFORTS, type Effort } from "./model";
+import { EFFORTS } from "./enums";
+import type { Effort } from "./model";
 import { roundedOrNull } from "./rounding";
 
 /** One model as Artificial Analysis' data API returns it. */

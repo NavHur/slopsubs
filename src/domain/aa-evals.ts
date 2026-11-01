@@ -1,9 +1,10 @@
 // Reads per-model Intelligence Index evals out of an AA model page's Next.js
 // flight payload and files them under the catalog's families and efforts.
 
+import { AA_EVAL_IDS } from "./enums";
 import type { AaEvalId } from "./eval-units";
 import { MODEL_START_PATTERN, stringLiteralEnd } from "./flight";
-import { AA_EVAL_IDS, type BenchmarkPoint, type Effort } from "./model";
+import type { BenchmarkPoint, Effort } from "./model";
 import { roundedOrNull } from "./rounding";
 
 /** Website release slugs the catalog files under another family. */
