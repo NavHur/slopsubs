@@ -3,7 +3,7 @@
 // Brand marks belong to their owners; shown only to identify each lab.
 
 /** One path of a mark; `fill` is set only for multicolor marks. */
-export type MarkPath = { d: string; fill?: string };
+type MarkPath = { d: string; fill?: string };
 
 export const PROVIDER_MARKS: Record<string, readonly MarkPath[]> = {
 	anthropic: [

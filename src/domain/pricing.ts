@@ -21,7 +21,7 @@ export type ClaudeUsage = {
 	};
 };
 
-export type TokenPrice = { inputPerMTokUsd: number; outputPerMTokUsd: number };
+type TokenPrice = { inputPerMTokUsd: number; outputPerMTokUsd: number };
 
 export class UnpricedModelError extends Error {}
 

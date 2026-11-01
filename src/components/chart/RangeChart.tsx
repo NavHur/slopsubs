@@ -13,7 +13,7 @@ import {
 } from "./rangeGeometry";
 
 /** One effort's figure on a row. */
-export type RangeDot = { id: string; label: string; value: number };
+type RangeDot = { id: string; label: string; value: number };
 
 /** One row: a model, or a model on a plan, with a dot per effort. */
 export type RangeRow = {

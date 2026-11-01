@@ -223,7 +223,7 @@ export function markerPath(
 export type Box = { width: number; height: number };
 
 /** A span of `size` placed as near `start` as fits between `min` and `max`. */
-export function clampSpan(
+function clampSpan(
 	start: number,
 	size: number,
 	min: number,

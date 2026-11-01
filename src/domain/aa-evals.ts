@@ -24,7 +24,7 @@ const BRACKET_DELTA: Record<string, number> = { "[": 1, "]": -1 };
 
 /** A website row. `effort` is the website's slug, `none` for an effortless model
  * that does not reason, and null for one that does. */
-export type EvalRow = {
+type EvalRow = {
 	family: string;
 	effort: string | null;
 	eval: AaEvalId;

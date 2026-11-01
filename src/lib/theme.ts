@@ -1,4 +1,4 @@
-export type Theme = "light" | "dark";
+type Theme = "light" | "dark";
 
 const STORAGE_KEY = "theme";
 
