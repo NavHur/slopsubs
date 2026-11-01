@@ -1,4 +1,8 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	useHydrated,
+	useRouter,
+} from "@tanstack/react-router";
 import { useCallback, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { PricingKey } from "#/components/chart/PricingKey";
@@ -25,6 +29,7 @@ import {
 	CHART_SECTIONS,
 	type ChartSectionId,
 	DEFAULT_MODELS_VIEW,
+	DEFAULT_VIEW,
 	hiddenReasoning,
 	isDefaultModelsView,
 	selectedFamilies,
@@ -77,8 +82,18 @@ async function exporter() {
 	return (await import("#/lib/exportPng")).downloadChartPng;
 }
 
-function ValueView() {
+/**
+ * The view to render. The page is prerendered once, with the default view, so
+ * hydration must render that view too; a shared link's own view follows
+ * straight after, instead of failing hydration and re-rendering the page.
+ */
+function useRenderedView(): ViewSearch {
 	const view = Route.useSearch();
+	return useHydrated() ? view : DEFAULT_VIEW;
+}
+
+function ValueView() {
+	const view = useRenderedView();
 	const navigate = Route.useNavigate();
 	const router = useRouter();
 	const [panelOpen, setPanelOpen] = useState(false);
@@ -89,7 +104,9 @@ function ValueView() {
 			replace: true,
 			resetScroll: false,
 		});
-	const nav = useSectionNav(CHART_SECTIONS, view.chart, (chart) =>
+	// The URL's section, not the rendered one: the jump to it is set up on mount.
+	const linkedChart = Route.useSearch({ select: (search) => search.chart });
+	const nav = useSectionNav(CHART_SECTIONS, linkedChart, (chart) =>
 		update({ chart }),
 	);
 

@@ -57,6 +57,9 @@ export const ViewSearch = z.object({
 });
 export type ViewSearch = z.infer<typeof ViewSearch>;
 
+/** The view of a link with no query string: the one the page is prerendered with. */
+export const DEFAULT_VIEW: ViewSearch = ViewSearch.parse({});
+
 // SAFETY: frontier keys are family ids from the same dataset.
 const FRONTIER = Object.keys(frontier) as FamilyId[];
 
