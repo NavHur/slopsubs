@@ -47,25 +47,36 @@ async function* jsonlFiles(dir: string): AsyncGenerator<string> {
 	}
 }
 
+/** Every line of every .jsonl file under `dirs`. */
+async function* logLines(dirs: string[]): AsyncGenerator<string> {
+	for (const dir of dirs) {
+		for await (const file of jsonlFiles(dir))
+			yield* (await readFile(file, "utf8")).split("\n");
+	}
+}
+
+/** The message an assistant line records, keyed by message and request so a
+ * re-written line replaces its earlier copy; null for any other line. */
+function parseAssistantLine(line: string): [string, ClaudeMessage] | null {
+	if (!line.includes('"type":"assistant"')) return null;
+	const parsed = ClaudeLine.safeParse(JSON.parse(line));
+	if (!parsed.success) return null;
+	const { message, timestamp, requestId, requestRef } = parsed.data;
+	const request = requestRef ?? requestId ?? "";
+	return [
+		`${message.id}:${request}`,
+		{ at: Date.parse(timestamp), model: message.model, usage: message.usage },
+	];
+}
+
 /** Assistant messages from Claude Code logs, deduplicated across re-writes. */
 export async function readClaudeMessages(
 	dirs: string[],
 ): Promise<ClaudeMessage[]> {
 	const seen = new Map<string, ClaudeMessage>();
-	for (const dir of dirs) {
-		for await (const file of jsonlFiles(dir)) {
-			for (const line of (await readFile(file, "utf8")).split("\n")) {
-				if (!line.includes('"type":"assistant"')) continue;
-				const parsed = ClaudeLine.safeParse(JSON.parse(line));
-				if (!parsed.success) continue;
-				const { message, timestamp, requestId, requestRef } = parsed.data;
-				seen.set(`${message.id}:${requestRef ?? requestId ?? ""}`, {
-					at: Date.parse(timestamp),
-					model: message.model,
-					usage: message.usage,
-				});
-			}
-		}
+	for await (const line of logLines(dirs)) {
+		const entry = parseAssistantLine(line);
+		if (entry) seen.set(...entry);
 	}
 	return [...seen.values()];
 }
