@@ -1,7 +1,7 @@
 // Imports Artificial Analysis per-eval Intelligence Index scores, cost, tokens
 // and time from a model page's Next.js flight payload into src/data/aa-evals.json.
 
-import { readFile, writeFile } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import {
 	extractEvals,
 	flightFromHtml,
@@ -10,9 +10,9 @@ import {
 	type Skips,
 } from "../src/domain/aa-evals.ts";
 import { AA_EVAL_IDS } from "../src/domain/model.ts";
+import { loadAaPage } from "./aa-page.ts";
 import { loadCatalogByFamily } from "./catalog-by-family.ts";
 
-const SOURCE = "https://artificialanalysis.ai/models/gemini-4-argon";
 const ROOT = new URL("..", import.meta.url);
 const OUTPUT = new URL("src/data/aa-evals.json", ROOT);
 
@@ -23,15 +23,6 @@ function parseArgs(argv: string[]): { html?: string } {
 		else throw new Error(`Unknown argument ${argv[i]}`);
 	}
 	return args;
-}
-
-async function loadHtml(path: string | undefined): Promise<string> {
-	if (path) return readFile(path, "utf8");
-	const response = await fetch(SOURCE, {
-		headers: { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)" },
-	});
-	if (!response.ok) throw new Error(`${SOURCE}: HTTP ${response.status}`);
-	return response.text();
 }
 
 function logSummary(rows: ResolvedRow[], skips: Skips): void {
@@ -51,7 +42,7 @@ function logSummary(rows: ResolvedRow[], skips: Skips): void {
 
 async function main() {
 	const { html } = parseArgs(process.argv.slice(2));
-	const raw = extractEvals(flightFromHtml(await loadHtml(html)));
+	const raw = extractEvals(flightFromHtml(await loadAaPage(html)));
 	if (!raw.length) throw new Error("No eval rows extracted from website");
 	const { rows, skips } = resolveRows(raw, await loadCatalogByFamily(ROOT));
 	if (!rows.length) throw new Error("No eval rows matched the catalog");
