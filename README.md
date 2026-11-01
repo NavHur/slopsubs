@@ -136,6 +136,19 @@ never loads keeps the view hidden for 10 s (`src/styles.css`), so a shorter net
 would flash the default view and shift the layout. It prints each link's layout
 shift too. Like the brand images, it needs Chromium for `playwright-core`.
 
+## Paint Metrics
+
+```bash
+vp build && bun run measure-paint
+```
+
+serves `dist/client` and loads `/` cold five times (`--runs N` for more) on a
+phone viewport, throttled like Lighthouse's mobile profile. It prints the
+median first paint, first contentful paint, largest contentful paint,
+cumulative layout shift, and when the last web font arrived. It then opens
+each `?benchmark=` view and fails if the selected benchmark ends up under the
+benchmark picker's edge fade once the fonts have loaded.
+
 ## Styling
 
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.

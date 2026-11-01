@@ -13,7 +13,7 @@ import {
 	type ViewportName,
 } from "./page-session.ts";
 import { CPU_SLOWDOWN, scrollTimings } from "./scroll-timing.ts";
-import { serveSite } from "./serve-site.ts";
+import { originOf, serveSite } from "./serve-site.ts";
 import { stepUntil } from "./step-until.ts";
 
 const WHEEL_STEP_PX = 120;
@@ -210,11 +210,7 @@ const { values } = parseArgs({ options: { out: { type: "string" } } });
 const server = await serveSite();
 const browser = await chromium.launch({ args: ["--disable-smooth-scrolling"] });
 try {
-	const address = server.address();
-	if (!address || typeof address === "string") {
-		throw new Error("The site server has no TCP address");
-	}
-	const origin = `http://127.0.0.1:${address.port}/`;
+	const origin = originOf(server);
 	const report: Record<string, unknown> = {};
 	for (const viewport of Object.keys(VIEWPORTS) as ViewportName[]) {
 		const counted = await countedScroll(browser, origin, viewport);

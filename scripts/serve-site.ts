@@ -15,6 +15,7 @@ const CONTENT_TYPES: Record<string, string> = {
 	".svg": "image/svg+xml",
 	".png": "image/png",
 	".json": "application/json",
+	".woff2": "font/woff2",
 };
 
 /** A request for a path the build lacks: a 404, not a failure. */
@@ -49,4 +50,13 @@ export function serveSite(): Promise<Server> {
 	return new Promise((resolve) =>
 		server.listen(0, "127.0.0.1", () => resolve(server)),
 	);
+}
+
+/** The server's origin, with a trailing slash. */
+export function originOf(server: Server): string {
+	const address = server.address();
+	if (!address || typeof address === "string") {
+		throw new Error("The site server has no TCP address");
+	}
+	return `http://127.0.0.1:${address.port}/`;
 }

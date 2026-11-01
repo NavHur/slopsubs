@@ -2,11 +2,10 @@
 // `bun run render-brand-images` builds it first; see README.md, "Brand Images".
 
 import { readFile, writeFile } from "node:fs/promises";
-import type { AddressInfo } from "node:net";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, type Browser } from "playwright-core";
-import { serveSite } from "./serve-site.ts";
+import { originOf, serveSite } from "./serve-site.ts";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const CARD_PATH = join(ROOT, "public/og.png");
@@ -120,7 +119,7 @@ async function renderIcon(browser: Browser): Promise<Buffer> {
 const server = await serveSite();
 const browser = await chromium.launch();
 try {
-	const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}/`;
+	const origin = originOf(server);
 	const exported = await exportDefaultChart(browser, origin);
 	await writeFile(
 		CARD_PATH,
