@@ -132,6 +132,7 @@ export const ChartData = z.object({
 	frontier: Frontier,
 	leaderboards: z.object(LEADERBOARD_SHAPE),
 });
+export type ChartData = z.infer<typeof ChartData>;
 
 /** A weekly cap someone else published, used until we measure our own. */
 const ReportedCap = z.object({
