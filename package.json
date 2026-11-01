@@ -38,8 +38,8 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
     "playwright-core": "1.62.1",
-    "tsrs": "0.18.0-ts7.1.0-dev.20260929",
-    "typescript": "^6.0.2",
+    "tsrs": "0.20.1-ts7.1.0-beta",
+    "typescript": "7.0.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0",
     "vite-plus": "1.4.0",
     "wrangler": "4.149.0"
