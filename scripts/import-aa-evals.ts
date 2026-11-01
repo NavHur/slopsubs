@@ -43,6 +43,10 @@ function logSummary(rows: ResolvedRow[], skips: Skips): void {
 		console.log(`No catalog family for ${[...skips.families].join(", ")}`);
 	if (skips.efforts.size)
 		console.log(`No catalog effort for ${[...skips.efforts].join(", ")}`);
+	if (skips.mappedToDefault.size)
+		console.log(
+			`Mapped to the sole default variant: ${[...skips.mappedToDefault].join(", ")}`,
+		);
 }
 
 async function main() {

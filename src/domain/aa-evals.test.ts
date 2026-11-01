@@ -84,6 +84,11 @@ describe("pickModel", () => {
 		expect(pickModel([only], null, "beta")).toBe(only);
 	});
 
+	it("skips a named effort a multi-variant family lacks", () => {
+		const models = [catalogModel("beta", "low"), catalogModel("beta", "high")];
+		expect(pickModel(models, "max", "beta")).toBeNull();
+	});
+
 	it("throws when a null effort fits several models and no fallback", () => {
 		const models = [catalogModel("beta", "low"), catalogModel("beta", "high")];
 		expect(() => pickModel(models, null, "beta")).toThrow(
@@ -105,6 +110,19 @@ describe("resolveRows", () => {
 			["beta", "default"],
 		]);
 		expect([...skips.families]).toEqual(["alpha"]);
+	});
+
+	it("files the website's one named effort under a sole default, logged", () => {
+		const { rows, skips } = resolveRows([row("beta", "xhigh")], byFamily);
+		expect(rows.map((r) => r.effort)).toEqual(["default"]);
+		expect([...skips.mappedToDefault]).toEqual(["beta (xhigh)"]);
+	});
+
+	it("skips a sole default family the website lists at two efforts", () => {
+		const raw = [row("beta", "medium"), row("beta", "high")];
+		const { rows, skips } = resolveRows(raw, byFamily);
+		expect(rows).toEqual([]);
+		expect([...skips.efforts]).toEqual(["beta (medium)", "beta (high)"]);
 	});
 
 	it("throws on two rows for one family, effort and eval", () => {

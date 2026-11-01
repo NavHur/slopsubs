@@ -50,7 +50,8 @@ API omits their per-task cost, tokens and time. `import-aa-evals` fetches a
 model page, reconstructs its Next.js flight payload, and extracts each model's
 per-eval score, cost, tokens and time into `src/data/aa-evals.json`, resolved
 against the catalog (unknown families/efforts are skipped with a log; ambiguous
-ones stop the import).
+ones stop the import). A family the catalog has only as `default` takes the
+website's row when the site lists it at one effort, and the log names it.
 
 Each script takes cached input for offline runs: `import-benchmarks` accepts
 `--bundle <bundle.js>` and `--aa <models.json>`, and `import-aa-evals` accepts

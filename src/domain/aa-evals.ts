@@ -179,27 +179,62 @@ export function pickModel(
 	return fallback;
 }
 
-export type Skips = { families: Set<string>; efforts: Set<string> };
+/** Website rows the import skipped, and efforts it filed under a sole default. */
+export type Skips = {
+	families: Set<string>;
+	efforts: Set<string>;
+	mappedToDefault: Set<string>;
+};
+
+type Resolution = {
+	byFamily: Map<string, BenchmarkPoint[]>;
+	/** Each catalog family's distinct website efforts. */
+	siteEfforts: Map<string, Set<string | null>>;
+	skips: Skips;
+};
+
+const catalogFamily = (r: EvalRow) => FAMILY_ALIASES[r.family] ?? r.family;
+
+/** The family's one default model, when the website lists it at one effort. */
+function soleDefault(
+	candidates: BenchmarkPoint[],
+	family: string,
+	{ siteEfforts }: Resolution,
+): BenchmarkPoint | null {
+	const [only, ...rest] = candidates;
+	const oneSiteEffort = siteEfforts.get(family)?.size === 1;
+	return oneSiteEffort && !rest.length && only.effort === "default"
+		? only
+		: null;
+}
 
 /** The row filed under the catalog's family and effort, or null if skipped. */
-function resolveRow(
-	r: EvalRow,
-	byFamily: Map<string, BenchmarkPoint[]>,
-	skips: Skips,
-): ResolvedRow | null {
-	const family = FAMILY_ALIASES[r.family] ?? r.family;
+function resolveRow(r: EvalRow, resolution: Resolution): ResolvedRow | null {
+	const { byFamily, skips } = resolution;
+	const family = catalogFamily(r);
 	const candidates = byFamily.get(family);
 	if (!candidates) {
 		skips.families.add(r.family);
 		return null;
 	}
-	const match = pickModel(candidates, r.effort, family);
+	const exact = pickModel(candidates, r.effort, family);
+	const match = exact ?? soleDefault(candidates, family, resolution);
 	if (!match) {
 		// The website carries efforts the catalog can't price; they skip the chart.
 		skips.efforts.add(`${r.family} (${r.effort})`);
 		return null;
 	}
+	if (!exact) skips.mappedToDefault.add(`${r.family} (${r.effort})`);
 	return { ...r, family, effort: match.effort };
+}
+
+function siteEffortsOf(raw: EvalRow[]): Map<string, Set<string | null>> {
+	const efforts = new Map<string, Set<string | null>>();
+	for (const r of raw) {
+		const family = catalogFamily(r);
+		efforts.set(family, (efforts.get(family) ?? new Set()).add(r.effort));
+	}
+	return efforts;
 }
 
 /** Resolves rows against the catalog, failing loud on duplicates. */
@@ -207,10 +242,15 @@ export function resolveRows(
 	raw: EvalRow[],
 	byFamily: Map<string, BenchmarkPoint[]>,
 ) {
-	const skips: Skips = { families: new Set(), efforts: new Set() };
+	const skips: Skips = {
+		families: new Set(),
+		efforts: new Set(),
+		mappedToDefault: new Set(),
+	};
+	const resolution = { byFamily, siteEfforts: siteEffortsOf(raw), skips };
 	const rows = new Map<string, ResolvedRow>();
 	for (const r of raw) {
-		const row = resolveRow(r, byFamily, skips);
+		const row = resolveRow(r, resolution);
 		if (!row) continue;
 		const key = `${row.family}@${row.effort}@${row.eval}`;
 		if (rows.has(key)) throw new Error(`Two rows for ${key}`);
