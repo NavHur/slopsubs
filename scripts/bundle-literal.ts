@@ -1,5 +1,7 @@
 // Reads data literals out of slopalytics' minified JS bundle.
 
+import { stringLiteralEnd } from "../src/domain/flight.ts";
+
 export type Literal =
 	| null
 	| boolean
@@ -8,21 +10,16 @@ export type Literal =
 	| Literal[]
 	| { [key: string]: Literal };
 
-function balancedEnd(source: string, start: number): number {
-	const open = source[start];
-	const close = open === "{" ? "}" : "]";
+const QUOTES = new Set(["`", '"', "'"]);
+const BRACE_DELTA: Record<string, number> = { "{": 1, "}": -1 };
+
+/** End of the object literal opening at `start`, skipping string contents. */
+function objectEnd(source: string, start: number): number {
 	let depth = 0;
-	let quote: string | null = null;
 	for (let i = start; i < source.length; i++) {
-		const ch = source[i];
-		if (quote) {
-			if (ch === "\\") i++;
-			else if (ch === quote) quote = null;
-			continue;
-		}
-		if (ch === "`" || ch === '"' || ch === "'") quote = ch;
-		else if (ch === open) depth++;
-		else if (ch === close && --depth === 0) return i + 1;
+		if (QUOTES.has(source[i])) i = stringLiteralEnd(source, i);
+		else depth += BRACE_DELTA[source[i]] ?? 0;
+		if (depth === 0) return i + 1;
 	}
 	throw new Error(`Unbalanced literal starting at ${start}`);
 }
@@ -49,6 +46,6 @@ export function extract(source: string, anchor: RegExp): Literal {
 	if (!found) throw new Error(`Anchor ${anchor} not found in bundle`);
 	const start = found.index + found[0].indexOf("{");
 	return JSON.parse(
-		literalToJson(source.slice(start, balancedEnd(source, start))),
+		literalToJson(source.slice(start, objectEnd(source, start))),
 	);
 }
