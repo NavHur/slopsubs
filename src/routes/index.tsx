@@ -257,7 +257,7 @@ function ValueView() {
 						title={benchmark.chartTitle}
 						canExport={points.length > 0}
 						onExport={exportValueChart}
-						className="lg:h-[calc(100dvh-var(--header-h)-var(--section-nav-h))] lg:min-h-[540px]"
+						className="lg:min-h-[540px]"
 						controls={
 							<>
 								<Toggle
