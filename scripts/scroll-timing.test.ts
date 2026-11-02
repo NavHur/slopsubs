@@ -16,4 +16,9 @@ describe("split", () => {
 	it("throws when the profile has no timeDeltas", () => {
 		expect(() => split({ nodes, samples: [1] })).toThrow(/timeDeltas/);
 	});
+
+	it("throws when timeDeltas is shorter than samples", () => {
+		const truncated = { nodes, samples: [1, 1, 1], timeDeltas: [0] };
+		expect(() => split(truncated)).toThrow(/timeDeltas/);
+	});
 });
