@@ -85,11 +85,19 @@ export function wheelScrollLeft(
 	return Math.abs(next - row.scrollLeft) < 1 ? null : next;
 }
 
-/** Lets a plain mouse wheel scroll the row sideways under the pointer. */
-function useWheelScroll(ref: RefObject<HTMLElement | null>) {
+/**
+ * Lets a plain mouse wheel scroll the row sideways under the pointer. It
+ * listens on `frame`, which holds the edge arrows as well as the row, so a
+ * wheel turned over an arrow scrolls the row too.
+ */
+function useWheelScroll(
+	frameRef: RefObject<HTMLElement | null>,
+	rowRef: RefObject<HTMLElement | null>,
+) {
 	useEffect(() => {
-		const row = ref.current;
-		if (!row) return;
+		const frame = frameRef.current;
+		const row = rowRef.current;
+		if (!frame || !row) return;
 		// React's onWheel listener is passive, so it cannot stop the page
 		// scrolling as well.
 		const onWheel = (event: WheelEvent) => {
@@ -98,9 +106,9 @@ function useWheelScroll(ref: RefObject<HTMLElement | null>) {
 			event.preventDefault();
 			row.scrollLeft = next;
 		};
-		row.addEventListener("wheel", onWheel, { passive: false });
-		return () => row.removeEventListener("wheel", onWheel);
-	}, [ref]);
+		frame.addEventListener("wheel", onWheel, { passive: false });
+		return () => frame.removeEventListener("wheel", onWheel);
+	}, [frameRef, rowRef]);
 }
 
 /** Tracks which ends of the row hide content; only a changed edge re-renders. */
@@ -239,14 +247,15 @@ export function ScrollRow({
 	className?: string;
 	children: ReactNode;
 }) {
+	const frameRef = useRef<HTMLDivElement>(null);
 	const ref = useRef<HTMLDivElement>(null);
 	const overflow = useOverflowEdges(ref);
 	useRevealSelected(ref, selectedKey);
-	useWheelScroll(ref);
+	useWheelScroll(frameRef, ref);
 
 	const mask = fadeMask(overflow);
 	return (
-		<div className="relative flex min-w-0">
+		<div ref={frameRef} className="relative flex min-w-0">
 			<div
 				ref={ref}
 				className={`relative min-w-0 overflow-x-auto [scrollbar-width:none] ${className}`}
