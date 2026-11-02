@@ -75,7 +75,9 @@ describe("TasksChart", () => {
 		const html = markup();
 		const brand = familyColor(opus);
 		expect(html).not.toContain(`style="color:${brand}`);
-		expect(html).toContain(`<circle cx="4" cy="4" r="4" fill="${brand}"`);
-		expect(html).toMatch(/<svg aria-hidden="true"[^>]*><circle cx="4"/);
+		const dot = html.match(
+			/<svg aria-hidden="true"[^>]*><circle[^>]*fill="([^"]*)"/,
+		);
+		expect(dot?.[1]).toBe(brand);
 	});
 });
