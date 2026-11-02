@@ -1,7 +1,7 @@
 // Opens the built home page for the profiler and waits for it to settle.
 
 import type { Browser, Page } from "playwright-core";
-import { installProbe } from "./page-probe.ts";
+import type { ProbeScript } from "./page-probe.ts";
 
 export const VIEWPORTS = {
 	desktop: { width: 1440, height: 900 },
@@ -23,15 +23,15 @@ export async function settle(page: Page, ms = 40) {
 	await page.waitForTimeout(ms);
 }
 
-/** The page at `viewport`, hydrated, with the probe counting renders or not. */
+/** The page at `viewport`, hydrated, with `probe` installed before it loads. */
 export async function openPage(
 	browser: Browser,
 	origin: string,
 	viewport: ViewportName,
-	countRenders: boolean,
+	probe: ProbeScript,
 ): Promise<Page> {
 	const page = await browser.newPage({ viewport: VIEWPORTS[viewport] });
-	await page.addInitScript(installProbe, countRenders);
+	await page.addInitScript(probe);
 	await page.goto(origin, { waitUntil: "networkidle" });
 	await page.locator('[aria-current="location"]').waitFor();
 	await settle(page, 500);

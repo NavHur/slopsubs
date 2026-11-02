@@ -1,20 +1,10 @@
-// Profiles the home page's re-renders and scroll cost on the built site.
-//
-//   vp build --minify false   (component names survive; React stays in
-//                              production mode)
-//   node scripts/profile-page.ts [--out profile.json]
-//
-// Scrolls the page down to the end and back with the wheel, at a desktop and
-// a phone width, follows each nav link and a deep link, then hovers each
-// chart's points. Render counts come from a probe on the React DevTools hook;
-// scroll timings (scroll-timing.ts) from separate, unprobed pages, so the
-// probe's own cost stays out.
+// Profiles the home page's re-renders and scroll cost on the built site; see
+// README, "Profiling The Home Page". Run: node scripts/profile-page.ts
 
 import { writeFile } from "node:fs/promises";
-import type { AddressInfo } from "node:net";
 import { parseArgs } from "node:util";
 import { type Browser, chromium, type Page } from "playwright-core";
-import type { ProbeStats } from "./page-probe.ts";
+import { countedProbe, type ProbeStats, uncountedProbe } from "./page-probe.ts";
 import {
 	openPage,
 	pointAtGutter,
@@ -41,6 +31,7 @@ type ScrollPass = { steps: Step[]; wheel: number[]; probe: ProbeStats };
 
 function resetProbe(page: Page) {
 	return page.evaluate(() =>
+		// SAFETY: the init script set window.__probe before the page loaded.
 		(window as unknown as { __probe: { reset: () => void } }).__probe.reset(),
 	);
 }
@@ -48,6 +39,7 @@ function resetProbe(page: Page) {
 function readProbe(page: Page): Promise<ProbeStats> {
 	return page.evaluate(() =>
 		structuredClone(
+			// SAFETY: the init script set window.__probe before the page loaded.
 			(window as unknown as { __probe: { stats: ProbeStats } }).__probe.stats,
 		),
 	);
@@ -61,7 +53,7 @@ function readStep(page: Page): Promise<Step & { atEnd: boolean }> {
 		const scroller =
 			main && main.scrollHeight > main.clientHeight
 				? main
-				: (document.scrollingElement as HTMLElement);
+				: (document.scrollingElement ?? document.documentElement);
 		const { scrollTop, scrollHeight, clientHeight } = scroller;
 		return {
 			scrollTop: Math.round(scrollTop),
@@ -73,25 +65,37 @@ function readStep(page: Page): Promise<Step & { atEnd: boolean }> {
 	});
 }
 
+/** Wheels in one direction until `done` says the page has reached its end. */
+async function wheelUntil(
+	page: Page,
+	direction: 1 | -1,
+	done: (step: Step & { atEnd: boolean }) => boolean,
+) {
+	const steps: Step[] = [];
+	const wheel: number[] = [];
+	for (let i = 0; i < MAX_STEPS; i++) {
+		wheel.push(direction * WHEEL_STEP_PX);
+		await page.mouse.wheel(0, direction * WHEEL_STEP_PX);
+		await settle(page);
+		const { atEnd, ...step } = await readStep(page);
+		steps.push(step);
+		if (done({ ...step, atEnd })) break;
+	}
+	return { steps, wheel };
+}
+
 /**
  * Wheels from the top to the end and back, recording each step and the wheel
  * deltas that made the pass.
  */
 async function wheelPass(page: Page, viewport: ViewportName) {
 	await pointAtGutter(page, viewport);
-	const steps: Step[] = [];
-	const wheel: number[] = [];
-	for (const direction of [1, -1]) {
-		for (let i = 0; i < MAX_STEPS; i++) {
-			wheel.push(direction * WHEEL_STEP_PX);
-			await page.mouse.wheel(0, direction * WHEEL_STEP_PX);
-			await settle(page);
-			const { atEnd, ...step } = await readStep(page);
-			steps.push(step);
-			if (direction > 0 ? atEnd : step.scrollTop === 0) break;
-		}
-	}
-	return { steps, wheel };
+	const down = await wheelUntil(page, 1, (step) => step.atEnd);
+	const up = await wheelUntil(page, -1, (step) => step.scrollTop === 0);
+	return {
+		steps: [...down.steps, ...up.steps],
+		wheel: [...down.wheel, ...up.wheel],
+	};
 }
 
 async function countedScroll(
@@ -99,7 +103,7 @@ async function countedScroll(
 	origin: string,
 	viewport: ViewportName,
 ): Promise<ScrollPass> {
-	const page = await openPage(browser, origin, viewport, true);
+	const page = await openPage(browser, origin, viewport, countedProbe);
 	await resetProbe(page);
 	const { steps, wheel } = await wheelPass(page, viewport);
 	const probe = await readProbe(page);
@@ -122,7 +126,7 @@ function pointCentres(page: Page, chart: string) {
 
 /** Renders while the pointer visits each chart's points and leaves. */
 async function countedHover(browser: Browser, origin: string) {
-	const page = await openPage(browser, origin, "desktop", true);
+	const page = await openPage(browser, origin, "desktop", countedProbe);
 	const result: Record<string, ProbeStats & { hovered: number }> = {};
 	for (const chart of CHARTS) {
 		await page.locator(`#${chart}`).evaluate((el) => el.scrollIntoView());
@@ -144,7 +148,7 @@ async function countedHover(browser: Browser, origin: string) {
 
 /** Where the nav and URL land after each link click, and after a deep link. */
 async function navJumps(browser: Browser, origin: string) {
-	const page = await openPage(browser, origin, "desktop", false);
+	const page = await openPage(browser, origin, "desktop", uncountedProbe);
 	const landed = async () => {
 		await settle(page, JUMP_SETTLE_MS);
 		const { atEnd: _, ...step } = await readStep(page);
@@ -193,7 +197,11 @@ const { values } = parseArgs({ options: { out: { type: "string" } } });
 const server = await serveSite();
 const browser = await chromium.launch({ args: ["--disable-smooth-scrolling"] });
 try {
-	const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}/`;
+	const address = server.address();
+	if (!address || typeof address === "string") {
+		throw new Error("The site server has no TCP address");
+	}
+	const origin = `http://127.0.0.1:${address.port}/`;
 	const report: Record<string, unknown> = {};
 	for (const viewport of Object.keys(VIEWPORTS) as ViewportName[]) {
 		const counted = await countedScroll(browser, origin, viewport);

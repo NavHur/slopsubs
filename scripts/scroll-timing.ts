@@ -1,8 +1,8 @@
-// Times a wheel pass on the built page with Chrome's sampling CPU profiler,
-// splitting script time into React's render and commit work and the page's
-// layout reads.
+// Times a wheel pass on the built page with Chrome's CPU profiler, splitting
+// script time into React's work and layout reads (see README, Profiling).
 
 import type { Browser } from "playwright-core";
+import { uncountedProbe } from "./page-probe.ts";
 import { openPage, pointAtGutter, type ViewportName } from "./page-session.ts";
 
 export const CPU_SLOWDOWN = 4;
@@ -58,6 +58,18 @@ function stacksOf(profile: Profile) {
 	};
 }
 
+/** The buckets whose frames appear in a stack. */
+function bucketsIn(stack: readonly string[]) {
+	// SAFETY: Object.entries(BUCKETS) yields exactly the keys of BUCKETS.
+	const entries = Object.entries(BUCKETS) as [
+		keyof typeof BUCKETS,
+		readonly string[],
+	][];
+	return entries
+		.filter(([, fns]) => fns.some((fn) => stack.includes(fn)))
+		.map(([bucket]) => bucket);
+}
+
 /** Milliseconds of script, and of each bucket, in a profile. */
 function split(profile: Profile): Split {
 	const stackOf = stacksOf(profile);
@@ -67,15 +79,10 @@ function split(profile: Profile): Split {
 	samples.forEach((id, i) => {
 		// A sample lasts until the next one.
 		const ms = (deltas[i + 1] ?? 0) / 1000;
-		const [self, ...callers] = stackOf(id);
-		if (NOT_SCRIPT.has(self)) return;
+		const stack = stackOf(id);
+		if (NOT_SCRIPT.has(stack[0])) return;
 		totals.script += ms;
-		const stack = [self, ...callers];
-		for (const [bucket, fns] of Object.entries(BUCKETS)) {
-			if (fns.some((fn) => stack.includes(fn))) {
-				totals[bucket as keyof typeof BUCKETS] += ms;
-			}
-		}
+		for (const bucket of bucketsIn(stack)) totals[bucket] += ms;
 	});
 	return totals;
 }
@@ -90,7 +97,7 @@ async function timedScroll(
 	viewport: ViewportName,
 	wheel: readonly number[],
 ): Promise<Split> {
-	const page = await openPage(browser, origin, viewport, false);
+	const page = await openPage(browser, origin, viewport, uncountedProbe);
 	const cdp = await page.context().newCDPSession(page);
 	await cdp.send("Emulation.setCPUThrottlingRate", { rate: CPU_SLOWDOWN });
 	await cdp.send("Profiler.enable");
@@ -124,6 +131,7 @@ export async function scrollTimings(
 	for (let i = 0; i < TIMED_RUNS; i++) {
 		runs.push(await timedScroll(browser, origin, viewport, wheel));
 	}
+	// SAFETY: every run is a Split, so its keys are the keys of Split.
 	const names = Object.keys(runs[0]) as (keyof Split)[];
 	return Object.fromEntries(
 		names.map((name) => {
