@@ -14,6 +14,7 @@ import {
 } from "./page-session.ts";
 import { CPU_SLOWDOWN, scrollTimings } from "./scroll-timing.ts";
 import { serveSite } from "./serve-site.ts";
+import { stepUntil } from "./step-until.ts";
 
 const WHEEL_STEP_PX = 120;
 /** Stops a pass that never reaches the end. */
@@ -68,20 +69,27 @@ function readStep(page: Page): Promise<Step & { atEnd: boolean }> {
 /** Wheels in one direction until `done` says the page has reached its end. */
 async function wheelUntil(
 	page: Page,
+	viewport: ViewportName,
 	direction: 1 | -1,
 	done: (step: Step & { atEnd: boolean }) => boolean,
 ) {
-	const steps: Step[] = [];
-	const wheel: number[] = [];
-	for (let i = 0; i < MAX_STEPS; i++) {
-		wheel.push(direction * WHEEL_STEP_PX);
-		await page.mouse.wheel(0, direction * WHEEL_STEP_PX);
-		await settle(page);
-		const { atEnd, ...step } = await readStep(page);
-		steps.push(step);
-		if (done({ ...step, atEnd })) break;
-	}
-	return { steps, wheel };
+	const delta = direction * WHEEL_STEP_PX;
+	const reached = await stepUntil(
+		async () => {
+			await page.mouse.wheel(0, delta);
+			await settle(page);
+			return readStep(page);
+		},
+		done,
+		MAX_STEPS,
+		`${viewport} wheel pass to the ${direction === 1 ? "end" : "top"}`,
+	);
+	const steps = reached.map(({ scrollTop, active, chartParam }): Step => ({
+		scrollTop,
+		active,
+		chartParam,
+	}));
+	return { steps, wheel: steps.map(() => delta) };
 }
 
 /**
@@ -90,8 +98,13 @@ async function wheelUntil(
  */
 async function wheelPass(page: Page, viewport: ViewportName) {
 	await pointAtGutter(page, viewport);
-	const down = await wheelUntil(page, 1, (step) => step.atEnd);
-	const up = await wheelUntil(page, -1, (step) => step.scrollTop === 0);
+	const down = await wheelUntil(page, viewport, 1, (step) => step.atEnd);
+	const up = await wheelUntil(
+		page,
+		viewport,
+		-1,
+		(step) => step.scrollTop === 0,
+	);
 	return {
 		steps: [...down.steps, ...up.steps],
 		wheel: [...down.wheel, ...up.wheel],
