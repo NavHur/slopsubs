@@ -13,6 +13,8 @@ type Overflow = { start: boolean; end: boolean };
 const EDGE_SLACK_PX = 2;
 /** Width of the faded band at a hiding edge; the mask and the reveal share it. */
 export const FADE_PX = 24;
+/** Share of the row's width one arrow press scrolls; the rest stays as context. */
+const ARROW_PAGE_SHARE = 0.8;
 /** Pixels in one line of a line-mode wheel step (deltaMode 1). */
 const WHEEL_LINE_PX = 16;
 
@@ -154,11 +156,79 @@ function useRevealSelected(
 	}, [ref, selectedKey]);
 }
 
+type Edge = keyof Overflow;
+
+const ARROWS: Record<
+	Edge,
+	{ label: string; path: string; inset: string; direction: -1 | 1 }
+> = {
+	start: {
+		label: "Scroll left",
+		path: "m15 6-6 6 6 6",
+		inset: "-left-1.5",
+		direction: -1,
+	},
+	end: {
+		label: "Scroll right",
+		path: "m9 6 6 6-6 6",
+		inset: "-right-1.5",
+		direction: 1,
+	},
+};
+
+function scrollRowPage(row: HTMLElement, direction: -1 | 1) {
+	const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+	row.scrollBy({
+		left: direction * row.clientWidth * ARROW_PAGE_SHARE,
+		behavior: reduceMotion ? "instant" : "smooth",
+	});
+}
+
+/**
+ * A round arrow over one faded edge, for a mouse that cannot swipe. Left
+ * out of the Tab order, since Tab already reaches, and reveals, every
+ * control in the row.
+ */
+function EdgeArrow({
+	edge,
+	rowRef,
+}: {
+	edge: Edge;
+	rowRef: RefObject<HTMLElement | null>;
+}) {
+	const arrow = ARROWS[edge];
+	return (
+		<button
+			type="button"
+			tabIndex={-1}
+			aria-label={arrow.label}
+			onClick={() => {
+				if (rowRef.current) scrollRowPage(rowRef.current, arrow.direction);
+			}}
+			className={`absolute top-1/2 ${arrow.inset} hidden size-7 -translate-y-1/2 place-items-center rounded-full border border-line bg-bg text-muted transition-colors hover:text-fg pointer-fine:grid`}
+		>
+			<svg
+				aria-hidden="true"
+				viewBox="0 0 24 24"
+				className="size-3.5"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth={1.75}
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			>
+				<path d={arrow.path} />
+			</svg>
+		</button>
+	);
+}
+
 /**
  * A single line of controls that scrolls sideways instead of widening the
  * page, fading each edge that hides content, turning a vertical mouse wheel
- * into sideways scrolling, and bringing the pressed control into view
- * whenever `selectedKey` changes.
+ * into sideways scrolling, offering an arrow at each hiding edge to fine
+ * pointers, and bringing the pressed control into view whenever
+ * `selectedKey` changes. `className` styles the scrolling row itself.
  */
 export function ScrollRow({
 	selectedKey,
@@ -176,12 +246,16 @@ export function ScrollRow({
 
 	const mask = fadeMask(overflow);
 	return (
-		<div
-			ref={ref}
-			className={`relative overflow-x-auto [scrollbar-width:none] ${className}`}
-			style={{ maskImage: mask, WebkitMaskImage: mask }}
-		>
-			{children}
+		<div className="relative flex min-w-0">
+			<div
+				ref={ref}
+				className={`relative min-w-0 overflow-x-auto [scrollbar-width:none] ${className}`}
+				style={{ maskImage: mask, WebkitMaskImage: mask }}
+			>
+				{children}
+			</div>
+			{overflow.start && <EdgeArrow edge="start" rowRef={ref} />}
+			{overflow.end && <EdgeArrow edge="end" rowRef={ref} />}
 		</div>
 	);
 }
