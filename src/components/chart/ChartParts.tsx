@@ -7,6 +7,7 @@ import type { LineLabel } from "#/lib/chart";
 import { familyLabId } from "#/lib/families";
 import { formatUsd } from "#/lib/format";
 import { ProviderLogo } from "../ProviderLogo";
+import { ColorDot } from "./ColorDot";
 import {
 	type AxisReadouts,
 	type AxisScale,
@@ -343,8 +344,7 @@ function ModelTag({
 				x={at[0] + TAG_LOGO_SIZE + 5}
 				y={at[1]}
 				dy="0.32em"
-				fill={model.color}
-				className="text-[13px] font-medium group-focus-visible:underline"
+				className="fill-fg text-[13px] font-medium group-focus-visible:underline"
 			>
 				{model.name}
 			</text>
@@ -396,14 +396,10 @@ function LegendButton({
 			type="button"
 			aria-pressed={pinned}
 			onClick={() => onHighlight({ type: "toggle", modelId: model.id })}
-			className="flex min-h-8 w-full items-center gap-2 text-left transition-opacity"
-			style={{ color: model.color, opacity: muted ? 0.4 : 1 }}
+			className="flex min-h-8 w-full items-center gap-2 text-left text-fg transition-opacity"
+			style={{ opacity: muted ? 0.4 : 1 }}
 		>
-			<span
-				aria-hidden
-				className="size-2 shrink-0 rounded-full"
-				style={{ backgroundColor: model.color }}
-			/>
+			<ColorDot color={model.color} />
 			<ProviderLogo lab={familyLabId(model.id)} />
 			<span className="truncate">{model.name}</span>
 		</button>
