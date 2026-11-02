@@ -71,14 +71,15 @@ function bucketsIn(stack: readonly string[]) {
 }
 
 /** Milliseconds of script, and of each bucket, in a profile. */
-function split(profile: Profile): Split {
+export function split(profile: Profile): Split {
+	const { samples, timeDeltas } = profile;
+	if (!samples) throw new Error("Chrome profile has no samples");
+	if (!timeDeltas) throw new Error("Chrome profile has no timeDeltas");
 	const stackOf = stacksOf(profile);
 	const totals: Split = { script: 0, react: 0, layoutReads: 0 };
-	const samples = profile.samples ?? [];
-	const deltas = profile.timeDeltas ?? [];
 	samples.forEach((id, i) => {
 		// A sample lasts until the next one.
-		const ms = (deltas[i + 1] ?? 0) / 1000;
+		const ms = (timeDeltas[i + 1] ?? 0) / 1000;
 		const stack = stackOf(id);
 		if (NOT_SCRIPT.has(stack[0])) return;
 		totals.script += ms;
