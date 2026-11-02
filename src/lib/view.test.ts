@@ -57,6 +57,22 @@ describe("stale or hand-edited links", () => {
 		});
 		expect(hiddenReasoning(parsed)).toEqual(["none"]);
 	});
+
+	it("open the default models when every model they name is retired", () => {
+		expect(selectedFamilies(view({ families: ["retired-family"] }))).toEqual(
+			selectedFamilies(view({})),
+		);
+	});
+
+	it("keep the models that still exist", () => {
+		expect(
+			selectedFamilies(view({ families: ["retired-family", opus] })),
+		).toEqual([opus]);
+	});
+
+	it("still show no models when the sender deselected them all", () => {
+		expect(selectedFamilies(view({ families: [] }))).toEqual([]);
+	});
 });
 
 describe("labels", () => {
