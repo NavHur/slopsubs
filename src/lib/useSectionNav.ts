@@ -28,16 +28,19 @@ export function sectionInView<T extends string>(
 	return shown.filter((id) => seen.reached.get(id)).at(-1) ?? shown[0];
 }
 
-/** Whether the nearest ancestor that scrolls on its own, else the page, can. */
-function canScroll(el: Element): boolean {
+/** The nearest ancestor that scrolls on its own; null when the page scrolls. */
+function scrollerOf(el: Element): Element | null {
 	for (let p = el.parentElement; p; p = p.parentElement) {
 		const { overflowY } = getComputedStyle(p);
-		if (overflowY === "auto" || overflowY === "scroll") {
-			return p.scrollHeight > p.clientHeight;
-		}
+		if (overflowY === "auto" || overflowY === "scroll") return p;
 	}
-	const page = document.scrollingElement ?? document.documentElement;
-	return page.scrollHeight > page.clientHeight;
+	return null;
+}
+
+/** Whether the scroller, or the page when there is none, has more to scroll. */
+function canScroll(scroller: Element | null): boolean {
+	const el = scroller ?? document.scrollingElement ?? document.documentElement;
+	return el.scrollHeight > el.clientHeight;
 }
 
 /**
@@ -46,50 +49,141 @@ function canScroll(el: Element): boolean {
  */
 export const SCROLL_END_ID = "sections-end";
 
+/** The sections of `ids` that are rendered, with their elements. */
+function renderedSections<T extends string>(ids: readonly T[]) {
+	return ids.flatMap((id) => {
+		const el = document.getElementById(id);
+		return el ? [{ id, el }] : [];
+	});
+}
+
+/** The observer root box runs from here down to the reading line: past any page. */
+const ABOVE_PAGE_PX = 1_000_000;
+const BELOW_LINE_PERCENT = Math.round((1 - READING_LINE) * 100);
+
+/** What `observeSections` keeps current: a Sighting whose map it fills in. */
+type Tracked<T extends string> = {
+	reached: Map<T, boolean>;
+	atEnd: boolean;
+};
+
+/** The observer root and margin that put the reading line at 40% of the window. */
+type LineBox = { root: Element | null; margin: string };
+
 /**
- * Keeps a Sighting of the sections of `ids` current from IntersectionObserver
- * entries, so nothing reads layout, and calls `onChange` after each update.
+ * The box from far above the page down to the reading line. The page scrolls
+ * in the viewport, whose percent margin follows its size. A scroller is the
+ * root, or its own clip would hide the sections above it; its margin is in
+ * pixels, to put the line where the window's 40% is rather than the scroller's.
  */
-function observeSections<T extends string>(
-	ids: readonly T[],
+function lineBoxOf(scroller: Element | null): LineBox {
+	if (!scroller) {
+		return {
+			root: null,
+			margin: `${ABOVE_PAGE_PX}px 0px -${BELOW_LINE_PERCENT}% 0px`,
+		};
+	}
+	const { top } = scroller.getBoundingClientRect();
+	const bottom = top + scroller.clientTop + scroller.clientHeight;
+	const line = Math.round(window.innerHeight * READING_LINE - bottom);
+	return { root: scroller, margin: `${ABOVE_PAGE_PX}px 0px ${line}px 0px` };
+}
+
+/**
+ * Watches each section against the box down to the reading line, so a section
+ * meets it exactly when its top has reached the line, however far one jump
+ * moves it: a section that skips a narrower band would send no entry.
+ */
+function observeReached<T extends string>(
+	sections: ReturnType<typeof renderedSections<T>>,
+	box: LineBox,
+	seen: Tracked<T>,
 	onChange: (seen: Sighting<T>) => void,
 ) {
-	const reached = new Map<T, boolean>();
-	const seen = { reached, atEnd: false };
-	const idOf = new Map<Element, T>();
-	// The viewport above the reading line. A section's top crosses the line
-	// exactly when the section enters or leaves this band from below, so each
-	// section's last entry says whether its top has reached the line.
-	const aboveLine = new IntersectionObserver(
+	const idOf = new Map<Element, T>(sections.map(({ id, el }) => [el, id]));
+	const observer = new IntersectionObserver(
 		(entries) => {
-			const line = window.innerHeight * READING_LINE;
-			for (const { target, boundingClientRect } of entries) {
+			for (const { target, isIntersecting } of entries) {
 				const id = idOf.get(target);
-				if (id) reached.set(id, boundingClientRect.top <= line);
+				if (id) seen.reached.set(id, isIntersecting);
 			}
 			onChange(seen);
 		},
-		{ rootMargin: `0px 0px -${Math.round((1 - READING_LINE) * 100)}% 0px` },
+		{ root: box.root, rootMargin: box.margin },
 	);
-	const end = new IntersectionObserver((entries) => {
+	for (const { el } of sections) observer.observe(el);
+	return observer;
+}
+
+/** Watches the end marker, which says whether the scroller is at its end. */
+function observeEnd<T extends string>(
+	scroller: Element | null,
+	seen: Tracked<T>,
+	onChange: (seen: Sighting<T>) => void,
+) {
+	const observer = new IntersectionObserver((entries) => {
 		const marker = entries.at(-1);
 		if (!marker) return;
-		seen.atEnd = marker.isIntersecting && canScroll(marker.target);
+		seen.atEnd = marker.isIntersecting && canScroll(scroller);
 		onChange(seen);
 	});
-	for (const id of ids) {
-		const section = document.getElementById(id);
-		if (!section) continue;
-		idOf.set(section, id);
-		aboveLine.observe(section);
-	}
 	const endMarker = document.getElementById(SCROLL_END_ID);
-	if (endMarker) end.observe(endMarker);
+	if (endMarker) observer.observe(endMarker);
+	return observer;
+}
+
+/**
+ * Keeps `seen` current from IntersectionObserver entries and calls `onChange`
+ * after each update. The section observer reads no layout; the end check
+ * reads it once per crossing of the scroller's end. The scroller and the
+ * line's margin come from the layout at the time, so `isCurrent` says when a
+ * resize has moved them.
+ */
+export function observeSections<T extends string>(
+	ids: readonly T[],
+	onChange: (seen: Sighting<T>) => void,
+	seen: Tracked<T> = { reached: new Map(), atEnd: false },
+) {
+	const sections = renderedSections(ids);
+	const scrollerNow = () => (sections[0] ? scrollerOf(sections[0].el) : null);
+	const scroller = scrollerNow();
+	const box = lineBoxOf(scroller);
+	const observers = [
+		observeReached(sections, box, seen, onChange),
+		observeEnd(scroller, seen, onChange),
+	];
 	return {
 		seen,
+		isCurrent: () => {
+			const now = scrollerNow();
+			return now === scroller && lineBoxOf(now).margin === box.margin;
+		},
 		stop: () => {
-			aboveLine.disconnect();
-			end.disconnect();
+			for (const observer of observers) observer.disconnect();
+		},
+	};
+}
+
+/**
+ * `observeSections`, made again whenever a resize moves the scroller (at a
+ * breakpoint) or the reading line, keeping what the old observers saw.
+ */
+export function observeAcrossResizes<T extends string>(
+	ids: readonly T[],
+	onChange: (seen: Sighting<T>) => void,
+) {
+	let sections = observeSections(ids, onChange);
+	const onResize = () => {
+		if (sections.isCurrent()) return;
+		sections.stop();
+		sections = observeSections(ids, onChange, sections.seen);
+	};
+	window.addEventListener("resize", onResize, { passive: true });
+	return {
+		seen: sections.seen,
+		stop: () => {
+			window.removeEventListener("resize", onResize);
+			sections.stop();
 		},
 	};
 }
@@ -115,7 +209,7 @@ function useScrollSpy<T extends string>(
 			reported = id;
 			cross(id);
 		};
-		const sections = observeSections(ids, report);
+		const sections = observeAcrossResizes(ids, report);
 		// Quiet until the reader first scrolls: a tall screen keeps its URL on
 		// load even when a later section starts in view.
 		const onFirstScroll = () => {
