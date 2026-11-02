@@ -241,7 +241,8 @@ function ValueView() {
 							</span>
 							<ScrollRow
 								selectedKey={view.benchmark}
-								className="-mr-4 min-w-0 pr-4 sm:mr-0 sm:pr-0"
+								className="-mr-4 sm:mr-0"
+								rowClassName="pr-4 sm:pr-0"
 							>
 								<Segmented
 									label="Benchmark that defines a task"
@@ -257,7 +258,7 @@ function ValueView() {
 						title={benchmark.chartTitle}
 						canExport={points.length > 0}
 						onExport={exportValueChart}
-						className="lg:h-[calc(100dvh-var(--header-h)-var(--section-nav-h))] lg:min-h-[540px]"
+						className="lg:min-h-[540px]"
 						controls={
 							<>
 								<Toggle
