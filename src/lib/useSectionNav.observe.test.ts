@@ -217,3 +217,25 @@ describe("observeAcrossResizes when the window crosses the scroller breakpoint",
 		expect(before).not.toHaveBeenCalled();
 	});
 });
+
+describe("observeSections without the end marker", () => {
+	const world = buildWorld("page");
+
+	afterEach(() => vi.unstubAllGlobals());
+
+	it("throws when sections are rendered but the marker is not", () => {
+		stubBrowser(world);
+		world.elements.delete(SCROLL_END_ID);
+		expect(() => observeSections(ids, () => {})).toThrow(
+			`#${SCROLL_END_ID} is not rendered`,
+		);
+	});
+
+	it("tracks nothing, without throwing, when no section is rendered", () => {
+		stubBrowser(world);
+		world.elements.clear();
+		const tracker = observeSections(ids, () => {});
+		expect(sectionInView(ids, tracker.seen)).toBeUndefined();
+		tracker.stop();
+	});
+});

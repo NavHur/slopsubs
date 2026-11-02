@@ -118,6 +118,7 @@ function observeReached<T extends string>(
 /** Watches the end marker, which says whether the scroller is at its end. */
 function observeEnd<T extends string>(
 	scroller: Element | null,
+	endMarker: Element | null,
 	seen: Tracked<T>,
 	onChange: (seen: Sighting<T>) => void,
 ) {
@@ -127,7 +128,6 @@ function observeEnd<T extends string>(
 		seen.atEnd = marker.isIntersecting && canScroll(scroller);
 		onChange(seen);
 	});
-	const endMarker = document.getElementById(SCROLL_END_ID);
 	if (endMarker) observer.observe(endMarker);
 	return observer;
 }
@@ -145,12 +145,16 @@ export function observeSections<T extends string>(
 	seen: Tracked<T> = { reached: new Map(), atEnd: false },
 ) {
 	const sections = renderedSections(ids);
+	const endMarker = document.getElementById(SCROLL_END_ID);
+	if (sections.length > 0 && !endMarker) {
+		throw new Error(`#${SCROLL_END_ID} is not rendered`);
+	}
 	const scrollerNow = () => (sections[0] ? scrollerOf(sections[0].el) : null);
 	const scroller = scrollerNow();
 	const box = lineBoxOf(scroller);
 	const observers = [
 		observeReached(sections, box, seen, onChange),
-		observeEnd(scroller, seen, onChange),
+		observeEnd(scroller, endMarker, seen, onChange),
 	];
 	return {
 		seen,
@@ -279,7 +283,8 @@ function useInitialScroll<T extends string>(
  * Scroll-spy navigation between page sections whose element ids are `ids`.
  * Reports the section in view through `onChange` (undefined for the first,
  * which is the top of the page), scrolls to `current` once on load, and
- * `scrollTo` jumps to a section without reporting the ones it passes.
+ * `scrollTo` jumps to a section without reporting the ones it passes. The page
+ * must render #SCROLL_END_ID as the last child of the scroller, or it throws.
  */
 export function useSectionNav<T extends string>(
 	ids: readonly T[],
