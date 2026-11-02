@@ -3,6 +3,7 @@ import { describe, expect, it } from "vite-plus/test";
 import type { BenchmarkPoint, FamilyId, Plan, PlanId } from "#/domain/model";
 import { tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
+import { familyColor } from "#/lib/families";
 import { TasksChart } from "./TasksChart";
 
 const opus = "claude-opus-5-5" as FamilyId;
@@ -69,4 +70,17 @@ describe("TasksChart", () => {
 		const elementText = markup().replaceAll("&#x27;", "'");
 		expect(elementText).toContain(`>${text}</`);
 	});
+
+	it("names each model in the text colour, its brand on a hidden dot", () => {
+		const html = markup();
+		const brand = familyColor(opus);
+		expect(html).not.toContain(`style="color:${brand}`);
+		expect(html).toMatch(
+			new RegExp(`aria-hidden="true"[^>]*background-color:${escape(brand)}`),
+		);
+	});
 });
+
+function escape(text: string): string {
+	return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}

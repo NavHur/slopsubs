@@ -3,6 +3,7 @@ import type { FamilyId } from "#/domain/model";
 import type { EffortValue } from "#/domain/ranges";
 import { familyColor, familyName } from "#/lib/families";
 import { useElementSize } from "#/lib/useElementSize";
+import { ColorDot } from "./ColorDot";
 import {
 	COLUMN_GAP_PX,
 	type RangeLayout,
@@ -185,9 +186,14 @@ function Row({
 			className="grid items-center border-b border-line py-1.5 text-[13px]"
 			style={{ gridTemplateColumns: layout.columns, columnGap: COLUMN_GAP_PX }}
 		>
-			<span className="whitespace-nowrap">
-				<span style={{ color: row.color }}>{row.label}</span>
-				{row.note && <span className="ml-1 text-muted">{`· ${row.note}`}</span>}
+			<span className="flex items-center gap-1.5 whitespace-nowrap">
+				<ColorDot color={row.color} />
+				<span>
+					{row.label}
+					{row.note && (
+						<span className="ml-1 text-muted">{`· ${row.note}`}</span>
+					)}
+				</span>
 			</span>
 			<Track
 				row={row}
