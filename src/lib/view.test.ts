@@ -9,6 +9,7 @@ import {
 	isDefaultModelsView,
 	NOTABLE_FAMILIES,
 	selectedFamilies,
+	selectedPlans,
 	toggledGroup,
 	ViewSearch,
 } from "./view";
@@ -72,6 +73,19 @@ describe("stale or hand-edited links", () => {
 
 	it("still show no models when the sender deselected them all", () => {
 		expect(selectedFamilies(view({ families: [] }))).toEqual([]);
+	});
+
+	it("open the default plans when every plan they name is retired", () => {
+		expect(selectedPlans(view({ plans: ["retired-plan"] }))).toEqual(
+			selectedPlans(view({})),
+		);
+		expect(
+			selectedPlans(view({ plans: ["retired-plan", "opencode-go"] })),
+		).toEqual(["opencode-go"]);
+	});
+
+	it("still show no plans when the sender deselected them all", () => {
+		expect(selectedPlans(view({ plans: [] }))).toEqual([]);
 	});
 });
 

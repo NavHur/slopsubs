@@ -80,7 +80,7 @@ export const ViewSearch = z.object({
 	api: z.boolean().default(true).catch(true),
 	/** Model names at the right end of each line; off gives the plot more room. */
 	labels: z.boolean().default(true).catch(true),
-	plans: z.array(z.string()).optional().catch(undefined),
+	plans: knownSelection(plans.map((p) => p.id)),
 	families: knownSelection(COVERED_FAMILIES),
 	hideReasoning: knownMembers(REASONING_LEVELS).optional().catch(undefined),
 	/** The section in view; unset is the top of the page. */
