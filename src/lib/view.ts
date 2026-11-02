@@ -58,13 +58,6 @@ function knownSelection<T extends string>(known: readonly T[]) {
 		.catch(undefined);
 }
 
-/** Keeps the list members this version knows, dropping the rest. */
-function knownMembers<T extends string>(known: readonly T[]) {
-	const isKnown = (item: unknown): item is T =>
-		known.some((value) => value === item);
-	return z.array(z.unknown()).transform((items) => items.filter(isKnown));
-}
-
 /**
  * Chart state, kept in the URL so every view is shareable. A value this
  * version does not know (a retired benchmark, a hand-edited link) falls back
@@ -82,7 +75,7 @@ export const ViewSearch = z.object({
 	labels: z.boolean().default(true).catch(true),
 	plans: knownSelection(plans.map((p) => p.id)),
 	families: knownSelection(COVERED_FAMILIES),
-	hideReasoning: knownMembers(REASONING_LEVELS).optional().catch(undefined),
+	hideReasoning: knownSelection(REASONING_LEVELS),
 	/** The section in view; unset is the top of the page. */
 	chart: z.enum(CHART_SECTIONS).optional().catch(undefined),
 });

@@ -87,6 +87,12 @@ describe("stale or hand-edited links", () => {
 	it("still show no plans when the sender deselected them all", () => {
 		expect(selectedPlans(view({ plans: [] }))).toEqual([]);
 	});
+
+	it("hide the default efforts when every effort they hide is unknown", () => {
+		expect(
+			hiddenReasoning(view({ hideReasoning: ["retired-effort"] })),
+		).toEqual(["none"]);
+	});
 });
 
 describe("labels", () => {
