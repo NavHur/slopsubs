@@ -24,21 +24,17 @@ type Fiber = {
 
 /** Counts layout reads and scroll events, and exposes `window.__probe`. */
 function installInstrumentation() {
-	const stats: ProbeStats = {
+	// Inside the function: only its own source is serialized into the page.
+	const zeroed = (): ProbeStats => ({
 		commits: 0,
 		renders: {},
 		scrollEvents: 0,
 		rectReads: 0,
 		styleReads: 0,
-	};
+	});
+	const stats = zeroed();
 	const reset = () => {
-		Object.assign(stats, {
-			commits: 0,
-			renders: {},
-			scrollEvents: 0,
-			rectReads: 0,
-			styleReads: 0,
-		});
+		Object.assign(stats, zeroed());
 	};
 	Object.assign(window, { __probe: { stats, reset } });
 
