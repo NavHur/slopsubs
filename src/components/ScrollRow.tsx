@@ -179,7 +179,8 @@ const ARROWS: Record<
 	end: {
 		label: "Scroll right",
 		path: "m9 6 6 6-6 6",
-		inset: "-right-1.5",
+		// Below sm the caller's bleed reaches the window edge: stay inside it.
+		inset: "-right-1.5 max-sm:right-0",
 		direction: 1,
 	},
 };
