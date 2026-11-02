@@ -13,6 +13,8 @@ type Overflow = { start: boolean; end: boolean };
 const EDGE_SLACK_PX = 2;
 /** Width of the faded band at a hiding edge; the mask and the reveal share it. */
 export const FADE_PX = 24;
+/** Pixels in one line of a line-mode wheel step (deltaMode 1). */
+const WHEEL_LINE_PX = 16;
 
 function overflowOf(row: HTMLElement): Overflow {
 	const maxScroll = row.scrollWidth - row.clientWidth;
@@ -49,6 +51,54 @@ export function revealScrollLeft(r: Reveal): number {
 	if (right > r.scrollLeft + r.clientWidth - r.margin)
 		return right + r.margin - r.clientWidth;
 	return r.scrollLeft;
+}
+
+type WheelStep = Pick<
+	WheelEvent,
+	"deltaX" | "deltaY" | "deltaMode" | "ctrlKey"
+>;
+type RowScroll = Pick<
+	HTMLElement,
+	"scrollLeft" | "scrollWidth" | "clientWidth"
+>;
+
+/**
+ * The scrollLeft a vertical wheel step moves the row to, or null when the
+ * step is not the row's: a pinch, a sideways gesture (the browser scrolls
+ * the row natively), or a push past an end the row has reached, which goes
+ * on to scroll the page.
+ */
+export function wheelScrollLeft(
+	step: WheelStep,
+	row: RowScroll,
+): number | null {
+	if (step.ctrlKey || Math.abs(step.deltaX) >= Math.abs(step.deltaY))
+		return null;
+	const unitPx = [1, WHEEL_LINE_PX, row.clientWidth][step.deltaMode] ?? 1;
+	const maxScroll = Math.max(0, row.scrollWidth - row.clientWidth);
+	const next = Math.min(
+		maxScroll,
+		Math.max(0, row.scrollLeft + step.deltaY * unitPx),
+	);
+	return Math.abs(next - row.scrollLeft) < 1 ? null : next;
+}
+
+/** Lets a plain mouse wheel scroll the row sideways under the pointer. */
+function useWheelScroll(ref: RefObject<HTMLElement | null>) {
+	useEffect(() => {
+		const row = ref.current;
+		if (!row) return;
+		// React's onWheel listener is passive, so it cannot stop the page
+		// scrolling as well.
+		const onWheel = (event: WheelEvent) => {
+			const next = wheelScrollLeft(event, row);
+			if (next === null) return;
+			event.preventDefault();
+			row.scrollLeft = next;
+		};
+		row.addEventListener("wheel", onWheel, { passive: false });
+		return () => row.removeEventListener("wheel", onWheel);
+	}, [ref]);
 }
 
 /** Tracks which ends of the row hide content; only a changed edge re-renders. */
@@ -106,8 +156,9 @@ function useRevealSelected(
 
 /**
  * A single line of controls that scrolls sideways instead of widening the
- * page, fading each edge that hides content, and bringing the pressed control
- * into view whenever `selectedKey` changes.
+ * page, fading each edge that hides content, turning a vertical mouse wheel
+ * into sideways scrolling, and bringing the pressed control into view
+ * whenever `selectedKey` changes.
  */
 export function ScrollRow({
 	selectedKey,
@@ -121,6 +172,7 @@ export function ScrollRow({
 	const ref = useRef<HTMLDivElement>(null);
 	const overflow = useOverflowEdges(ref);
 	useRevealSelected(ref, selectedKey);
+	useWheelScroll(ref);
 
 	const mask = fadeMask(overflow);
 	return (
