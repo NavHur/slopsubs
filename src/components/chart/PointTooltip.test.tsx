@@ -72,8 +72,11 @@ describe("point tooltip", () => {
 		);
 	});
 
-	it("names the model in the text colour, not its brand colour", () => {
+	it("uses the brand colour only for the model's dot, never its name", () => {
 		const html = tooltipHtml(BENCHMARK_VIEWS.intelligence);
-		expect(html).not.toContain(`style="color:${familyColor(opus)}`);
+		const brand = familyColor(opus);
+		expect(html).toContain(`<circle cx="4" cy="4" r="4" fill="${brand}"`);
+		expect(html).toMatch(/<svg aria-hidden="true"[^>]*><circle cx="4"/);
+		expect(html.split(brand)).toHaveLength(2);
 	});
 });

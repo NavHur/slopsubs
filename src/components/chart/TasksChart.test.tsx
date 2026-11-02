@@ -71,16 +71,11 @@ describe("TasksChart", () => {
 		expect(elementText).toContain(`>${text}</`);
 	});
 
-	it("names each model in the text colour, its brand on a hidden dot", () => {
+	it("names each model in the text colour, its brand on an SVG dot the PNG export draws", () => {
 		const html = markup();
 		const brand = familyColor(opus);
 		expect(html).not.toContain(`style="color:${brand}`);
-		expect(html).toMatch(
-			new RegExp(`aria-hidden="true"[^>]*background-color:${escape(brand)}`),
-		);
+		expect(html).toContain(`<circle cx="4" cy="4" r="4" fill="${brand}"`);
+		expect(html).toMatch(/<svg aria-hidden="true"[^>]*><circle cx="4"/);
 	});
 });
-
-function escape(text: string): string {
-	return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
