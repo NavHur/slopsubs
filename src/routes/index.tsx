@@ -241,7 +241,8 @@ function ValueView() {
 							</span>
 							<ScrollRow
 								selectedKey={view.benchmark}
-								className="-mr-4 min-w-0 pr-4 sm:mr-0 sm:pr-0"
+								className="-mr-4 sm:mr-0"
+								rowClassName="pr-4 sm:pr-0"
 							>
 								<Segmented
 									label="Benchmark that defines a task"

@@ -236,15 +236,19 @@ function EdgeArrow({
  * page, fading each edge that hides content, turning a vertical mouse wheel
  * into sideways scrolling, offering an arrow at each hiding edge to fine
  * pointers, and bringing the pressed control into view whenever
- * `selectedKey` changes. `className` styles the scrolling row itself.
+ * `selectedKey` changes. `className` places the whole control, arrows
+ * included, in its parent (a bleed margin belongs here, so the arrows follow
+ * the fade); `rowClassName` styles the scrolling row itself.
  */
 export function ScrollRow({
 	selectedKey,
 	className = "",
+	rowClassName = "",
 	children,
 }: {
 	selectedKey: string;
 	className?: string;
+	rowClassName?: string;
 	children: ReactNode;
 }) {
 	const frameRef = useRef<HTMLDivElement>(null);
@@ -255,10 +259,10 @@ export function ScrollRow({
 
 	const mask = fadeMask(overflow);
 	return (
-		<div ref={frameRef} className="relative flex min-w-0">
+		<div ref={frameRef} className={`relative flex min-w-0 ${className}`}>
 			<div
 				ref={ref}
-				className={`relative min-w-0 overflow-x-auto [scrollbar-width:none] ${className}`}
+				className={`relative min-w-0 overflow-x-auto [scrollbar-width:none] ${rowClassName}`}
 				style={{ maskImage: mask, WebkitMaskImage: mask }}
 			>
 				{children}
