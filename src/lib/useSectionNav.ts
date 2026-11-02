@@ -284,7 +284,8 @@ function useInitialScroll<T extends string>(
  * Reports the section in view through `onChange` (undefined for the first,
  * which is the top of the page), scrolls to `current` once on load, and
  * `scrollTo` jumps to a section without reporting the ones it passes. The page
- * must render #SCROLL_END_ID as the last child of the scroller, or it throws.
+ * must render #SCROLL_END_ID as the scroller's last child; it throws when the
+ * marker is missing.
  */
 export function useSectionNav<T extends string>(
 	ids: readonly T[],
