@@ -79,6 +79,9 @@ describe("stale or hand-edited links", () => {
 		expect(selectedPlans(view({ plans: ["retired-plan"] }))).toEqual(
 			selectedPlans(view({})),
 		);
+	});
+
+	it("keep the plans that still exist", () => {
 		expect(
 			selectedPlans(view({ plans: ["retired-plan", "opencode-go"] })),
 		).toEqual(["opencode-go"]);
