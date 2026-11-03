@@ -98,6 +98,12 @@ function emphasis(
 	return worthWeighing ? 1 : BEATEN_OPACITY;
 }
 
+/** The model's colour pushed toward the text's: darker on a light page,
+ * lighter on a dark one, so the options worth weighing stand off the grid. */
+function strongColor(family: FamilyId): string {
+	return `color-mix(in oklab, ${familyColor(family)} 75%, var(--color-fg))`;
+}
+
 /**
  * Each model's efforts joined low to high, drawn as the cost and score chart
  * draws the pricing's lines.
@@ -114,7 +120,7 @@ export function EffortLines({
 }) {
 	const { isApi, lineWidth } = pricing;
 	return (
-		<g aria-hidden="true" pointerEvents="none" opacity={isApi ? 0.6 : 1}>
+		<g aria-hidden="true" pointerEvents="none">
 			{steps.map((step) => (
 				<line
 					key={step.key}
@@ -122,8 +128,12 @@ export function EffortLines({
 					y1={step.y1}
 					x2={step.x2}
 					y2={step.y2}
-					stroke={familyColor(step.family)}
-					strokeWidth={lineWidth}
+					stroke={
+						step.worthWeighing
+							? strongColor(step.family)
+							: familyColor(step.family)
+					}
+					strokeWidth={step.worthWeighing ? lineWidth + 0.5 : lineWidth}
 					strokeDasharray={isApi ? API_DASH : undefined}
 					opacity={emphasis(step.family, step.worthWeighing, activeModel)}
 					className="transition-opacity"
@@ -143,8 +153,13 @@ function pointLabel({ point, worthWeighing }: ScenePoint, view: BenchmarkView) {
 	return `${familyName(benchmark.family)}, ${benchmark.effortLabel}, ${measures}${verdict}`;
 }
 
+/** Marker radius of an option worth weighing, a beaten one, and the one
+ * whose details show (px). */
+const MARKER_RADIUS_PX = { worth: 5, beaten: 4, active: 7 };
+
 /**
- * One option: the pricing's marker, with a line down to the floor so its cost
+ * One option: the pricing's marker, filled when it is worth weighing and
+ * hollow when another beats it, with a line down to the floor so its cost
  * and time read off the grid. Hover or focus previews its details; click,
  * Enter or Space pins them.
  */
@@ -168,7 +183,10 @@ export function TradeoffPoint({
 }) {
 	const { point, at, floor, worthWeighing } = scenePoint;
 	const { family } = point.benchmark;
-	const color = familyColor(family);
+	const color = worthWeighing ? strongColor(family) : familyColor(family);
+	const radius = active
+		? MARKER_RADIUS_PX.active
+		: MARKER_RADIUS_PX[worthWeighing ? "worth" : "beaten"];
 	const preview = (source: PreviewSource) => () =>
 		onDetails({ type: "preview", source, point });
 	const endPreview = (source: PreviewSource) => () =>
@@ -185,7 +203,7 @@ export function TradeoffPoint({
 				x2={floor.x}
 				y2={floor.y}
 				stroke={color}
-				strokeOpacity={0.25}
+				strokeOpacity={worthWeighing ? 0.4 : 0.25}
 				pointerEvents="none"
 			/>
 			<g
@@ -205,8 +223,8 @@ export function TradeoffPoint({
 			>
 				<circle cx={at.x} cy={at.y} r={HIT_RADIUS_PX} fill="transparent" />
 				<path
-					d={markerPath(pricing.marker, at.x, at.y, active ? 6 : 4)}
-					fill={pricing.isApi ? "var(--bg)" : color}
+					d={markerPath(pricing.marker, at.x, at.y, radius)}
+					fill={worthWeighing ? color : "var(--bg)"}
 					stroke={color}
 					strokeWidth={1.5}
 					className="group-focus-visible:stroke-fg"

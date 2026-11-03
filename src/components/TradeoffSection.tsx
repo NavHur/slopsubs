@@ -70,7 +70,7 @@ function TradeoffKey({
 	// One text node: the PNG export draws each node apart, trimming its spaces.
 	return (
 		<p className={`text-[13px] text-muted ${className}`}>
-			{`${prices}: ${worth} of ${points.length} options worth weighing. Faded ones are beaten on cost, time and score by another.`}
+			{`${prices}: ${worth} of ${points.length} options worth weighing, drawn filled. Hollow ones are beaten on cost, time and score by another.`}
 		</p>
 	);
 }
