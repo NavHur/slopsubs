@@ -141,7 +141,7 @@ function pointLabel(
 }
 
 /** A key handler that runs `action` on Enter or Space, as a button does. */
-function onActivationKey(action: () => void) {
+export function onActivationKey(action: () => void) {
 	return (event: KeyboardEvent) => {
 		if (event.key !== "Enter" && event.key !== " ") return;
 		event.preventDefault();
@@ -153,7 +153,7 @@ function onActivationKey(action: () => void) {
  * A focus handler that runs `action` for keyboard focus only, since a mouse
  * press focuses the point too.
  */
-function onKeyboardFocus(action: () => void) {
+export function onKeyboardFocus(action: () => void) {
 	return (event: FocusEvent) => {
 		if (event.currentTarget.matches(":focus-visible")) action();
 	};
