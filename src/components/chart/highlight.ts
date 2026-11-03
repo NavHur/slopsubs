@@ -1,3 +1,4 @@
+import { useReducer, useState } from "react";
 import type { FamilyId } from "#/domain/model";
 
 /**
@@ -79,4 +80,16 @@ function plottedHighlight(
 
 export function highlightedModel(state: ModelHighlight): FamilyId | null {
 	return state.hovered ?? state.focused ?? state.pinned;
+}
+
+/** Shared label and legend highlight. */
+export function useModelHighlight(plotted: ReadonlySet<FamilyId>) {
+	const [highlight, dispatch] = useReducer(updateHighlight, NO_HIGHLIGHT);
+	const [prunedFor, setPrunedFor] = useState(plotted);
+	if (prunedFor !== plotted) {
+		// Forget models that left the chart before this render commits.
+		setPrunedFor(plotted);
+		dispatch({ type: "prune", plotted });
+	}
+	return [highlight, dispatch] as const;
 }

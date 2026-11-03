@@ -4,9 +4,7 @@ import {
 	useEffect,
 	useEffectEvent,
 	useMemo,
-	useReducer,
 	useRef,
-	useState,
 } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
@@ -31,7 +29,7 @@ import {
 	px,
 	xTicks,
 } from "./geometry";
-import { highlightedModel, NO_HIGHLIGHT, updateHighlight } from "./highlight";
+import { highlightedModel, useModelHighlight } from "./highlight";
 import { usePointDetails } from "./pointDetails";
 import { PointTooltip } from "./PointTooltip";
 import { buildSeries, groupByModel, modelEnd, type Series } from "./series";
@@ -82,18 +80,6 @@ function isDimmed(
 ) {
 	if (activePoint) return activePoint.seriesId !== series.id;
 	return highlighted !== null && highlighted !== series.modelId;
-}
-
-/** Shared label and legend highlight. */
-function useModelHighlight(plotted: ReadonlySet<FamilyId>) {
-	const [highlight, dispatch] = useReducer(updateHighlight, NO_HIGHLIGHT);
-	const [prunedFor, setPrunedFor] = useState(plotted);
-	if (prunedFor !== plotted) {
-		// Forget models that left the chart before this render commits.
-		setPrunedFor(plotted);
-		dispatch({ type: "prune", plotted });
-	}
-	return [highlight, dispatch] as const;
 }
 
 /** useElementSize's ref, plus a ref object so handlers can read the element. */

@@ -276,7 +276,7 @@ export function ModelTags({
 const TAG_LOGO_SIZE = 14;
 
 /** Hover or focus previews the model; click, Enter or Space pins it. */
-function ModelTag({
+export function ModelTag({
 	model,
 	from,
 	at,
