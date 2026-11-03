@@ -31,7 +31,8 @@ export const AXES = {
 export type AxisId = keyof typeof AXES;
 
 /** The floor's corners and the score axis's top. The camera fits these
- * whatever the points, so the chart's frame never jumps as they change. */
+ * whatever the points, so the frame holds still as they change; it also fits
+ * the points, which can rise above this frame over the far corner. */
 export const FRAME_ANCHORS: readonly Vec3[] = [
 	[FLOOR_MIN, FLOOR_MIN, 0],
 	[FLOOR_MIN, FLOOR_MAX, 0],
