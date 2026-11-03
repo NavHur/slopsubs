@@ -167,19 +167,24 @@ const PLAN_FAMILIES: Record<
 // get around 4.3K", and "the $200 Claude plan gets you 12 grand in usage".
 const THEO = "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s";
 const WEEKS_PER_MONTH = 52 / 12;
+const CLAUDE_MULTIPLIER = 60;
+const CODEX_PRO_MULTIPLIER = 21;
+/** Pro 100, 200 and 500 give 10x, 20x and 50x Plus's usage, so a Pro dollar
+ * buys twice what a Plus dollar does. */
+const CODEX_PLUS_MULTIPLIER = CODEX_PRO_MULTIPLIER / 2;
 
 /**
- * API-priced dollars a month per subscription dollar (Theo, 2026-11-02):
- * flat 60x on Claude; on Codex, 11x for Plus and 21x for every Pro tier.
+ * API-priced dollars a month per subscription dollar: Theo's flat 60x on
+ * Claude and 21x on every Codex Pro tier (2026-11-02), with Plus at half.
  */
 const THEO_MULTIPLIERS: Record<string, number> = {
-	"claude-pro": 60,
-	"claude-max-5x": 60,
-	"claude-max-20x": 60,
-	"chatgpt-plus": 11,
-	"chatgpt-pro-100": 21,
-	"chatgpt-pro-200": 21,
-	"chatgpt-pro-500": 21,
+	"claude-pro": CLAUDE_MULTIPLIER,
+	"claude-max-5x": CLAUDE_MULTIPLIER,
+	"claude-max-20x": CLAUDE_MULTIPLIER,
+	"chatgpt-plus": CODEX_PLUS_MULTIPLIER,
+	"chatgpt-pro-100": CODEX_PRO_MULTIPLIER,
+	"chatgpt-pro-200": CODEX_PRO_MULTIPLIER,
+	"chatgpt-pro-500": CODEX_PRO_MULTIPLIER,
 };
 
 /** A reported weekly cap, used until a plan has measured samples. */

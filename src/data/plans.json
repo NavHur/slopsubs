@@ -133,10 +133,10 @@
     "confidence": "primary",
     "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 50.769230769230774,
+      "weeklyCapApiUsd": 48.46153846153847,
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
-      "basis": "Theo: 11x the price, $220 a month of API-priced inference"
+      "basis": "Theo: 10.5x the price, $210 a month of API-priced inference"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
