@@ -162,68 +162,46 @@ const PLAN_FAMILIES: Record<
 	"opencode-go-plus": { lab: "opencode", families: OPENCODE_GO },
 };
 
-// Theo (t3.gg), "Does the $200 Codex plan suck now?", 2026-10-07.
-const THEO = "https://www.youtube.com/watch?v=nYA0yASgaZI";
-const at = (seconds: number) => `${THEO}&t=${seconds}s`;
+// Theo (t3.gg), "OpenAI is getting desperate", 2026-11-02, from 5:08: "on the
+// $500 plan, you now get around $10.5,000 of usage. And on the $200 plan, you
+// get around 4.3K", and "the $200 Claude plan gets you 12 grand in usage".
+const THEO = "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s";
 const WEEKS_PER_MONTH = 52 / 12;
-const ULTRA_WEEKLY = 8000 / WEEKS_PER_MONTH;
-const PRO_200_WEEKLY = 573.86;
-/** OpenAI cancelled the cut and doubled every Pro allowance on 2026-10-29,
- * leaving Plus unchanged (help.openai.com/en/articles/9793128). */
-const PRO_DOUBLING = 2;
+const CLAUDE_MULTIPLIER = 60;
+const CODEX_PRO_MULTIPLIER = 21;
+/** Pro 100, 200 and 500 give 10x, 20x and 50x Plus's usage, so a Pro dollar
+ * buys twice what a Plus dollar does. */
+const CODEX_PLUS_MULTIPLIER = CODEX_PRO_MULTIPLIER / 2;
 
-/** Published weekly caps, used until a plan has measured samples. */
-const REPORTED_CAPS: Record<string, ReportedCap> = {
-	"claude-max-20x": {
-		weeklyCapApiUsd: ULTRA_WEEKLY,
-		by: "Theo",
-		url: at(28),
-		basis:
-			"Theo: $200 in, $8,000 a month of API-priced inference out (as Max 20x, now Ultra)",
-	},
-	// Theo gives no figure for the smaller Claude tiers; Anthropic sizes Ultra
-	// and Max at 10 and 5 times Pro's weekly usage.
-	"claude-max-5x": {
-		weeklyCapApiUsd: ULTRA_WEEKLY / 2,
-		by: "Theo",
-		url: at(28),
-		basis: "Half Theo's Ultra figure (Max is 5x Pro weekly, Ultra 10x)",
-	},
-	"claude-pro": {
-		weeklyCapApiUsd: ULTRA_WEEKLY / 10,
-		by: "Theo",
-		url: at(28),
-		basis: "A tenth of Theo's Ultra figure (Ultra is 10x Pro weekly)",
-	},
-	// Theo measured Pro 200's reduced allowance: "The 20x plan is now 10x, but
-	// you can get the 25x plan" (24:34), in multiples of Plus.
-	"chatgpt-plus": {
-		weeklyCapApiUsd: PRO_200_WEEKLY / 10,
-		by: "Theo",
-		url: at(1474),
-		basis: "A tenth of Theo's Pro 200 figure (Pro 200 was then 10x Plus)",
-	},
-	"chatgpt-pro-200": {
-		weeklyCapApiUsd: PRO_200_WEEKLY * PRO_DOUBLING,
-		by: "Theo",
-		url: at(1037),
-		basis:
-			"Twice Theo's measured $573.86 a week; OpenAI doubled the allowance on 2026-10-29",
-	},
-	"chatgpt-pro-500": {
-		weeklyCapApiUsd: PRO_200_WEEKLY * 2.5 * PRO_DOUBLING,
-		by: "Theo",
-		url: at(1474),
-		basis: "5x Theo's Pro 200 figure (25x Plus vs 10x, then doubled)",
-	},
-	// Theo gives no Pro 100 figure; OpenAI launched it at 5x Plus.
-	"chatgpt-pro-100": {
-		weeklyCapApiUsd: (PRO_200_WEEKLY / 10) * 5 * PRO_DOUBLING,
-		by: "Theo",
-		url: at(1474),
-		basis: "10x Theo's Plus figure (launched at 5x Plus, then doubled)",
-	},
+/**
+ * API-priced dollars a month per subscription dollar: Theo's flat 60x on
+ * Claude and 21x on every Codex Pro tier (2026-11-02), with Plus at half.
+ */
+const THEO_MULTIPLIERS: Record<string, number> = {
+	"claude-pro": CLAUDE_MULTIPLIER,
+	"claude-max-5x": CLAUDE_MULTIPLIER,
+	"claude-max-20x": CLAUDE_MULTIPLIER,
+	"chatgpt-plus": CODEX_PLUS_MULTIPLIER,
+	"chatgpt-pro-100": CODEX_PRO_MULTIPLIER,
+	"chatgpt-pro-200": CODEX_PRO_MULTIPLIER,
+	"chatgpt-pro-500": CODEX_PRO_MULTIPLIER,
 };
+
+/** A reported weekly cap, used until a plan has measured samples. */
+function reportedCap(
+	planId: string,
+	monthlyPriceUsd: number,
+): ReportedCap | null {
+	const multiplier = THEO_MULTIPLIERS[planId];
+	if (multiplier === undefined) return null;
+	const monthlyApiUsd = monthlyPriceUsd * multiplier;
+	return {
+		weeklyCapApiUsd: monthlyApiUsd / WEEKS_PER_MONTH,
+		by: "Theo",
+		url: THEO,
+		basis: `Theo: ${multiplier}x the price, $${monthlyApiUsd.toLocaleString("en-US")} a month of API-priced inference`,
+	};
+}
 
 const ResearchPlan = z.object({
 	vendor: z.string(),
@@ -337,7 +315,7 @@ const plans = Plans.parse(
 				thirdPartyHarnessAllowed: p.thirdPartyHarnessAllowed,
 				confidence: p.confidence,
 				sourceUrl: p.sources[0].url,
-				reportedCap: REPORTED_CAPS[p.planId] ?? null,
+				reportedCap: reportedCap(p.planId, p.monthlyPriceUsd),
 				publishedAllowance: publishedAllowance(p.planId),
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
