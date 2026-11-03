@@ -32,14 +32,18 @@ function markup(benchmark: BenchmarkId) {
 }
 
 describe("TradeoffSection", () => {
-	it("plots each timed option at API prices and counts those worth weighing", () => {
+	it("plots each timed option at API prices, names each model and counts those worth weighing", () => {
 		const api = timedPoints(pagePoints("intelligence")).filter(
 			(p) => p.pricing.kind === "api",
 		);
 		const html = markup("intelligence");
-		const buttons = html.match(/<g role="button"/g) ?? [];
+		// Model labels are buttons too, but pressed or not.
+		const points = html.match(/<g role="button" tabindex="0" aria-label=/g);
+		const labels = html.match(/aria-label="Highlight /g);
+		const families = new Set(api.map((p) => p.benchmark.family));
 		expect(api.length).toBeGreaterThan(0);
-		expect(buttons).toHaveLength(api.length);
+		expect(points).toHaveLength(api.length);
+		expect(labels).toHaveLength(families.size);
 		const worth = tradeoffFrontier(api).size;
 		expect(html).toContain(`API prices: ${worth} of ${api.length} options`);
 	});

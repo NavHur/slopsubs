@@ -1,6 +1,7 @@
 import type { FamilyId } from "#/domain/model";
 import { type TimedPoint, tradeoffFrontier } from "#/domain/tradeoffs";
 import { formatUsd } from "#/lib/format";
+import { COMPACT_WIDTH, LABEL_COLUMN_PX } from "./geometry";
 import { AXES, type AxisId, FRAME_ANCHORS, plotSpace } from "./plotSpace";
 import {
 	type Angles,
@@ -32,7 +33,14 @@ export function tradeoffViewport(width: number): Viewport {
 	const height = Math.round(
 		Math.min(MAX_HEIGHT_PX, Math.max(MIN_HEIGHT_PX, width * HEIGHT_PER_WIDTH)),
 	);
-	return { width, height, padding: PADDING };
+	const right = hasModelColumn(width) ? LABEL_COLUMN_PX : PADDING.right;
+	return { width, height, padding: { ...PADDING, right } };
+}
+
+/** Wide plots name each model in a column on their right, as the cost and
+ * score chart does; narrow ones leave that to a legend below. */
+export function hasModelColumn(width: number): boolean {
+	return width >= COMPACT_WIDTH;
 }
 
 /** An axis drawn shorter than this is seen nearly end-on, where its labels
@@ -57,6 +65,9 @@ export type ScenePoint = {
 	worthWeighing: boolean;
 };
 
+/** A model's rightmost point, where its label's leader line starts. */
+export type ModelEnd = { family: FamilyId; at: Anchor };
+
 /** One step between two efforts of a model under the shown pricing. */
 export type EffortStep = Segment & {
 	key: string;
@@ -74,6 +85,7 @@ export type TradeoffScene = {
 	/** Where each labelled axis's title goes: past its end. */
 	axisTitles: Partial<Record<AxisId, Anchor>>;
 	efforts: EffortStep[];
+	modelEnds: ModelEnd[];
 	/** Far to near, so nearer points paint over farther ones. */
 	points: ScenePoint[];
 	worthWeighing: number;
@@ -120,6 +132,7 @@ export function tradeoffScene(
 			labelled.map((id) => [id, project(AXES[id][1], camera)]),
 		),
 		efforts: effortSteps(scenePoints),
+		modelEnds: modelEnds(scenePoints),
 		points: scenePoints,
 		worthWeighing: frontier.size,
 	};
@@ -213,4 +226,12 @@ function effortSteps(points: readonly ScenePoint[]): EffortStep[] {
 			};
 		}),
 	);
+}
+
+function modelEnds(points: readonly ScenePoint[]): ModelEnd[] {
+	const byFamily = Map.groupBy(points, (p) => p.point.benchmark.family);
+	return [...byFamily].map(([family, members]) => ({
+		family,
+		at: members.reduce((a, b) => (b.at.x > a.at.x ? b : a)).at,
+	}));
 }

@@ -108,6 +108,7 @@ export function TradeoffSection({
 			chart: (
 				<TradeoffChart
 					points={plotted.shown}
+					pricing={plotted.pricing}
 					angles={angles}
 					onAnglesChange={() => {}}
 					view={view}
@@ -160,6 +161,7 @@ export function TradeoffSection({
 					</div>
 					<TradeoffChart
 						points={plotted.shown}
+						pricing={plotted.pricing}
 						angles={angles}
 						onAnglesChange={setAngles}
 						view={view}

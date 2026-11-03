@@ -11,7 +11,11 @@ function point(
 	// SAFETY: the scene reads only the series, the effort and the three measures.
 	return {
 		seriesId: series,
-		benchmark: { id: `${series}-${effortOrder}`, effortOrder },
+		benchmark: {
+			id: `${series}-${effortOrder}`,
+			effortOrder,
+			family: series.split("@")[0],
+		},
 		costPerTaskUsd: cost,
 		secondsPerTask: seconds,
 		score,
@@ -32,6 +36,11 @@ describe("tradeoffViewport", () => {
 		expect(tradeoffViewport(320).height).toBe(300);
 		expect(tradeoffViewport(800).height).toBe(496);
 		expect(tradeoffViewport(1200).height).toBe(620);
+	});
+
+	it("keeps a column for the model names on wide plots only", () => {
+		expect(tradeoffViewport(1200).padding.right).toBe(180);
+		expect(tradeoffViewport(390).padding.right).toBeLessThan(180);
 	});
 });
 
@@ -67,6 +76,15 @@ describe("tradeoffScene", () => {
 		const step = scene.efforts.find((e) => e.seriesId === "opus@api");
 		const lowAt = opus.find((p) => p.point === low)?.at;
 		expect([step?.x1, step?.y1]).toEqual([lowAt?.x, lowAt?.y]);
+	});
+
+	it("ties each model's label to its rightmost point", () => {
+		const ends = new Map(scene.modelEnds.map((e) => [e.family, e.at]));
+		expect(ends.size).toBe(2);
+		for (const p of scene.points) {
+			const end = ends.get(p.point.benchmark.family);
+			expect(end?.x).toBeGreaterThanOrEqual(p.at.x);
+		}
 	});
 
 	it("labels all three axes from the default angle", () => {
