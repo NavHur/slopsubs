@@ -14,12 +14,6 @@ import {
 	type Viewport,
 } from "./projection";
 
-/**
- * Everything the trade-off chart draws for one camera angle, already on the
- * SVG: the floor and wall gridlines, the three axes, the labels of the axes
- * not seen end-on, each effort line, and the points from back to front.
- */
-
 /** Room around the cube for tick labels and the axis titles (px). */
 const PADDING = { top: 36, right: 48, bottom: 46, left: 56 };
 
@@ -77,9 +71,17 @@ export type EffortStep = Segment & {
 	worthWeighing: boolean;
 };
 
+/** A gridline, keyed by its axis and tick value so it survives a drag. */
+export type GridLine = Segment & { key: string };
+
+/**
+ * Everything the trade-off chart draws for one camera angle, already on the
+ * SVG: the floor and wall gridlines, the three axes, the labels of the axes
+ * not seen end-on, each effort line, and the points from back to front.
+ */
 export type TradeoffScene = {
-	floorGrid: Segment[];
-	wallGrid: Segment[];
+	floorGrid: GridLine[];
+	wallGrid: GridLine[];
 	axes: Record<AxisId, Segment>;
 	tickLabels: TickLabel[];
 	/** Where each labelled axis's title goes: past its end. */
@@ -88,7 +90,6 @@ export type TradeoffScene = {
 	modelEnds: ModelEnd[];
 	/** Far to near, so nearer points paint over farther ones. */
 	points: ScenePoint[];
-	worthWeighing: number;
 };
 
 const AXIS_IDS = Object.keys(AXES) as AxisId[];
@@ -118,10 +119,16 @@ export function tradeoffScene(
 	const ticks = axisTicks(space.ticks);
 	return {
 		floorGrid: [
-			...ticks.cost.map((y) => segment([-1, y, 0], [1, y, 0], camera)),
-			...ticks.minutes.map((x) => segment([x, -1, 0], [x, 1, 0], camera)),
+			...ticks.cost.map(({ key, at: y }) =>
+				gridLine(key, [-1, y, 0], [1, y, 0], camera),
+			),
+			...ticks.minutes.map(({ key, at: x }) =>
+				gridLine(key, [x, -1, 0], [x, 1, 0], camera),
+			),
 		],
-		wallGrid: ticks.score.map((z) => segment([-1, -1, z], [-1, 1, z], camera)),
+		wallGrid: ticks.score.map(({ key, at: z }) =>
+			gridLine(key, [-1, -1, z], [-1, 1, z], camera),
+		),
 		axes: {
 			minutes: segment(...AXES.minutes, camera),
 			cost: segment(...AXES.cost, camera),
@@ -134,7 +141,6 @@ export function tradeoffScene(
 		efforts: effortSteps(scenePoints),
 		modelEnds: modelEnds(scenePoints),
 		points: scenePoints,
-		worthWeighing: frontier.size,
 	};
 }
 
@@ -149,14 +155,24 @@ function segment(a: Vec3, b: Vec3, camera: Camera): Segment {
 	return { x1: start.x, y1: start.y, x2: end.x, y2: end.y };
 }
 
+function gridLine(key: string, a: Vec3, b: Vec3, camera: Camera): GridLine {
+	return { key, ...segment(a, b, camera) };
+}
+
+type GridTick = { key: string; at: number };
+
 type Ticks = ReturnType<typeof plotSpace>["ticks"];
 
 /** Each tick's coordinate on its own axis, in plot units. */
-function axisTicks(ticks: Ticks): Record<AxisId, number[]> {
+function axisTicks(ticks: Ticks): Record<AxisId, GridTick[]> {
+	const tick = (id: AxisId, t: Ticks[AxisId][number], offset: number) => ({
+		key: `${id}-${t.value}`,
+		at: offset + t.at,
+	});
 	return {
-		minutes: ticks.minutes.map((t) => -1 + t.at),
-		cost: ticks.cost.map((t) => -1 + t.at),
-		score: ticks.score.map((t) => t.at),
+		minutes: ticks.minutes.map((t) => tick("minutes", t, -1)),
+		cost: ticks.cost.map((t) => tick("cost", t, -1)),
+		score: ticks.score.map((t) => tick("score", t, 0)),
 	};
 }
 

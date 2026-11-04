@@ -43,11 +43,11 @@ export function SceneFrame({
 	return (
 		<g aria-hidden="true">
 			<g className="stroke-grid" strokeWidth={1}>
-				{scene.floorGrid.map((line) => (
-					<line key={`${line.x1},${line.y1}`} {...line} />
+				{scene.floorGrid.map(({ key, ...line }) => (
+					<line key={key} {...line} />
 				))}
-				{scene.wallGrid.map((line) => (
-					<line key={`${line.x1},${line.y1}`} {...line} strokeDasharray="2 6" />
+				{scene.wallGrid.map(({ key, ...line }) => (
+					<line key={key} {...line} strokeDasharray="2 6" />
 				))}
 			</g>
 			<g className="stroke-subtle" strokeWidth={1.5}>

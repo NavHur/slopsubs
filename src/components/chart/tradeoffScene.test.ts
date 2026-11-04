@@ -56,7 +56,21 @@ describe("tradeoffScene", () => {
 	it("fades a point another beats on cost, time and score", () => {
 		const fading = scene.points.filter((p) => !p.worthWeighing);
 		expect(fading.map((p) => p.point)).toEqual([beaten]);
-		expect(scene.worthWeighing).toBe(3);
+		expect(scene.points.filter((p) => p.worthWeighing)).toHaveLength(3);
+	});
+
+	it("keys each gridline by its axis tick, whatever the angle", () => {
+		const free = point("haiku@api", 3, [0, 30, 15]);
+		const keys = (angles: typeof VIEW_PRESETS.perspective) => {
+			const s = tradeoffScene([...POINTS, free], angles, VIEWPORT);
+			return [s.floorGrid.map((l) => l.key), s.wallGrid.map((l) => l.key)];
+		};
+		const [floor, wall] = keys(VIEW_PRESETS.perspective);
+		expect(new Set(floor).size).toBe(floor.length);
+		expect(new Set(wall).size).toBe(wall.length);
+		expect(floor.every(Boolean)).toBe(true);
+		const turned = { ...VIEW_PRESETS.perspective, yaw: -20 };
+		expect(keys(turned)).toEqual([floor, wall]);
 	});
 
 	it("drops each point's line straight down to the floor below it", () => {
