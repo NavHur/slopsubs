@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import type { TimedPoint } from "#/domain/tradeoffs";
 import type { BenchmarkView } from "#/lib/benchmarks";
+import { useChartEscape } from "./chartEscape";
 import { ModelLegend } from "./ChartParts";
 import { highlightedModel, useModelHighlight } from "./highlight";
 import { usePointDetails } from "./pointDetails";
 import { PointTooltip } from "./PointTooltip";
 import type { Angles } from "./projection";
 import { buildSeries, groupByModel, type PricingStyle } from "./series";
-import { useTradeoffEscape } from "./tradeoffEscape";
 import { TradeoffModelColumn } from "./TradeoffModelColumn";
 import { EffortLines, SceneFrame, TradeoffPoint } from "./TradeoffParts";
 import {
@@ -53,12 +53,13 @@ export function TradeoffChart({
 	const [highlight, dispatchHighlight] = useModelHighlight(plotted);
 	const activeModel =
 		details?.point.benchmark.family ?? highlightedModel(highlight);
-	useTradeoffEscape(element, {
-		detailsOpen: details !== null,
-		pinnedModel: highlight.pinned,
-		closeDetails: () => dispatch({ type: "close" }),
-		clearHighlight: () => dispatchHighlight({ type: "clear" }),
-	});
+	useChartEscape(element, [
+		{ open: details !== null, close: () => dispatch({ type: "close" }) },
+		{
+			open: highlight.pinned !== null,
+			close: () => dispatchHighlight({ type: "clear" }),
+		},
+	]);
 	const camera = useCameraControls(angles, onAnglesChange);
 	return (
 		<div ref={ref} data-chart-width={width} className="relative">
@@ -95,7 +96,6 @@ export function TradeoffChart({
 				<TradeoffModelColumn
 					scene={scene}
 					viewport={viewport}
-					width={width}
 					models={models}
 					activeModel={activeModel}
 					pinnedModel={highlight.pinned}

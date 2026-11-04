@@ -13,7 +13,7 @@ const COLUMN_GAP_PX = 24;
 /** Each model's name and where its line ends, spread so no names overlap. */
 function modelLabels(scene: TradeoffScene, viewport: Viewport) {
 	const { height, padding } = viewport;
-	const labels = spreadLabels({
+	return spreadLabels({
 		anchors: scene.modelEnds.map(({ family, at }) => ({
 			id: family,
 			anchorY: at.y,
@@ -23,7 +23,6 @@ function modelLabels(scene: TradeoffScene, viewport: Viewport) {
 		top: padding.top,
 		bottom: height - padding.bottom,
 	});
-	return labels.map(({ id, end, y }) => ({ id, end, y }));
 }
 
 /**
@@ -33,7 +32,6 @@ function modelLabels(scene: TradeoffScene, viewport: Viewport) {
 export function TradeoffModelColumn({
 	scene,
 	viewport,
-	width,
 	models,
 	activeModel,
 	pinnedModel,
@@ -41,15 +39,14 @@ export function TradeoffModelColumn({
 }: {
 	scene: TradeoffScene;
 	viewport: Viewport;
-	width: number;
 	models: readonly ModelGroup[];
 	/** The highlighted model, or the one whose point shows; the rest fade. */
 	activeModel: FamilyId | null;
 	pinnedModel: FamilyId | null;
 	onHighlight: (event: HighlightEvent) => void;
 }) {
-	if (!hasModelColumn(width)) return null;
-	const x = width - viewport.padding.right + COLUMN_GAP_PX;
+	if (!hasModelColumn(viewport.width)) return null;
+	const x = viewport.width - viewport.padding.right + COLUMN_GAP_PX;
 	return modelLabels(scene, viewport).map(({ id, end, y }) => {
 		const model = models.find((m) => m.id === id);
 		return (

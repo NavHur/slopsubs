@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
 import type { Angles } from "#/components/chart/projection";
 import type { PricingStyle } from "#/components/chart/series";
 import { TradeoffChart } from "#/components/chart/TradeoffChart";
 import { type TimedPoint, tradeoffFrontier } from "#/domain/tradeoffs";
 import type { BenchmarkView } from "#/lib/benchmarks";
+import type { downloadChartPng } from "#/lib/exportPng";
 
 /** The points drawn under the one pricing on show. */
 export type Plotted = {
@@ -40,7 +40,8 @@ export function TradeoffKey({
 function TradeoffExportKey({
 	points,
 	pricing,
-}: Omit<Plotted, "shown"> & {
+}: {
+	pricing: PricingStyle;
 	points: readonly TimedPoint[];
 }) {
 	const worth = tradeoffFrontier(points).size;
@@ -59,13 +60,7 @@ export function tradeoffPng(
 	{ pricing, shown }: Plotted,
 	angles: Angles,
 	view: BenchmarkView,
-): {
-	chart: ReactNode;
-	legend: ReactNode;
-	title: string;
-	fileName: string;
-	height: "content";
-} {
+): Parameters<typeof downloadChartPng>[0] {
 	return {
 		chart: (
 			<TradeoffChart

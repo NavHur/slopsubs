@@ -1,7 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from "vite-plus/test";
-import type { FamilyId } from "#/domain/model";
 import { closeFirstOpen, isChartEscape } from "./chartEscape";
-import { tradeoffEscapeLayers } from "./tradeoffEscape";
 
 describe("closeFirstOpen", () => {
 	it("closes only the first open layer", () => {
@@ -28,31 +26,5 @@ describe("isChartEscape", () => {
 	it("leaves other keys and an inert chart alone", () => {
 		expect(isChartEscape({ key: "a", target: null }, chart)).toBe(false);
 		expect(isChartEscape({ key: "Escape", target: null }, inert)).toBe(false);
-	});
-});
-
-describe("tradeoffEscapeLayers", () => {
-	it("closes the details first, then the pinned highlight", () => {
-		const events: string[] = [];
-		const layers = tradeoffEscapeLayers({
-			detailsOpen: true,
-			pinnedModel: "claude" as FamilyId,
-			closeDetails: () => events.push("close details"),
-			clearHighlight: () => events.push("clear highlight"),
-		});
-		closeFirstOpen(layers);
-		expect(events).toEqual(["close details"]);
-		closeFirstOpen(layers.slice(1));
-		expect(events).toEqual(["close details", "clear highlight"]);
-	});
-
-	it("is closed when nothing is shown or pinned", () => {
-		const layers = tradeoffEscapeLayers({
-			detailsOpen: false,
-			pinnedModel: null,
-			closeDetails: () => {},
-			clearHighlight: () => {},
-		});
-		expect(layers.some((l) => l.open)).toBe(false);
 	});
 });
