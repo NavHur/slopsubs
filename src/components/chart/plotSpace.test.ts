@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import type { TimedPoint } from "#/domain/tradeoffs";
-import { plotSpace, SCORE_HEIGHT } from "./plotSpace";
+import { MIN_COST_TICK_GAP, plotSpace, SCORE_HEIGHT } from "./plotSpace";
 
 function point(cost: number, seconds: number, score: number): TimedPoint {
 	// SAFETY: the plot space reads only the three measures.
@@ -106,6 +106,31 @@ describe("plotSpace", () => {
 				expect(at[1]).toBe(-1);
 			}
 			expect(values(freeSpace.ticks.cost).every(Number.isFinite)).toBe(true);
+		});
+
+		it("labels the cheap edge $0 first, then only clear positive ticks", () => {
+			const [zero, ...rest] = plotSpace([free, paid]).ticks.cost;
+			expect(zero).toEqual({ value: 0, at: 0 });
+			expect(rest.length).toBeGreaterThan(0);
+			expect(values(rest)).toEqual([...values(rest)].sort((a, b) => a - b));
+			expect(rest.map((t) => t.value).every((v) => v > 0)).toBe(true);
+			expect(rest.map((t) => t.at).every((at) => at >= MIN_COST_TICK_GAP)).toBe(
+				true,
+			);
+		});
+
+		it("labels only $0 when every option is free", () => {
+			const onlyFree = [point(0, 30, 5), point(0, 90, 15)] as const;
+			expect(plotSpace(onlyFree).ticks.cost).toEqual([{ value: 0, at: 0 }]);
+		});
+
+		it("drops a positive tick that would crowd the $0 label", () => {
+			const crowded = point(0.07, 60, 10);
+			const ticks = plotSpace([free, crowded, paid]).ticks.cost;
+			expect(values(ticks)).not.toContain(0.05);
+			expect(ticks.slice(1).every((t) => t.at >= MIN_COST_TICK_GAP)).toBe(true);
+			// Without a free option the same tick is kept.
+			expect(values(plotSpace([crowded, paid]).ticks.cost)).toContain(0.05);
 		});
 	});
 

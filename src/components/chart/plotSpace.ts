@@ -17,6 +17,9 @@ import type { Vec3 } from "./projection";
  * as a box rather than a slab. */
 export const SCORE_HEIGHT = 1.5;
 
+/** Least distance, in plot units, between the $0 tick and the next cost tick. */
+export const MIN_COST_TICK_GAP = 0.1;
+
 const FLOOR_MIN = -1;
 const FLOOR_MAX = 1;
 
@@ -54,8 +57,8 @@ export type PlotSpace = {
 
 const SECONDS_PER_MINUTE = 60;
 
-/** Room past the cheapest and priciest point on the log cost axis, as
- * factors, so no point sits on the cube's edge (as on the 2D chart). */
+/** Room past the cheapest and priciest paid option on the log cost axis, as
+ * factors. Free options sit on the cheap edge, labelled $0. */
 const COST_PAD_BELOW = 0.7;
 const COST_PAD_ABOVE = 1.4;
 
@@ -99,11 +102,16 @@ export function plotSpace(
 		],
 		ticks: {
 			minutes: linearTicks(minutes, MINUTE_TICKS, FLOOR_MIN),
-			cost: costTicks(cost),
+			cost: costTicks(cost, costs.some(isFree), costs.every(isFree)),
 			score: linearTicks(score, SCORE_TICKS, 0),
 		},
 	};
 }
+
+const isFree = (cost: number) => cost <= 0;
+
+/** The $0 label on the cheap edge, where free options sit. */
+const FREE_TICK: AxisTick = { value: 0, at: 0 };
 
 /** A log axis cannot show $0, so free options plot at the cheap edge: the
  * domain starts from the smallest positive cost. */
@@ -138,8 +146,15 @@ function linearTicks(
 }
 
 /** The densest 1-2-5, 1-3 or decade ticks inside the cost domain that keep
- * to MAX_COST_TICKS, falling back to the sparsest. */
-function costTicks(scale: ScaleLogarithmic<number, number>): AxisTick[] {
+ * to MAX_COST_TICKS, falling back to the sparsest. With a free option the
+ * cheap edge reads $0 and ticks too close to it are dropped; with only free
+ * options the placeholder domain labels nothing real, so only $0 remains. */
+function costTicks(
+	scale: ScaleLogarithmic<number, number>,
+	hasFree: boolean,
+	allFree: boolean,
+): AxisTick[] {
+	if (allFree) return [FREE_TICK];
 	const [low, high] = scale.domain();
 	const candidates = LOG_TICK_MANTISSAS.map((mantissas) =>
 		logTickValues(low, high, mantissas),
@@ -147,5 +162,10 @@ function costTicks(scale: ScaleLogarithmic<number, number>): AxisTick[] {
 	const values =
 		candidates.find((c) => c.length <= MAX_COST_TICKS) ??
 		candidates[candidates.length - 1];
-	return values.map((value) => ({ value, at: scale(value) - FLOOR_MIN }));
+	const ticks = values.map((value) => ({
+		value,
+		at: scale(value) - FLOOR_MIN,
+	}));
+	if (!hasFree) return ticks;
+	return [FREE_TICK, ...ticks.filter((t) => t.at >= MIN_COST_TICK_GAP)];
 }
