@@ -19,17 +19,17 @@ export type LineLabel = { id: string; anchorY: number; y: number };
  * Spreads end-of-line labels vertically so none sit closer than `gap`,
  * keeping each as near its line's anchor as the bounds allow.
  */
-export function spreadLabels({
+export function spreadLabels<A extends { id: string; anchorY: number }>({
 	anchors,
 	gap,
 	top,
 	bottom,
 }: {
-	anchors: readonly { id: string; anchorY: number }[];
+	anchors: readonly A[];
 	gap: number;
 	top: number;
 	bottom: number;
-}): LineLabel[] {
+}): (A & { y: number })[] {
 	const sorted = [...anchors].sort((a, b) => a.anchorY - b.anchorY);
 	const placed = sorted.map((a) => ({ ...a, y: a.anchorY }));
 	for (let i = 0; i < placed.length; i++) {

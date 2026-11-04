@@ -184,9 +184,8 @@ export function TradeoffPoint({
 	const { point, at, floor, worthWeighing } = scenePoint;
 	const { family } = point.benchmark;
 	const color = worthWeighing ? strongColor(family) : familyColor(family);
-	const radius = active
-		? MARKER_RADIUS_PX.active
-		: MARKER_RADIUS_PX[worthWeighing ? "worth" : "beaten"];
+	const restingRadius = MARKER_RADIUS_PX[worthWeighing ? "worth" : "beaten"];
+	const radius = active ? MARKER_RADIUS_PX.active : restingRadius;
 	const preview = (source: PreviewSource) => () =>
 		onDetails({ type: "preview", source, point });
 	const endPreview = (source: PreviewSource) => () =>

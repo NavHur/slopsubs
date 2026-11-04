@@ -1,18 +1,10 @@
-import {
-	type RefObject,
-	useCallback,
-	useEffect,
-	useEffectEvent,
-	useMemo,
-	useRef,
-} from "react";
+import { useMemo } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import type { BenchmarkView } from "#/lib/benchmarks";
 import { paretoFrontier, spreadLabels } from "#/lib/chart";
 import { familyColor } from "#/lib/families";
-import { isTextEntryTarget } from "#/lib/textEntry";
-import { useElementSize } from "#/lib/useElementSize";
+import { useChartEscape } from "./chartEscape";
 import {
 	Axes,
 	ModelLegend,
@@ -33,41 +25,7 @@ import { highlightedModel, useModelHighlight } from "./highlight";
 import { usePointDetails } from "./pointDetails";
 import { PointTooltip } from "./PointTooltip";
 import { buildSeries, groupByModel, modelEnd, type Series } from "./series";
-
-/**
- * Escape meant for the chart, not for a text field or for the sheet that made
- * the chart inert.
- */
-function isChartEscape(event: KeyboardEvent, chart: HTMLElement | null) {
-	return (
-		event.key === "Escape" &&
-		!isTextEntryTarget(event.target) &&
-		!chart?.closest("[inert]")
-	);
-}
-
-/** Something Escape closes while it is `open`. */
-type Dismissable = { open: boolean; close: () => void };
-
-/**
- * While any layer is open, Escape meant for the chart closes the first open
- * one, so the layers peel off in order.
- */
-function useChartEscape(
-	chart: RefObject<HTMLElement | null>,
-	layers: readonly Dismissable[],
-) {
-	const closeFirst = useEffectEvent(() => layers.find((l) => l.open)?.close());
-	const enabled = layers.some((l) => l.open);
-	useEffect(() => {
-		if (!enabled) return;
-		const onKeyDown = (event: KeyboardEvent) => {
-			if (isChartEscape(event, chart.current)) closeFirst();
-		};
-		window.addEventListener("keydown", onKeyDown);
-		return () => window.removeEventListener("keydown", onKeyDown);
-	}, [enabled, chart]);
-}
+import { useChartRef } from "./useChartRef";
 
 /**
  * A line fades unless it holds the shown point or, with none shown, belongs to
@@ -80,20 +38,6 @@ function isDimmed(
 ) {
 	if (activePoint) return activePoint.seriesId !== series.id;
 	return highlighted !== null && highlighted !== series.modelId;
-}
-
-/** useElementSize's ref, plus a ref object so handlers can read the element. */
-function useChartRef() {
-	const [sizeRef, size] = useElementSize<HTMLDivElement>();
-	const element = useRef<HTMLDivElement | null>(null);
-	const ref = useCallback(
-		(node: HTMLDivElement | null) => {
-			element.current = node;
-			return sizeRef(node);
-		},
-		[sizeRef],
-	);
-	return { ref, element, size };
 }
 
 export function ValueChart({
