@@ -1,6 +1,6 @@
 {
-  "fetchedAt": "2026-11-04T02:16:47.158Z",
-  "source": "Artificial Analysis (scores, prices, releases); Slopalytics (cost and tokens per task), else AA's website",
+  "fetchedAt": "2026-11-04T02:32:09.619Z",
+  "source": "Artificial Analysis (scores, prices, releases, cost, tokens and time per task); Slopalytics (catalog, and figures AA's site lacks)",
   "frontier": {
     "gpt-6-astra": {
       "tier": "Large",
@@ -658,9 +658,9 @@
       "effortLabel": "max",
       "effortOrder": 60,
       "score": 49.16,
-      "costPerTaskUsd": 13.03927,
+      "costPerTaskUsd": 12.994,
       "tokensPerTask": 117941,
-      "secondsPerTask": 1177.6,
+      "secondsPerTask": 1052.7,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -678,9 +678,9 @@
       "effortLabel": "high",
       "effortOrder": 40,
       "score": 47.17,
-      "costPerTaskUsd": 7.56079,
+      "costPerTaskUsd": 7.53996,
       "tokensPerTask": 66031,
-      "secondsPerTask": 672.6,
+      "secondsPerTask": 719.8,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -698,9 +698,9 @@
       "effortLabel": "low",
       "effortOrder": 20,
       "score": 38.68,
-      "costPerTaskUsd": 4.48674,
+      "costPerTaskUsd": 4.47114,
       "tokensPerTask": 37837,
-      "secondsPerTask": 411.2,
+      "secondsPerTask": 421.3,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -718,9 +718,9 @@
       "effortLabel": "medium",
       "effortOrder": 30,
       "score": 43.17,
-      "costPerTaskUsd": 5.58054,
+      "costPerTaskUsd": 5.56426,
       "tokensPerTask": 48545,
-      "secondsPerTask": 502.5,
+      "secondsPerTask": 537.1,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -738,9 +738,9 @@
       "effortLabel": "xhigh",
       "effortOrder": 50,
       "score": 50.02,
-      "costPerTaskUsd": 10.88546,
+      "costPerTaskUsd": 10.84747,
       "tokensPerTask": 97059,
-      "secondsPerTask": 950.8,
+      "secondsPerTask": 966.2,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -760,7 +760,7 @@
       "score": 36.48,
       "costPerTaskUsd": 0.41101,
       "tokensPerTask": 225966,
-      "secondsPerTask": 593.5,
+      "secondsPerTask": 596.4,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -780,7 +780,7 @@
       "score": 29.87,
       "costPerTaskUsd": 0.15856,
       "tokensPerTask": 88064,
-      "secondsPerTask": 298.3,
+      "secondsPerTask": 305.3,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -800,7 +800,7 @@
       "score": 18.62,
       "costPerTaskUsd": 0.04376,
       "tokensPerTask": 28161,
-      "secondsPerTask": 98,
+      "secondsPerTask": 103.9,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -820,7 +820,7 @@
       "score": 24.6,
       "costPerTaskUsd": 0.09176,
       "tokensPerTask": 53335,
-      "secondsPerTask": 193,
+      "secondsPerTask": 195.6,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -840,7 +840,7 @@
       "score": 34.64,
       "costPerTaskUsd": 0.24836,
       "tokensPerTask": 136177,
-      "secondsPerTask": 441.3,
+      "secondsPerTask": 439.4,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -1040,7 +1040,7 @@
       "score": 59.11,
       "costPerTaskUsd": 10.03641,
       "tokensPerTask": 173313,
-      "secondsPerTask": 1132.6,
+      "secondsPerTask": 1149.8,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -1060,7 +1060,7 @@
       "score": 51.84,
       "costPerTaskUsd": 3.46466,
       "tokensPerTask": 60071,
-      "secondsPerTask": 463.6,
+      "secondsPerTask": 477.9,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -1080,7 +1080,7 @@
       "score": 34.75,
       "costPerTaskUsd": 0.97553,
       "tokensPerTask": 19060,
-      "secondsPerTask": 146.9,
+      "secondsPerTask": 153.4,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -1100,7 +1100,7 @@
       "score": 48.21,
       "costPerTaskUsd": 2.45109,
       "tokensPerTask": 43817,
-      "secondsPerTask": 336.6,
+      "secondsPerTask": 354.9,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -1120,7 +1120,7 @@
       "score": 57.44,
       "costPerTaskUsd": 6.04719,
       "tokensPerTask": 103395,
-      "secondsPerTask": 778.9,
+      "secondsPerTask": 789.8,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -1300,7 +1300,7 @@
       "score": 54.54,
       "costPerTaskUsd": 10.02062,
       "tokensPerTask": 285387,
-      "secondsPerTask": 1325.7,
+      "secondsPerTask": 1262.4,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -1320,7 +1320,7 @@
       "score": 41.52,
       "costPerTaskUsd": 1.63613,
       "tokensPerTask": 58421,
-      "secondsPerTask": 331.6,
+      "secondsPerTask": 360.4,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -1340,7 +1340,7 @@
       "score": 25.65,
       "costPerTaskUsd": 0.51134,
       "tokensPerTask": 20856,
-      "secondsPerTask": 120.5,
+      "secondsPerTask": 136,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -1360,7 +1360,7 @@
       "score": 30.82,
       "costPerTaskUsd": 0.78066,
       "tokensPerTask": 30746,
-      "secondsPerTask": 177.6,
+      "secondsPerTask": 204.4,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -1380,7 +1380,7 @@
       "score": 49.92,
       "costPerTaskUsd": 4.09198,
       "tokensPerTask": 122205,
-      "secondsPerTask": 690.7,
+      "secondsPerTask": 732,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -1540,7 +1540,7 @@
       "score": 6.24,
       "costPerTaskUsd": 0,
       "tokensPerTask": 35630,
-      "secondsPerTask": 202.7,
+      "secondsPerTask": 160.1,
       "inputPricePerMTokUsd": 0,
       "outputPricePerMTokUsd": 0
     },
@@ -2180,7 +2180,7 @@
       "score": 32.59,
       "costPerTaskUsd": 0.60211,
       "tokensPerTask": 138962,
-      "secondsPerTask": 523.5,
+      "secondsPerTask": 628.7,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 1.2
     },
@@ -2320,7 +2320,7 @@
       "score": 23.06,
       "costPerTaskUsd": 1.76913,
       "tokensPerTask": 98733,
-      "secondsPerTask": 769.7,
+      "secondsPerTask": 912.1,
       "inputPricePerMTokUsd": 1.32,
       "outputPricePerMTokUsd": 3.96
     },
@@ -3380,7 +3380,7 @@
       "score": 11.66,
       "costPerTaskUsd": 0.6929,
       "tokensPerTask": 30301,
-      "secondsPerTask": 64.6,
+      "secondsPerTask": 69.5,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 2.5
     },
@@ -3520,7 +3520,7 @@
       "score": 30.85,
       "costPerTaskUsd": 7.76601,
       "tokensPerTask": 98940,
-      "secondsPerTask": 724.4,
+      "secondsPerTask": 736.2,
       "inputPricePerMTokUsd": 0.75,
       "outputPricePerMTokUsd": 3.75
     },
@@ -3678,9 +3678,9 @@
       "effortLabel": "high",
       "effortOrder": 40,
       "score": 50.41,
-      "costPerTaskUsd": 3.84134,
+      "costPerTaskUsd": 7.68267,
       "tokensPerTask": 116368,
-      "secondsPerTask": 1366.8,
+      "secondsPerTask": 1364,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -4400,7 +4400,7 @@
       "score": 31.65,
       "costPerTaskUsd": 5.00926,
       "tokensPerTask": 118987,
-      "secondsPerTask": 1060.9,
+      "secondsPerTask": 1077.2,
       "inputPricePerMTokUsd": 1.4,
       "outputPricePerMTokUsd": 4.4
     },
@@ -4440,7 +4440,7 @@
       "score": 23.11,
       "costPerTaskUsd": 1.57493,
       "tokensPerTask": 51986,
-      "secondsPerTask": 576.2,
+      "secondsPerTask": 624.3,
       "inputPricePerMTokUsd": 1.4,
       "outputPricePerMTokUsd": 4.4
     },
@@ -5980,7 +5980,7 @@
       "score": 54.61,
       "costPerTaskUsd": 1.27206,
       "tokensPerTask": 67824,
-      "secondsPerTask": 858.4,
+      "secondsPerTask": 891.6,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6000,7 +6000,7 @@
       "score": 50.33,
       "costPerTaskUsd": 0.59099,
       "tokensPerTask": 22606,
-      "secondsPerTask": 322.1,
+      "secondsPerTask": 352,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6020,7 +6020,7 @@
       "score": 34.8,
       "costPerTaskUsd": 0.16147,
       "tokensPerTask": 5838,
-      "secondsPerTask": 103.5,
+      "secondsPerTask": 96,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6040,7 +6040,7 @@
       "score": 46.35,
       "costPerTaskUsd": 0.35939,
       "tokensPerTask": 13518,
-      "secondsPerTask": 231.1,
+      "secondsPerTask": 241.3,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6060,7 +6060,7 @@
       "score": 52.46,
       "costPerTaskUsd": 0.76399,
       "tokensPerTask": 30241,
-      "secondsPerTask": 435.9,
+      "secondsPerTask": 411.1,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6080,7 +6080,7 @@
       "score": 51.33,
       "costPerTaskUsd": 0.96111,
       "tokensPerTask": 59883,
-      "secondsPerTask": 656.7,
+      "secondsPerTask": 548.2,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6100,7 +6100,7 @@
       "score": 42.43,
       "costPerTaskUsd": 0.25928,
       "tokensPerTask": 16746,
-      "secondsPerTask": 182.1,
+      "secondsPerTask": 174.4,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6140,7 +6140,7 @@
       "score": 38.17,
       "costPerTaskUsd": 0.1688,
       "tokensPerTask": 10875,
-      "secondsPerTask": 118.4,
+      "secondsPerTask": 120.9,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6160,7 +6160,7 @@
       "score": 30.52,
       "costPerTaskUsd": 0.2259,
       "tokensPerTask": 9488,
-      "secondsPerTask": 103.8,
+      "secondsPerTask": 111,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6180,7 +6180,7 @@
       "score": 45.25,
       "costPerTaskUsd": 0.40069,
       "tokensPerTask": 26200,
-      "secondsPerTask": 287,
+      "secondsPerTask": 261.4,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6200,7 +6200,7 @@
       "score": 56.85,
       "costPerTaskUsd": 6.24467,
       "tokensPerTask": 51973,
-      "secondsPerTask": 711.1,
+      "secondsPerTask": 753.7,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -6220,7 +6220,7 @@
       "score": 54.85,
       "costPerTaskUsd": 3.23857,
       "tokensPerTask": 23133,
-      "secondsPerTask": 372.4,
+      "secondsPerTask": 405.9,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -6240,7 +6240,7 @@
       "score": 43.33,
       "costPerTaskUsd": 1.42372,
       "tokensPerTask": 9126,
-      "secondsPerTask": 189.2,
+      "secondsPerTask": 180.7,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -6260,7 +6260,7 @@
       "score": 51.55,
       "costPerTaskUsd": 2.73244,
       "tokensPerTask": 18052,
-      "secondsPerTask": 303.7,
+      "secondsPerTask": 352.4,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -6280,7 +6280,7 @@
       "score": 55.31,
       "costPerTaskUsd": 3.65893,
       "tokensPerTask": 26724,
-      "secondsPerTask": 390.9,
+      "secondsPerTask": 482,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -6300,7 +6300,7 @@
       "score": 27.86,
       "costPerTaskUsd": 0.15196,
       "tokensPerTask": 75296,
-      "secondsPerTask": 597.3,
+      "secondsPerTask": 680.1,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -6320,7 +6320,7 @@
       "score": 21.43,
       "costPerTaskUsd": 0.07295,
       "tokensPerTask": 32839,
-      "secondsPerTask": 269.2,
+      "secondsPerTask": 274.4,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -6340,7 +6340,7 @@
       "score": 9.67,
       "costPerTaskUsd": 0.00512,
       "tokensPerTask": 3296,
-      "secondsPerTask": 28.1,
+      "secondsPerTask": 28.3,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -6380,7 +6380,7 @@
       "score": 9.44,
       "costPerTaskUsd": 0.07142,
       "tokensPerTask": 10059,
-      "secondsPerTask": 86.2,
+      "secondsPerTask": 90.8,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -6400,7 +6400,7 @@
       "score": 23.45,
       "costPerTaskUsd": 0.10409,
       "tokensPerTask": 43893,
-      "secondsPerTask": 357.2,
+      "secondsPerTask": 345.6,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -7318,9 +7318,9 @@
       "effortLabel": "xhigh",
       "effortOrder": 50,
       "score": 35.49,
-      "costPerTaskUsd": 7.51177,
-      "tokensPerTask": 92970,
-      "secondsPerTask": 991.1,
+      "costPerTaskUsd": 7.77154,
+      "tokensPerTask": 104531,
+      "secondsPerTask": 1355.4,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 6
     },
@@ -7340,7 +7340,7 @@
       "score": 35.21,
       "costPerTaskUsd": 6.1836,
       "tokensPerTask": 89127,
-      "secondsPerTask": 952.5,
+      "secondsPerTask": 1199.4,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 6
     },
@@ -7360,7 +7360,7 @@
       "score": 31.13,
       "costPerTaskUsd": 2.9222,
       "tokensPerTask": 42670,
-      "secondsPerTask": 537.9,
+      "secondsPerTask": 702.1,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 6
     },
@@ -7680,7 +7680,7 @@
       "score": 12.48,
       "costPerTaskUsd": 1.35196,
       "tokensPerTask": 51256,
-      "secondsPerTask": 207.1,
+      "secondsPerTask": 181.4,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 4.05
     },
@@ -7700,7 +7700,7 @@
       "score": 12.91,
       "costPerTaskUsd": 0.20316,
       "tokensPerTask": 36718,
-      "secondsPerTask": 147.5,
+      "secondsPerTask": 146.5,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 1.2
     },
@@ -8060,7 +8060,7 @@
       "score": 17.82,
       "costPerTaskUsd": 0,
       "tokensPerTask": 63665,
-      "secondsPerTask": 52.1,
+      "secondsPerTask": 543.7,
       "inputPricePerMTokUsd": 0,
       "outputPricePerMTokUsd": 0
     },
@@ -8420,7 +8420,7 @@
       "score": 46.45,
       "costPerTaskUsd": 3.6812,
       "tokensPerTask": 72239,
-      "secondsPerTask": 1504.1,
+      "secondsPerTask": 2071.5,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -8838,8 +8838,8 @@
       "effortLabel": "Default",
       "effortOrder": 35,
       "score": 29.57,
-      "costPerTaskUsd": 3.18513,
-      "tokensPerTask": 224706,
+      "costPerTaskUsd": 3.18515,
+      "tokensPerTask": 224711,
       "secondsPerTask": null,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 0.9
@@ -9640,7 +9640,7 @@
       "score": 26.73,
       "costPerTaskUsd": 0.12853,
       "tokensPerTask": 131806,
-      "secondsPerTask": 2222.2,
+      "secondsPerTask": 3672.1,
       "inputPricePerMTokUsd": 0.14,
       "outputPricePerMTokUsd": 0.28
     },
@@ -9660,7 +9660,7 @@
       "score": 29.89,
       "costPerTaskUsd": 0.25718,
       "tokensPerTask": 121073,
-      "secondsPerTask": 1828.4,
+      "secondsPerTask": 2805,
       "inputPricePerMTokUsd": 0.435,
       "outputPricePerMTokUsd": 0.87
     },
@@ -9980,7 +9980,7 @@
       "score": 18.88,
       "costPerTaskUsd": 1.2851,
       "tokensPerTask": 91452,
-      "secondsPerTask": 667,
+      "secondsPerTask": 814.2,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 1.2
     },
@@ -10000,7 +10000,7 @@
       "score": 29.06,
       "costPerTaskUsd": 0.49097,
       "tokensPerTask": 138176,
-      "secondsPerTask": 1015.5,
+      "secondsPerTask": 944.7,
       "inputPricePerMTokUsd": 0.15,
       "outputPricePerMTokUsd": 0.6
     },
@@ -10198,9 +10198,9 @@
       "effortLabel": "Default",
       "effortOrder": 35,
       "score": 25.34,
-      "costPerTaskUsd": 5.53703,
+      "costPerTaskUsd": 4.2089,
       "tokensPerTask": 135318,
-      "secondsPerTask": 1065.2,
+      "secondsPerTask": 971.9,
       "inputPricePerMTokUsd": 0.7,
       "outputPricePerMTokUsd": 2.1
     },
@@ -10580,7 +10580,7 @@
       "score": 6.34,
       "costPerTaskUsd": 0.16096,
       "tokensPerTask": 26067,
-      "secondsPerTask": 210,
+      "secondsPerTask": 224,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 1.2
     },
@@ -10660,7 +10660,7 @@
       "score": 36.62,
       "costPerTaskUsd": 2.38578,
       "tokensPerTask": 91114,
-      "secondsPerTask": 447.7,
+      "secondsPerTask": 602.3,
       "inputPricePerMTokUsd": 1.25,
       "outputPricePerMTokUsd": 4.25
     },
@@ -10700,7 +10700,7 @@
       "score": 24.88,
       "costPerTaskUsd": 2.01767,
       "tokensPerTask": 66440,
-      "secondsPerTask": 347.6,
+      "secondsPerTask": 380.1,
       "inputPricePerMTokUsd": 1.25,
       "outputPricePerMTokUsd": 4.25
     },
@@ -10720,7 +10720,7 @@
       "score": 43.57,
       "costPerTaskUsd": 6.95204,
       "tokensPerTask": 96063,
-      "secondsPerTask": 467.7,
+      "secondsPerTask": 550.6,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -10838,9 +10838,9 @@
       "effortLabel": "Default",
       "effortOrder": 35,
       "score": 13.62,
-      "costPerTaskUsd": 0.55652,
+      "costPerTaskUsd": 0.53823,
       "tokensPerTask": 81435,
-      "secondsPerTask": 158.5,
+      "secondsPerTask": 155.8,
       "inputPricePerMTokUsd": 0.2,
       "outputPricePerMTokUsd": 0.5
     },
@@ -11300,7 +11300,7 @@
       "score": 11.76,
       "costPerTaskUsd": 2.22574,
       "tokensPerTask": 51468,
-      "secondsPerTask": 253.6,
+      "secondsPerTask": 291.3,
       "inputPricePerMTokUsd": 0.6,
       "outputPricePerMTokUsd": 2.7
     },
@@ -13020,7 +13020,7 @@
       "score": 20.11,
       "costPerTaskUsd": 3.52955,
       "tokensPerTask": 109802,
-      "secondsPerTask": 2047.1,
+      "secondsPerTask": 1972.7,
       "inputPricePerMTokUsd": 0.5,
       "outputPricePerMTokUsd": 3
     },
@@ -13120,7 +13120,7 @@
       "score": 33.65,
       "costPerTaskUsd": 10.02389,
       "tokensPerTask": 170794,
-      "secondsPerTask": 3138.6,
+      "secondsPerTask": 3621.7,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 6
     },
@@ -13680,7 +13680,7 @@
       "score": 17.73,
       "costPerTaskUsd": 0.28441,
       "tokensPerTask": 34242,
-      "secondsPerTask": 60.8,
+      "secondsPerTask": 70.7,
       "inputPricePerMTokUsd": 0.4,
       "outputPricePerMTokUsd": 1.2
     },
@@ -14240,7 +14240,7 @@
       "score": 28.53,
       "costPerTaskUsd": 2.34525,
       "tokensPerTask": 113473,
-      "secondsPerTask": 567.9,
+      "secondsPerTask": 804.1,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 2.7
     },
