@@ -22,6 +22,7 @@ export type ReasoningLevel = (typeof REASONING_LEVELS)[number];
 /** The page's chart sections, top to bottom. */
 export const CHART_SECTIONS = [
 	"cost-vs-score",
+	"tradeoffs",
 	"tasks-per-week",
 	"ranked-cost",
 ] as const;

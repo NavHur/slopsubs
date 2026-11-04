@@ -141,7 +141,7 @@ function pointLabel(
 }
 
 /** A key handler that runs `action` on Enter or Space, as a button does. */
-function onActivationKey(action: () => void) {
+export function onActivationKey(action: () => void) {
 	return (event: KeyboardEvent) => {
 		if (event.key !== "Enter" && event.key !== " ") return;
 		event.preventDefault();
@@ -153,7 +153,7 @@ function onActivationKey(action: () => void) {
  * A focus handler that runs `action` for keyboard focus only, since a mouse
  * press focuses the point too.
  */
-function onKeyboardFocus(action: () => void) {
+export function onKeyboardFocus(action: () => void) {
 	return (event: FocusEvent) => {
 		if (event.currentTarget.matches(":focus-visible")) action();
 	};
@@ -276,7 +276,7 @@ export function ModelTags({
 const TAG_LOGO_SIZE = 14;
 
 /** Hover or focus previews the model; click, Enter or Space pins it. */
-function ModelTag({
+export function ModelTag({
 	model,
 	from,
 	at,
@@ -313,6 +313,8 @@ function ModelTag({
 			aria-pressed={pinned}
 			aria-label={`Highlight ${model.name}`}
 			opacity={dimmed ? 0.25 : 1}
+			// A press on a label pins it rather than starting a camera turn.
+			onPointerDown={(event) => event.stopPropagation()}
 			onMouseEnter={preview("hover")}
 			onMouseLeave={endPreview("hover")}
 			onFocus={preview("focus")}

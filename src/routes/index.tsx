@@ -15,6 +15,7 @@ import { SectionNav } from "#/components/SectionNav";
 import { Segmented, Toggle } from "#/components/Segmented";
 import { type Coverage, FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
+import { TradeoffSection } from "#/components/TradeoffSection";
 import { leaderboards, plans, samples } from "#/data";
 import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/model";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
@@ -45,6 +46,7 @@ const BENCHMARK_OPTIONS = BENCHMARK_IDS.map((id) => ({
 
 const SECTION_LABELS: Record<ChartSectionId, string> = {
 	"cost-vs-score": "Cost vs score",
+	tradeoffs: "Cost, time, score",
 	"tasks-per-week": "Tasks per week",
 	"ranked-cost": "Cost per task",
 };
@@ -293,6 +295,7 @@ function ValueView() {
 							className="mt-3 lg:hidden"
 						/>
 					</ChartSection>
+					<TradeoffSection points={points} view={benchmark} />
 					<ChartSection
 						id="tasks-per-week"
 						title="Tasks per week on each plan"

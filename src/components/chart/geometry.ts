@@ -11,7 +11,7 @@ import type { PointMarker } from "./series";
 
 export const LABEL_GAP = 22;
 /** Below this width series labels leave the plot for a legend underneath. */
-const COMPACT_WIDTH = 640;
+export const COMPACT_WIDTH = 640;
 /** Narrowest clear space between neighbouring x-axis tick labels. */
 export const MIN_TICK_LABEL_GAP_PX = 12;
 
@@ -32,7 +32,7 @@ const COMPACT_MIN_HEIGHT = 360;
 const COMPACT_MAX_HEIGHT = 480;
 const COMPACT_HEIGHT_RATIO = 1.15;
 /** Right margin holding the model labels beside a wide plot. */
-const LABEL_COLUMN_PX = 180;
+export const LABEL_COLUMN_PX = 180;
 /** Right margin without labels: room for half the last x-axis tick label. */
 const PLOT_EDGE_PX = 24;
 

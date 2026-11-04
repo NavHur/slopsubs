@@ -20,6 +20,10 @@ export type PointMarker = (typeof PLAN_MARKERS)[number];
 /** A pricing's identity: "api", or the subscription plan's id. */
 export type PricingId = PlanId | "api";
 
+export function pricingIdOf(pricing: Pricing): PricingId {
+	return pricing.kind === "api" ? "api" : pricing.plan.id;
+}
+
 /** How a line is paid for, and how the chart draws that. */
 export type PricingStyle = {
 	id: PricingId;
