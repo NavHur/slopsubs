@@ -13,15 +13,12 @@ import {
 	pricingStyles,
 } from "#/components/chart/series";
 import { TradeoffChart } from "#/components/chart/TradeoffChart";
-import {
-	type TimedPoint,
-	timedPoints,
-	tradeoffFrontier,
-} from "#/domain/tradeoffs";
+import { type TimedPoint, timedPoints } from "#/domain/tradeoffs";
 import type { ValuePoint } from "#/domain/value";
 import type { BenchmarkView } from "#/lib/benchmarks";
 import { ChartSection } from "./ChartSection";
 import { Segmented } from "./Segmented";
+import { type Plotted, TradeoffKey, tradeoffPng } from "./TradeoffKey";
 
 const PRESET_OPTIONS = [
 	{ value: "perspective", label: "3D" },
@@ -44,10 +41,6 @@ function shownPricing(
 	);
 }
 
-function isNonEmpty<T>(items: readonly T[]): items is readonly [T, ...T[]] {
-	return items.length > 0;
-}
-
 /** Why the chart has nothing to show. */
 function emptyMessage(points: readonly ValuePoint[], view: BenchmarkView) {
 	if (points.length === 0)
@@ -55,24 +48,80 @@ function emptyMessage(points: readonly ValuePoint[], view: BenchmarkView) {
 	return `No plotted model has a time per task on ${view.tabLabel}. Pick another benchmark to weigh time too.`;
 }
 
-/** How many options survive, and what the faded ones mean. */
-function TradeoffKey({
-	points,
-	pricing,
-	className = "",
+/** The key, camera presets and turnable chart for the pricing on show. */
+function TradeoffPlot({
+	plotted,
+	angles,
+	onAnglesChange,
+	view,
 }: {
-	points: readonly TimedPoint[];
-	pricing: PricingStyle;
-	className?: string;
+	plotted: Plotted;
+	angles: Angles;
+	onAnglesChange: (angles: Angles) => void;
+	view: BenchmarkView;
 }) {
-	const worth = tradeoffFrontier(points).size;
-	const prices = pricing.isApi ? "API prices" : `${pricing.label} prices`;
-	// One text node: the PNG export draws each node apart, trimming its spaces.
 	return (
-		<p className={`text-[13px] text-muted ${className}`}>
-			{`${prices}: ${worth} of ${points.length} options worth weighing, drawn filled. Hollow ones are beaten on cost, time and score by another.`}
-		</p>
+		<>
+			<TradeoffKey
+				points={plotted.shown}
+				pricing={plotted.pricing}
+				className="mb-3 max-w-[72ch] leading-5"
+			/>
+			<div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+				<Segmented<ViewPreset | "turned">
+					label="Camera angle"
+					options={PRESET_OPTIONS}
+					value={presetAt(angles) ?? "turned"}
+					onChange={(preset) => {
+						if (preset !== "turned") onAnglesChange(VIEW_PRESETS[preset]);
+					}}
+				/>
+				<span className="text-[12px] text-subtle">
+					Drag, or focus the chart and use the arrow keys, to turn it
+				</span>
+			</div>
+			<TradeoffChart
+				points={plotted.shown}
+				pricing={plotted.pricing}
+				angles={angles}
+				onAnglesChange={onAnglesChange}
+				view={view}
+			/>
+		</>
 	);
+}
+
+/** Switches the pricing when more than one covers the chart. */
+function PricingControl({
+	pricings,
+	value,
+	onChange,
+}: {
+	pricings: readonly PricingStyle[];
+	value: PricingId;
+	onChange: (id: PricingId) => void;
+}) {
+	if (pricings.length < 2) return null;
+	return (
+		<Segmented
+			label="Prices to plot"
+			options={pricings.map((p) => ({ value: p.id, label: p.label }))}
+			value={value}
+			onChange={onChange}
+		/>
+	);
+}
+
+/** The points of the pricing on show, or null when none can be drawn. */
+function plottedFor(
+	pricing: PricingStyle | undefined,
+	shown: readonly TimedPoint[],
+): Plotted | null {
+	return pricing && isNonEmpty(shown) ? { pricing, shown } : null;
+}
+
+function isNonEmpty<T>(items: readonly T[]): items is readonly [T, ...T[]] {
+	return items.length > 0;
 }
 
 /**
@@ -99,26 +148,12 @@ export function TradeoffSection({
 		[timed, pricing?.id],
 	);
 	const [angles, setAngles] = useState<Angles>(VIEW_PRESETS.perspective);
-	const plotted = pricing && isNonEmpty(shown) ? { pricing, shown } : null;
+	const plotted = plottedFor(pricing, shown);
 
 	const exportChart = async () => {
 		if (!plotted) return;
 		const { downloadChartPng } = await import("#/lib/exportPng");
-		await downloadChartPng({
-			chart: (
-				<TradeoffChart
-					points={plotted.shown}
-					pricing={plotted.pricing}
-					angles={angles}
-					onAnglesChange={() => {}}
-					view={view}
-				/>
-			),
-			legend: <TradeoffKey points={plotted.shown} pricing={plotted.pricing} />,
-			title: `Cost, time and ${view.tabLabel} score`,
-			fileName: `slopsubs-tradeoffs-${view.id}-${plotted.pricing.id}.png`,
-			height: "content",
-		});
+		await downloadChartPng(tradeoffPng(plotted, angles, view));
 	};
 
 	return (
@@ -128,11 +163,9 @@ export function TradeoffSection({
 			canExport={plotted !== null}
 			onExport={exportChart}
 			controls={
-				pricings.length > 1 &&
 				pricing && (
-					<Segmented
-						label="Prices to plot"
-						options={pricings.map((p) => ({ value: p.id, label: p.label }))}
+					<PricingControl
+						pricings={pricings}
 						value={pricing.id}
 						onChange={setPicked}
 					/>
@@ -140,33 +173,12 @@ export function TradeoffSection({
 			}
 		>
 			{plotted ? (
-				<>
-					<TradeoffKey
-						points={plotted.shown}
-						pricing={plotted.pricing}
-						className="mb-3 max-w-[72ch] leading-5"
-					/>
-					<div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-1">
-						<Segmented<ViewPreset | "turned">
-							label="Camera angle"
-							options={PRESET_OPTIONS}
-							value={presetAt(angles) ?? "turned"}
-							onChange={(preset) => {
-								if (preset !== "turned") setAngles(VIEW_PRESETS[preset]);
-							}}
-						/>
-						<span className="text-[12px] text-subtle">
-							Drag, or focus the chart and use the arrow keys, to turn it
-						</span>
-					</div>
-					<TradeoffChart
-						points={plotted.shown}
-						pricing={plotted.pricing}
-						angles={angles}
-						onAnglesChange={setAngles}
-						view={view}
-					/>
-				</>
+				<TradeoffPlot
+					plotted={plotted}
+					angles={angles}
+					onAnglesChange={setAngles}
+					view={view}
+				/>
 			) : (
 				<p className="py-10 text-center text-sm text-muted">
 					{emptyMessage(points, view)}

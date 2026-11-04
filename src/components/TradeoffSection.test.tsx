@@ -1,11 +1,14 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
+import { VIEW_PRESETS } from "#/components/chart/projection";
+import { buildSeries, pricingStyles } from "#/components/chart/series";
 import { leaderboards, plans, samples } from "#/data";
 import type { BenchmarkId } from "#/domain/model";
 import { tradeoffFrontier, timedPoints } from "#/domain/tradeoffs";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
 import { selectedFamilies, selectedPlans, ViewSearch } from "#/lib/view";
+import { tradeoffPng } from "./TradeoffKey";
 import { TradeoffSection } from "./TradeoffSection";
 
 /** The page's default selection on one benchmark tab. */
@@ -46,6 +49,31 @@ describe("TradeoffSection", () => {
 		expect(labels).toHaveLength(families.size);
 		const worth = tradeoffFrontier(api).size;
 		expect(html).toContain(`API prices: ${worth} of ${api.length} options`);
+	});
+
+	it("hands the PNG export a key of short one-line text nodes with the counts and meanings", () => {
+		const api = timedPoints(pagePoints("intelligence")).filter(
+			(p) => p.pricing.kind === "api",
+		);
+		const [first, ...rest] = api;
+		const pricing = pricingStyles(buildSeries(api)).values().next().value;
+		if (!first || !pricing) throw new Error("no API points to export");
+		const { legend } = tradeoffPng(
+			{ pricing, shown: [first, ...rest] },
+			VIEW_PRESETS.perspective,
+			BENCHMARK_VIEWS.intelligence,
+		);
+		// The exporter draws each text node as one unwrapped line.
+		const lines = renderToStaticMarkup(legend)
+			.split(/<[^>]*>/)
+			.map((text) => text.trim())
+			.filter(Boolean);
+		const worth = tradeoffFrontier(api).size;
+		expect(lines.length).toBeGreaterThan(1);
+		for (const line of lines) expect(line.length).toBeLessThanOrEqual(60);
+		expect(lines).toContain(`${worth} of ${api.length} options worth weighing`);
+		expect(lines.join(" ")).toMatch(/Filled/);
+		expect(lines.join(" ")).toMatch(/Hollow/);
 	});
 
 	it("explains an empty chart on a benchmark that never times its tasks", () => {
