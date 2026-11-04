@@ -5,6 +5,7 @@ import {
 	scaleLog,
 } from "d3-scale";
 import type { TimedPoint } from "#/domain/tradeoffs";
+import { LOG_TICK_MANTISSAS, logTickValues } from "./geometry";
 import type { Vec3 } from "./projection";
 
 /**
@@ -62,8 +63,8 @@ const COST_PAD_ABOVE = 1.4;
 const MINUTE_TICKS = 6;
 const SCORE_TICKS = 5;
 
-/** Mantissas of the log ticks within each decade, densest first. */
-const LOG_TICK_MANTISSAS = [[1, 2, 5], [1, 3], [1]] as const;
+/** The cost domain when no option has a positive cost: one decade. */
+const FREE_ONLY_COST_DOMAIN = [1, 10] as const;
 /** Most cost ticks one axis carries before it thins to sparser mantissas. */
 const MAX_COST_TICKS = 6;
 
@@ -81,11 +82,9 @@ export function plotSpace(
 		.range([FLOOR_MIN, FLOOR_MAX]);
 	const costs = points.map((p) => p.costPerTaskUsd);
 	const cost = scaleLog()
-		.domain([
-			Math.min(...costs) * COST_PAD_BELOW,
-			Math.max(...costs) * COST_PAD_ABOVE,
-		])
+		.domain(costDomain(costs))
 		.range([FLOOR_MIN, FLOOR_MAX]);
+	const [cheapestCost] = cost.domain();
 	const score = scaleLinear()
 		.domain([0, Math.max(...points.map((p) => p.score))])
 		.nice(SCORE_TICKS)
@@ -95,7 +94,7 @@ export function plotSpace(
 	return {
 		position: (p) => [
 			minutes(minutesOf(p)),
-			cost(p.costPerTaskUsd),
+			cost(Math.max(p.costPerTaskUsd, cheapestCost)),
 			score(p.score),
 		],
 		ticks: {
@@ -104,6 +103,17 @@ export function plotSpace(
 			score: linearTicks(score, SCORE_TICKS, 0),
 		},
 	};
+}
+
+/** A log axis cannot show $0, so free options plot at the cheap edge: the
+ * domain starts from the smallest positive cost. */
+function costDomain(costs: readonly number[]): [number, number] {
+	const paid = costs.filter((c) => c > 0);
+	if (paid.length === 0) return [...FREE_ONLY_COST_DOMAIN];
+	return [
+		Math.min(...paid) * COST_PAD_BELOW,
+		Math.max(...paid) * COST_PAD_ABOVE,
+	];
 }
 
 function minutesOf(point: TimedPoint): number {
@@ -132,31 +142,10 @@ function linearTicks(
 function costTicks(scale: ScaleLogarithmic<number, number>): AxisTick[] {
 	const [low, high] = scale.domain();
 	const candidates = LOG_TICK_MANTISSAS.map((mantissas) =>
-		logValues(low, high, mantissas),
+		logTickValues(low, high, mantissas),
 	);
 	const values =
 		candidates.find((c) => c.length <= MAX_COST_TICKS) ??
 		candidates[candidates.length - 1];
 	return values.map((value) => ({ value, at: scale(value) - FLOOR_MIN }));
-}
-
-/** Every mantissa × power of ten within [low, high]. */
-function logValues(
-	low: number,
-	high: number,
-	mantissas: readonly number[],
-): number[] {
-	const values: number[] = [];
-	for (
-		let exponent = Math.floor(Math.log10(low));
-		exponent <= Math.ceil(Math.log10(high));
-		exponent++
-	) {
-		for (const mantissa of mantissas) {
-			// toPrecision drops float noise: 3 × 10⁻³ is 0.003, not 0.0030000000000000005.
-			const value = Number((mantissa * 10 ** exponent).toPrecision(12));
-			if (value >= low && value <= high) values.push(value);
-		}
-	}
-	return values;
 }

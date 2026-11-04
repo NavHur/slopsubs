@@ -76,6 +76,39 @@ describe("plotSpace", () => {
 		expect(values(narrow.ticks.cost)).toEqual([0.02, 0.05]);
 	});
 
+	describe("free ($0) options", () => {
+		const free = point(0, 202, 6.2);
+		const paid = point(1.5, 100, 20);
+
+		it("plots a $0 option at the cheap edge with finite positions", () => {
+			const freeSpace = plotSpace([free, paid]);
+			const at = freeSpace.position(free);
+			expect(at.every(Number.isFinite)).toBe(true);
+			expect(at[1]).toBe(-1);
+			expect(freeSpace.position(paid).every(Number.isFinite)).toBe(true);
+			expect(values(freeSpace.ticks.cost).every(Number.isFinite)).toBe(true);
+			expect(freeSpace.ticks.cost.length).toBeGreaterThan(0);
+		});
+
+		it("keeps the $0 option below every paid option on the cost axis", () => {
+			const freeSpace = plotSpace([free, paid, point(0.2, 60, 10)]);
+			const costY = (p: TimedPoint) => freeSpace.position(p)[1];
+			expect(costY(free)).toBeLessThan(costY(point(0.2, 60, 10)));
+			expect(costY(point(0.2, 60, 10))).toBeLessThan(costY(paid));
+		});
+
+		it("maps a set of only $0 options to finite positions and ticks", () => {
+			const onlyFree = [point(0, 30, 5), point(0, 90, 15)] as const;
+			const freeSpace = plotSpace(onlyFree);
+			for (const p of onlyFree) {
+				const at = freeSpace.position(p);
+				expect(at.every(Number.isFinite)).toBe(true);
+				expect(at[1]).toBe(-1);
+			}
+			expect(values(freeSpace.ticks.cost).every(Number.isFinite)).toBe(true);
+		});
+	});
+
 	it("keeps a lone point with no time or score inside the cube", () => {
 		const lone = point(0.5, 0, 0);
 		const position = plotSpace([lone]).position(lone);
