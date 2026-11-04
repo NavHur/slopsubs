@@ -1,23 +1,23 @@
 {
-  "fetchedAt": "2026-10-31T22:41:37.597Z",
+  "fetchedAt": "2026-11-04T02:17:06.283Z",
   "source": "Cognition's FrontierCode 2.0",
   "rows": [
     {
-      "family": "deepseek-v4-1-flash",
+      "family": "deepseek-v4-1-flash-1017",
       "effort": "low",
       "score": 15.96,
       "costPerTaskUsd": 0.206,
       "tokensPerTask": 40659
     },
     {
-      "family": "deepseek-v4-1-flash",
+      "family": "deepseek-v4-1-flash-1017",
       "effort": "high",
       "score": 18.21,
       "costPerTaskUsd": 0.274,
       "tokensPerTask": 57169
     },
     {
-      "family": "deepseek-v4-1-flash",
+      "family": "deepseek-v4-1-flash-1017",
       "effort": "max",
       "score": 19.3,
       "costPerTaskUsd": 0.384,

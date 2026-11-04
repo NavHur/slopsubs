@@ -1,5 +1,6 @@
-// Merges AA (scores, prices, releases) and slopalytics (cost, tokens per task)
-// into src/data/benchmarks.json; AA's site costs points slopalytics hasn't run.
+// Merges AA (scores, prices, releases, cost/tokens/time per task) and
+// slopalytics (the catalog, and figures AA's site lacks) into
+// src/data/benchmarks.json.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { flightFromHtml } from "../src/domain/aa-evals.ts";
@@ -32,16 +33,18 @@ type Args = {
 	aa?: string;
 	html?: string;
 	allowMissingCost: boolean;
+	allowScoreDrift: boolean;
 };
 
 function parseArgs(argv: string[]): Args {
-	const args: Args = { allowMissingCost: false };
+	const args: Args = { allowMissingCost: false, allowScoreDrift: false };
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
 		if (arg === "--bundle") args.bundle = argv[++i];
 		else if (arg === "--aa") args.aa = argv[++i];
 		else if (arg === "--html") args.html = argv[++i];
 		else if (arg === "--allow-missing-cost") args.allowMissingCost = true;
+		else if (arg === "--allow-score-drift") args.allowScoreDrift = true;
 		else throw new Error(`Unknown argument ${arg}`);
 	}
 	return args;
@@ -151,6 +154,7 @@ async function main() {
 	const merged = mergeCatalog(aa, slopa, {
 		coveredFamilies: new Set(plans.flatMap((plan) => plan.families)),
 		siteCosts: extractIndexCosts(flightFromHtml(page)),
+		allowScoreDrift: args.allowScoreDrift,
 	});
 	if (merged.missingCost.length && !args.allowMissingCost)
 		throw new Error(
@@ -161,7 +165,7 @@ async function main() {
 	const output = {
 		fetchedAt: new Date().toISOString(),
 		source:
-			"Artificial Analysis (scores, prices, releases); Slopalytics (cost and tokens per task), else AA's website",
+			"Artificial Analysis (scores, prices, releases, cost, tokens and time per task); Slopalytics (catalog, and figures AA's site lacks)",
 		frontier,
 		models: merged.models,
 	};

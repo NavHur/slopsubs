@@ -209,6 +209,28 @@ describe("mergeCatalog", () => {
 		).toThrow(/AA index 58.4, slopalytics 59.2/);
 	});
 
+	it("accepts a published regrade as a warning", () => {
+		const merged = mergeCatalog([CLAUDE], [point({ score: 59.2 })], {
+			coveredFamilies: covered,
+			siteCosts: NO_SITE_COSTS,
+			allowScoreDrift: true,
+		});
+		expect(merged.models[0].score).toBe(58.4);
+		expect(merged.warnings).toEqual([
+			"claude-opus-5-5: AA regraded 59.2 to 58.4; using AA",
+		]);
+	});
+
+	it("still refuses a score gap no regrade explains", () => {
+		expect(() =>
+			mergeCatalog([CLAUDE], [point({ score: 60.5 })], {
+				coveredFamilies: covered,
+				siteCosts: NO_SITE_COSTS,
+				allowScoreDrift: true,
+			}),
+		).toThrow(/AA index 58.4, slopalytics 60.5/);
+	});
+
 	it("refuses a point AA does not list", () => {
 		expect(() =>
 			mergeCatalog([], [point()], {
@@ -270,12 +292,26 @@ describe("mergeCatalog", () => {
 		});
 	});
 
-	it("keeps slopalytics' cost over AA's site", () => {
+	it("prefers AA's site cost, tokens and time over slopalytics'", () => {
 		const merged = mergeCatalog([CLAUDE], [point()], {
 			coveredFamilies: covered,
 			siteCosts: new Map([["claude-opus-5-5", SITE_COST]]),
 		});
-		expect(merged.models[0].costPerTaskUsd).toBe(10.03641);
+		expect(merged.models[0]).toMatchObject(SITE_COST);
+	});
+
+	it("keeps slopalytics' time when AA's site lacks it", () => {
+		const merged = mergeCatalog([CLAUDE], [point()], {
+			coveredFamilies: covered,
+			siteCosts: new Map([
+				["claude-opus-5-5", { ...SITE_COST, secondsPerTask: null }],
+			]),
+		});
+		expect(merged.models[0]).toMatchObject({
+			costPerTaskUsd: SITE_COST.costPerTaskUsd,
+			tokensPerTask: SITE_COST.tokensPerTask,
+			secondsPerTask: 1445.4,
+		});
 	});
 
 	it("costs an AA-only point from AA's site, so it is not missing", () => {
