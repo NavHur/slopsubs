@@ -42,7 +42,9 @@ git ignores) and `bun` passes it to the script. Slopalytics still supplies the
 cost, tokens and wall-clock time per task that the free API does not publish,
 and the two sources are merged in `src/domain/catalog.ts`. A score they
 disagree on stops the import; a price they disagree on only warns, since a
-promo can explain the gap, and AA's list price wins.
+promo can explain the gap, and AA's list price wins. When AA says it regraded
+a benchmark, `--allow-score-drift` turns a gap of up to 1.5 points into a
+warning so the refresh can proceed before slopalytics catches up.
 
 The nine Intelligence Index evals (Terminal-Bench 4.0, FrontierCode 2.0 and
 seven others) come from the AA website itself, not the data API, because the

@@ -60,6 +60,9 @@ export const AA_ALIASES: Record<string, string> = {
 /** Two sources rounding to one decimal still agree within this. */
 export const SCORE_TOLERANCE = 0.06;
 
+/** The largest score gap a published AA regrade can explain. */
+const SCORE_DRIFT_LIMIT = 1.5;
+
 /** A gap under a tenth of a cent per million tokens can't move the cost chart. */
 const PRICE_TOLERANCE = 0.001;
 
@@ -103,6 +106,8 @@ export type MergeOptions = {
 	coveredFamilies: ReadonlySet<string>;
 	/** AA's own cost per task by slug, for points slopalytics hasn't costed. */
 	siteCosts: ReadonlyMap<string, TaskCost>;
+	/** Accept a score gap a published AA regrade explains, as a warning. */
+	allowScoreDrift?: boolean;
 };
 
 export type MergedCatalog = {
@@ -117,17 +122,30 @@ export type MergedCatalog = {
 
 type EffortLabel = { label: string; order: number };
 
-/** Throws when the two sources disagree on a point's Intelligence Index. */
-function checkScore(point: SlopaPoint, aaScore: number | null): void {
+/** Throws when the two sources disagree on a point's Intelligence Index,
+ * unless the gap is one AA says it caused by a regrade. */
+function checkScore(
+	point: SlopaPoint,
+	aaScore: number | null,
+	warnings: string[],
+	allowScoreDrift: boolean,
+): void {
 	if (point.score === null) return;
 	if (aaScore === null)
 		throw new Error(
 			`${point.id}: slopalytics scores ${point.score}, AA has no index`,
 		);
-	if (Math.abs(aaScore - point.score) > SCORE_TOLERANCE)
-		throw new Error(
-			`${point.id}: AA index ${aaScore}, slopalytics ${point.score}`,
+	const drift = Math.abs(aaScore - point.score);
+	if (drift <= SCORE_TOLERANCE) return;
+	if (allowScoreDrift && drift <= SCORE_DRIFT_LIMIT) {
+		warnings.push(
+			`${point.id}: AA regraded ${point.score} to ${aaScore}; using AA`,
 		);
+		return;
+	}
+	throw new Error(
+		`${point.id}: AA index ${aaScore}, slopalytics ${point.score}`,
+	);
 }
 
 /** One warning per price AA and slopalytics disagree on. */
@@ -162,12 +180,13 @@ function mergePoint(
 	aaById: ReadonlyMap<string, AaModel>,
 	siteCosts: ReadonlyMap<string, TaskCost>,
 	warnings: string[],
+	allowScoreDrift: boolean,
 ): SlopaPoint {
 	const slug = AA_ALIASES[point.id] ?? point.id;
 	const aa = aaById.get(slug);
 	if (!aa) throw new Error(`AA has no model for ${point.id} (${point.name})`);
 	const aaScore = aa.evaluations.artificial_analysis_intelligence_index;
-	checkScore(point, aaScore);
+	checkScore(point, aaScore, warnings, allowScoreDrift);
 	warnings.push(...priceWarnings(point, aa));
 	return {
 		...point,
@@ -262,7 +281,13 @@ export function mergeCatalog(
 	const missingCost: string[] = [];
 	const skipped: string[] = [];
 	const models = slopaPoints.map((point) =>
-		mergePoint(point, aaById, options.siteCosts, warnings),
+		mergePoint(
+			point,
+			aaById,
+			options.siteCosts,
+			warnings,
+			options.allowScoreDrift ?? false,
+		),
 	);
 
 	const effortOf = new Map(

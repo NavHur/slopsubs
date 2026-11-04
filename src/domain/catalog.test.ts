@@ -209,6 +209,28 @@ describe("mergeCatalog", () => {
 		).toThrow(/AA index 58.4, slopalytics 59.2/);
 	});
 
+	it("accepts a published regrade as a warning", () => {
+		const merged = mergeCatalog([CLAUDE], [point({ score: 59.2 })], {
+			coveredFamilies: covered,
+			siteCosts: NO_SITE_COSTS,
+			allowScoreDrift: true,
+		});
+		expect(merged.models[0].score).toBe(58.4);
+		expect(merged.warnings).toEqual([
+			"claude-opus-5-5: AA regraded 59.2 to 58.4; using AA",
+		]);
+	});
+
+	it("still refuses a score gap no regrade explains", () => {
+		expect(() =>
+			mergeCatalog([CLAUDE], [point({ score: 60.5 })], {
+				coveredFamilies: covered,
+				siteCosts: NO_SITE_COSTS,
+				allowScoreDrift: true,
+			}),
+		).toThrow(/AA index 58.4, slopalytics 60.5/);
+	});
+
 	it("refuses a point AA does not list", () => {
 		expect(() =>
 			mergeCatalog([], [point()], {
