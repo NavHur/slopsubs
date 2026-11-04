@@ -104,7 +104,7 @@ function displayName(name: string): string {
 export type MergeOptions = {
 	/** Families a plan covers, so an AA-only model is one that would ship. */
 	coveredFamilies: ReadonlySet<string>;
-	/** AA's own cost per task by slug, for points slopalytics hasn't costed. */
+	/** AA's own cost, tokens and time per task by slug. */
 	siteCosts: ReadonlyMap<string, TaskCost>;
 	/** Accept a score gap a published AA regrade explains, as a warning. */
 	allowScoreDrift?: boolean;
@@ -162,19 +162,19 @@ function priceWarnings(point: SlopaPoint, aa: AaModel): string[] {
 		);
 }
 
-/** AA's site cost for a point slopalytics hasn't costed, keeping the
- * tokens and time slopalytics did measure. */
+/** AA's site figures when it has them, keeping slopalytics' values for the
+ * fields the site lacks. */
 function siteCostFill(point: SlopaPoint, siteCost: TaskCost | undefined) {
-	if (point.costPerTaskUsd !== null || !siteCost) return {};
+	if (!siteCost) return {};
 	return {
 		costPerTaskUsd: siteCost.costPerTaskUsd,
-		tokensPerTask: point.tokensPerTask ?? siteCost.tokensPerTask,
-		secondsPerTask: point.secondsPerTask ?? siteCost.secondsPerTask,
+		tokensPerTask: siteCost.tokensPerTask ?? point.tokensPerTask,
+		secondsPerTask: siteCost.secondsPerTask ?? point.secondsPerTask,
 	};
 }
 
 /** A slopalytics point carrying AA's score, prices and release date, and
- * AA's own cost when slopalytics has none. */
+ * AA's own cost, tokens and time when its site has them. */
 function mergePoint(
 	point: SlopaPoint,
 	aaById: ReadonlyMap<string, AaModel>,
@@ -265,11 +265,12 @@ function aaOnlyModel(
 }
 
 /**
- * Artificial Analysis wins on scores, prices and release dates; slopalytics
- * supplies cost, tokens and time, and AA's website fills them in for points
- * slopalytics hasn't costed. A score disagreement is an error, since it
- * means one side changed its benchmark. A price disagreement is only a
- * warning: AA's list price is what we plot, but a promo can explain the gap.
+ * Artificial Analysis wins on scores, prices, release dates, and the cost,
+ * tokens and time per task its website publishes; slopalytics supplies the
+ * catalog and fills the points the website doesn't cover. A score
+ * disagreement is an error, since it means one side changed its benchmark. A
+ * price disagreement is only a warning: AA's list price is what we plot, but
+ * a promo can explain the gap.
  */
 export function mergeCatalog(
 	aaModels: readonly AaModel[],

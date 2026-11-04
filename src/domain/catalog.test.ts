@@ -292,12 +292,26 @@ describe("mergeCatalog", () => {
 		});
 	});
 
-	it("keeps slopalytics' cost over AA's site", () => {
+	it("prefers AA's site cost, tokens and time over slopalytics'", () => {
 		const merged = mergeCatalog([CLAUDE], [point()], {
 			coveredFamilies: covered,
 			siteCosts: new Map([["claude-opus-5-5", SITE_COST]]),
 		});
-		expect(merged.models[0].costPerTaskUsd).toBe(10.03641);
+		expect(merged.models[0]).toMatchObject(SITE_COST);
+	});
+
+	it("keeps slopalytics' time when AA's site lacks it", () => {
+		const merged = mergeCatalog([CLAUDE], [point()], {
+			coveredFamilies: covered,
+			siteCosts: new Map([
+				["claude-opus-5-5", { ...SITE_COST, secondsPerTask: null }],
+			]),
+		});
+		expect(merged.models[0]).toMatchObject({
+			costPerTaskUsd: SITE_COST.costPerTaskUsd,
+			tokensPerTask: SITE_COST.tokensPerTask,
+			secondsPerTask: 1445.4,
+		});
 	});
 
 	it("costs an AA-only point from AA's site, so it is not missing", () => {

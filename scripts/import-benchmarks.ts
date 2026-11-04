@@ -1,5 +1,6 @@
-// Merges AA (scores, prices, releases) and slopalytics (cost, tokens per task)
-// into src/data/benchmarks.json; AA's site costs points slopalytics hasn't run.
+// Merges AA (scores, prices, releases, cost/tokens/time per task) and
+// slopalytics (the catalog, and figures AA's site lacks) into
+// src/data/benchmarks.json.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { flightFromHtml } from "../src/domain/aa-evals.ts";
@@ -164,7 +165,7 @@ async function main() {
 	const output = {
 		fetchedAt: new Date().toISOString(),
 		source:
-			"Artificial Analysis (scores, prices, releases); Slopalytics (cost and tokens per task), else AA's website",
+			"Artificial Analysis (scores, prices, releases, cost, tokens and time per task); Slopalytics (catalog, and figures AA's site lacks)",
 		frontier,
 		models: merged.models,
 	};

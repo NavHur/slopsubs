@@ -38,13 +38,15 @@ bun run build-plans          # plans.json and chart-benchmarks.json
 [Artificial Analysis](https://artificialanalysis.ai) is the source of the
 model list, Intelligence Index scores, list prices and release dates, through
 its data API. The API needs a key: put `AA_API_KEY=...` in `.env.local` (which
-git ignores) and `bun` passes it to the script. Slopalytics still supplies the
-cost, tokens and wall-clock time per task that the free API does not publish,
-and the two sources are merged in `src/domain/catalog.ts`. A score they
-disagree on stops the import; a price they disagree on only warns, since a
-promo can explain the gap, and AA's list price wins. When AA says it regraded
-a benchmark, `--allow-score-drift` turns a gap of up to 1.5 points into a
-warning so the refresh can proceed before slopalytics catches up.
+git ignores) and `bun` passes it to the script. AA's model page also publishes
+the cost, tokens and time per task for the models it has run; `import-benchmarks`
+reads them from its flight payload and prefers them. Slopalytics supplies the
+catalog and fills any point the website doesn't cover. A score they disagree on
+stops the import; a price they disagree on only warns, since a promo can explain
+the gap, and AA's list price wins. When AA says it regraded a benchmark,
+`--allow-score-drift` turns a gap of up to 1.5 points into a warning so the
+refresh can proceed before slopalytics catches up. AA's time per task is decode
+time, excluding TTFT and overhead.
 
 The nine Intelligence Index evals (Terminal-Bench 4.0, FrontierCode 2.0 and
 seven others) come from the AA website itself, not the data API, because the
