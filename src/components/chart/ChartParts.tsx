@@ -313,6 +313,8 @@ export function ModelTag({
 			aria-pressed={pinned}
 			aria-label={`Highlight ${model.name}`}
 			opacity={dimmed ? 0.25 : 1}
+			// A press on a label pins it rather than starting a camera turn.
+			onPointerDown={(event) => event.stopPropagation()}
 			onMouseEnter={preview("hover")}
 			onMouseLeave={endPreview("hover")}
 			onFocus={preview("focus")}
