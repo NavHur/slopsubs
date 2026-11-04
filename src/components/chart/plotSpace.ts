@@ -102,7 +102,7 @@ export function plotSpace(
 		],
 		ticks: {
 			minutes: linearTicks(minutes, MINUTE_TICKS, FLOOR_MIN),
-			cost: costTicks(cost, costs.some(isFree), costs.every(isFree)),
+			cost: costAxisTicks(cost, costs),
 			score: linearTicks(score, SCORE_TICKS, 0),
 		},
 	};
@@ -145,16 +145,22 @@ function linearTicks(
 	}));
 }
 
-/** The densest 1-2-5, 1-3 or decade ticks inside the cost domain that keep
- * to MAX_COST_TICKS, falling back to the sparsest. With a free option the
- * cheap edge reads $0 and ticks too close to it are dropped; with only free
- * options the placeholder domain labels nothing real, so only $0 remains. */
-function costTicks(
+/** The cost axis's ticks. With a free option the cheap edge reads $0 and
+ * ticks too close to it are dropped; with only free options the placeholder
+ * domain labels nothing real, so only $0 remains. */
+function costAxisTicks(
 	scale: ScaleLogarithmic<number, number>,
-	hasFree: boolean,
-	allFree: boolean,
+	costs: readonly number[],
 ): AxisTick[] {
-	if (allFree) return [FREE_TICK];
+	if (costs.every(isFree)) return [FREE_TICK];
+	const ticks = pricedCostTicks(scale);
+	if (!costs.some(isFree)) return ticks;
+	return [FREE_TICK, ...ticks.filter((t) => t.at >= MIN_COST_TICK_GAP)];
+}
+
+/** The densest 1-2-5, 1-3 or decade ticks inside the cost domain that keep
+ * to MAX_COST_TICKS, falling back to the sparsest. */
+function pricedCostTicks(scale: ScaleLogarithmic<number, number>): AxisTick[] {
 	const [low, high] = scale.domain();
 	const candidates = LOG_TICK_MANTISSAS.map((mantissas) =>
 		logTickValues(low, high, mantissas),
@@ -162,10 +168,5 @@ function costTicks(
 	const values =
 		candidates.find((c) => c.length <= MAX_COST_TICKS) ??
 		candidates[candidates.length - 1];
-	const ticks = values.map((value) => ({
-		value,
-		at: scale(value) - FLOOR_MIN,
-	}));
-	if (!hasFree) return ticks;
-	return [FREE_TICK, ...ticks.filter((t) => t.at >= MIN_COST_TICK_GAP)];
+	return values.map((value) => ({ value, at: scale(value) - FLOOR_MIN }));
 }
