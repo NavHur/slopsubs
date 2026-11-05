@@ -1,6 +1,6 @@
 import { useHydrated } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { DEFAULT_VIEW, ViewSearch } from "#/lib/view";
+import { DEFAULT_VIEW, type DrawnView, ViewSearch } from "#/lib/view";
 
 /**
  * The params that change what the page draws. `chart` is left out: it only
@@ -39,9 +39,7 @@ function useShowLinkedView(rendered: boolean) {
  * hydration must render that view too; the link's own view follows straight
  * after, and the page shows once it has.
  */
-export function useRenderedView(
-	linked: Omit<ViewSearch, "chart">,
-): Omit<ViewSearch, "chart"> {
+export function useRenderedView(linked: DrawnView): DrawnView {
 	const hydrated = useHydrated();
 	useShowLinkedView(hydrated);
 	return hydrated ? linked : DEFAULT_VIEW;

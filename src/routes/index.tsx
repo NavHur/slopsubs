@@ -27,6 +27,7 @@ import {
 	CHART_SECTIONS,
 	type ChartSectionId,
 	DEFAULT_MODELS_VIEW,
+	type DrawnView,
 	hiddenReasoning,
 	isDefaultModelsView,
 	selectedFamilies,
@@ -90,7 +91,7 @@ function useViewUpdate() {
  * The chart links. They own the section in view and the URL's `chart`, so
  * scrolling into another section re-renders the links, not the charts.
  */
-function ChartNav({ view }: { view: Omit<ViewSearch, "chart"> }) {
+function ChartNav({ view }: { view: DrawnView }) {
 	// The URL's section, not the rendered one: the jump to it is set up on mount.
 	const linkedChart = Route.useSearch({ select: (search) => search.chart });
 	const update = useViewUpdate();
@@ -114,7 +115,7 @@ function ChartNav({ view }: { view: Omit<ViewSearch, "chart"> }) {
 }
 
 /** The view without `chart`, which only ChartNav follows. */
-function withoutChart(search: ViewSearch): Omit<ViewSearch, "chart"> {
+function withoutChart(search: ViewSearch): DrawnView {
 	const view = { ...search };
 	delete view.chart;
 	return view;
