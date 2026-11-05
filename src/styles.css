@@ -29,10 +29,8 @@
 }
 
 /*
- * A shared link draws its own view only once the page hydrates (see
- * src/lib/sharedLink.ts). Until then the prerendered default view keeps its
- * layout but stays unseen, so the wrong chart never flashes and nothing
- * shifts. If the scripts never run, it shows after two seconds anyway.
+ * A shared link's view stays hidden, but laid out, until it renders (see
+ * src/lib/sharedLink.ts); a fallback shows the prerendered view if it never does.
  */
 :root[data-view-pending] [data-view-dependent] {
   visibility: hidden;

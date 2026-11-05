@@ -1,6 +1,5 @@
-// Opens shared links against the prerendered build and fails if any of them
-// fails hydration or keeps its view hidden. `bun run check-shared-links`
-// builds first; see README.md, "Shared Links".
+// Opens shared links against the prerendered build; fails on a hydration error
+// or a view left hidden. `bun run check-shared-links`; see README.md.
 
 import type { AddressInfo } from "node:net";
 import { type Browser, chromium } from "playwright-core";
