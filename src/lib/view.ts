@@ -89,8 +89,13 @@ export const ViewSearch = z.object({
 });
 export type ViewSearch = z.infer<typeof ViewSearch>;
 
-/** The view without `chart`, which only picks the section to scroll to. */
-export type DrawnView = Omit<ViewSearch, "chart">;
+/** Params that only pick the section to scroll to, so they draw nothing. */
+export const SCROLL_ONLY_PARAMS = [
+	"chart",
+] as const satisfies readonly (keyof ViewSearch)[];
+
+/** The view without the scroll-only params. */
+export type DrawnView = Omit<ViewSearch, (typeof SCROLL_ONLY_PARAMS)[number]>;
 
 /** The view of a link with no query string: the one the page is prerendered with. */
 export const DEFAULT_VIEW: ViewSearch = ViewSearch.parse({});

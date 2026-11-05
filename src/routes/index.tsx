@@ -30,6 +30,7 @@ import {
 	type DrawnView,
 	hiddenReasoning,
 	isDefaultModelsView,
+	SCROLL_ONLY_PARAMS,
 	selectedFamilies,
 	selectedPlans,
 	toggled,
@@ -114,10 +115,10 @@ function ChartNav({ view }: { view: DrawnView }) {
 	);
 }
 
-/** The view without `chart`, which only ChartNav follows. */
+/** The view without the scroll-only params, which only ChartNav follows. */
 function withoutChart(search: ViewSearch): DrawnView {
 	const view = { ...search };
-	delete view.chart;
+	for (const key of SCROLL_ONLY_PARAMS) delete view[key];
 	return view;
 }
 

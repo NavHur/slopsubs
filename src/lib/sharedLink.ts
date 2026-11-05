@@ -1,13 +1,18 @@
 import { useHydrated } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { DEFAULT_VIEW, type DrawnView, ViewSearch } from "#/lib/view";
+import {
+	DEFAULT_VIEW,
+	type DrawnView,
+	SCROLL_ONLY_PARAMS,
+	ViewSearch,
+} from "#/lib/view";
 
 /**
- * The params that change what the page draws. `chart` is left out: it only
- * picks the section to scroll to, so the prerendered page is right for it.
+ * The params that change what the page draws. The scroll-only ones are left
+ * out: the prerendered page is right for them.
  */
 const DRAWN_PARAMS = Object.keys(ViewSearch.shape).filter(
-	(key) => key !== "chart",
+	(key) => !(SCROLL_ONLY_PARAMS as readonly string[]).includes(key),
 );
 
 /**
