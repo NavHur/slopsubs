@@ -116,7 +116,7 @@ function ChartNav({ view }: { view: DrawnView }) {
 }
 
 /** The view without the scroll-only params, which only ChartNav follows. */
-function withoutChart(search: ViewSearch): DrawnView {
+function toDrawnView(search: ViewSearch): DrawnView {
 	const view = { ...search };
 	for (const key of SCROLL_ONLY_PARAMS) delete view[key];
 	return view;
@@ -131,7 +131,7 @@ function ValueView() {
 	// Structural sharing keeps the selection's identity while only `chart`
 	// changes, so the charts and sidebar skip those renders.
 	const view = useRenderedView(
-		Route.useSearch({ select: withoutChart, structuralSharing: true }),
+		Route.useSearch({ select: toDrawnView, structuralSharing: true }),
 	);
 	const update = useViewUpdate();
 	const [panelOpen, setPanelOpen] = useState(false);
