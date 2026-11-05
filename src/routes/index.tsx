@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { PricingKey } from "#/components/chart/PricingKey";
 import { RankedChart } from "#/components/chart/RankedChart";
@@ -132,6 +132,7 @@ function ValueView() {
 	});
 	const update = useViewUpdate();
 	const [panelOpen, setPanelOpen] = useState(false);
+	const panelOpenerRef = useRef<HTMLButtonElement>(null);
 	const closePanel = useCallback(() => setPanelOpen(false), []);
 
 	const benchmark = BENCHMARK_VIEWS[view.benchmark];
@@ -216,6 +217,7 @@ function ValueView() {
 						/>
 					</div>
 					<button
+						ref={panelOpenerRef}
 						type="button"
 						onClick={() => setPanelOpen(true)}
 						className="flex min-h-11 items-center gap-2 px-2 text-[15px] font-medium lg:hidden"
@@ -352,7 +354,12 @@ function ValueView() {
 						className="-mt-px h-px shrink-0"
 					/>
 				</main>
-				<SidePanel title="Plans & models" open={panelOpen} onClose={closePanel}>
+				<SidePanel
+					title="Plans & models"
+					open={panelOpen}
+					onClose={closePanel}
+					opener={panelOpenerRef}
+				>
 					<PlanList
 						plans={plans}
 						selected={planIds}
