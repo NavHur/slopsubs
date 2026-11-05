@@ -131,19 +131,35 @@ function useOverflowEdges(ref: RefObject<HTMLElement | null>): Overflow {
 		const observer = new ResizeObserver(update);
 		observer.observe(row);
 		row.addEventListener("scroll", update, { passive: true });
+		// A font swap widens the content without resizing or scrolling the row.
+		document.fonts.addEventListener("loadingdone", update);
 		return () => {
 			observer.disconnect();
 			row.removeEventListener("scroll", update);
+			document.fonts.removeEventListener("loadingdone", update);
 		};
 	}, [ref]);
 
 	return overflow;
 }
 
+/** Scrolls the row, and only the row, to its pressed control. The row is
+ * positioned, so `offsetLeft` measures from its own left edge. */
+function revealPressed(row: HTMLElement) {
+	const pressed = row.querySelector<HTMLElement>("[aria-pressed=true]");
+	if (!pressed) return;
+	row.scrollLeft = revealScrollLeft({
+		left: pressed.offsetLeft,
+		width: pressed.offsetWidth,
+		scrollLeft: row.scrollLeft,
+		clientWidth: row.clientWidth,
+		margin: FADE_PX,
+	});
+}
+
 /**
- * Scrolls the row, and only the row, to the pressed control when
- * `selectedKey` changes. The row is positioned, so `offsetLeft` measures
- * from its own left edge.
+ * Reveals the pressed control when `selectedKey` changes, and again when web
+ * fonts finish loading, since the swap widens the content under it.
  */
 function useRevealSelected(
 	ref: RefObject<HTMLElement | null>,
@@ -151,17 +167,16 @@ function useRevealSelected(
 ) {
 	// The key is the trigger; the pressed control is read from the DOM.
 	useEffect(() => {
-		const row = ref.current;
-		const pressed = row?.querySelector<HTMLElement>("[aria-pressed=true]");
-		if (!row || !pressed) return;
-		row.scrollLeft = revealScrollLeft({
-			left: pressed.offsetLeft,
-			width: pressed.offsetWidth,
-			scrollLeft: row.scrollLeft,
-			clientWidth: row.clientWidth,
-			margin: FADE_PX,
-		});
+		if (ref.current) revealPressed(ref.current);
 	}, [ref, selectedKey]);
+
+	useEffect(() => {
+		const row = ref.current;
+		if (!row) return;
+		const reveal = () => revealPressed(row);
+		document.fonts.addEventListener("loadingdone", reveal);
+		return () => document.fonts.removeEventListener("loadingdone", reveal);
+	}, [ref]);
 }
 
 type Edge = keyof Overflow;

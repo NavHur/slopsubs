@@ -1,9 +1,8 @@
 // Opens shared links against the prerendered build; fails on a hydration error,
 // a view left hidden, or one shown before slow scripts run. See README.md.
 
-import type { AddressInfo } from "node:net";
 import { type Browser, chromium } from "playwright-core";
-import { serveSite } from "./serve-site.ts";
+import { originOf, serveSite } from "./serve-site.ts";
 
 /** Each link and the benchmark tab it must end on. */
 const LINKS: { search: string; benchmark: string }[] = [
@@ -96,8 +95,7 @@ async function staysHiddenWhileSlow(
 }
 
 const server = await serveSite();
-const { port } = server.address() as AddressInfo;
-const origin = `http://127.0.0.1:${port}/`;
+const origin = originOf(server);
 const browser = await chromium.launch();
 let failures = 0;
 try {

@@ -92,8 +92,7 @@ It builds the site first, so the card always matches the current source.
 The card is the chart's own "Download PNG" export of the default view, fitted
 onto 1200x630. The icon is `public/favicon.svg` drawn full bleed, since iOS
 rounds its corners itself. The script needs Chromium for `playwright-core`
-(`bunx playwright-core install chromium`) and network access for the web font
-the export embeds.
+(`bunx playwright-core install chromium`).
 
 ## Profiling The Home Page
 
@@ -136,9 +135,36 @@ never loads keeps the view hidden for 10 s (`src/styles.css`), so a shorter net
 would flash the default view and shift the layout. It prints each link's layout
 shift too. Like the brand images, it needs Chromium for `playwright-core`.
 
+## Paint Metrics
+
+```bash
+vp build && bun run measure-paint
+```
+
+serves `dist/client` and loads `/` cold five times (`--runs N`, a positive whole number, for more) on a
+phone viewport, throttled like Lighthouse's mobile preset (`--throttle
+desktop` for the desktop one). The first request to any other origin waits
+three round trips for DNS, TCP, and TLS, which Chromium's throttle leaves out.
+It prints the median first paint, first contentful paint, largest contentful
+paint, cumulative layout shift, and when the last web font arrived. It then
+opens each `?benchmark=` view and fails if the selected benchmark ends up
+under the benchmark picker's edge fade once the fonts have loaded. Each
+view holds its font request until the benchmark is revealed in the fallback
+face, so a swap that pushes it under the fade fails the run.
+
 ## Styling
 
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+
+### DM Sans Fallback
+
+`src/styles.css` defines "DM Sans Fallback", a local Arial (or a metric twin)
+sized to DM Sans, so text barely moves when the web font swaps in.
+`size-adjust` is DM Sans's width divided by Arial's over the page's own text
+at each element's weight, measured at 1000px so hinting cannot round it. The
+overrides are DM Sans's ascent (992) and descent (310) per 1000 units, divided
+by `size-adjust`. Android ships none of these fonts, so there the text first
+paints in unadjusted Roboto and still shifts at the swap.
 
 ### Removing Tailwind CSS
 
