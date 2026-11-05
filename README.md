@@ -72,9 +72,10 @@ FrontierCode 2.0 comes from Cognition's own `data.json`, not a reseller.
 `build-plans` then keeps only the points some plan covers and writes the
 chart's copy.
 
-Each script validates what it writes against its schema in
-`src/domain/model.ts`, and the site imports the files without parsing them
-again. `src/data/data.test.ts` checks that every committed file is still
+The site imports three files without parsing them: `plans.json` and
+`chart-benchmarks.json` (parsed by `build-plans` before it writes them) and
+`samples.json` (parsed by `measure`), against the schemas in
+`src/domain/model.ts`. `src/data/data.test.ts` checks that each is still
 exactly what its schema outputs, so a hand edit fails CI rather than the page.
 
 ## Brand Images
