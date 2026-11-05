@@ -1,14 +1,5 @@
-// Measures first paint, layout shift, and web font arrival on the built site,
-// and checks that the benchmark picker keeps the selected benchmark in view
-// once the fonts have loaded. Build first; see README.md, "Paint Metrics".
-//
-//   bun run measure-paint [--runs 5] [--throttle mobile|desktop]
-//
-// Each load gets a fresh browser context (cold cache) on a phone viewport,
-// throttled like one of Lighthouse's presets (mobile by default).
-// ceiling: Chromium's throttle shares bandwidth evenly, where an HTTP/2 host
-// sends render-blocking CSS ahead of a preloaded font; a WebPageTest run on
-// the deployed site is the upgrade.
+// Measures paint, layout shift, font arrival, and the benchmark picker's reveal
+// on the built site. Build first; see README.md, "Paint Metrics".
 
 import { parseArgs } from "node:util";
 import { type Browser, chromium, type Page } from "playwright-core";
@@ -23,7 +14,9 @@ type Throttle = {
 	cpuSlowdown: number;
 };
 const KBPS = 1024 / 8;
-/** Lighthouse's simulated networks and CPUs. */
+/** Lighthouse's simulated networks and CPUs.
+ * ceiling: Chromium splits bandwidth evenly where HTTP/2 sends CSS before a
+ * preloaded font; a WebPageTest run on the deployed site is the upgrade. */
 const THROTTLES: Record<string, Throttle> = {
 	mobile: {
 		latencyMs: 150,
@@ -45,6 +38,9 @@ const { values: args } = parseArgs({
 	},
 });
 const runs = Number(args.runs);
+if (!Number.isSafeInteger(runs) || runs < 1) {
+	throw new Error("--runs takes a positive whole number");
+}
 const throttle = THROTTLES[args.throttle];
 if (!throttle) {
 	throw new Error(`--throttle takes ${Object.keys(THROTTLES).join(" or ")}`);
@@ -58,6 +54,8 @@ const CONNECT_RTTS = 3;
 const SETTLE_MS = 1000;
 /** ScrollRow.tsx's FADE_PX; Node cannot load that JSX module. */
 const FADE_PX = 24;
+/** ScrollRow.tsx's EDGE_SLACK_PX; Node cannot load that JSX module. */
+const EDGE_SLACK_PX = 2;
 const PICKER = 'fieldset[aria-label="Benchmark that defines a task"]';
 
 type PaintSample = {
@@ -135,8 +133,8 @@ async function loadSettled(page: Page, url: string): Promise<void> {
 	await page.waitForTimeout(SETTLE_MS);
 }
 
-/** When each web font finished arriving, in epoch ms. Resource timing
- * leaves out fonts a cross-origin stylesheet requests, so this listens. */
+/** When each web font finished arriving, in epoch ms, from request events
+ * because the finish time is not in the page's resource timing. */
 function recordFontArrivals(page: Page): number[] {
 	const arrivals: number[] = [];
 	page.on("requestfinished", (request) => {
@@ -166,6 +164,9 @@ async function samplePaint(browser: Browser, url: string) {
 				timeOrigin: performance.timeOrigin,
 			};
 		});
+		if (fontArrivals.length === 0) {
+			throw new Error(`${url} requested no web font (woff2) to time`);
+		}
 		const { timeOrigin, ...paint } = sample;
 		return {
 			...paint,
@@ -178,28 +179,69 @@ async function samplePaint(browser: Browser, url: string) {
 
 /** How far the pressed benchmark sits inside the picker's unfaded band;
  * negative means part of it is faded or hidden. */
+function measureClearance(page: Page): Promise<number> {
+	return page.evaluate(
+		({ picker, fade, slack }) => {
+			const fieldset = document.querySelector(picker);
+			const row = fieldset?.parentElement;
+			const pressed = fieldset?.querySelector("[aria-pressed=true]");
+			if (!row || !pressed) throw new Error("No benchmark picker");
+			const box = row.getBoundingClientRect();
+			const target = pressed.getBoundingClientRect();
+			const maxScroll = row.scrollWidth - row.clientWidth;
+			const fadeStart = row.scrollLeft > slack ? fade : 0;
+			const fadeEnd = row.scrollLeft < maxScroll - slack ? fade : 0;
+			return Math.min(
+				target.left - (box.left + fadeStart),
+				box.right - fadeEnd - target.right,
+			);
+		},
+		{ picker: PICKER, fade: FADE_PX, slack: EDGE_SLACK_PX },
+	);
+}
+
+/** Holds every font request until `release` runs. */
+async function holdFonts(page: Page): Promise<() => void> {
+	let release = () => {};
+	const gate = new Promise<void>((resolve) => {
+		release = resolve;
+	});
+	await page.route("**/*.woff2", async (route) => {
+		await gate;
+		await route.continue();
+	});
+	return release;
+}
+
+/** Waits for hydration to reveal the selected benchmark in the fallback face. */
+async function waitForFallbackReveal(page: Page): Promise<void> {
+	await page.waitForFunction((picker) => {
+		const pressed = document.querySelector(`${picker} [aria-pressed=true]`);
+		const hydrated = Object.keys(pressed ?? {}).some((key) =>
+			key.startsWith("__reactFiber"),
+		);
+		return hydrated && document.fonts.status === "loading";
+	}, PICKER);
+	await page.evaluate(
+		() =>
+			new Promise((done) =>
+				requestAnimationFrame(() => requestAnimationFrame(done)),
+			),
+	);
+}
+
+/** Loads the view with its fonts held until the reveal has run in the
+ * fallback face, then lets them arrive and measures. */
 async function pickerClearance(browser: Browser, url: string) {
 	const page = await throttledPage(browser, url);
 	try {
-		await loadSettled(page, url);
-		return await page.evaluate(
-			({ picker, fade }) => {
-				const fieldset = document.querySelector(picker);
-				const row = fieldset?.parentElement;
-				const pressed = fieldset?.querySelector("[aria-pressed=true]");
-				if (!row || !pressed) throw new Error("No benchmark picker");
-				const box = row.getBoundingClientRect();
-				const target = pressed.getBoundingClientRect();
-				const maxScroll = row.scrollWidth - row.clientWidth;
-				const fadeStart = row.scrollLeft > 2 ? fade : 0;
-				const fadeEnd = row.scrollLeft < maxScroll - 2 ? fade : 0;
-				return Math.min(
-					target.left - (box.left + fadeStart),
-					box.right - fadeEnd - target.right,
-				);
-			},
-			{ picker: PICKER, fade: FADE_PX },
-		);
+		const release = await holdFonts(page);
+		await page.goto(url, { waitUntil: "domcontentloaded" });
+		await waitForFallbackReveal(page);
+		release();
+		await page.evaluate(() => document.fonts.ready);
+		await page.waitForTimeout(SETTLE_MS);
+		return await measureClearance(page);
 	} finally {
 		await page.context().close();
 	}

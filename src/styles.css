@@ -1,13 +1,7 @@
 @import "tailwindcss";
 @import "@fontsource-variable/dm-sans/wght.css";
 
-/*
- * Local Arial (or a metric twin) sized to DM Sans, so text barely moves when
- * the web font swaps in. size-adjust is the width ratio of the page's own
- * text at each element's weight, measured at 1000px so hinting cannot round
- * it; the overrides are DM Sans's ascent (992) and descent (310) per 1000
- * units, divided by it.
- */
+/* Arial sized to DM Sans so the swap barely moves text; see README, "Styling". */
 @font-face {
   font-family: "DM Sans Fallback";
   font-weight: 100 500;
