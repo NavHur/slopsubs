@@ -21,13 +21,16 @@ import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/enums";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
+import { useRenderedView } from "#/lib/sharedLink";
 import { SCROLL_END_ID, useSectionNav } from "#/lib/useSectionNav";
 import {
 	CHART_SECTIONS,
 	type ChartSectionId,
 	DEFAULT_MODELS_VIEW,
+	type DrawnView,
 	hiddenReasoning,
 	isDefaultModelsView,
+	SCROLL_ONLY_PARAMS,
 	selectedFamilies,
 	selectedPlans,
 	toggled,
@@ -89,11 +92,12 @@ function useViewUpdate() {
  * The chart links. They own the section in view and the URL's `chart`, so
  * scrolling into another section re-renders the links, not the charts.
  */
-function ChartNav() {
-	const view = Route.useSearch();
+function ChartNav({ view }: { view: DrawnView }) {
+	// The URL's section, not the rendered one: the jump to it is set up on mount.
+	const linkedChart = Route.useSearch({ select: (search) => search.chart });
 	const update = useViewUpdate();
 	const router = useRouter();
-	const nav = useSectionNav(CHART_SECTIONS, view.chart, (chart) =>
+	const nav = useSectionNav(CHART_SECTIONS, linkedChart, (chart) =>
 		update({ chart }),
 	);
 	const sectionHref = (id: ChartSectionId) =>
@@ -111,10 +115,10 @@ function ChartNav() {
 	);
 }
 
-/** The view without `chart`, which only ChartNav follows. */
-function withoutChart(search: ViewSearch): Omit<ViewSearch, "chart"> {
+/** The view without the scroll-only params, which only ChartNav follows. */
+function toDrawnView(search: ViewSearch): DrawnView {
 	const view = { ...search };
-	delete view.chart;
+	for (const key of SCROLL_ONLY_PARAMS) delete view[key];
 	return view;
 }
 
@@ -126,10 +130,9 @@ async function exporter() {
 function ValueView() {
 	// Structural sharing keeps the selection's identity while only `chart`
 	// changes, so the charts and sidebar skip those renders.
-	const view = Route.useSearch({
-		select: withoutChart,
-		structuralSharing: true,
-	});
+	const view = useRenderedView(
+		Route.useSearch({ select: toDrawnView, structuralSharing: true }),
+	);
 	const update = useViewUpdate();
 	const [panelOpen, setPanelOpen] = useState(false);
 	const panelOpenerRef = useRef<HTMLButtonElement>(null);
@@ -208,7 +211,10 @@ function ValueView() {
 				<p className="text-[13px] text-muted max-sm:hidden">
 					What a task really costs on a subscription
 				</p>
-				<div className="-mr-2 ml-auto flex items-center gap-1">
+				<div
+					data-view-dependent
+					className="-mr-2 ml-auto flex items-center gap-1"
+				>
 					<ThemeToggle />
 					<div className="max-sm:hidden">
 						<ChartSettingsMenu
@@ -229,7 +235,10 @@ function ValueView() {
 					</button>
 				</div>
 			</header>
-			<div className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_288px]">
+			<div
+				data-view-dependent
+				className="flex-1 lg:grid lg:min-h-0 lg:grid-cols-[1fr_288px]"
+			>
 				<main
 					inert={panelOpen}
 					className="flex min-w-0 flex-col lg:overflow-y-auto"
@@ -238,7 +247,7 @@ function ValueView() {
 						slopsubs: what a task really costs on a subscription
 					</h1>
 					<div className="@container sticky top-0 z-10 flex min-h-(--section-nav-h) shrink-0 flex-wrap items-center gap-x-6 border-b border-line bg-bg px-4 sm:px-7">
-						<ChartNav />
+						<ChartNav view={view} />
 						<div className="flex min-w-0 flex-1 basis-[26rem] items-center gap-3 @min-[50rem]:border-l @min-[50rem]:border-line @min-[50rem]:pl-6">
 							<span aria-hidden className="shrink-0 text-[12px] text-subtle">
 								Benchmark

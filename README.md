@@ -117,6 +117,25 @@ reports:
 
 The unminified build replaces `dist/`; build again before deploying.
 
+## Shared Links
+
+Every view lives in the URL, but the site is prerendered once, with the
+default view. A link that sets view params hydrates with that default and
+draws its own view straight after, hidden until it has, so it neither fails
+hydration nor shifts. To check a set of shared links against the build:
+
+```bash
+bun run check-shared-links
+```
+
+It builds first, opens each link at a desktop and a phone width, and fails on
+any console error (React's hydration error #418 among them), a view left
+hidden, the wrong benchmark, or a view that shows before slow scripts have
+run. That last case holds the scripts back for 3 s: a bundle that is slow or
+never loads keeps the view hidden for 10 s (`src/styles.css`), so a shorter net
+would flash the default view and shift the layout. It prints each link's layout
+shift too. Like the brand images, it needs Chromium for `playwright-core`.
+
 ## Styling
 
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
