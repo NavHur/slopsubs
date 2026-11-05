@@ -28,11 +28,35 @@ export const CHART_SECTIONS = [
 ] as const;
 export type ChartSectionId = (typeof CHART_SECTIONS)[number];
 
-/** Keeps the list members this version knows, dropping the rest. */
-function knownMembers<T extends string>(known: readonly T[]) {
+// SAFETY: frontier keys are family ids from the same dataset.
+const FRONTIER = Object.keys(frontier) as FamilyId[];
+
+/** Families a plan covers, frontier first, in dataset order. */
+export const COVERED_FAMILIES: FamilyId[] = [
+	...new Set(plans.flatMap((p) => p.families)),
+].sort((a, b) => rank(a) - rank(b));
+
+function rank(family: FamilyId): number {
+	const index = FRONTIER.indexOf(family);
+	return index === -1 ? FRONTIER.length : index;
+}
+
+/**
+ * A selection of IDs this version knows. A list that names only unknown IDs
+ * comes from a stale link, so it reads as unset and the default applies; an
+ * empty list stays a deliberate "none selected".
+ */
+function knownSelection<T extends string>(known: readonly T[]) {
 	const isKnown = (item: unknown): item is T =>
 		known.some((value) => value === item);
-	return z.array(z.unknown()).transform((items) => items.filter(isKnown));
+	return z
+		.array(z.unknown())
+		.transform((items) => {
+			const kept = items.filter(isKnown);
+			return items.length > 0 && kept.length === 0 ? undefined : kept;
+		})
+		.optional()
+		.catch(undefined);
 }
 
 /**
@@ -50,26 +74,13 @@ export const ViewSearch = z.object({
 	api: z.boolean().default(true).catch(true),
 	/** Model names at the right end of each line; off gives the plot more room. */
 	labels: z.boolean().default(true).catch(true),
-	plans: z.array(z.string()).optional().catch(undefined),
-	families: z.array(z.string()).optional().catch(undefined),
-	hideReasoning: knownMembers(REASONING_LEVELS).optional().catch(undefined),
+	plans: knownSelection(plans.map((p) => p.id)),
+	families: knownSelection(COVERED_FAMILIES),
+	hideReasoning: knownSelection(REASONING_LEVELS),
 	/** The section in view; unset is the top of the page. */
 	chart: z.enum(CHART_SECTIONS).optional().catch(undefined),
 });
 export type ViewSearch = z.infer<typeof ViewSearch>;
-
-// SAFETY: frontier keys are family ids from the same dataset.
-const FRONTIER = Object.keys(frontier) as FamilyId[];
-
-/** Families a plan covers, frontier first, in dataset order. */
-export const COVERED_FAMILIES: FamilyId[] = [
-	...new Set(plans.flatMap((p) => p.families)),
-].sort((a, b) => rank(a) - rank(b));
-
-function rank(family: FamilyId): number {
-	const index = FRONTIER.indexOf(family);
-	return index === -1 ? FRONTIER.length : index;
-}
 
 /** The plans people compare first: each harness's headline tier. */
 const DEFAULT_PLANS = ["claude-max-20x", "chatgpt-pro-200", "opencode-go"];
