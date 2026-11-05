@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 
 /** Tailwind's `lg` breakpoint, where the sheet becomes the sidebar. */
 const WIDE_QUERY = "(min-width: 64rem)";
@@ -26,26 +26,46 @@ function listenForDismiss(onClose: () => void): () => void {
 }
 
 /**
+ * While `open`, moves focus to `initial`; on close, returns it to `opener`,
+ * which a tap may never have focused (Safari does not focus clicked buttons).
+ */
+function useFocusWhileOpen(
+	open: boolean,
+	initial: RefObject<HTMLElement | null>,
+	opener: RefObject<HTMLElement | null>,
+) {
+	useEffect(() => {
+		if (!open) return;
+		const returnTo = opener.current;
+		initial.current?.focus({ focusVisible: false });
+		return () => returnTo?.focus();
+	}, [open, initial, opener]);
+}
+
+/**
  * The sidebar on wide screens; below `lg` a full-screen sheet that opens
  * over the chart, like a native picker. The caller makes the rest of the
- * page `inert` while it is open.
+ * page `inert` while it is open, and closing it refocuses `opener`.
  */
 export function SidePanel({
 	title,
 	open,
 	onClose,
+	opener,
 	children,
 }: {
 	title: string;
 	open: boolean;
 	onClose: () => void;
+	/** The control that opens the sheet, refocused when it closes. */
+	opener: RefObject<HTMLElement | null>;
 	children: React.ReactNode;
 }) {
 	const doneRef = useRef<HTMLButtonElement>(null);
+	useFocusWhileOpen(open, doneRef, opener);
 
 	useEffect(() => {
 		if (!open) return;
-		doneRef.current?.focus({ focusVisible: false });
 		const { overflow } = document.body.style;
 		document.body.style.overflow = "hidden";
 		const stopListening = listenForDismiss(onClose);

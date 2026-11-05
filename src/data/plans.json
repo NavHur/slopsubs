@@ -20,10 +20,10 @@
     "confidence": "primary",
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 184.6153846153846,
+      "weeklyCapApiUsd": 276.92307692307696,
       "by": "Theo",
-      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
-      "basis": "A tenth of Theo's Ultra figure (Ultra is 10x Pro weekly)"
+      "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
+      "basis": "Theo: 60x the price, $1,200 a month of API-priced inference"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
@@ -52,10 +52,10 @@
     "confidence": "primary",
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 923.0769230769231,
+      "weeklyCapApiUsd": 1384.6153846153848,
       "by": "Theo",
-      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
-      "basis": "Half Theo's Ultra figure (Max is 5x Pro weekly, Ultra 10x)"
+      "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
+      "basis": "Theo: 60x the price, $6,000 a month of API-priced inference"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {
@@ -86,10 +86,10 @@
     "confidence": "primary",
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 1846.1538461538462,
+      "weeklyCapApiUsd": 2769.2307692307695,
       "by": "Theo",
-      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=28s",
-      "basis": "Theo: $200 in, $8,000 a month of API-priced inference out (as Max 20x, now Ultra)"
+      "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
+      "basis": "Theo: 60x the price, $12,000 a month of API-priced inference"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {
@@ -133,10 +133,10 @@
     "confidence": "primary",
     "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 57.386,
+      "weeklyCapApiUsd": 48.46153846153847,
       "by": "Theo",
-      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
-      "basis": "A tenth of Theo's Pro 200 figure (Pro 200 was then 10x Plus)"
+      "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
+      "basis": "Theo: 10.5x the price, $210 a month of API-priced inference"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
@@ -178,10 +178,10 @@
     "confidence": "primary",
     "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 573.86,
+      "weeklyCapApiUsd": 484.61538461538464,
       "by": "Theo",
-      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
-      "basis": "10x Theo's Plus figure (launched at 5x Plus, then doubled)"
+      "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
+      "basis": "Theo: 21x the price, $2,100 a month of API-priced inference"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
@@ -223,10 +223,10 @@
     "confidence": "primary",
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
     "reportedCap": {
-      "weeklyCapApiUsd": 1147.72,
+      "weeklyCapApiUsd": 969.2307692307693,
       "by": "Theo",
-      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1037s",
-      "basis": "Twice Theo's measured $573.86 a week; OpenAI doubled the allowance on 2026-10-29"
+      "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
+      "basis": "Theo: 21x the price, $4,200 a month of API-priced inference"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
@@ -268,10 +268,10 @@
     "confidence": "primary",
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
     "reportedCap": {
-      "weeklyCapApiUsd": 2869.3,
+      "weeklyCapApiUsd": 2423.0769230769233,
       "by": "Theo",
-      "url": "https://www.youtube.com/watch?v=nYA0yASgaZI&t=1474s",
-      "basis": "5x Theo's Pro 200 figure (25x Plus vs 10x, then doubled)"
+      "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
+      "basis": "Theo: 21x the price, $10,500 a month of API-priced inference"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
@@ -344,7 +344,7 @@
         "longcat-2-0": 148.5714285714286,
         "mimo-v2-6-pro": 15,
         "mimo-v2-6-flash": 60,
-        "mimo-v2-5-pro": 15.558620689655175,
+        "mimo-v2-5-pro": 15,
         "mimo-v2-5-0424": 57,
         "hy3": 57.78,
         "deepseek-v4-1-flash-1017": 100,
@@ -433,7 +433,7 @@
         "longcat-2-0": 594.2857142857144,
         "mimo-v2-6-pro": 60,
         "mimo-v2-6-flash": 120,
-        "mimo-v2-5-pro": 62.2344827586207,
+        "mimo-v2-5-pro": 60,
         "mimo-v2-5-0424": 114,
         "hy3": 231.12,
         "deepseek-v4-1-flash-1017": 200,

@@ -11,7 +11,7 @@ import type { PointMarker } from "./series";
 
 export const LABEL_GAP = 22;
 /** Below this width series labels leave the plot for a legend underneath. */
-const COMPACT_WIDTH = 640;
+export const COMPACT_WIDTH = 640;
 /** Narrowest clear space between neighbouring x-axis tick labels. */
 export const MIN_TICK_LABEL_GAP_PX = 12;
 
@@ -32,7 +32,7 @@ const COMPACT_MIN_HEIGHT = 360;
 const COMPACT_MAX_HEIGHT = 480;
 const COMPACT_HEIGHT_RATIO = 1.15;
 /** Right margin holding the model labels beside a wide plot. */
-const LABEL_COLUMN_PX = 180;
+export const LABEL_COLUMN_PX = 180;
 /** Right margin without labels: room for half the last x-axis tick label. */
 const PLOT_EDGE_PX = 24;
 
@@ -105,7 +105,7 @@ export function makeScales(
  * Mantissas of the log ticks within each decade, densest first: 1-2-5, then
  * the near-even 1-3, then decades alone.
  */
-const LOG_TICK_MANTISSAS = [[1, 2, 5], [1, 3], [1]] as const;
+export const LOG_TICK_MANTISSAS = [[1, 2, 5], [1, 3], [1]] as const;
 /** Linear tick counts tried, most first; d3 treats each as a hint. */
 const LINEAR_TICK_COUNTS = [6, 5, 4, 3, 2, 1] as const;
 
@@ -133,9 +133,9 @@ function linearCandidates(x: XScale): number[][] {
 
 function logCandidates([lo, hi]: number[]): number[][] {
 	const byMantissas = LOG_TICK_MANTISSAS.map((mantissas) =>
-		logTicks(lo, hi, mantissas),
+		logTickValues(lo, hi, mantissas),
 	);
-	const decades = logTicks(lo, hi, [1]);
+	const decades = logTickValues(lo, hi, [1]);
 	const strides = Array.from({ length: decades.length - 1 }, (_, i) => i + 2);
 	const everyNthDecade = strides.map((stride) =>
 		decades.filter((_, i) => i % stride === 0),
@@ -143,12 +143,14 @@ function logCandidates([lo, hi]: number[]): number[][] {
 	return [...byMantissas, ...everyNthDecade];
 }
 
-function logTicks(
+/** Every mantissa × power of ten within [lo, hi]; none when lo is not positive. */
+export function logTickValues(
 	lo: number,
 	hi: number,
 	mantissas: readonly number[],
 ): number[] {
 	const ticks: number[] = [];
+	if (!(lo > 0)) return ticks;
 	for (
 		let e = Math.floor(Math.log10(lo));
 		e <= Math.ceil(Math.log10(hi));

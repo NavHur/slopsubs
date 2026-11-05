@@ -3,6 +3,7 @@ import { describe, expect, it } from "vite-plus/test";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { BENCHMARK_VIEWS, type BenchmarkView } from "#/lib/benchmarks";
+import { familyColor } from "#/lib/families";
 import { PointTooltip } from "./PointTooltip";
 
 const opus = "claude-opus-5-5" as FamilyId;
@@ -31,8 +32,8 @@ const point: ValuePoint = {
 	pricing: { kind: "api" },
 };
 
-function tooltipText(view: BenchmarkView, shown: ValuePoint = point) {
-	const html = renderToStaticMarkup(
+function tooltipHtml(view: BenchmarkView, shown: ValuePoint = point) {
+	return renderToStaticMarkup(
 		<PointTooltip
 			point={shown}
 			anchor={{ x: 0, y: 0 }}
@@ -42,7 +43,10 @@ function tooltipText(view: BenchmarkView, shown: ValuePoint = point) {
 			view={view}
 		/>,
 	);
-	return html.replace(/<[^>]+>/g, " ");
+}
+
+function tooltipText(view: BenchmarkView, shown: ValuePoint = point) {
+	return tooltipHtml(view, shown).replace(/<[^>]+>/g, " ");
 }
 
 describe("point tooltip", () => {
@@ -66,5 +70,15 @@ describe("point tooltip", () => {
 		expect(tooltipText(BENCHMARK_VIEWS.intelligence, untimed)).not.toContain(
 			"Time per task",
 		);
+	});
+
+	it("uses the brand colour only for the model's dot, never its name", () => {
+		const html = tooltipHtml(BENCHMARK_VIEWS.intelligence);
+		const brand = familyColor(opus);
+		const dot = html.match(
+			/<svg aria-hidden="true"[^>]*><circle[^>]*fill="([^"]*)"/,
+		);
+		expect(dot?.[1]).toBe(brand);
+		expect(html.split(brand)).toHaveLength(2);
 	});
 });

@@ -9,6 +9,7 @@ import {
 	isDefaultModelsView,
 	NOTABLE_FAMILIES,
 	selectedFamilies,
+	selectedPlans,
 	toggledGroup,
 	ViewSearch,
 } from "./view";
@@ -56,6 +57,44 @@ describe("stale or hand-edited links", () => {
 			chart: undefined,
 		});
 		expect(hiddenReasoning(parsed)).toEqual(["none"]);
+	});
+
+	it("open the default models when every model they name is retired", () => {
+		expect(selectedFamilies(view({ families: ["retired-family"] }))).toEqual(
+			selectedFamilies(view({})),
+		);
+	});
+
+	it("keep the models that still exist", () => {
+		expect(
+			selectedFamilies(view({ families: ["retired-family", opus] })),
+		).toEqual([opus]);
+	});
+
+	it("still show no models when the sender deselected them all", () => {
+		expect(selectedFamilies(view({ families: [] }))).toEqual([]);
+	});
+
+	it("open the default plans when every plan they name is retired", () => {
+		expect(selectedPlans(view({ plans: ["retired-plan"] }))).toEqual(
+			selectedPlans(view({})),
+		);
+	});
+
+	it("keep the plans that still exist", () => {
+		expect(
+			selectedPlans(view({ plans: ["retired-plan", "opencode-go"] })),
+		).toEqual(["opencode-go"]);
+	});
+
+	it("still show no plans when the sender deselected them all", () => {
+		expect(selectedPlans(view({ plans: [] }))).toEqual([]);
+	});
+
+	it("hide the default efforts when every effort they hide is unknown", () => {
+		expect(
+			hiddenReasoning(view({ hideReasoning: ["retired-effort"] })),
+		).toEqual(["none"]);
 	});
 });
 

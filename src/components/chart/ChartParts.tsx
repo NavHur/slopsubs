@@ -7,6 +7,7 @@ import type { LineLabel } from "#/lib/chart";
 import { familyLabId } from "#/lib/families";
 import { formatUsd } from "#/lib/format";
 import { ProviderLogo } from "../ProviderLogo";
+import { ColorDot } from "./ColorDot";
 import {
 	type AxisReadouts,
 	type AxisScale,
@@ -141,7 +142,7 @@ function pointLabel(
 }
 
 /** A key handler that runs `action` on Enter or Space, as a button does. */
-function onActivationKey(action: () => void) {
+export function onActivationKey(action: () => void) {
 	return (event: KeyboardEvent) => {
 		if (event.key !== "Enter" && event.key !== " ") return;
 		event.preventDefault();
@@ -153,7 +154,7 @@ function onActivationKey(action: () => void) {
  * A focus handler that runs `action` for keyboard focus only, since a mouse
  * press focuses the point too.
  */
-function onKeyboardFocus(action: () => void) {
+export function onKeyboardFocus(action: () => void) {
 	return (event: FocusEvent) => {
 		if (event.currentTarget.matches(":focus-visible")) action();
 	};
@@ -276,7 +277,7 @@ export function ModelTags({
 const TAG_LOGO_SIZE = 14;
 
 /** Hover or focus previews the model; click, Enter or Space pins it. */
-function ModelTag({
+export function ModelTag({
 	model,
 	from,
 	at,
@@ -313,6 +314,8 @@ function ModelTag({
 			aria-pressed={pinned}
 			aria-label={`Highlight ${model.name}`}
 			opacity={dimmed ? 0.25 : 1}
+			// A press on a label pins it rather than starting a camera turn.
+			onPointerDown={(event) => event.stopPropagation()}
 			onMouseEnter={preview("hover")}
 			onMouseLeave={endPreview("hover")}
 			onFocus={preview("focus")}
@@ -343,8 +346,7 @@ function ModelTag({
 				x={at[0] + TAG_LOGO_SIZE + 5}
 				y={at[1]}
 				dy="0.32em"
-				fill={model.color}
-				className="text-[13px] font-medium group-focus-visible:underline"
+				className="fill-fg text-[13px] font-medium group-focus-visible:underline"
 			>
 				{model.name}
 			</text>
@@ -396,14 +398,10 @@ function LegendButton({
 			type="button"
 			aria-pressed={pinned}
 			onClick={() => onHighlight({ type: "toggle", modelId: model.id })}
-			className="flex min-h-8 w-full items-center gap-2 text-left transition-opacity"
-			style={{ color: model.color, opacity: muted ? 0.4 : 1 }}
+			className="flex min-h-8 w-full items-center gap-2 text-left text-fg transition-opacity"
+			style={{ opacity: muted ? 0.4 : 1 }}
 		>
-			<span
-				aria-hidden
-				className="size-2 shrink-0 rounded-full"
-				style={{ backgroundColor: model.color }}
-			/>
+			<ColorDot color={model.color} />
 			<ProviderLogo lab={familyLabId(model.id)} />
 			<span className="truncate">{model.name}</span>
 		</button>

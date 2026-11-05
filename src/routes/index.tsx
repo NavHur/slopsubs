@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { AxisScale } from "#/components/chart/geometry";
 import { PricingKey } from "#/components/chart/PricingKey";
 import { RankedChart } from "#/components/chart/RankedChart";
@@ -15,12 +15,13 @@ import { SectionNav } from "#/components/SectionNav";
 import { Segmented, Toggle } from "#/components/Segmented";
 import { type Coverage, FamilyList, PlanList } from "#/components/Sidebar";
 import { SidePanel } from "#/components/SidePanel";
+import { TradeoffSection } from "#/components/TradeoffSection";
 import { leaderboards, plans, samples } from "#/data";
 import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/enums";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
-import { useSectionNav } from "#/lib/useSectionNav";
+import { SCROLL_END_ID, useSectionNav } from "#/lib/useSectionNav";
 import {
 	CHART_SECTIONS,
 	type ChartSectionId,
@@ -45,6 +46,7 @@ const BENCHMARK_OPTIONS = BENCHMARK_IDS.map((id) => ({
 
 const SECTION_LABELS: Record<ChartSectionId, string> = {
 	"cost-vs-score": "Cost vs score",
+	tradeoffs: "Cost, time, score",
 	"tasks-per-week": "Tasks per week",
 	"ranked-cost": "Cost per task",
 };
@@ -72,32 +74,66 @@ const SCALE_OPTIONS = [
 	{ value: "log", label: "Log" },
 ] as const satisfies readonly { value: AxisScale; label: string }[];
 
+/** Patches the page's search params in place: no history entry, no scroll. */
+function useViewUpdate() {
+	const navigate = Route.useNavigate();
+	return (patch: Partial<ViewSearch>) =>
+		navigate({
+			search: (prev) => ({ ...prev, ...patch }),
+			replace: true,
+			resetScroll: false,
+		});
+}
+
+/**
+ * The chart links. They own the section in view and the URL's `chart`, so
+ * scrolling into another section re-renders the links, not the charts.
+ */
+function ChartNav() {
+	const view = Route.useSearch();
+	const update = useViewUpdate();
+	const router = useRouter();
+	const nav = useSectionNav(CHART_SECTIONS, view.chart, (chart) =>
+		update({ chart }),
+	);
+	const sectionHref = (id: ChartSectionId) =>
+		router.buildLocation({
+			to: "/",
+			search: { ...view, chart: id === CHART_SECTIONS[0] ? undefined : id },
+		}).href;
+	return (
+		<SectionNav
+			sections={SECTION_LINKS}
+			active={nav.active}
+			hrefFor={sectionHref}
+			onSelect={nav.scrollTo}
+		/>
+	);
+}
+
+/** The view without `chart`, which only ChartNav follows. */
+function withoutChart(search: ViewSearch): Omit<ViewSearch, "chart"> {
+	const view = { ...search };
+	delete view.chart;
+	return view;
+}
+
 /** Loaded on demand so visitors who never export skip the code. */
 async function exporter() {
 	return (await import("#/lib/exportPng")).downloadChartPng;
 }
 
 function ValueView() {
-	const view = Route.useSearch();
-	const navigate = Route.useNavigate();
-	const router = useRouter();
+	// Structural sharing keeps the selection's identity while only `chart`
+	// changes, so the charts and sidebar skip those renders.
+	const view = Route.useSearch({
+		select: withoutChart,
+		structuralSharing: true,
+	});
+	const update = useViewUpdate();
 	const [panelOpen, setPanelOpen] = useState(false);
+	const panelOpenerRef = useRef<HTMLButtonElement>(null);
 	const closePanel = useCallback(() => setPanelOpen(false), []);
-	const update = (patch: Partial<ViewSearch>) =>
-		navigate({
-			search: (prev) => ({ ...prev, ...patch }),
-			replace: true,
-			resetScroll: false,
-		});
-	const nav = useSectionNav(CHART_SECTIONS, view.chart, (chart) =>
-		update({ chart }),
-	);
-
-	const sectionHref = (id: ChartSectionId) =>
-		router.buildLocation({
-			to: "/",
-			search: { ...view, chart: id === CHART_SECTIONS[0] ? undefined : id },
-		}).href;
 
 	const benchmark = BENCHMARK_VIEWS[view.benchmark];
 	const leaderboard = leaderboards[view.benchmark];
@@ -181,6 +217,7 @@ function ValueView() {
 						/>
 					</div>
 					<button
+						ref={panelOpenerRef}
 						type="button"
 						onClick={() => setPanelOpen(true)}
 						className="flex min-h-11 items-center gap-2 px-2 text-[15px] font-medium lg:hidden"
@@ -201,19 +238,15 @@ function ValueView() {
 						slopsubs: what a task really costs on a subscription
 					</h1>
 					<div className="@container sticky top-0 z-10 flex min-h-(--section-nav-h) shrink-0 flex-wrap items-center gap-x-6 border-b border-line bg-bg px-4 sm:px-7">
-						<SectionNav
-							sections={SECTION_LINKS}
-							active={nav.active}
-							hrefFor={sectionHref}
-							onSelect={nav.scrollTo}
-						/>
+						<ChartNav />
 						<div className="flex min-w-0 flex-1 basis-[26rem] items-center gap-3 @min-[50rem]:border-l @min-[50rem]:border-line @min-[50rem]:pl-6">
 							<span aria-hidden className="shrink-0 text-[12px] text-subtle">
 								Benchmark
 							</span>
 							<ScrollRow
 								selectedKey={view.benchmark}
-								className="-mr-4 min-w-0 pr-4 sm:mr-0 sm:pr-0"
+								className="-mr-4 sm:mr-0"
+								rowClassName="pr-4 sm:pr-0"
 							>
 								<Segmented
 									label="Benchmark that defines a task"
@@ -229,7 +262,7 @@ function ValueView() {
 						title={benchmark.chartTitle}
 						canExport={points.length > 0}
 						onExport={exportValueChart}
-						className="lg:h-[calc(100dvh-var(--header-h)-var(--section-nav-h))] lg:min-h-[540px]"
+						className="lg:min-h-[540px]"
 						controls={
 							<>
 								<Toggle
@@ -264,6 +297,7 @@ function ValueView() {
 							className="mt-3 lg:hidden"
 						/>
 					</ChartSection>
+					<TradeoffSection points={points} view={benchmark} />
 					<ChartSection
 						id="tasks-per-week"
 						title="Tasks per week on each plan"
@@ -313,8 +347,19 @@ function ValueView() {
 						)}
 					</ChartSection>
 					<PageFooter benchmark={benchmark} fetchedAt={leaderboard.fetchedAt} />
+					{/* Overlaps the footer's last pixel, so it adds no height. */}
+					<div
+						id={SCROLL_END_ID}
+						aria-hidden
+						className="-mt-px h-px shrink-0"
+					/>
 				</main>
-				<SidePanel title="Plans & models" open={panelOpen} onClose={closePanel}>
+				<SidePanel
+					title="Plans & models"
+					open={panelOpen}
+					onClose={closePanel}
+					opener={panelOpenerRef}
+				>
 					<PlanList
 						plans={plans}
 						selected={planIds}

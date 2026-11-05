@@ -17,18 +17,41 @@ export type ReasoningLevel = (typeof REASONING_LEVELS)[number];
 /** The page's chart sections, top to bottom. */
 export const CHART_SECTIONS = [
 	"cost-vs-score",
+	"tradeoffs",
 	"tasks-per-week",
 	"ranked-cost",
 ] as const;
 export type ChartSectionId = (typeof CHART_SECTIONS)[number];
 
-/** Keeps the list members this version knows, dropping the rest. */
-function knownMembers<T extends string>(known: readonly T[]) {
+// SAFETY: frontier keys are family ids from the same dataset.
+const FRONTIER = Object.keys(frontier) as FamilyId[];
+
+/** Families a plan covers, frontier first, in dataset order. */
+export const COVERED_FAMILIES: FamilyId[] = [
+	...new Set(plans.flatMap((p) => p.families)),
+].sort((a, b) => rank(a) - rank(b));
+
+function rank(family: FamilyId): number {
+	const index = FRONTIER.indexOf(family);
+	return index === -1 ? FRONTIER.length : index;
+}
+
+/**
+ * A selection of IDs this version knows. A list that names only unknown IDs
+ * comes from a stale link, so it reads as unset and the default applies; an
+ * empty list stays a deliberate "none selected".
+ */
+function knownSelection<T extends string>(known: readonly T[]) {
 	const isKnown = (item: unknown): item is T =>
 		known.some((value) => value === item);
-	return z.pipe(
-		z.array(z.unknown()),
-		z.transform((items) => items.filter(isKnown)),
+	return optionalValid(
+		z.pipe(
+			z.array(z.unknown()),
+			z.transform((items) => {
+				const kept = items.filter(isKnown);
+				return items.length > 0 && kept.length === 0 ? undefined : kept;
+			}),
+		),
 	);
 }
 
@@ -58,26 +81,13 @@ export const ViewSearch = z.object({
 	api: withFallback(z.boolean(), true),
 	/** Model names at the right end of each line; off gives the plot more room. */
 	labels: withFallback(z.boolean(), true),
-	plans: optionalValid(z.array(z.string())),
-	families: optionalValid(z.array(z.string())),
-	hideReasoning: optionalValid(knownMembers(REASONING_LEVELS)),
+	plans: knownSelection<string>(plans.map((p) => p.id)),
+	families: knownSelection<string>(COVERED_FAMILIES),
+	hideReasoning: knownSelection(REASONING_LEVELS),
 	/** The section in view; unset is the top of the page. */
 	chart: optionalValid(z.enum(CHART_SECTIONS)),
 });
 export type ViewSearch = z.infer<typeof ViewSearch>;
-
-// SAFETY: frontier keys are family ids from the same dataset.
-const FRONTIER = Object.keys(frontier) as FamilyId[];
-
-/** Families a plan covers, frontier first, in dataset order. */
-export const COVERED_FAMILIES: FamilyId[] = [
-	...new Set(plans.flatMap((p) => p.families)),
-].sort((a, b) => rank(a) - rank(b));
-
-function rank(family: FamilyId): number {
-	const index = FRONTIER.indexOf(family);
-	return index === -1 ? FRONTIER.length : index;
-}
 
 /** The plans people compare first: each harness's headline tier. */
 const DEFAULT_PLANS = ["claude-max-20x", "chatgpt-pro-200", "opencode-go"];

@@ -11,6 +11,7 @@ import {
 	formatUsd,
 } from "#/lib/format";
 import { ProviderLogo } from "../ProviderLogo";
+import { ColorDot } from "./ColorDot";
 import { type Box, tooltipPlacement } from "./geometry";
 
 /**
@@ -66,13 +67,9 @@ export function PointTooltip({
 		>
 			<div className="flex min-h-7 items-center justify-between gap-2">
 				<div className="flex min-w-0 items-center gap-2 text-[13px] font-semibold text-fg">
+					<ColorDot color={familyColor(benchmark.family)} />
 					<ProviderLogo lab={familyLabId(benchmark.family)} size={16} />
-					<span
-						className="truncate"
-						style={{ color: familyColor(benchmark.family) }}
-					>
-						{familyName(benchmark.family)}
-					</span>
+					<span className="truncate">{familyName(benchmark.family)}</span>
 				</div>
 				{pinned && <CloseButton onClose={onClose} />}
 			</div>
