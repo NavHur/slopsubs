@@ -12,7 +12,8 @@ export function requirePainted(
 	url: string,
 	metrics: { firstPaintMs: number; fcpMs: number; lcpMs: number },
 ): void {
-	for (const [name, ms] of Object.entries(metrics)) {
+	const { firstPaintMs, fcpMs, lcpMs } = metrics;
+	for (const [name, ms] of Object.entries({ firstPaintMs, fcpMs, lcpMs })) {
 		if (!(ms > 0)) {
 			throw new Error(`${url} recorded no ${name}; got ${ms}`);
 		}

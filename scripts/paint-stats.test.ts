@@ -19,6 +19,11 @@ describe("requirePainted", () => {
 		expect(() => requirePainted("/", painted)).not.toThrow();
 	});
 
+	it("ignores the other fields of a full sample, such as a CLS of 0", () => {
+		const sample = { ...painted, cls: 0, timeOrigin: 0 };
+		expect(() => requirePainted("/", sample)).not.toThrow();
+	});
+
 	it("throws on a missing first paint (NaN)", () => {
 		expect(() =>
 			requirePainted("/", { ...painted, firstPaintMs: Number.NaN }),
