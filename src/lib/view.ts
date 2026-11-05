@@ -82,7 +82,7 @@ export const ViewSearch = z.object({
 	/** Model names at the right end of each line; off gives the plot more room. */
 	labels: withFallback(z.boolean(), true),
 	// Plain strings, not brands: structural sharing needs JSON shapes and reads a
-	// brand as String's methods. selectedPlans, selectedFamilies return brands.
+	// brand as String's methods. selectedPlans and selectedFamilies return brands.
 	plans: knownSelection<string>(plans.map((p) => p.id)),
 	families: knownSelection<string>(COVERED_FAMILIES),
 	hideReasoning: knownSelection(REASONING_LEVELS),
