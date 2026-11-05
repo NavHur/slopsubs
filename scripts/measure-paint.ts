@@ -133,8 +133,8 @@ async function loadSettled(page: Page, url: string): Promise<void> {
 	await page.waitForTimeout(SETTLE_MS);
 }
 
-/** When each web font finished arriving, in epoch ms, from request events
- * because the finish time is not in the page's resource timing. */
+/** When each web font finished arriving, in epoch ms; `requestfinished`
+ * reports it directly. */
 function recordFontArrivals(page: Page): number[] {
 	const arrivals: number[] = [];
 	page.on("requestfinished", (request) => {
@@ -213,21 +213,17 @@ async function holdFonts(page: Page): Promise<() => void> {
 	return release;
 }
 
-/** Waits for hydration to reveal the selected benchmark in the fallback face. */
+/** Waits until the linked view has rendered and been shown, which is after
+ * ScrollRow revealed its benchmark, with the fonts still held. */
 async function waitForFallbackReveal(page: Page): Promise<void> {
 	await page.waitForFunction((picker) => {
 		const pressed = document.querySelector(`${picker} [aria-pressed=true]`);
 		const hydrated = Object.keys(pressed ?? {}).some((key) =>
 			key.startsWith("__reactFiber"),
 		);
-		return hydrated && document.fonts.status === "loading";
+		const shown = !("viewPending" in document.documentElement.dataset);
+		return hydrated && shown && document.fonts.status === "loading";
 	}, PICKER);
-	await page.evaluate(
-		() =>
-			new Promise((done) =>
-				requestAnimationFrame(() => requestAnimationFrame(done)),
-			),
-	);
 }
 
 /** Loads the view with its fonts held until the reveal has run in the
