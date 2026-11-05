@@ -49,6 +49,42 @@ const config = defineConfig({
 			"typescript/no-inferrable-types": "error",
 			"unicorn/prefer-node-protocol": "error",
 		},
+		overrides: [
+			{
+				// Classic zod and the schemas stay out of the client bundle; validate
+				// at import (scripts/*, data.test.ts). zod/mini and types are fine.
+				files: [
+					"src/components/**",
+					"src/routes/**",
+					"src/lib/**",
+					"src/data/index.ts",
+				],
+				rules: {
+					"no-restricted-imports": [
+						"error",
+						{
+							paths: [
+								{
+									name: "zod",
+									message:
+										"Use zod/mini: classic zod bloats the client bundle.",
+								},
+								{
+									name: "#/domain/model",
+									allowTypeImports: true,
+									message:
+										"Import types only: the schemas stay out of the client.",
+								},
+							],
+						},
+					],
+				},
+			},
+			{
+				files: ["**/*.test.ts", "**/*.test.tsx"],
+				rules: { "no-restricted-imports": "off" },
+			},
+		],
 		ignorePatterns: ["src/routeTree.gen.ts", "src/data/*.json"],
 		options: { typeAware: true, typeCheck: true },
 	},
