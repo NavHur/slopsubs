@@ -58,19 +58,22 @@ const config = defineConfig({
 					"src/routes/**",
 					"src/lib/**",
 					"src/data/index.ts",
+					"src/domain/**",
 				],
 				rules: {
 					"no-restricted-imports": [
 						"error",
 						{
-							paths: [
-								{
-									name: "zod",
+							paths: ["zod", "zod/v3", "zod/v4", "zod/v4/classic"].map(
+								(name) => ({
+									name,
 									message:
 										"Use zod/mini: classic zod bloats the client bundle.",
-								},
+								}),
+							),
+							patterns: [
 								{
-									name: "#/domain/model",
+									group: ["#/domain/model", "**/domain/model*", "./model*"],
 									allowTypeImports: true,
 									message:
 										"Import types only: the schemas stay out of the client.",
@@ -81,7 +84,12 @@ const config = defineConfig({
 				},
 			},
 			{
-				files: ["**/*.test.ts", "**/*.test.tsx"],
+				// The import side of src/domain parses with the schemas and never ships.
+				files: [
+					"src/domain/{model,catalog,aa-index-cost,aa-evals,leaderboards,pricing}.ts",
+					"**/*.test.ts",
+					"**/*.test.tsx",
+				],
 				rules: { "no-restricted-imports": "off" },
 			},
 		],
