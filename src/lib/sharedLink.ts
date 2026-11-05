@@ -15,7 +15,7 @@ const DRAWN_PARAMS = Object.keys(ViewSearch.shape).filter(
  * `data-view-pending` on <html>, which hides the prerendered default view
  * (laid out, not shown) until the link's own view renders; see styles.css.
  */
-export const PENDING_VIEW_SCRIPT = `try{var p=new URLSearchParams(location.search);if(${JSON.stringify(DRAWN_PARAMS)}.some(function(k){return p.has(k)}))document.documentElement.dataset.viewPending=""}catch(e){}`;
+export const PENDING_VIEW_SCRIPT = `var p=new URLSearchParams(location.search);if(${JSON.stringify(DRAWN_PARAMS)}.some(function(k){return p.has(k)}))document.documentElement.dataset.viewPending=""`;
 
 /**
  * Shows the page two frames after the link's view renders. Chrome counts an

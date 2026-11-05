@@ -25,4 +25,10 @@ describe("PENDING_VIEW_SCRIPT", () => {
 		expect(hidesPrerender("?chart=ranked-cost&scale=linear")).toBe(true);
 		expect(hidesPrerender("?hideReasoning=%5B%5D")).toBe(true);
 	});
+
+	it("lets a failure reach the console instead of swallowing it", () => {
+		expect(() =>
+			runInNewContext(PENDING_VIEW_SCRIPT, { URLSearchParams }),
+		).toThrow(/location/);
+	});
 });
