@@ -131,10 +131,10 @@ bun run check-shared-links
 It builds first, opens each link at a desktop and a phone width, and fails on
 any console error (React's hydration error #418 among them), a view left
 hidden, the wrong benchmark, or a view that shows before slow scripts have
-run. That last case holds the scripts back for 3 s: the prerender is meant to
-stay hidden for 10 s without scripts (`src/styles.css`), so a shorter net would
-flash the default view and shift the layout. It prints each link's layout shift
-too. Like the brand images, it needs Chromium for `playwright-core`.
+run. That last case holds the scripts back for 3 s: a bundle that is slow or
+never loads keeps the view hidden for 10 s (`src/styles.css`), so a shorter net
+would flash the default view and shift the layout. It prints each link's layout
+shift too. Like the brand images, it needs Chromium for `playwright-core`.
 
 ## Styling
 
