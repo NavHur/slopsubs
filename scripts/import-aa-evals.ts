@@ -9,7 +9,7 @@ import {
 	type ResolvedRow,
 	type Skips,
 } from "../src/domain/aa-evals.ts";
-import { AA_EVAL_IDS } from "../src/domain/model.ts";
+import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import { loadAaPage } from "./aa-page.ts";
 import { loadCatalogByFamily } from "./catalog-by-family.ts";
 

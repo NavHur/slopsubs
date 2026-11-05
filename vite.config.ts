@@ -15,7 +15,7 @@ const config = defineConfig({
 		ignorePatterns: [
 			"src/routeTree.gen.ts",
 			"src/styles.css",
-			"src/data/**",
+			"src/data/*.json",
 			"research/**",
 			"measurements/**",
 			"*.md",
@@ -49,7 +49,51 @@ const config = defineConfig({
 			"typescript/no-inferrable-types": "error",
 			"unicorn/prefer-node-protocol": "error",
 		},
-		ignorePatterns: ["src/routeTree.gen.ts", "src/data/**"],
+		overrides: [
+			{
+				// Classic zod and the schemas stay out of the client bundle; validate
+				// at import (scripts/*, data.test.ts). zod/mini and types are fine.
+				files: [
+					"src/components/**",
+					"src/routes/**",
+					"src/lib/**",
+					"src/data/index.ts",
+					"src/domain/**",
+				],
+				rules: {
+					"no-restricted-imports": [
+						"error",
+						{
+							paths: ["zod", "zod/v3", "zod/v4", "zod/v4/classic"].map(
+								(name) => ({
+									name,
+									message:
+										"Use zod/mini: classic zod bloats the client bundle.",
+								}),
+							),
+							patterns: [
+								{
+									group: ["#/domain/model", "**/domain/model*", "./model*"],
+									allowTypeImports: true,
+									message:
+										"Import types only: the schemas stay out of the client.",
+								},
+							],
+						},
+					],
+				},
+			},
+			{
+				// The import side of src/domain parses with the schemas and never ships.
+				files: [
+					"src/domain/{model,catalog,aa-index-cost,aa-evals,leaderboards,pricing}.ts",
+					"**/*.test.ts",
+					"**/*.test.tsx",
+				],
+				rules: { "no-restricted-imports": "off" },
+			},
+		],
+		ignorePatterns: ["src/routeTree.gen.ts", "src/data/*.json"],
 		options: { typeAware: true, typeCheck: true },
 	},
 	run: {

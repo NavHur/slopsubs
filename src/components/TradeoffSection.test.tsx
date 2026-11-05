@@ -3,7 +3,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { VIEW_PRESETS } from "#/components/chart/projection";
 import { buildSeries, pricingStyles } from "#/components/chart/series";
 import { leaderboards, plans, samples } from "#/data";
-import type { BenchmarkId } from "#/domain/model";
+import type { BenchmarkId } from "#/domain/enums";
 import { tradeoffFrontier, timedPoints } from "#/domain/tradeoffs";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";

@@ -1,15 +1,6 @@
 import { z } from "zod";
+import { AA_EVAL_IDS, BENCHMARK_IDS, type BenchmarkId, EFFORTS } from "./enums";
 
-export const EFFORTS = [
-	"none",
-	"minimal",
-	"low",
-	"medium",
-	"default",
-	"high",
-	"xhigh",
-	"max",
-] as const;
 const Effort = z.enum(EFFORTS);
 export type Effort = z.infer<typeof Effort>;
 
@@ -75,19 +66,6 @@ export const FrontierCodeDataset = z.object({
 	rows: z.array(FrontierCodeRow),
 });
 
-/** The Intelligence Index evals the chart plots from the AA website. */
-export const AA_EVAL_IDS = [
-	"aa-briefcase",
-	"automationbench-aa",
-	"terminalbench-4-0",
-	"frontiercode-2-0",
-	"omniscience",
-	"gdp-pdf",
-	"hle-diamond",
-	"critpt-v2-hard",
-	"terminal-bench-science",
-] as const;
-
 /** One Artificial Analysis Intelligence Index eval result, by release slug. */
 export const AaEvalRow = z.object({
 	family: FamilyId,
@@ -109,14 +87,6 @@ export const AaEvalsDataset = z.object({
 });
 export type AaEvalsDataset = z.infer<typeof AaEvalsDataset>;
 
-/** The benchmarks the chart can plot, in tab order. */
-export const BENCHMARK_IDS = [
-	"intelligence",
-	"frontiercode",
-	...AA_EVAL_IDS,
-] as const;
-export type BenchmarkId = (typeof BENCHMARK_IDS)[number];
-
 const Leaderboard = z.object({
 	fetchedAt: z.iso.datetime(),
 	models: z.array(BenchmarkPoint),
@@ -132,6 +102,7 @@ export const ChartData = z.object({
 	frontier: Frontier,
 	leaderboards: z.object(LEADERBOARD_SHAPE),
 });
+export type ChartData = z.infer<typeof ChartData>;
 
 /** A weekly cap someone else published, used until we measure our own. */
 const ReportedCap = z.object({

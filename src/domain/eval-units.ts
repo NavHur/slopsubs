@@ -1,4 +1,4 @@
-import type { AA_EVAL_IDS } from "./model";
+import type { AA_EVAL_IDS } from "./enums";
 
 /** The AA Intelligence Index evals, which the chart plots from the AA website. */
 export type AaEvalId = (typeof AA_EVAL_IDS)[number];

@@ -3,10 +3,10 @@
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
+import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import type { AaEvalId } from "../src/domain/eval-units.ts";
 import { evalPoints, frontierCodePoints } from "../src/domain/leaderboards.ts";
 import {
-	AA_EVAL_IDS,
 	AaEvalsDataset,
 	BenchmarkDataset,
 	type BenchmarkPoint,

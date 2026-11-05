@@ -1,12 +1,12 @@
-import {
-	type BenchmarkPoint,
-	EFFORTS,
-	type Effort,
-	type FamilyId,
-	type LimitSample,
-	type Plan,
-	type PublishedAllowance,
-	type ReportedCap,
+import { EFFORTS } from "./enums";
+import type {
+	BenchmarkPoint,
+	Effort,
+	FamilyId,
+	LimitSample,
+	Plan,
+	PublishedAllowance,
+	ReportedCap,
 } from "./model";
 
 const WEEKS_PER_MONTH = 52 / 12;
