@@ -163,7 +163,8 @@ sized to DM Sans, so text barely moves when the web font swaps in.
 `size-adjust` is DM Sans's width divided by Arial's over the page's own text
 at each element's weight, measured at 1000px so hinting cannot round it. The
 overrides are DM Sans's ascent (992) and descent (310) per 1000 units, divided
-by `size-adjust`.
+by `size-adjust`. Android ships none of these fonts, so there the text first
+paints in unadjusted Roboto and still shifts at the swap.
 
 ### Removing Tailwind CSS
 
