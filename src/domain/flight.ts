@@ -5,7 +5,8 @@
 export const MODEL_START_PATTERN = /\{"id":"[0-9a-f-]{36}","slug":"/g;
 
 /** Index of the quote closing the string literal opened at `open`, by the
- * same quote character, or the text's length when it never closes. */
+ * same quote character, or an index at or past the text's length when it
+ * never closes (a trailing backslash skips one extra character). */
 export function stringLiteralEnd(text: string, open: number): number {
 	const quote = text[open];
 	let i = open + 1;
