@@ -4,6 +4,7 @@
 import { parseArgs } from "node:util";
 import { type Browser, chromium, type Page } from "playwright-core";
 import { BENCHMARK_IDS } from "../src/domain/enums.ts";
+import { median, requirePainted } from "./paint-stats.ts";
 import { originOf, serveSite } from "./serve-site.ts";
 
 const PHONE = { width: 390, height: 844 };
@@ -56,6 +57,8 @@ const SETTLE_MS = 1000;
 const FADE_PX = 24;
 /** ScrollRow.tsx's EDGE_SLACK_PX; Node cannot load that JSX module. */
 const EDGE_SLACK_PX = 2;
+/** Sub-pixel rounding below the fade's edge that still counts as clear. */
+const CLEARANCE_TOLERANCE_PX = 0.5;
 const PICKER = 'fieldset[aria-label="Benchmark that defines a task"]';
 
 type PaintSample = {
@@ -167,6 +170,7 @@ async function samplePaint(browser: Browser, url: string) {
 		if (fontArrivals.length === 0) {
 			throw new Error(`${url} requested no web font (woff2) to time`);
 		}
+		requirePainted(url, sample);
 		const { timeOrigin, ...paint } = sample;
 		return {
 			...paint,
@@ -218,11 +222,8 @@ async function holdFonts(page: Page): Promise<() => void> {
 async function waitForFallbackReveal(page: Page): Promise<void> {
 	await page.waitForFunction((picker) => {
 		const pressed = document.querySelector(`${picker} [aria-pressed=true]`);
-		const hydrated = Object.keys(pressed ?? {}).some((key) =>
-			key.startsWith("__reactFiber"),
-		);
 		const shown = !("viewPending" in document.documentElement.dataset);
-		return hydrated && shown && document.fonts.status === "loading";
+		return pressed && shown && document.fonts.status === "loading";
 	}, PICKER);
 }
 
@@ -241,11 +242,6 @@ async function pickerClearance(browser: Browser, url: string) {
 	} finally {
 		await page.context().close();
 	}
-}
-
-function median(values: number[]): number {
-	const sorted = values.toSorted((a, b) => a - b);
-	return sorted[Math.floor(sorted.length / 2)];
 }
 
 function summarize(samples: PaintSample[]) {
@@ -284,7 +280,9 @@ try {
 	}
 	console.log("Selected benchmark's clearance from a fade, px:");
 	console.table(clearance);
-	const hidden = Object.entries(clearance).filter(([, px]) => px < -0.5);
+	const hidden = Object.entries(clearance).filter(
+		([, px]) => px < -CLEARANCE_TOLERANCE_PX,
+	);
 	if (hidden.length > 0) {
 		throw new Error(`Faded or hidden: ${hidden.map(([id]) => id).join(", ")}`);
 	}
