@@ -81,9 +81,8 @@ export const ViewSearch = z.object({
 	api: withFallback(z.boolean(), true),
 	/** Model names at the right end of each line; off gives the plot more room. */
 	labels: withFallback(z.boolean(), true),
-	// Plain strings, not branded ids: the router's structural sharing only
-	// accepts JSON-shaped types and reads a brand as String's methods.
-	// selectedPlans and selectedFamilies return the dataset's branded ids.
+	// Plain strings, not brands: the router's structural sharing reads a brand as
+	// String's methods. selectedPlans and selectedFamilies return the branded ids.
 	plans: knownSelection<string>(plans.map((p) => p.id)),
 	families: knownSelection<string>(COVERED_FAMILIES),
 	hideReasoning: knownSelection(REASONING_LEVELS),
