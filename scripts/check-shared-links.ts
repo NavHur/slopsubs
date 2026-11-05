@@ -71,6 +71,30 @@ async function checkLink(
 	return { problems, layoutShift: state.layoutShift };
 }
 
+/** Longer than the 2 s the CSS fallback once waited, shorter than its 10 s. */
+const SLOW_BUNDLE_MS = 3000;
+
+/** Holds the app's scripts back; whether the view stayed hidden meanwhile. */
+async function staysHiddenWhileSlow(
+	browser: Browser,
+	url: string,
+): Promise<boolean> {
+	const page = await browser.newPage({ viewport: VIEWPORTS[1] });
+	await page.route("**/*.js", async (route) => {
+		await new Promise((resolve) => setTimeout(resolve, SLOW_BUNDLE_MS));
+		await route.continue();
+	});
+	await page.goto(url, { waitUntil: "commit" });
+	await page.waitForTimeout(SLOW_BUNDLE_MS - 500);
+	const visibility = await page.evaluate(
+		() =>
+			getComputedStyle(document.querySelector("[data-view-dependent]")!)
+				.visibility,
+	);
+	await page.close();
+	return visibility === "hidden";
+}
+
 const server = await serveSite();
 const { port } = server.address() as AddressInfo;
 const origin = `http://127.0.0.1:${port}/`;
@@ -90,6 +114,12 @@ try {
 			for (const problem of result.problems) console.log(`     ${problem}`);
 		}
 	}
+	const slowUrl = new URL("?benchmark=omniscience", origin).href;
+	const hidden = await staysHiddenWhileSlow(browser, slowUrl);
+	if (!hidden) failures++;
+	console.log(
+		`${hidden ? "ok  " : "FAIL"} slow scripts: the view ${hidden ? "stays hidden" : "showed the default early"}`,
+	);
 } finally {
 	await browser.close();
 	server.close();

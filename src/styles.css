@@ -30,11 +30,11 @@
 
 /*
  * A shared link's view stays hidden, but laid out, until it renders (see
- * src/lib/sharedLink.ts); a fallback shows the prerendered view if it never does.
+ * src/lib/sharedLink.ts); after 10 s, scripts that never load show the prerender.
  */
 :root[data-view-pending] [data-view-dependent] {
   visibility: hidden;
-  animation: show-view 0s 2s forwards;
+  animation: show-view 0s 10s forwards;
 }
 
 @keyframes show-view {
