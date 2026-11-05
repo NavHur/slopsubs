@@ -8,7 +8,7 @@ import { familyColor, familyName } from "#/lib/families";
  * ceiling: plans past the fifth reuse shapes; add more if people often
  * compare that many at once.
  */
-export const PLAN_MARKERS = [
+const PLAN_MARKERS = [
 	"circle",
 	"square",
 	"diamond",
