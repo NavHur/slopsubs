@@ -3,6 +3,7 @@ import { describe, expect, it } from "vite-plus/test";
 import type { BenchmarkPoint, FamilyId, Plan, PlanId } from "#/domain/model";
 import { tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
+import { familyColor } from "#/lib/families";
 import { TasksChart } from "./TasksChart";
 
 const opus = "claude-opus-5-5" as FamilyId;
@@ -68,5 +69,15 @@ describe("TasksChart", () => {
 		const text = `${capBasis}. Not measured yet.`;
 		const elementText = markup().replaceAll("&#x27;", "'");
 		expect(elementText).toContain(`>${text}</`);
+	});
+
+	it("names each model in the text colour, its brand on an SVG dot the PNG export draws", () => {
+		const html = markup();
+		const brand = familyColor(opus);
+		expect(html).not.toContain(`style="color:${brand}`);
+		const dot = html.match(
+			/<svg aria-hidden="true"[^>]*><circle[^>]*fill="([^"]*)"/,
+		);
+		expect(dot?.[1]).toBe(brand);
 	});
 });

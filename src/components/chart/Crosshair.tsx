@@ -93,8 +93,7 @@ function Readout({ readout }: { readout: AxisReadout }) {
 				y={px(top + height / 2)}
 				dy="0.32em"
 				textAnchor="middle"
-				fill="currentColor"
-				className="font-medium"
+				className="fill-fg font-medium"
 			>
 				{text}
 			</text>
