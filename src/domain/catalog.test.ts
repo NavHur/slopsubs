@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import type { TaskCost } from "./aa-index-cost";
+import type { TaskCost } from "./aa-site";
 import {
 	type AaModel,
 	deriveModel,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { extractIndexCosts } from "./aa-index-cost";
+import { extractIndexCosts } from "./aa-site";
 
 /** A model id in the payload's 36-character uuid form. */
 const uuidOf = (index: number) =>

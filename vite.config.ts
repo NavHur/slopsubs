@@ -86,7 +86,7 @@ const config = defineConfig({
 			{
 				// The import side of src/domain parses with the schemas and never ships.
 				files: [
-					"src/domain/{model,catalog,aa-index-cost,aa-evals,leaderboards,pricing}.ts",
+					"src/domain/{model,catalog,aa-site,aa-evals,leaderboards,pricing}.ts",
 					"**/*.test.ts",
 					"**/*.test.tsx",
 				],

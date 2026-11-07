@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { TaskCost } from "./aa-index-cost";
+import type { TaskCost } from "./aa-site";
 import { EFFORTS } from "./enums";
 import type { Effort } from "./model";
 import { roundedOrNull } from "./rounding";

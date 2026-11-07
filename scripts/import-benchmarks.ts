@@ -4,7 +4,7 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { flightFromHtml } from "../src/domain/aa-evals.ts";
-import { extractIndexCosts } from "../src/domain/aa-index-cost.ts";
+import { extractIndexCosts } from "../src/domain/aa-site.ts";
 import {
 	type AaModel,
 	AaResponse,
