@@ -1,7 +1,49 @@
 {
-  "fetchedAt": "2026-11-04T02:17:06.283Z",
+  "fetchedAt": "2026-11-07T04:29:04.586Z",
   "source": "Cognition's FrontierCode 2.0",
   "rows": [
+    {
+      "family": "reflection-beam",
+      "effort": "minimal",
+      "score": 0,
+      "costPerTaskUsd": 0.059,
+      "tokensPerTask": 1550
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "low",
+      "score": 0,
+      "costPerTaskUsd": 0.142,
+      "tokensPerTask": 3490
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "medium",
+      "score": 0.83,
+      "costPerTaskUsd": 0.315,
+      "tokensPerTask": 7243
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "high",
+      "score": 1.74,
+      "costPerTaskUsd": 0.612,
+      "tokensPerTask": 14068
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "xhigh",
+      "score": 2.43,
+      "costPerTaskUsd": 1.126,
+      "tokensPerTask": 23156
+    },
+    {
+      "family": "reflection-beam",
+      "effort": "max",
+      "score": 2.9,
+      "costPerTaskUsd": 1.299,
+      "tokensPerTask": 27971
+    },
     {
       "family": "deepseek-v4-1-flash-1017",
       "effort": "low",
@@ -423,6 +465,27 @@
       "tokensPerTask": 64271
     },
     {
+      "family": "kimi-k3-1-pro",
+      "effort": "low",
+      "score": 12.86,
+      "costPerTaskUsd": 1.877,
+      "tokensPerTask": 20367
+    },
+    {
+      "family": "kimi-k3-1-pro",
+      "effort": "high",
+      "score": 17.29,
+      "costPerTaskUsd": 2.358,
+      "tokensPerTask": 27628
+    },
+    {
+      "family": "kimi-k3-1-pro",
+      "effort": "max",
+      "score": 19.64,
+      "costPerTaskUsd": 3.033,
+      "tokensPerTask": 37242
+    },
+    {
       "family": "mistral-large-4",
       "effort": "low",
       "score": 9.5,
@@ -610,6 +673,34 @@
       "score": 40.96,
       "costPerTaskUsd": 19.941,
       "tokensPerTask": 514722
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "low",
+      "score": 0.42,
+      "costPerTaskUsd": 0.593,
+      "tokensPerTask": 4472
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "medium",
+      "score": 1.63,
+      "costPerTaskUsd": 1.865,
+      "tokensPerTask": 11576
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "high",
+      "score": 3.95,
+      "costPerTaskUsd": 6.78,
+      "tokensPerTask": 33810
+    },
+    {
+      "family": "muse-spark-open",
+      "effort": "xhigh",
+      "score": 6.24,
+      "costPerTaskUsd": 9.157,
+      "tokensPerTask": 44615
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
-  "fetchedAt": "2026-11-04T02:32:09.619Z",
-  "source": "Artificial Analysis (scores, prices, releases, cost, tokens and time per task); Slopalytics (catalog, and figures AA's site lacks)",
+  "fetchedAt": "2026-11-07T05:12:34.017Z",
+  "source": "Artificial Analysis website (scores, prices, releases, cost, tokens and time per task); Slopalytics (catalog, and figures AA's site lacks)",
   "frontier": {
     "gpt-6-astra": {
       "tier": "Large",
@@ -61,8 +61,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "agnes-2-5-pro-beta",
@@ -81,8 +81,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.1,
-      "outputPricePerMTokUsd": 0.3
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "apertus-70b-instruct",
@@ -101,8 +101,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "apertus-8b-instruct",
@@ -121,8 +121,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.1,
-      "outputPricePerMTokUsd": 0.2
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "apodex-1-1",
@@ -181,8 +181,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "arctic-instruct",
@@ -201,8 +201,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "celeris-1",
@@ -241,8 +241,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "claude-21",
@@ -261,8 +261,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "claude-3-5-haiku",
@@ -281,8 +281,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "claude-3-7-sonnet",
@@ -321,8 +321,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "claude-3-haiku",
@@ -381,8 +381,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "claude-35-sonnet",
@@ -497,10 +497,10 @@
       "effort": "default",
       "effortLabel": "Default",
       "effortOrder": 35,
-      "score": null,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null,
+      "score": 7.43,
+      "costPerTaskUsd": 0.53178,
+      "tokensPerTask": 25258,
+      "secondsPerTask": 254.7,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -601,8 +601,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "claude-4-sonnet-thinking",
@@ -621,8 +621,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "claude-fable-5",
@@ -660,7 +660,7 @@
       "score": 49.16,
       "costPerTaskUsd": 12.994,
       "tokensPerTask": 117941,
-      "secondsPerTask": 1052.7,
+      "secondsPerTask": 1329.3,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -680,7 +680,7 @@
       "score": 47.17,
       "costPerTaskUsd": 7.53996,
       "tokensPerTask": 66031,
-      "secondsPerTask": 719.8,
+      "secondsPerTask": 752,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -700,7 +700,7 @@
       "score": 38.68,
       "costPerTaskUsd": 4.47114,
       "tokensPerTask": 37837,
-      "secondsPerTask": 421.3,
+      "secondsPerTask": 427.6,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -720,7 +720,7 @@
       "score": 43.17,
       "costPerTaskUsd": 5.56426,
       "tokensPerTask": 48545,
-      "secondsPerTask": 537.1,
+      "secondsPerTask": 552.2,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -740,7 +740,7 @@
       "score": 50.02,
       "costPerTaskUsd": 10.84747,
       "tokensPerTask": 97059,
-      "secondsPerTask": 966.2,
+      "secondsPerTask": 1097.9,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -760,7 +760,7 @@
       "score": 36.48,
       "costPerTaskUsd": 0.41101,
       "tokensPerTask": 225966,
-      "secondsPerTask": 596.4,
+      "secondsPerTask": 963.6,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -780,7 +780,7 @@
       "score": 29.87,
       "costPerTaskUsd": 0.15856,
       "tokensPerTask": 88064,
-      "secondsPerTask": 305.3,
+      "secondsPerTask": 394,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -800,7 +800,7 @@
       "score": 18.62,
       "costPerTaskUsd": 0.04376,
       "tokensPerTask": 28161,
-      "secondsPerTask": 103.9,
+      "secondsPerTask": 129,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -820,7 +820,7 @@
       "score": 24.6,
       "costPerTaskUsd": 0.09176,
       "tokensPerTask": 53335,
-      "secondsPerTask": 195.6,
+      "secondsPerTask": 247.3,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -840,7 +840,7 @@
       "score": 34.64,
       "costPerTaskUsd": 0.24836,
       "tokensPerTask": 136177,
-      "secondsPerTask": 439.4,
+      "secondsPerTask": 582.1,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -861,8 +861,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "claude-opus-4-5",
@@ -1017,10 +1017,10 @@
       "effort": "max",
       "effortLabel": "max",
       "effortOrder": 60,
-      "score": null,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null,
+      "score": 44.16,
+      "costPerTaskUsd": 11.8215,
+      "tokensPerTask": 118068,
+      "secondsPerTask": 1750.8,
       "inputPricePerMTokUsd": 5,
       "outputPricePerMTokUsd": 25
     },
@@ -1040,7 +1040,7 @@
       "score": 59.11,
       "costPerTaskUsd": 10.03641,
       "tokensPerTask": 173313,
-      "secondsPerTask": 1149.8,
+      "secondsPerTask": 1498.7,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -1060,7 +1060,7 @@
       "score": 51.84,
       "costPerTaskUsd": 3.46466,
       "tokensPerTask": 60071,
-      "secondsPerTask": 477.9,
+      "secondsPerTask": 552,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -1080,7 +1080,7 @@
       "score": 34.75,
       "costPerTaskUsd": 0.97553,
       "tokensPerTask": 19060,
-      "secondsPerTask": 153.4,
+      "secondsPerTask": 180.2,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -1100,7 +1100,7 @@
       "score": 48.21,
       "costPerTaskUsd": 2.45109,
       "tokensPerTask": 43817,
-      "secondsPerTask": 354.9,
+      "secondsPerTask": 406.1,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -1120,7 +1120,7 @@
       "score": 57.44,
       "costPerTaskUsd": 6.04719,
       "tokensPerTask": 103395,
-      "secondsPerTask": 789.8,
+      "secondsPerTask": 954.2,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -1300,7 +1300,7 @@
       "score": 54.54,
       "costPerTaskUsd": 10.02062,
       "tokensPerTask": 285387,
-      "secondsPerTask": 1262.4,
+      "secondsPerTask": 1886.3,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -1320,7 +1320,7 @@
       "score": 41.52,
       "costPerTaskUsd": 1.63613,
       "tokensPerTask": 58421,
-      "secondsPerTask": 360.4,
+      "secondsPerTask": 413.2,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -1340,7 +1340,7 @@
       "score": 25.65,
       "costPerTaskUsd": 0.51134,
       "tokensPerTask": 20856,
-      "secondsPerTask": 136,
+      "secondsPerTask": 156.7,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -1360,7 +1360,7 @@
       "score": 30.82,
       "costPerTaskUsd": 0.78066,
       "tokensPerTask": 30746,
-      "secondsPerTask": 204.4,
+      "secondsPerTask": 214,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -1380,7 +1380,7 @@
       "score": 49.92,
       "costPerTaskUsd": 4.09198,
       "tokensPerTask": 122205,
-      "secondsPerTask": 732,
+      "secondsPerTask": 905.3,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -1501,8 +1501,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "command-a",
@@ -1540,7 +1540,7 @@
       "score": 6.24,
       "costPerTaskUsd": 0,
       "tokensPerTask": 35630,
-      "secondsPerTask": 160.1,
+      "secondsPerTask": 194.2,
       "inputPricePerMTokUsd": 0,
       "outputPricePerMTokUsd": 0
     },
@@ -1561,8 +1561,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "command-r-plus-04-2024",
@@ -1581,8 +1581,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "dbrx",
@@ -1601,8 +1601,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deephermes-3-llama-3-1-8b-preview",
@@ -1621,8 +1621,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deephermes-3-mistral-24b-preview",
@@ -1641,8 +1641,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-coder-v2",
@@ -1661,8 +1661,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-coder-v2-lite",
@@ -1681,8 +1681,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-llm-67b-chat",
@@ -1701,8 +1701,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-r1",
@@ -1781,8 +1781,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-r1-distill-qwen-1-5b",
@@ -1801,8 +1801,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-r1-distill-qwen-14b",
@@ -1821,8 +1821,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-r1-distill-qwen-32b",
@@ -1841,8 +1841,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-r1-qwen3-8b",
@@ -1861,8 +1861,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-v2",
@@ -1881,8 +1881,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-v2-5",
@@ -1901,8 +1901,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-v2-5-sep-2024",
@@ -1921,8 +1921,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-v3",
@@ -1981,8 +1981,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.56,
-      "outputPricePerMTokUsd": 1.68
+      "inputPricePerMTokUsd": 0.53,
+      "outputPricePerMTokUsd": 1.59
     },
     {
       "id": "deepseek-v3-1-reasoning",
@@ -2001,8 +2001,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.58,
-      "outputPricePerMTokUsd": 1.68
+      "inputPricePerMTokUsd": 0.425,
+      "outputPricePerMTokUsd": 1.34
     },
     {
       "id": "deepseek-v3-1-terminus",
@@ -2141,8 +2141,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-v4-1-flash",
@@ -2161,7 +2161,7 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.3,
+      "inputPricePerMTokUsd": 0.29,
       "outputPricePerMTokUsd": 1.2
     },
     {
@@ -2180,7 +2180,7 @@
       "score": 32.59,
       "costPerTaskUsd": 0.60211,
       "tokensPerTask": 138962,
-      "secondsPerTask": 628.7,
+      "secondsPerTask": 813.5,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 1.2
     },
@@ -2320,7 +2320,7 @@
       "score": 23.06,
       "costPerTaskUsd": 1.76913,
       "tokensPerTask": 98733,
-      "secondsPerTask": 912.1,
+      "secondsPerTask": 1374.3,
       "inputPricePerMTokUsd": 1.32,
       "outputPricePerMTokUsd": 3.96
     },
@@ -2397,10 +2397,10 @@
       "effort": "none",
       "effortLabel": "Non-reasoning",
       "effortOrder": 0,
-      "score": null,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null,
+      "score": 12.57,
+      "costPerTaskUsd": 0.97699,
+      "tokensPerTask": 71588,
+      "secondsPerTask": 889.4,
       "inputPricePerMTokUsd": 1.32,
       "outputPricePerMTokUsd": 3.96
     },
@@ -2421,8 +2421,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "devstral-medium",
@@ -2441,8 +2441,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "devstral-small",
@@ -2461,8 +2461,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "devstral-small-2",
@@ -2481,8 +2481,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "devstral-small-2505",
@@ -2501,8 +2501,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "diffusiongemma-26b-a4b",
@@ -2521,8 +2521,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "doubao-seed-code",
@@ -2541,8 +2541,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "ernie-4-5-300b-a47b",
@@ -2561,8 +2561,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "ernie-5-0-thinking-preview",
@@ -2581,8 +2581,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "exaone-4-0-1-2b",
@@ -2601,8 +2601,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "exaone-4-0-1-2b-reasoning",
@@ -2621,8 +2621,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "exaone-4-0-32b",
@@ -2641,8 +2641,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "exaone-4-0-32b-reasoning",
@@ -2661,8 +2661,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "exaone-4-5-33b",
@@ -2681,8 +2681,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "exaone-4-5-33b-non-reasoning",
@@ -2701,8 +2701,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "falcon-h1r-7b",
@@ -2721,8 +2721,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "g9v3-39a5b",
@@ -2741,8 +2741,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "g9v3-3b",
@@ -2761,8 +2761,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-1-0-pro",
@@ -2781,8 +2781,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-1-0-ultra",
@@ -2801,8 +2801,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-1-5-flash",
@@ -2821,8 +2821,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-1-5-flash-8b",
@@ -2841,8 +2841,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-1-5-flash-may-2024",
@@ -2861,8 +2861,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-1-5-pro",
@@ -2881,8 +2881,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-1-5-pro-may-2024",
@@ -2901,8 +2901,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-0-flash",
@@ -2921,8 +2921,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-0-flash-experimental",
@@ -2961,8 +2961,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-0-flash-lite-preview",
@@ -2981,8 +2981,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-0-flash-thinking-exp-0121",
@@ -3001,8 +3001,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-0-flash-thinking-exp-1219",
@@ -3021,8 +3021,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-0-pro-experimental-02-05",
@@ -3041,8 +3041,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-5-flash",
@@ -3081,8 +3081,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -3181,8 +3181,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-5-flash-preview-09-2025-reasoning",
@@ -3201,8 +3201,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-5-flash-reasoning",
@@ -3241,8 +3241,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-5-pro",
@@ -3281,8 +3281,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-2-5-pro-05-06",
@@ -3317,10 +3317,10 @@
       "effort": "high",
       "effortLabel": "high",
       "effortOrder": 40,
-      "score": null,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null,
+      "score": 6.16,
+      "costPerTaskUsd": 0.19445,
+      "tokensPerTask": 15911,
+      "secondsPerTask": 44.6,
       "inputPricePerMTokUsd": 0.25,
       "outputPricePerMTokUsd": 1.5
     },
@@ -3380,7 +3380,7 @@
       "score": 11.66,
       "costPerTaskUsd": 0.6929,
       "tokensPerTask": 30301,
-      "secondsPerTask": 69.5,
+      "secondsPerTask": 104,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 2.5
     },
@@ -3481,8 +3481,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-3-7-flash-medium",
@@ -3501,8 +3501,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-3-8-flash",
@@ -3520,7 +3520,7 @@
       "score": 30.85,
       "costPerTaskUsd": 7.76601,
       "tokensPerTask": 98940,
-      "secondsPerTask": 736.2,
+      "secondsPerTask": 876.2,
       "inputPricePerMTokUsd": 0.75,
       "outputPricePerMTokUsd": 3.75
     },
@@ -3560,7 +3560,7 @@
       "score": 30.08,
       "costPerTaskUsd": 6.25859,
       "tokensPerTask": 82068,
-      "secondsPerTask": null,
+      "secondsPerTask": 779.1,
       "inputPricePerMTokUsd": 0.75,
       "outputPricePerMTokUsd": 3.75
     },
@@ -3581,8 +3581,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemini-3-flash",
@@ -3678,9 +3678,9 @@
       "effortLabel": "high",
       "effortOrder": 40,
       "score": 50.41,
-      "costPerTaskUsd": 7.68267,
+      "costPerTaskUsd": 9.94661,
       "tokensPerTask": 116368,
-      "secondsPerTask": 1364,
+      "secondsPerTask": 1660.4,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -3741,8 +3741,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemma-3-27b",
@@ -3821,8 +3821,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemma-3n-e4b-preview-0520",
@@ -3841,8 +3841,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemma-4-12b",
@@ -3937,7 +3937,7 @@
       "effort": "default",
       "effortLabel": "Default",
       "effortOrder": 35,
-      "score": null,
+      "score": 4.38,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
@@ -3961,7 +3961,7 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.16499999999999998,
+      "inputPricePerMTokUsd": 0.165,
       "outputPricePerMTokUsd": 0.4
     },
     {
@@ -3981,8 +3981,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemma-4-e2b-non-reasoning",
@@ -4001,8 +4001,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gemma-4-e4b",
@@ -4281,8 +4281,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "glm-5",
@@ -4400,7 +4400,7 @@
       "score": 31.65,
       "costPerTaskUsd": 5.00926,
       "tokensPerTask": 118987,
-      "secondsPerTask": 1077.2,
+      "secondsPerTask": 1891.6,
       "inputPricePerMTokUsd": 1.4,
       "outputPricePerMTokUsd": 4.4
     },
@@ -4420,7 +4420,7 @@
       "score": 27.8,
       "costPerTaskUsd": 0.58331,
       "tokensPerTask": 134205,
-      "secondsPerTask": 1479.8,
+      "secondsPerTask": 2364,
       "inputPricePerMTokUsd": 0.15,
       "outputPricePerMTokUsd": 0.5
     },
@@ -4440,7 +4440,7 @@
       "score": 23.11,
       "costPerTaskUsd": 1.57493,
       "tokensPerTask": 51986,
-      "secondsPerTask": 624.3,
+      "secondsPerTask": 1085.7,
       "inputPricePerMTokUsd": 1.4,
       "outputPricePerMTokUsd": 4.4
     },
@@ -4481,8 +4481,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "glm-5v-turbo",
@@ -4501,8 +4501,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-3-5-turbo-0613",
@@ -4521,8 +4521,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-35-turbo",
@@ -4541,8 +4541,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-4",
@@ -4561,8 +4561,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-4-1",
@@ -4641,8 +4641,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-4-turbo",
@@ -4741,8 +4741,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-4o-chatgpt-03-25",
@@ -4761,8 +4761,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-4o-mini",
@@ -4801,8 +4801,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-4o-realtime-dec-2024",
@@ -4821,8 +4821,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-5",
@@ -5381,8 +5381,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-5-6-luna",
@@ -5397,10 +5397,10 @@
       "effort": "max",
       "effortLabel": "max",
       "effortOrder": 60,
-      "score": null,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null,
+      "score": 23.79,
+      "costPerTaskUsd": 0.33126,
+      "tokensPerTask": 59003,
+      "secondsPerTask": 618.5,
       "inputPricePerMTokUsd": 0.2,
       "outputPricePerMTokUsd": 1.2
     },
@@ -5640,7 +5640,7 @@
       "score": 32.34,
       "costPerTaskUsd": 3.7349,
       "tokensPerTask": 66249,
-      "secondsPerTask": 508.8,
+      "secondsPerTask": 650.6,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 12
     },
@@ -5761,8 +5761,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "gpt-5-codex",
@@ -5980,7 +5980,7 @@
       "score": 54.61,
       "costPerTaskUsd": 1.27206,
       "tokensPerTask": 67824,
-      "secondsPerTask": 891.6,
+      "secondsPerTask": 1314.6,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6000,7 +6000,7 @@
       "score": 50.33,
       "costPerTaskUsd": 0.59099,
       "tokensPerTask": 22606,
-      "secondsPerTask": 352,
+      "secondsPerTask": 417.9,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6020,7 +6020,7 @@
       "score": 34.8,
       "costPerTaskUsd": 0.16147,
       "tokensPerTask": 5838,
-      "secondsPerTask": 96,
+      "secondsPerTask": 109.8,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6040,7 +6040,7 @@
       "score": 46.35,
       "costPerTaskUsd": 0.35939,
       "tokensPerTask": 13518,
-      "secondsPerTask": 241.3,
+      "secondsPerTask": 246,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6060,7 +6060,7 @@
       "score": 52.46,
       "costPerTaskUsd": 0.76399,
       "tokensPerTask": 30241,
-      "secondsPerTask": 411.1,
+      "secondsPerTask": 588.7,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6080,7 +6080,7 @@
       "score": 51.33,
       "costPerTaskUsd": 0.96111,
       "tokensPerTask": 59883,
-      "secondsPerTask": 548.2,
+      "secondsPerTask": 828.5,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6100,7 +6100,7 @@
       "score": 42.43,
       "costPerTaskUsd": 0.25928,
       "tokensPerTask": 16746,
-      "secondsPerTask": 174.4,
+      "secondsPerTask": 241.7,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6120,7 +6120,7 @@
       "score": 29.42,
       "costPerTaskUsd": 0.07134,
       "tokensPerTask": 4422,
-      "secondsPerTask": 48.3,
+      "secondsPerTask": 63.9,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6140,7 +6140,7 @@
       "score": 38.17,
       "costPerTaskUsd": 0.1688,
       "tokensPerTask": 10875,
-      "secondsPerTask": 120.9,
+      "secondsPerTask": 155.7,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6160,7 +6160,7 @@
       "score": 30.52,
       "costPerTaskUsd": 0.2259,
       "tokensPerTask": 9488,
-      "secondsPerTask": 111,
+      "secondsPerTask": 133.5,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6180,7 +6180,7 @@
       "score": 45.25,
       "costPerTaskUsd": 0.40069,
       "tokensPerTask": 26200,
-      "secondsPerTask": 261.4,
+      "secondsPerTask": 372,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 5
     },
@@ -6200,7 +6200,7 @@
       "score": 56.85,
       "costPerTaskUsd": 6.24467,
       "tokensPerTask": 51973,
-      "secondsPerTask": 753.7,
+      "secondsPerTask": 1253.7,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -6220,7 +6220,7 @@
       "score": 54.85,
       "costPerTaskUsd": 3.23857,
       "tokensPerTask": 23133,
-      "secondsPerTask": 405.9,
+      "secondsPerTask": 544,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -6240,7 +6240,7 @@
       "score": 43.33,
       "costPerTaskUsd": 1.42372,
       "tokensPerTask": 9126,
-      "secondsPerTask": 180.7,
+      "secondsPerTask": 211.9,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -6260,7 +6260,7 @@
       "score": 51.55,
       "costPerTaskUsd": 2.73244,
       "tokensPerTask": 18052,
-      "secondsPerTask": 352.4,
+      "secondsPerTask": 389.7,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -6280,7 +6280,7 @@
       "score": 55.31,
       "costPerTaskUsd": 3.65893,
       "tokensPerTask": 26724,
-      "secondsPerTask": 482,
+      "secondsPerTask": 626.9,
       "inputPricePerMTokUsd": 10,
       "outputPricePerMTokUsd": 50
     },
@@ -6300,7 +6300,7 @@
       "score": 27.86,
       "costPerTaskUsd": 0.15196,
       "tokensPerTask": 75296,
-      "secondsPerTask": 680.1,
+      "secondsPerTask": 750.2,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -6320,7 +6320,7 @@
       "score": 21.43,
       "costPerTaskUsd": 0.07295,
       "tokensPerTask": 32839,
-      "secondsPerTask": 274.4,
+      "secondsPerTask": 341,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -6340,7 +6340,7 @@
       "score": 9.67,
       "costPerTaskUsd": 0.00512,
       "tokensPerTask": 3296,
-      "secondsPerTask": 28.3,
+      "secondsPerTask": 36.4,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -6360,7 +6360,7 @@
       "score": 18.45,
       "costPerTaskUsd": 0.0422,
       "tokensPerTask": 19823,
-      "secondsPerTask": null,
+      "secondsPerTask": 213.7,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -6380,7 +6380,7 @@
       "score": 9.44,
       "costPerTaskUsd": 0.07142,
       "tokensPerTask": 10059,
-      "secondsPerTask": 90.8,
+      "secondsPerTask": 115.8,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -6400,7 +6400,7 @@
       "score": 23.45,
       "costPerTaskUsd": 0.10409,
       "tokensPerTask": 43893,
-      "secondsPerTask": 345.6,
+      "secondsPerTask": 448.5,
       "inputPricePerMTokUsd": 0.1,
       "outputPricePerMTokUsd": 0.5
     },
@@ -6417,10 +6417,10 @@
       "effort": "max",
       "effortLabel": "max",
       "effortOrder": 60,
-      "score": 44.11,
-      "costPerTaskUsd": 2.46569,
-      "tokensPerTask": 53881,
-      "secondsPerTask": 358.7,
+      "score": 44.16,
+      "costPerTaskUsd": 2.4658,
+      "tokensPerTask": 53890,
+      "secondsPerTask": 482.3,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -6641,8 +6641,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-0-350m",
@@ -6661,8 +6661,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-0-h-350m",
@@ -6681,8 +6681,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-0-h-nano-1b",
@@ -6701,8 +6701,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-0-h-small",
@@ -6721,8 +6721,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-0-micro",
@@ -6741,8 +6741,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-0-nano-1b",
@@ -6761,8 +6761,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-1-30b",
@@ -6781,8 +6781,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-1-3b",
@@ -6801,8 +6801,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-1-8b",
@@ -6821,8 +6821,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-2-30b",
@@ -6841,8 +6841,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-2-3b",
@@ -6861,8 +6861,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "granite-4-2-8b",
@@ -6880,7 +6880,7 @@
       "score": 5.1,
       "costPerTaskUsd": 0.04046,
       "tokensPerTask": 51515,
-      "secondsPerTask": 799.7,
+      "secondsPerTask": 793.8,
       "inputPricePerMTokUsd": 0.06,
       "outputPricePerMTokUsd": 0.25
     },
@@ -6901,8 +6901,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "grok-2-1212",
@@ -6921,8 +6921,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "grok-3",
@@ -6981,8 +6981,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "grok-4",
@@ -7021,8 +7021,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "grok-4-1-fast-reasoning",
@@ -7041,8 +7041,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "grok-4-20",
@@ -7297,10 +7297,10 @@
       "effort": "xhigh",
       "effortLabel": "xhigh",
       "effortOrder": 50,
-      "score": null,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null,
+      "score": 31.03,
+      "costPerTaskUsd": 4.67863,
+      "tokensPerTask": 58431,
+      "secondsPerTask": 800.2,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 6
     },
@@ -7320,7 +7320,7 @@
       "score": 35.49,
       "costPerTaskUsd": 7.77154,
       "tokensPerTask": 104531,
-      "secondsPerTask": 1355.4,
+      "secondsPerTask": 1427.3,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 6
     },
@@ -7340,7 +7340,7 @@
       "score": 35.21,
       "costPerTaskUsd": 6.1836,
       "tokensPerTask": 89127,
-      "secondsPerTask": 1199.4,
+      "secondsPerTask": 1217.5,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 6
     },
@@ -7360,7 +7360,7 @@
       "score": 31.13,
       "costPerTaskUsd": 2.9222,
       "tokensPerTask": 42670,
-      "secondsPerTask": 702.1,
+      "secondsPerTask": 591.6,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 6
     },
@@ -7421,8 +7421,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "grok-build-0-1-06-16",
@@ -7461,8 +7461,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "hermes-3-llama-3-1-70b",
@@ -7541,8 +7541,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "hermes-4-llama-3-1-70b-reasoning",
@@ -7561,8 +7561,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "hy3",
@@ -7582,7 +7582,7 @@
       "tokensPerTask": null,
       "secondsPerTask": null,
       "inputPricePerMTokUsd": 0.136,
-      "outputPricePerMTokUsd": 0.5549999999999999
+      "outputPricePerMTokUsd": 0.555
     },
     {
       "id": "hy3-non-reasoning",
@@ -7641,8 +7641,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "hypernova-60b",
@@ -7661,8 +7661,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "inkling",
@@ -7680,7 +7680,7 @@
       "score": 12.48,
       "costPerTaskUsd": 1.35196,
       "tokensPerTask": 51256,
-      "secondsPerTask": 181.4,
+      "secondsPerTask": 487,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 4.05
     },
@@ -7700,7 +7700,7 @@
       "score": 12.91,
       "costPerTaskUsd": 0.20316,
       "tokensPerTask": 36718,
-      "secondsPerTask": 146.5,
+      "secondsPerTask": 338.8,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 1.2
     },
@@ -7721,8 +7721,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "jamba-1-5-large",
@@ -7781,8 +7781,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "jamba-1-6-mini",
@@ -7801,8 +7801,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "jamba-1-7-large",
@@ -7821,8 +7821,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "jamba-1-7-mini",
@@ -7841,8 +7841,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "jamba-reasoning-3b",
@@ -7861,8 +7861,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "jt-35b-flash",
@@ -7881,8 +7881,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "jt-4-1-flash-236b-a21b",
@@ -7901,8 +7901,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "jt-4-1-flash-236b-a21b-non-reasoning",
@@ -7921,8 +7921,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "jt-mini",
@@ -7941,8 +7941,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k-exaone",
@@ -7961,8 +7961,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k-exaone-2-0-0803",
@@ -7977,12 +7977,12 @@
       "effort": "default",
       "effortLabel": "Default",
       "effortOrder": 35,
-      "score": null,
+      "score": 7.56,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k-exaone-non-reasoning",
@@ -8001,8 +8001,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k2-horizon-0-9b",
@@ -8021,8 +8021,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k2-horizon-3-7b",
@@ -8041,8 +8041,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k2-horizon-375b-a23b",
@@ -8060,7 +8060,7 @@
       "score": 17.82,
       "costPerTaskUsd": 0,
       "tokensPerTask": 63665,
-      "secondsPerTask": 543.7,
+      "secondsPerTask": 293.4,
       "inputPricePerMTokUsd": 0,
       "outputPricePerMTokUsd": 0
     },
@@ -8081,8 +8081,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k2-horizon-mova-36b-a4b",
@@ -8101,8 +8101,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k2-think-v2",
@@ -8121,8 +8121,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k2-v2",
@@ -8141,8 +8141,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k2-v2-low",
@@ -8161,8 +8161,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "k2-v2-medium",
@@ -8181,8 +8181,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "kat-coder-pro-v1",
@@ -8201,8 +8201,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "kat-coder-pro-v2",
@@ -8221,8 +8221,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "kimi-k2",
@@ -8420,7 +8420,7 @@
       "score": 46.45,
       "costPerTaskUsd": 3.6812,
       "tokensPerTask": 72239,
-      "secondsPerTask": 2071.5,
+      "secondsPerTask": 2163.7,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 10
     },
@@ -8440,7 +8440,7 @@
       "score": 17.42,
       "costPerTaskUsd": 2.36877,
       "tokensPerTask": 39666,
-      "secondsPerTask": 776.3,
+      "secondsPerTask": 1100.3,
       "inputPricePerMTokUsd": 3,
       "outputPricePerMTokUsd": 15
     },
@@ -8461,8 +8461,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "lfm-40b",
@@ -8481,8 +8481,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "lfm2-1-2b",
@@ -8501,8 +8501,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "lfm2-2-6b",
@@ -8521,8 +8521,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "lfm2-24b-a2b",
@@ -8541,8 +8541,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "lfm2-5-1-2b-instruct",
@@ -8561,8 +8561,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "lfm2-5-1-2b-thinking",
@@ -8581,8 +8581,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "lfm2-5-2-6b",
@@ -8601,8 +8601,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "lfm2-5-8b-a1b",
@@ -8621,8 +8621,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "lfm2-5-vl-1-6b",
@@ -8641,8 +8641,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "lfm2-8b-a1b",
@@ -8661,8 +8661,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "ling-1t",
@@ -8681,8 +8681,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "ling-2-6-1t",
@@ -8721,8 +8721,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "ling-3-0-flash",
@@ -8761,8 +8761,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "ling-3-0-flash-vl",
@@ -8781,8 +8781,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "ling-3-0-tiny",
@@ -8881,8 +8881,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-2-chat-13b",
@@ -8901,8 +8901,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-2-chat-70b",
@@ -8921,8 +8921,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-2-chat-7b",
@@ -8941,8 +8941,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-3-1-instruct-405b",
@@ -8961,8 +8961,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-3-1-instruct-70b",
@@ -9021,8 +9021,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-3-1-nemotron-nano-4b-reasoning",
@@ -9041,8 +9041,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-3-1-nemotron-ultra-253b-v1-reasoning",
@@ -9061,8 +9061,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-3-2-instruct-11b-vision",
@@ -9101,8 +9101,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-3-2-instruct-3b",
@@ -9121,8 +9121,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-3-2-instruct-90b-vision",
@@ -9141,8 +9141,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-3-3-instruct-70b",
@@ -9181,8 +9181,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-3-3-nemotron-super-49b-reasoning",
@@ -9201,8 +9201,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-3-instruct-70b",
@@ -9262,7 +9262,7 @@
       "tokensPerTask": null,
       "secondsPerTask": null,
       "inputPricePerMTokUsd": 0.25,
-      "outputPricePerMTokUsd": 0.9199999999999999
+      "outputPricePerMTokUsd": 0.92
     },
     {
       "id": "llama-4-scout",
@@ -9301,8 +9301,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-nemotron-super-49b-v1-5",
@@ -9321,8 +9321,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "llama-nemotron-super-49b-v1-5-reasoning",
@@ -9341,8 +9341,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "longcat-2-0",
@@ -9381,8 +9381,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "magistral-medium",
@@ -9401,8 +9401,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "magistral-medium-2509",
@@ -9421,8 +9421,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "magistral-small",
@@ -9441,8 +9441,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "magistral-small-2509",
@@ -9521,8 +9521,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "midm-250-pro-rsnsft",
@@ -9541,8 +9541,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mimo-v2-0206",
@@ -9561,8 +9561,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mimo-v2-5-0424",
@@ -9581,8 +9581,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.133,
-      "outputPricePerMTokUsd": 0.266
+      "inputPricePerMTokUsd": 0.181,
+      "outputPricePerMTokUsd": 0.362
     },
     {
       "id": "mimo-v2-5-pro",
@@ -9621,8 +9621,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.6739999999999999,
-      "outputPricePerMTokUsd": 1.8479999999999999
+      "inputPricePerMTokUsd": 0.674,
+      "outputPricePerMTokUsd": 1.848
     },
     {
       "id": "mimo-v2-6-flash",
@@ -9640,7 +9640,7 @@
       "score": 26.73,
       "costPerTaskUsd": 0.12853,
       "tokensPerTask": 131806,
-      "secondsPerTask": 3672.1,
+      "secondsPerTask": 3842.8,
       "inputPricePerMTokUsd": 0.14,
       "outputPricePerMTokUsd": 0.28
     },
@@ -9660,7 +9660,7 @@
       "score": 29.89,
       "costPerTaskUsd": 0.25718,
       "tokensPerTask": 121073,
-      "secondsPerTask": 2805,
+      "secondsPerTask": 2593.2,
       "inputPricePerMTokUsd": 0.435,
       "outputPricePerMTokUsd": 0.87
     },
@@ -9681,8 +9681,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mimo-v2-flash-reasoning",
@@ -9721,8 +9721,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mimo-v2-omni-0327",
@@ -9741,8 +9741,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mimo-v2-pro",
@@ -9761,8 +9761,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "minicpm-v4-6-1-3b",
@@ -9781,8 +9781,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "minicpm5-1b",
@@ -9801,8 +9801,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "minicpm5-1b-non-reasoning",
@@ -9821,8 +9821,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "minicpm5-2b",
@@ -9841,8 +9841,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "minimax-m1-40k",
@@ -9861,8 +9861,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "minimax-m1-80k",
@@ -9980,7 +9980,7 @@
       "score": 18.88,
       "costPerTaskUsd": 1.2851,
       "tokensPerTask": 91452,
-      "secondsPerTask": 814.2,
+      "secondsPerTask": 788.6,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 1.2
     },
@@ -10000,7 +10000,7 @@
       "score": 29.06,
       "costPerTaskUsd": 0.49097,
       "tokensPerTask": 138176,
-      "secondsPerTask": 944.7,
+      "secondsPerTask": 1034.1,
       "inputPricePerMTokUsd": 0.15,
       "outputPricePerMTokUsd": 0.6
     },
@@ -10101,8 +10101,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mistral-large",
@@ -10141,8 +10141,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mistral-large-2407",
@@ -10200,7 +10200,7 @@
       "score": 25.34,
       "costPerTaskUsd": 4.2089,
       "tokensPerTask": 135318,
-      "secondsPerTask": 971.9,
+      "secondsPerTask": 1373.6,
       "inputPricePerMTokUsd": 0.7,
       "outputPricePerMTokUsd": 2.1
     },
@@ -10221,8 +10221,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mistral-medium-3",
@@ -10261,8 +10261,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mistral-medium-3-5",
@@ -10277,10 +10277,10 @@
       "effort": "high",
       "effortLabel": "high",
       "effortOrder": 40,
-      "score": null,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null,
+      "score": 4.65,
+      "costPerTaskUsd": 1.03908,
+      "tokensPerTask": 39528,
+      "secondsPerTask": 288,
       "inputPricePerMTokUsd": 1.5,
       "outputPricePerMTokUsd": 7.5
     },
@@ -10301,8 +10301,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mistral-small",
@@ -10321,8 +10321,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mistral-small-2402",
@@ -10341,8 +10341,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "mistral-small-3",
@@ -10420,7 +10420,7 @@
       "score": 4.3,
       "costPerTaskUsd": 0.03991,
       "tokensPerTask": 14400,
-      "secondsPerTask": 78.3,
+      "secondsPerTask": 98.5,
       "inputPricePerMTokUsd": 0.15,
       "outputPricePerMTokUsd": 0.6
     },
@@ -10481,8 +10481,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "molmo2-8b",
@@ -10501,8 +10501,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "motif-0714",
@@ -10521,8 +10521,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "motif-2-12-7b",
@@ -10541,8 +10541,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "motif-3",
@@ -10561,8 +10561,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "muse-glimmer",
@@ -10580,7 +10580,7 @@
       "score": 6.34,
       "costPerTaskUsd": 0.16096,
       "tokensPerTask": 26067,
-      "secondsPerTask": 224,
+      "secondsPerTask": 273.7,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 1.2
     },
@@ -10601,8 +10601,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "muse-spark-1-1",
@@ -10660,7 +10660,7 @@
       "score": 36.62,
       "costPerTaskUsd": 2.38578,
       "tokensPerTask": 91114,
-      "secondsPerTask": 602.3,
+      "secondsPerTask": 719.4,
       "inputPricePerMTokUsd": 1.25,
       "outputPricePerMTokUsd": 4.25
     },
@@ -10700,7 +10700,7 @@
       "score": 24.88,
       "costPerTaskUsd": 2.01767,
       "tokensPerTask": 66440,
-      "secondsPerTask": 380.1,
+      "secondsPerTask": 431.8,
       "inputPricePerMTokUsd": 1.25,
       "outputPricePerMTokUsd": 4.25
     },
@@ -10720,7 +10720,7 @@
       "score": 43.57,
       "costPerTaskUsd": 6.95204,
       "tokensPerTask": 96063,
-      "secondsPerTask": 550.6,
+      "secondsPerTask": 735.1,
       "inputPricePerMTokUsd": 4,
       "outputPricePerMTokUsd": 20
     },
@@ -10741,8 +10741,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": 88476,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nanbeige4-1-3b",
@@ -10761,8 +10761,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nemotron-3-5-bolt-74b-a9b",
@@ -10781,8 +10781,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nemotron-3-5-bolt-e4b-4gb",
@@ -10801,8 +10801,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nemotron-3-5-lightning",
@@ -10820,7 +10820,7 @@
       "score": 5.53,
       "costPerTaskUsd": 0.28981,
       "tokensPerTask": 65026,
-      "secondsPerTask": 168.9,
+      "secondsPerTask": 253.2,
       "inputPricePerMTokUsd": 0.06,
       "outputPricePerMTokUsd": 0.2
     },
@@ -10838,10 +10838,10 @@
       "effortLabel": "Default",
       "effortOrder": 35,
       "score": 13.62,
-      "costPerTaskUsd": 0.53823,
+      "costPerTaskUsd": 0.51963,
       "tokensPerTask": 81435,
-      "secondsPerTask": 155.8,
-      "inputPricePerMTokUsd": 0.2,
+      "secondsPerTask": 469.9,
+      "inputPricePerMTokUsd": 0.175,
       "outputPricePerMTokUsd": 0.5
     },
     {
@@ -10881,8 +10881,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nex-n2-pro",
@@ -10901,8 +10901,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "north-mini-code",
@@ -10917,10 +10917,10 @@
       "effort": "default",
       "effortLabel": "Default",
       "effortOrder": 35,
-      "score": null,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null,
+      "score": 3.42,
+      "costPerTaskUsd": 0,
+      "tokensPerTask": 30071,
+      "secondsPerTask": 226,
       "inputPricePerMTokUsd": 0,
       "outputPricePerMTokUsd": 0
     },
@@ -11021,8 +11021,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nova-2-0-omni-reasoning-low",
@@ -11041,8 +11041,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nova-2-0-omni-reasoning-medium",
@@ -11061,8 +11061,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nova-2-0-pro",
@@ -11181,8 +11181,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nova-pro",
@@ -11261,8 +11261,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": 11648,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nvidia-nemotron-3-super-120b-a12b",
@@ -11300,7 +11300,7 @@
       "score": 11.76,
       "costPerTaskUsd": 2.22574,
       "tokensPerTask": 51468,
-      "secondsPerTask": 291.3,
+      "secondsPerTask": 350.6,
       "inputPricePerMTokUsd": 0.6,
       "outputPricePerMTokUsd": 2.7
     },
@@ -11341,8 +11341,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "nvidia-nemotron-nano-9b-v2",
@@ -11421,8 +11421,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "o1-preview",
@@ -11581,8 +11581,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "olmo-2-7b",
@@ -11601,8 +11601,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "olmo-3-1-32b-instruct",
@@ -11621,8 +11621,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "olmo-3-1-32b-think",
@@ -11641,8 +11641,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "olmo-3-32b-think",
@@ -11661,8 +11661,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "olmo-3-7b-instruct",
@@ -11681,8 +11681,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "olmo-3-7b-think",
@@ -11701,8 +11701,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "openchat-35",
@@ -11721,8 +11721,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "palm-2",
@@ -11741,8 +11741,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "phi-3-mini",
@@ -11761,8 +11761,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "phi-4",
@@ -11841,8 +11841,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "quasar-438b",
@@ -11861,8 +11861,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.11,
-      "outputPricePerMTokUsd": 0.33
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen-2-5-max",
@@ -11881,8 +11881,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen-chat-14b",
@@ -11901,8 +11901,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen-chat-72b",
@@ -11921,8 +11921,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen-turbo",
@@ -11941,8 +11941,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen1.5-110b-chat",
@@ -11961,8 +11961,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen2-5-72b-instruct",
@@ -12001,8 +12001,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen2-5-coder-7b-instruct",
@@ -12021,8 +12021,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen2-72b-instruct",
@@ -12041,8 +12041,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen2.5-32b-instruct",
@@ -12061,8 +12061,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-0.6b-instruct",
@@ -12081,8 +12081,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-0.6b-instruct-reasoning",
@@ -12101,8 +12101,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-1.7b-instruct",
@@ -12121,8 +12121,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-1.7b-instruct-reasoning",
@@ -12141,8 +12141,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-14b-instruct",
@@ -12201,8 +12201,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-235b-a22b-instruct-2507",
@@ -12261,8 +12261,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-30b-a3b-2507",
@@ -12301,8 +12301,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-30b-a3b-instruct",
@@ -12381,7 +12381,7 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.24000000000000002,
+      "inputPricePerMTokUsd": 0.24,
       "outputPricePerMTokUsd": 0.54
     },
     {
@@ -12401,8 +12401,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-4b-2507-instruct-reasoning",
@@ -12421,8 +12421,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-4b-instruct",
@@ -12441,8 +12441,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-4b-instruct-reasoning",
@@ -12461,8 +12461,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-5-0-8b",
@@ -12481,8 +12481,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-5-0-8b-non-reasoning",
@@ -12501,8 +12501,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-5-122b-a10b",
@@ -12601,8 +12601,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-5-2b-non-reasoning",
@@ -12621,8 +12621,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-5-35b-a3b",
@@ -12921,8 +12921,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-6-plus",
@@ -13020,7 +13020,7 @@
       "score": 20.11,
       "costPerTaskUsd": 3.52955,
       "tokensPerTask": 109802,
-      "secondsPerTask": 1972.7,
+      "secondsPerTask": 2613.3,
       "inputPricePerMTokUsd": 0.5,
       "outputPricePerMTokUsd": 3
     },
@@ -13040,7 +13040,7 @@
       "score": 15.69,
       "costPerTaskUsd": 1.9059,
       "tokensPerTask": 80176,
-      "secondsPerTask": 1615.2,
+      "secondsPerTask": 1750.7,
       "inputPricePerMTokUsd": 0.5,
       "outputPricePerMTokUsd": 3
     },
@@ -13060,7 +13060,7 @@
       "score": 17.48,
       "costPerTaskUsd": 2.16,
       "tokensPerTask": 86407,
-      "secondsPerTask": 1698,
+      "secondsPerTask": 1990.3,
       "inputPricePerMTokUsd": 0.5,
       "outputPricePerMTokUsd": 3
     },
@@ -13080,7 +13080,7 @@
       "score": 10.03,
       "costPerTaskUsd": 3.77294,
       "tokensPerTask": 44867,
-      "secondsPerTask": 872.9,
+      "secondsPerTask": 1069.8,
       "inputPricePerMTokUsd": 0.5,
       "outputPricePerMTokUsd": 3
     },
@@ -13120,7 +13120,7 @@
       "score": 33.65,
       "costPerTaskUsd": 10.02389,
       "tokensPerTask": 170794,
-      "secondsPerTask": 3621.7,
+      "secondsPerTask": 3613.3,
       "inputPricePerMTokUsd": 2,
       "outputPricePerMTokUsd": 6
     },
@@ -13181,8 +13181,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-coder-30b-a3b-instruct",
@@ -13261,8 +13261,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-max-preview",
@@ -13281,8 +13281,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-max-thinking",
@@ -13301,8 +13301,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-max-thinking-preview",
@@ -13321,8 +13321,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-next-80b-a3b-instruct",
@@ -13361,8 +13361,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-omni-30b-a3b-instruct",
@@ -13441,8 +13441,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-vl-30b-a3b-instruct",
@@ -13501,8 +13501,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-vl-32b-reasoning",
@@ -13521,8 +13521,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-vl-4b-instruct",
@@ -13541,8 +13541,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-vl-4b-reasoning",
@@ -13561,8 +13561,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-vl-8b-instruct",
@@ -13581,8 +13581,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwen3-vl-8b-reasoning",
@@ -13601,8 +13601,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "qwq-32b",
@@ -13621,8 +13621,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "QwQ-32B-Preview",
@@ -13641,8 +13641,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "r1-1776",
@@ -13661,8 +13661,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "reflection-beam",
@@ -13680,7 +13680,7 @@
       "score": 17.73,
       "costPerTaskUsd": 0.28441,
       "tokensPerTask": 34242,
-      "secondsPerTask": 70.7,
+      "secondsPerTask": 151.6,
       "inputPricePerMTokUsd": 0.4,
       "outputPricePerMTokUsd": 1.2
     },
@@ -13741,8 +13741,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "ring-2-6-1t",
@@ -13781,8 +13781,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "sarvam-105b",
@@ -13821,8 +13821,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "sarvam-m-reasoning",
@@ -13921,8 +13921,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "solar-open2-250b",
@@ -13941,8 +13941,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "solar-pro-2",
@@ -13961,8 +13961,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "solar-pro-2-preview",
@@ -13981,8 +13981,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "solar-pro-2-preview-reasoning",
@@ -14001,8 +14001,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "solar-pro-2-reasoning",
@@ -14021,8 +14021,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "solar-pro-3",
@@ -14081,8 +14081,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "sonar-pro",
@@ -14101,8 +14101,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "sonar-reasoning",
@@ -14121,8 +14121,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "sonar-reasoning-pro",
@@ -14141,8 +14141,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "step-3-5-flash",
@@ -14221,8 +14221,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "step-5",
@@ -14240,7 +14240,7 @@
       "score": 28.53,
       "costPerTaskUsd": 2.34525,
       "tokensPerTask": 113473,
-      "secondsPerTask": 804.1,
+      "secondsPerTask": 842.9,
       "inputPricePerMTokUsd": 1,
       "outputPricePerMTokUsd": 2.7
     },
@@ -14281,8 +14281,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "tri-21b-think-v0-5",
@@ -14301,8 +14301,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "trinity-large-thinking",
@@ -14321,8 +14321,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "tulu3-405b",
@@ -14341,28 +14341,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0,
-      "outputPricePerMTokUsd": 0
-    },
-    {
-      "id": "deepseek-v4-1-flash-1017-high",
-      "family": "deepseek-v4-1-flash-1017",
-      "name": "DeepSeek V4.1 Flash 1017",
-      "variant": "DeepSeek V4.1 Flash 1017",
-      "lab": "deepseek",
-      "labName": "DeepSeek",
-      "released": "2026-10-17",
-      "open": false,
-      "deprecated": false,
-      "effort": "high",
-      "effortLabel": "high",
-      "effortOrder": 40,
-      "score": 28.64,
-      "costPerTaskUsd": 0.45619,
-      "tokensPerTask": 110430,
-      "secondsPerTask": 420.9,
-      "inputPricePerMTokUsd": 0.3,
-      "outputPricePerMTokUsd": 1.2
+      "inputPricePerMTokUsd": null,
+      "outputPricePerMTokUsd": null
     },
     {
       "id": "deepseek-v4-1-flash-1017-non-reasoning",
@@ -14380,7 +14360,27 @@
       "score": 18.51,
       "costPerTaskUsd": 0.42542,
       "tokensPerTask": 65358,
-      "secondsPerTask": 388,
+      "secondsPerTask": 432.9,
+      "inputPricePerMTokUsd": 0.3,
+      "outputPricePerMTokUsd": 1.2
+    },
+    {
+      "id": "deepseek-v4-1-flash-1017-high",
+      "family": "deepseek-v4-1-flash-1017",
+      "name": "DeepSeek V4.1 Flash 1017",
+      "variant": "DeepSeek V4.1 Flash 1017",
+      "lab": "deepseek",
+      "labName": "DeepSeek",
+      "released": "2026-10-17",
+      "open": false,
+      "deprecated": false,
+      "effort": "high",
+      "effortLabel": "high",
+      "effortOrder": 40,
+      "score": 28.64,
+      "costPerTaskUsd": 0.45619,
+      "tokensPerTask": 110430,
+      "secondsPerTask": 635.8,
       "inputPricePerMTokUsd": 0.3,
       "outputPricePerMTokUsd": 1.2
     }

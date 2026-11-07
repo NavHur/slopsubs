@@ -1,17 +1,13 @@
 import { describe, expect, it } from "vite-plus/test";
-import type { TaskCost } from "./aa-index-cost";
-import {
-	type AaModel,
-	deriveModel,
-	mergeCatalog,
-	type SlopaPoint,
-} from "./catalog";
+import type { AaModel, TaskCost } from "./aa-site";
+import { deriveModel, mergeCatalog, type SlopaPoint } from "./catalog";
 
 const AA = {
-	release_date: "2026-09-22",
-	model_creator: { slug: "anthropic", name: "Anthropic" },
-	evaluations: { artificial_analysis_intelligence_index: 58.4 },
-	pricing: { price_1m_input_tokens: 4, price_1m_output_tokens: 20 },
+	releaseDate: "2026-09-22",
+	creator: { slug: "anthropic", name: "Anthropic" },
+	intelligenceIndex: 58.4,
+	price1mInputTokens: 4,
+	price1mOutputTokens: 20,
 } satisfies Omit<AaModel, "slug" | "name">;
 
 function aaModel(
@@ -61,23 +57,26 @@ const SITE_COST: TaskCost = {
 
 const DEEPSEEK_AA = [
 	aaModel("deepseek-v4-1-flash-1017", "DeepSeek V4.1 Flash 1017 (Max)", {
-		evaluations: { artificial_analysis_intelligence_index: 32.5 },
-		pricing: { price_1m_input_tokens: 0.3, price_1m_output_tokens: 1.2 },
+		intelligenceIndex: 32.5,
+		price1mInputTokens: 0.3,
+		price1mOutputTokens: 1.2,
 	}),
 	aaModel(
 		"deepseek-v4-1-flash-1017-non-reasoning",
 		"DeepSeek V4.1 Flash 1017 (Non-reasoning)",
 		{
-			evaluations: { artificial_analysis_intelligence_index: 18.5 },
-			pricing: { price_1m_input_tokens: 0.3, price_1m_output_tokens: 1.2 },
+			intelligenceIndex: 18.5,
+			price1mInputTokens: 0.3,
+			price1mOutputTokens: 1.2,
 		},
 	),
 	aaModel(
 		"deepseek-v4-1-flash-non-reasoning",
 		"DeepSeek V4.1 Flash (Non-reasoning)",
 		{
-			evaluations: { artificial_analysis_intelligence_index: null },
-			pricing: { price_1m_input_tokens: 0.3, price_1m_output_tokens: 1.2 },
+			intelligenceIndex: null,
+			price1mInputTokens: 0.3,
+			price1mOutputTokens: 1.2,
 		},
 	),
 ];
@@ -161,8 +160,9 @@ describe("mergeCatalog", () => {
 		const merged = mergeCatalog(
 			[
 				aaModel("gemini-4-argon", "Gemini 4 Argon (High)", {
-					evaluations: { artificial_analysis_intelligence_index: 50.4 },
-					pricing: { price_1m_input_tokens: 4, price_1m_output_tokens: 20 },
+					intelligenceIndex: 50.4,
+					price1mInputTokens: 4,
+					price1mOutputTokens: 20,
 				}),
 			],
 			[
@@ -188,10 +188,8 @@ describe("mergeCatalog", () => {
 		const merged = mergeCatalog(
 			[
 				aaModel("claude-opus-5-5", "Claude Opus 5.5 (Max)", {
-					pricing: {
-						price_1m_input_tokens: 4.0004,
-						price_1m_output_tokens: 20,
-					},
+					price1mInputTokens: 4.0004,
+					price1mOutputTokens: 20,
 				}),
 			],
 			[point()],
@@ -350,8 +348,9 @@ describe("mergeCatalog", () => {
 		const merged = mergeCatalog(
 			[
 				aaModel("mistral-large-4-preview", "Mistral Large 4 Preview", {
-					evaluations: { artificial_analysis_intelligence_index: 25.3 },
-					pricing: { price_1m_input_tokens: 0.7, price_1m_output_tokens: 2.1 },
+					intelligenceIndex: 25.3,
+					price1mInputTokens: 0.7,
+					price1mOutputTokens: 2.1,
 				}),
 			],
 			[

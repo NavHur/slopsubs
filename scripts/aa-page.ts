@@ -1,5 +1,5 @@
-// Fetches the Artificial Analysis model page the importers read, shared by
-// the importers that take data from the website rather than the data API.
+// Fetches the Artificial Analysis model page that import-benchmarks and
+// import-aa-evals read.
 
 import { readFile } from "node:fs/promises";
 

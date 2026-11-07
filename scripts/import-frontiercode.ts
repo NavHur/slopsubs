@@ -14,6 +14,8 @@ const SOURCE = "https://cognition.com/data/frontier-code-2.0/data.json";
 const FAMILY_ALIASES: Record<string, string> = {
 	// Cognition's "Muse Wonder 1.0" is the family we chart as muse-wonder.
 	"muse-wonder-1-0": "muse-wonder",
+	// Cognition's "Beam 1.0" is the family we chart as reflection-beam.
+	"beam-1-0": "reflection-beam",
 };
 
 const Result = z.object({

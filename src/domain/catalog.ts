@@ -1,30 +1,8 @@
 import { z } from "zod";
-import type { TaskCost } from "./aa-index-cost";
+import type { AaModel, TaskCost } from "./aa-site";
 import { EFFORTS } from "./enums";
 import type { Effort } from "./model";
 import { roundedOrNull } from "./rounding";
-
-/** One model as Artificial Analysis' data API returns it. */
-const AaModel = z.object({
-	slug: z.string().min(1),
-	name: z.string().min(1),
-	release_date: z.string().min(1),
-	model_creator: z.object({
-		slug: z.string().min(1),
-		name: z.string().min(1),
-	}),
-	evaluations: z.object({
-		artificial_analysis_intelligence_index: z.number().nullable(),
-	}),
-	pricing: z.object({
-		price_1m_input_tokens: z.number().nonnegative().nullable(),
-		price_1m_output_tokens: z.number().nonnegative().nullable(),
-	}),
-});
-export type AaModel = z.infer<typeof AaModel>;
-
-/** The API wraps its rows in a status envelope the import ignores. */
-export const AaResponse = z.object({ data: z.array(AaModel) });
 
 /** The fields the import keeps from one slopalytics bundle point. */
 export const SlopaPoint = z.object({
@@ -152,8 +130,8 @@ function checkScore(
 /** One warning per price AA and slopalytics disagree on. */
 function priceWarnings(point: SlopaPoint, aa: AaModel): string[] {
 	const prices: [string, number | null, number | null][] = [
-		["input", point.inputPricePerMTokUsd, aa.pricing.price_1m_input_tokens],
-		["output", point.outputPricePerMTokUsd, aa.pricing.price_1m_output_tokens],
+		["input", point.inputPricePerMTokUsd, aa.price1mInputTokens],
+		["output", point.outputPricePerMTokUsd, aa.price1mOutputTokens],
 	];
 	return prices
 		.filter(([, ours, theirs]) => priceDiffers(ours, theirs))
@@ -186,16 +164,16 @@ function mergePoint(
 	const slug = AA_ALIASES[point.id] ?? point.id;
 	const aa = aaById.get(slug);
 	if (!aa) throw new Error(`AA has no model for ${point.id} (${point.name})`);
-	const aaScore = aa.evaluations.artificial_analysis_intelligence_index;
+	const aaScore = aa.intelligenceIndex;
 	checkScore(point, aaScore, warnings, allowScoreDrift);
 	warnings.push(...priceWarnings(point, aa));
 	return {
 		...point,
 		...siteCostFill(point, siteCosts.get(slug)),
-		released: aa.release_date,
+		released: aa.releaseDate,
 		score: roundedOrNull(aaScore, 2),
-		inputPricePerMTokUsd: aa.pricing.price_1m_input_tokens,
-		outputPricePerMTokUsd: aa.pricing.price_1m_output_tokens,
+		inputPricePerMTokUsd: aa.price1mInputTokens,
+		outputPricePerMTokUsd: aa.price1mOutputTokens,
 	};
 }
 
@@ -222,24 +200,21 @@ function aaOnlyPoint(
 		family: derived.family,
 		name,
 		variant: name,
-		lab: aa.model_creator.slug,
-		labName: aa.model_creator.name,
-		released: aa.release_date,
+		lab: aa.creator.slug,
+		labName: aa.creator.name,
+		released: aa.releaseDate,
 		open: false,
 		deprecated: false,
 		effort: derived.effort,
 		effortLabel: effort.label,
 		effortOrder: effort.order,
-		score: roundedOrNull(
-			aa.evaluations.artificial_analysis_intelligence_index,
-			2,
-		),
+		score: roundedOrNull(aa.intelligenceIndex, 2),
 		costPerTaskUsd: null,
 		tokensPerTask: null,
 		secondsPerTask: null,
 		...siteCost,
-		inputPricePerMTokUsd: aa.pricing.price_1m_input_tokens,
-		outputPricePerMTokUsd: aa.pricing.price_1m_output_tokens,
+		inputPricePerMTokUsd: aa.price1mInputTokens,
+		outputPricePerMTokUsd: aa.price1mOutputTokens,
 	};
 }
 
