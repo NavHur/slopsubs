@@ -1,29 +1,22 @@
-// Merges AA (scores, prices, releases, cost/tokens/time per task) and
-// slopalytics (the catalog, and figures AA's site lacks) into
+// Merges AA's website (scores, prices, releases, cost/tokens/time per task)
+// and slopalytics (the catalog, and figures AA's site lacks) into
 // src/data/benchmarks.json.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { flightFromHtml } from "../src/domain/aa-evals.ts";
-import { extractIndexCosts } from "../src/domain/aa-site.ts";
-import {
-	type AaModel,
-	AaResponse,
-	mergeCatalog,
-	SlopaPoint,
-} from "../src/domain/catalog.ts";
+import { readAaSite } from "../src/domain/aa-site.ts";
+import { mergeCatalog, SlopaPoint } from "../src/domain/catalog.ts";
 import { Plans } from "../src/domain/model.ts";
 import { roundedOrNull } from "../src/domain/rounding.ts";
 import { loadAaPage } from "./aa-page.ts";
 import { extract, type Literal } from "./bundle-literal.ts";
 
 const SITE = "https://slopalytics.com";
-const AA_API = "https://artificialanalysis.ai/api/v2/data/llms/models";
 const OUTPUT = new URL("../src/data/benchmarks.json", import.meta.url);
 const PLANS = new URL("../src/data/plans.json", import.meta.url);
 
 type Args = {
 	bundle?: string;
-	aa?: string;
 	html?: string;
 	allowMissingCost: boolean;
 	allowScoreDrift: boolean;
@@ -34,7 +27,6 @@ function parseArgs(argv: string[]): Args {
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
 		if (arg === "--bundle") args.bundle = argv[++i];
-		else if (arg === "--aa") args.aa = argv[++i];
 		else if (arg === "--html") args.html = argv[++i];
 		else if (arg === "--allow-missing-cost") args.allowMissingCost = true;
 		else if (arg === "--allow-score-drift") args.allowScoreDrift = true;
@@ -51,25 +43,10 @@ async function loadBundle(path: string | undefined): Promise<string> {
 	return (await fetch(SITE + script)).text();
 }
 
-/** AA's rows, from a cached response or one request with the API key. */
-async function loadAa(path: string | undefined): Promise<AaModel[]> {
-	if (path)
-		return AaResponse.parse(JSON.parse(await readFile(path, "utf8"))).data;
-	const key = process.env.AA_API_KEY;
-	if (!key)
-		throw new Error(
-			"Set AA_API_KEY in .env.local (bun loads it), or pass --aa <models.json>",
-		);
-	const response = await fetch(AA_API, { headers: { "x-api-key": key } });
-	if (!response.ok) throw new Error(`${AA_API}: HTTP ${response.status}`);
-	return AaResponse.parse(await response.json()).data;
-}
-
 async function main() {
 	const args = parseArgs(process.argv.slice(2));
-	const [bundle, aa, page] = await Promise.all([
+	const [bundle, page] = await Promise.all([
 		loadBundle(args.bundle),
-		loadAa(args.aa),
 		loadAaPage(args.html),
 	]);
 	const dataset = extract(bundle, /=\{fetchedAt:/) as Record<string, Literal>;
@@ -100,9 +77,10 @@ async function main() {
 		})),
 	);
 	const plans = Plans.parse(JSON.parse(await readFile(PLANS, "utf8")));
-	const merged = mergeCatalog(aa, slopa, {
+	const aa = readAaSite(flightFromHtml(page));
+	const merged = mergeCatalog(aa.models, slopa, {
 		coveredFamilies: new Set(plans.flatMap((plan) => plan.families)),
-		siteCosts: extractIndexCosts(flightFromHtml(page)),
+		siteCosts: aa.costs,
 		allowScoreDrift: args.allowScoreDrift,
 	});
 	if (merged.missingCost.length && !args.allowMissingCost)
@@ -114,7 +92,7 @@ async function main() {
 	const output = {
 		fetchedAt: new Date().toISOString(),
 		source:
-			"Artificial Analysis (scores, prices, releases, cost, tokens and time per task); Slopalytics (catalog, and figures AA's site lacks)",
+			"Artificial Analysis website (scores, prices, releases, cost, tokens and time per task); Slopalytics (catalog, and figures AA's site lacks)",
 		frontier,
 		models: merged.models,
 	};

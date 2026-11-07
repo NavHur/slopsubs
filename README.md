@@ -36,21 +36,18 @@ bun run build-plans          # plans.json and chart-benchmarks.json
 ```
 
 [Artificial Analysis](https://artificialanalysis.ai) is the source of the
-model list, Intelligence Index scores, list prices and release dates, through
-its data API. The API needs a key: put `AA_API_KEY=...` in `.env.local` (which
-git ignores) and `bun` passes it to the script. AA's model page also publishes
-the cost, tokens and time per task for the models it has run; `import-benchmarks`
-reads them from its flight payload and prefers them. Slopalytics supplies the
-catalog and fills any point the website doesn't cover. A score they disagree on
-stops the import; a price they disagree on only warns, since a promo can explain
-the gap, and AA's list price wins. When AA says it regraded a benchmark,
+model list, Intelligence Index scores, list prices and release dates, and the
+cost, tokens and time per task for the models it has run. `import-benchmarks`
+reads all of them from an AA model page's flight payload; no API key is
+needed. Slopalytics supplies the catalog and fills any point the website
+doesn't cover. A score they disagree on stops the import; a price they disagree
+on only warns, since a promo can explain the gap, and AA's list price wins. When AA says it regraded a benchmark,
 `--allow-score-drift` turns a gap of up to 1.5 points into a warning so the
 refresh can proceed before slopalytics catches up. AA's time per task is decode
 time, excluding TTFT and overhead.
 
 The nine Intelligence Index evals (Terminal-Bench 4.0, FrontierCode 2.0 and
-seven others) come from the AA website itself, not the data API, because the
-API omits their per-task cost, tokens and time. `import-aa-evals` fetches a
+seven others) come from the same AA page. `import-aa-evals` fetches a
 model page, reconstructs its Next.js flight payload, and extracts each model's
 per-eval score, cost, tokens and time into `src/data/aa-evals.json`, resolved
 against the catalog (unknown families/efforts are skipped with a log; ambiguous
@@ -58,7 +55,7 @@ ones stop the import). A family the catalog has only as `default` takes the
 website's row when the site lists it at one effort, and the log names it.
 
 Each script takes cached input for offline runs: `import-benchmarks` accepts
-`--bundle <bundle.js>`, `--aa <models.json>` and `--html <page.html>`, and
+`--bundle <bundle.js>` and `--html <page.html>`, and
 `import-aa-evals` accepts `--html <page.html>`. `import-frontiercode` has no flags.
 
 A point slopalytics has not costed takes AA's own cost, tokens and time per

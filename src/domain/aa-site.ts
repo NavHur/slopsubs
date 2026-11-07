@@ -1,5 +1,6 @@
-// Reads each model's whole Intelligence Index cost, tokens and time per task
-// out of an AA model page's flight payload, for models slopalytics hasn't run.
+// Reads an AA model page's Next.js flight payload: every model AA lists, with
+// its Intelligence Index, list prices and release date, and the whole index's
+// cost, tokens and time per task for the models AA has run.
 
 import { z } from "zod";
 import { MODEL_START_PATTERN, stringLiteralEnd } from "./flight";
@@ -17,7 +18,13 @@ const BRACE_DELTA: Record<string, number> = { "{": 1, "}": -1 };
 /** The fields read from one model record; the page carries many more. */
 const SiteModel = z.object({
 	slug: z.string().min(1),
+	name: z.string().min(1),
+	releaseDate: z.string().min(1),
+	creator: z.object({ slug: z.string().min(1), name: z.string().min(1) }),
 	chartDefaultSelected: z.boolean(),
+	intelligenceIndex: z.number().nullable(),
+	price1mInputTokens: z.number().nonnegative().nullable(),
+	price1mOutputTokens: z.number().nonnegative().nullable(),
 	intelligenceIndexCostPerTask: z
 		.object({ cost: z.object({ total: z.number().nonnegative() }) })
 		.nullish(),
@@ -27,6 +34,25 @@ const SiteModel = z.object({
 	intelligenceIndexTimePerTask: z.number().nullish(),
 });
 type SiteModel = z.infer<typeof SiteModel>;
+
+/** One model AA lists, as the catalog merge reads it. */
+export type AaModel = Pick<
+	SiteModel,
+	| "slug"
+	| "name"
+	| "releaseDate"
+	| "creator"
+	| "intelligenceIndex"
+	| "price1mInputTokens"
+	| "price1mOutputTokens"
+>;
+
+/** What the import reads from AA's site. */
+export type AaSite = {
+	models: AaModel[];
+	/** Task cost by AA slug, for the models AA has costed. */
+	costs: Map<string, TaskCost>;
+};
 
 /** End of the object starting at `start`, skipping braces inside strings. */
 function objectEnd(text: string, start: number): number {
@@ -67,24 +93,40 @@ function taskCost(model: SiteModel): TaskCost | null {
 	};
 }
 
+function aaModel(model: SiteModel): AaModel {
+	return {
+		slug: model.slug,
+		name: model.name,
+		releaseDate: model.releaseDate,
+		creator: { slug: model.creator.slug, name: model.creator.name },
+		intelligenceIndex: model.intelligenceIndex,
+		price1mInputTokens: model.price1mInputTokens,
+		price1mOutputTokens: model.price1mOutputTokens,
+	};
+}
+
 /**
- * Each costed model's task cost, by AA slug. Throws when the page carries
- * only AA's default chart selection, which a model in it gets instead of
- * every model.
+ * Every model on the page, and each costed model's task cost. Throws when
+ * the page carries only AA's default chart selection, which a model in it
+ * gets instead of every model.
  */
-export function extractIndexCosts(flight: string): Map<string, TaskCost> {
-	const models = [...flight.matchAll(MODEL_START_PATTERN)]
+export function readAaSite(flight: string): AaSite {
+	const records = [...flight.matchAll(MODEL_START_PATTERN)]
 		.map((found) => recordAt(flight, found.index))
 		.filter((model) => model !== null);
-	if (!models.length) throw new Error("No model records in the page");
-	if (models.every((model) => model.chartDefaultSelected))
+	if (!records.length) throw new Error("No model records in the page");
+	if (records.every((model) => model.chartDefaultSelected))
 		throw new Error(
 			"The page lists only AA's default chart selection; read a model page outside it",
 		);
 	const costs = new Map<string, TaskCost>();
-	for (const model of models) {
+	const slugs = new Set<string>();
+	for (const model of records) {
+		if (slugs.has(model.slug))
+			throw new Error(`The page lists ${model.slug} twice`);
+		slugs.add(model.slug);
 		const cost = taskCost(model);
 		if (cost) costs.set(model.slug, cost);
 	}
-	return costs;
+	return { models: records.map(aaModel), costs };
 }
