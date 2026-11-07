@@ -7,14 +7,23 @@ const uuidOf = (index: number) =>
 
 type Fixture = {
 	slug: string;
+	/** Task cost in USD; omitted means AA has no cost for the model. */
 	cost?: number;
+	/** No score and no prices, as AA lists a model it has not run. */
+	unlisted?: boolean;
 	selected?: boolean;
 	outputPrice?: number;
 };
 
 /** One model record as the flight payload lays it out, creator nested. */
 function modelRecord(
-	{ slug, cost, selected = false, outputPrice = 0.362 }: Fixture,
+	{
+		slug,
+		cost,
+		unlisted = false,
+		selected = false,
+		outputPrice = 0.362,
+	}: Fixture,
 	index: number,
 ) {
 	return {
@@ -29,9 +38,9 @@ function modelRecord(
 			name: 'Lab "{x}',
 			logo: "/img/lab.svg",
 		},
-		intelligenceIndex: cost === undefined ? null : 30,
-		price1mInputTokens: cost === undefined ? null : 0.181,
-		price1mOutputTokens: cost === undefined ? null : outputPrice,
+		intelligenceIndex: unlisted ? null : 30,
+		price1mInputTokens: unlisted ? null : 0.181,
+		price1mOutputTokens: unlisted ? null : outputPrice,
 		intelligenceIndexTimePerTask: cost === undefined ? null : 412.345,
 		intelligenceIndexCostPerTask:
 			cost === undefined ? null : { cost: { total: cost }, evaluations: [] },
@@ -69,7 +78,9 @@ describe("readAaSite", () => {
 	});
 
 	it("lists an unscored, unpriced model with null figures", () => {
-		const { models } = readAaSite(flightOf([{ slug: "granite-4-2-3b" }]));
+		const { models } = readAaSite(
+			flightOf([{ slug: "granite-4-2-3b", unlisted: true }]),
+		);
 		expect(models[0]).toMatchObject({
 			intelligenceIndex: null,
 			price1mInputTokens: null,
