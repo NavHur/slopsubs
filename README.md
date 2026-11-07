@@ -41,9 +41,9 @@ cost, tokens and time per task for the models it has run. `import-benchmarks`
 reads all of them from an AA model page's flight payload; no API key is
 needed. Slopalytics supplies the catalog and fills any point the website
 doesn't cover. A score they disagree on stops the import; a price they disagree
-on only warns, since a promo can explain the gap, and AA's list price wins. When AA says it regraded a benchmark,
-`--allow-score-drift` turns a gap of up to 1.5 points into a warning so the
-refresh can proceed before slopalytics catches up. AA's time per task is decode
+on only warns, since a promo can explain the gap, and AA's list price wins. When AA says it regraded a
+benchmark, `--allow-score-drift` turns a gap of up to 1.5 points into a warning
+so the refresh can proceed before slopalytics catches up. AA's time per task is decode
 time, excluding TTFT and overhead.
 
 The nine Intelligence Index evals (Terminal-Bench 4.0, FrontierCode 2.0 and
@@ -58,12 +58,13 @@ Each script takes cached input for offline runs: `import-benchmarks` accepts
 `--bundle <bundle.js>` and `--html <page.html>`, and
 `import-aa-evals` accepts `--html <page.html>`. `import-frontiercode` has no flags.
 
-A point slopalytics has not costed takes AA's own cost, tokens and time per
-task from the same model page `import-aa-evals` reads. A model AA lists that
-neither source has costed makes the import stop, so the gap is deliberate
-rather than silent.
-`bun run import-benchmarks -- --allow-missing-cost` writes it with a null cost
-instead; the cost chart leaves it out until either source costs it.
+AA's cost, tokens and time per task, from the same model page `import-aa-evals`
+reads, win over slopalytics' whenever AA has them; slopalytics supplies the
+rest. A model AA lists that the slopalytics catalog lacks takes AA's figures
+alone, and when AA has none the import stops, so the gap is deliberate rather
+than silent. `bun run import-benchmarks -- --allow-missing-cost` writes it with
+a null cost instead; the cost chart leaves it out until a source costs it. A
+catalog model that neither source costed ships a null cost without a warning.
 
 FrontierCode 2.0 comes from Cognition's own `data.json`, not a reseller.
 `build-plans` then keeps only the points some plan covers and writes the

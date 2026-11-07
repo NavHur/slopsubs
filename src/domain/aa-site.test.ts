@@ -5,10 +5,18 @@ import { readAaSite } from "./aa-site";
 const uuidOf = (index: number) =>
 	`${String(index).padStart(8, "0")}-0000-0000-0000-000000000000`;
 
-type Fixture = { slug: string; cost?: number; selected?: boolean };
+type Fixture = {
+	slug: string;
+	cost?: number;
+	selected?: boolean;
+	outputPrice?: number;
+};
 
 /** One model record as the flight payload lays it out, creator nested. */
-function modelRecord({ slug, cost, selected = false }: Fixture, index: number) {
+function modelRecord(
+	{ slug, cost, selected = false, outputPrice = 0.362 }: Fixture,
+	index: number,
+) {
 	return {
 		id: uuidOf(index),
 		slug,
@@ -23,7 +31,7 @@ function modelRecord({ slug, cost, selected = false }: Fixture, index: number) {
 		},
 		intelligenceIndex: cost === undefined ? null : 30,
 		price1mInputTokens: cost === undefined ? null : 0.181,
-		price1mOutputTokens: cost === undefined ? null : 0.362,
+		price1mOutputTokens: cost === undefined ? null : outputPrice,
 		intelligenceIndexTimePerTask: cost === undefined ? null : 412.345,
 		intelligenceIndexCostPerTask:
 			cost === undefined ? null : { cost: { total: cost }, evaluations: [] },
@@ -49,6 +57,15 @@ describe("readAaSite", () => {
 				price1mOutputTokens: 0.362,
 			},
 		]);
+	});
+
+	it("rounds away binary-float artifacts in AA's prices", () => {
+		const { models } = readAaSite(
+			flightOf([
+				{ slug: "deepseek-v3-1", cost: 1, outputPrice: 1.5899999999999999 },
+			]),
+		);
+		expect(models[0]?.price1mOutputTokens).toBe(1.59);
 	});
 
 	it("lists an unscored, unpriced model with null figures", () => {

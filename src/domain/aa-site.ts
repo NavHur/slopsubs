@@ -1,6 +1,5 @@
-// Reads an AA model page's Next.js flight payload: every model AA lists, with
-// its Intelligence Index, list prices and release date, and the whole index's
-// cost, tokens and time per task for the models AA has run.
+// Reads an AA model page's flight payload: each model's score, prices and
+// release date, and the cost, tokens and time per task of those AA has run.
 
 import { z } from "zod";
 import { MODEL_START_PATTERN, stringLiteralEnd } from "./flight";
@@ -100,8 +99,8 @@ function aaModel(model: SiteModel): AaModel {
 		releaseDate: model.releaseDate,
 		creator: { slug: model.creator.slug, name: model.creator.name },
 		intelligenceIndex: model.intelligenceIndex,
-		price1mInputTokens: model.price1mInputTokens,
-		price1mOutputTokens: model.price1mOutputTokens,
+		price1mInputTokens: roundedOrNull(model.price1mInputTokens, 6),
+		price1mOutputTokens: roundedOrNull(model.price1mOutputTokens, 6),
 	};
 }
 

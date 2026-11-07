@@ -1982,7 +1982,7 @@
       "tokensPerTask": null,
       "secondsPerTask": null,
       "inputPricePerMTokUsd": 0.53,
-      "outputPricePerMTokUsd": 1.5899999999999999
+      "outputPricePerMTokUsd": 1.59
     },
     {
       "id": "deepseek-v3-1-reasoning",
@@ -2002,7 +2002,7 @@
       "tokensPerTask": null,
       "secondsPerTask": null,
       "inputPricePerMTokUsd": 0.425,
-      "outputPricePerMTokUsd": 1.3399999999999999
+      "outputPricePerMTokUsd": 1.34
     },
     {
       "id": "deepseek-v3-1-terminus",
@@ -3961,7 +3961,7 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.16499999999999998,
+      "inputPricePerMTokUsd": 0.165,
       "outputPricePerMTokUsd": 0.4
     },
     {
@@ -7582,7 +7582,7 @@
       "tokensPerTask": null,
       "secondsPerTask": null,
       "inputPricePerMTokUsd": 0.136,
-      "outputPricePerMTokUsd": 0.5549999999999999
+      "outputPricePerMTokUsd": 0.555
     },
     {
       "id": "hy3-non-reasoning",
@@ -9262,7 +9262,7 @@
       "tokensPerTask": null,
       "secondsPerTask": null,
       "inputPricePerMTokUsd": 0.25,
-      "outputPricePerMTokUsd": 0.9199999999999999
+      "outputPricePerMTokUsd": 0.92
     },
     {
       "id": "llama-4-scout",
@@ -9621,8 +9621,8 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.6739999999999999,
-      "outputPricePerMTokUsd": 1.8479999999999999
+      "inputPricePerMTokUsd": 0.674,
+      "outputPricePerMTokUsd": 1.848
     },
     {
       "id": "mimo-v2-6-flash",
@@ -12381,7 +12381,7 @@
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null,
-      "inputPricePerMTokUsd": 0.24000000000000002,
+      "inputPricePerMTokUsd": 0.24,
       "outputPricePerMTokUsd": 0.54
     },
     {
