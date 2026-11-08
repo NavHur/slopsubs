@@ -18,10 +18,10 @@ const runner = vi.hoisted(() => {
 		cleanups: [] as Array<() => void>,
 		mount: <R>(hook: () => R): R => {
 			const result = hook();
-			for (const effect of effects) {
+			effects.forEach((effect) => {
 				const cleanup = effect();
 				if (cleanup) runner.cleanups.push(cleanup);
-			}
+			});
 			return result;
 		},
 		reset: () => {

@@ -58,11 +58,16 @@ function meetsRootBox(target: FakeBox, init: Init, viewport: number): boolean {
 	const { root = null, rootMargin = "0px 0px 0px 0px" } = init;
 	if (root && !isInside(target, root)) return false;
 	const rootSpan = root ? root.span() : { top: 0, bottom: viewport };
-	const clipped = root || !target.clip ? undefined : target.clip;
-	const seen = clipped ? clipTo(target.span(), clipped) : target.span();
+	const seen = visibleSpan(target, root);
 	return (
 		seen.top <= seen.bottom && touches(seen, rootBox(rootSpan, rootMargin))
 	);
+}
+
+/** The viewport clips through the target's scroller; an explicit root does not. */
+function visibleSpan(target: FakeBox, root: FakeBox | null): Span {
+	if (root || !target.clip) return target.span();
+	return clipTo(target.span(), target.clip);
 }
 
 /** Records each target's new state and returns an entry for those that flipped. */

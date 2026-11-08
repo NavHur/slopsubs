@@ -56,7 +56,7 @@ function buildWorld(initial: Layout) {
 			bottom: headerHeight() + offset + height - scrollY,
 		}),
 		get clip() {
-			return layout === "scroller" ? scroller.span() : undefined;
+			return this.parentElement?.span();
 		},
 	});
 	const elements = new Map<string, FakeBox & { id: string }>([
@@ -149,20 +149,17 @@ describe.each<Layout>(["page", "scroller"])(
 			expect(scrollTo(1300)).toBe("ranked");
 		});
 
-		it("lands on the first section after a jump straight up over a middle one", () => {
-			for (const y of [500, 700, 1300]) scrollTo(y);
-			expect(scrollTo(0)).toBe("cost");
-		});
-
-		it("lands on the first section after a jump from the end to the top", () => {
-			for (const y of [500, 1300, Infinity]) scrollTo(y);
-			expect(scrollTo(0)).toBe("cost");
-		});
-
-		it("lands on the middle section after a jump from the end up to it", () => {
-			for (const y of [500, 1300, Infinity]) scrollTo(y);
-			expect(scrollTo(500)).toBe("tasks");
-		});
+		it.each([
+			{ from: [500, 700, 1300], to: 0, expected: "cost" },
+			{ from: [500, 1300, Infinity], to: 0, expected: "cost" },
+			{ from: [500, 1300, Infinity], to: 500, expected: "tasks" },
+		])(
+			"jumps from $from to $to and reports $expected",
+			({ from, to, expected }) => {
+				from.forEach(scrollTo);
+				expect(scrollTo(to)).toBe(expected);
+			},
+		);
 
 		it("puts the reading line at 40% of the window, not of the scroller", () => {
 			const tasks = SECTIONS[1].offset;
