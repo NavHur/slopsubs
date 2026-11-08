@@ -5,6 +5,7 @@ import { parseArgs } from "node:util";
 import { type Browser, chromium, type Page } from "playwright-core";
 import { BENCHMARK_IDS } from "../src/domain/enums.ts";
 import { median, requirePainted } from "./paint-stats.ts";
+import { readPickerClearance } from "./picker-clearance.ts";
 import { originOf, serveSite } from "./serve-site.ts";
 
 const PHONE = { width: 390, height: 844 };
@@ -184,24 +185,11 @@ async function samplePaint(browser: Browser, url: string) {
 /** How far the pressed benchmark sits inside the picker's unfaded band;
  * negative means part of it is faded or hidden. */
 function measureClearance(page: Page): Promise<number> {
-	return page.evaluate(
-		({ picker, fade, slack }) => {
-			const fieldset = document.querySelector(picker);
-			const row = fieldset?.parentElement;
-			const pressed = fieldset?.querySelector("[aria-pressed=true]");
-			if (!row || !pressed) throw new Error("No benchmark picker");
-			const box = row.getBoundingClientRect();
-			const target = pressed.getBoundingClientRect();
-			const maxScroll = row.scrollWidth - row.clientWidth;
-			const fadeStart = row.scrollLeft > slack ? fade : 0;
-			const fadeEnd = row.scrollLeft < maxScroll - slack ? fade : 0;
-			return Math.min(
-				target.left - (box.left + fadeStart),
-				box.right - fadeEnd - target.right,
-			);
-		},
-		{ picker: PICKER, fade: FADE_PX, slack: EDGE_SLACK_PX },
-	);
+	return page.evaluate(readPickerClearance, {
+		picker: PICKER,
+		fade: FADE_PX,
+		slack: EDGE_SLACK_PX,
+	});
 }
 
 /** Holds every font request until `release` runs. */
