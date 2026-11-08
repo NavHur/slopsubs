@@ -109,7 +109,7 @@ function aaModel(model: SiteModel): AaModel {
  * the page carries only AA's default chart selection, which a model in it
  * gets instead of every model.
  */
-export function readAaSite(flight: string): AaSite {
+function pageRecords(flight: string): SiteModel[] {
 	const records = [...flight.matchAll(MODEL_START_PATTERN)]
 		.map((found) => recordAt(flight, found.index))
 		.filter((model) => model !== null);
@@ -118,6 +118,11 @@ export function readAaSite(flight: string): AaSite {
 		throw new Error(
 			"The page lists only AA's default chart selection; read a model page outside it",
 		);
+	return records;
+}
+
+export function readAaSite(flight: string): AaSite {
+	const records = pageRecords(flight);
 	const costs = new Map<string, TaskCost>();
 	const slugs = new Set<string>();
 	for (const model of records) {
