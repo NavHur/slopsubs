@@ -105,8 +105,9 @@ function aaModel(model: SiteModel): AaModel {
 }
 
 /**
- * Every model record on the page. Throws when the page carries only AA's
- * default chart selection, which a model in it gets instead of every model.
+ * Every model record on the page. Throws when the page has no model records,
+ * or carries only AA's default chart selection, which a model in it gets
+ * instead of every model.
  */
 function pageRecords(flight: string): SiteModel[] {
 	const records = [...flight.matchAll(MODEL_START_PATTERN)]

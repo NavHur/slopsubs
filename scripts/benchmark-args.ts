@@ -1,3 +1,5 @@
+// Reads the command-line flags of scripts/import-benchmarks.ts.
+
 type Args = {
 	bundle?: string;
 	html?: string;
