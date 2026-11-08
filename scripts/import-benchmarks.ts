@@ -9,31 +9,12 @@ import { mergeCatalog, SlopaPoint } from "../src/domain/catalog.ts";
 import { Plans } from "../src/domain/model.ts";
 import { roundedOrNull } from "../src/domain/rounding.ts";
 import { loadAaPage } from "./aa-page.ts";
+import { parseArgs } from "./benchmark-args.ts";
 import { extract, type Literal } from "./bundle-literal.ts";
 
 const SITE = "https://slopalytics.com";
 const OUTPUT = new URL("../src/data/benchmarks.json", import.meta.url);
 const PLANS = new URL("../src/data/plans.json", import.meta.url);
-
-type Args = {
-	bundle?: string;
-	html?: string;
-	allowMissingCost: boolean;
-	allowScoreDrift: boolean;
-};
-
-function parseArgs(argv: string[]): Args {
-	const args: Args = { allowMissingCost: false, allowScoreDrift: false };
-	for (let i = 0; i < argv.length; i++) {
-		const arg = argv[i];
-		if (arg === "--bundle") args.bundle = argv[++i];
-		else if (arg === "--html") args.html = argv[++i];
-		else if (arg === "--allow-missing-cost") args.allowMissingCost = true;
-		else if (arg === "--allow-score-drift") args.allowScoreDrift = true;
-		else throw new Error(`Unknown argument ${arg}`);
-	}
-	return args;
-}
 
 async function loadBundle(path: string | undefined): Promise<string> {
 	if (path) return readFile(path, "utf8");
