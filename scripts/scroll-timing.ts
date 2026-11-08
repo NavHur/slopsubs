@@ -70,13 +70,18 @@ function bucketsIn(stack: readonly string[]) {
 		.map(([bucket]) => bucket);
 }
 
-/** Milliseconds of script, and of each bucket, in a profile. */
-export function split(profile: Profile): Split {
+function profileSamples(profile: Profile) {
 	const { samples, timeDeltas } = profile;
 	if (!samples) throw new Error("Chrome profile has no samples");
 	if (!timeDeltas || timeDeltas.length < samples.length) {
 		throw new Error("Chrome profile has fewer timeDeltas than samples");
 	}
+	return { samples, timeDeltas };
+}
+
+/** Milliseconds of script, and of each bucket, in a profile. */
+export function split(profile: Profile): Split {
+	const { samples, timeDeltas } = profileSamples(profile);
 	const stackOf = stacksOf(profile);
 	const totals: Split = { script: 0, react: 0, layoutReads: 0 };
 	samples.forEach((id, i) => {

@@ -2,7 +2,12 @@
 // browser. Build first: `vp build`.
 
 import { readFile } from "node:fs/promises";
-import { createServer, type Server } from "node:http";
+import {
+	createServer,
+	type Server,
+	type IncomingMessage,
+	type ServerResponse,
+} from "node:http";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -25,28 +30,27 @@ function isMissingFile(error: unknown): boolean {
 }
 
 /** Serves the prerendered build, with / mapped to index.html. */
-export function serveSite(): Promise<Server> {
-	const server = createServer(async (request, response) => {
-		const path = normalize(new URL(request.url ?? "/", "http://x").pathname);
-		const file = join(
-			SITE_DIR,
-			path.endsWith("/") ? `${path}index.html` : path,
-		);
-		try {
-			const body = await readFile(file);
-			response.writeHead(200, {
-				"content-type":
-					CONTENT_TYPES[extname(file)] ?? "application/octet-stream",
-			});
-			response.end(body);
-		} catch (error) {
-			if (!isMissingFile(error)) {
-				response.writeHead(500).end();
-				throw error;
-			}
-			response.writeHead(404).end();
+async function serveAsset(request: IncomingMessage, response: ServerResponse) {
+	const path = normalize(new URL(request.url ?? "/", "http://x").pathname);
+	const file = join(SITE_DIR, path.endsWith("/") ? `${path}index.html` : path);
+	try {
+		const body = await readFile(file);
+		response.writeHead(200, {
+			"content-type":
+				CONTENT_TYPES[extname(file)] ?? "application/octet-stream",
+		});
+		response.end(body);
+	} catch (error) {
+		if (!isMissingFile(error)) {
+			response.writeHead(500).end();
+			throw error;
 		}
-	});
+		response.writeHead(404).end();
+	}
+}
+
+export function serveSite(): Promise<Server> {
+	const server = createServer(serveAsset);
 	return new Promise((resolve) =>
 		server.listen(0, "127.0.0.1", () => resolve(server)),
 	);
