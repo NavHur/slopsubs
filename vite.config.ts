@@ -31,8 +31,13 @@ const config = defineConfig({
 		// plus the recommended Biome rules it files under other categories.
 		plugins: ["oxc", "typescript", "unicorn", "react", "jsx-a11y", "import"],
 		categories: { correctness: "error" },
-		jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
+		jsPlugins: [
+			{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" },
+			{ name: "pbp", specifier: "./scripts/lint/cognitive-complexity.mjs" },
+		],
 		rules: {
+			complexity: ["error", { max: 18 }],
+			"pbp/cognitive-complexity": ["error", { max: 6 }],
 			"vite-plus/prefer-vite-plus-imports": "error",
 			eqeqeq: "error",
 			"no-var": "error",
