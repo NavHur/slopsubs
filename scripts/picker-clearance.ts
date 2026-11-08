@@ -1,6 +1,15 @@
-type PickerBand = { picker: string; fade: number; slack: number };
+// Serialized as source by page.evaluate: the function may use only itself and
+// browser globals, never module constants or helpers.
 
-export const readPickerClearance = ({ picker, fade, slack }: PickerBand) => {
+type PickerBand = { picker: string; fadePx: number; slackPx: number };
+
+/** How far the pressed benchmark sits inside the picker's unfaded band;
+ * negative means part of it is faded or hidden. */
+export const readPickerClearance = ({
+	picker,
+	fadePx,
+	slackPx,
+}: PickerBand) => {
 	const fieldset = document.querySelector(picker);
 	const row = fieldset?.parentElement;
 	const pressed = fieldset?.querySelector("[aria-pressed=true]");
@@ -8,8 +17,8 @@ export const readPickerClearance = ({ picker, fade, slack }: PickerBand) => {
 	const box = row.getBoundingClientRect();
 	const target = pressed.getBoundingClientRect();
 	const maxScroll = row.scrollWidth - row.clientWidth;
-	const fadeStart = row.scrollLeft > slack ? fade : 0;
-	const fadeEnd = row.scrollLeft < maxScroll - slack ? fade : 0;
+	const fadeStart = row.scrollLeft > slackPx ? fadePx : 0;
+	const fadeEnd = row.scrollLeft < maxScroll - slackPx ? fadePx : 0;
 	return Math.min(
 		target.left - (box.left + fadeStart),
 		box.right - fadeEnd - target.right,

@@ -16,7 +16,7 @@ function picker(scrollLeft: number, left: number, right: number) {
 			querySelector: () => ({ getBoundingClientRect: () => ({ left, right }) }),
 		}),
 	});
-	return readPickerClearance({ picker: "fieldset", fade: 24, slack: 2 });
+	return readPickerClearance({ picker: "fieldset", fadePx: 24, slackPx: 2 });
 }
 
 describe("picker clearance", () => {
@@ -37,7 +37,7 @@ describe("picker clearance", () => {
 	it("rejects a missing picker", () => {
 		vi.stubGlobal("document", { querySelector: () => null });
 		expect(() =>
-			readPickerClearance({ picker: "fieldset", fade: 24, slack: 2 }),
+			readPickerClearance({ picker: "fieldset", fadePx: 24, slackPx: 2 }),
 		).toThrow("No benchmark picker");
 	});
 });

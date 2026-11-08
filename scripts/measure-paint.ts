@@ -182,16 +182,6 @@ async function samplePaint(browser: Browser, url: string) {
 	}
 }
 
-/** How far the pressed benchmark sits inside the picker's unfaded band;
- * negative means part of it is faded or hidden. */
-function measureClearance(page: Page): Promise<number> {
-	return page.evaluate(readPickerClearance, {
-		picker: PICKER,
-		fade: FADE_PX,
-		slack: EDGE_SLACK_PX,
-	});
-}
-
 /** Holds every font request until `release` runs. */
 async function holdFonts(page: Page): Promise<() => void> {
 	let release = () => {};
@@ -226,7 +216,11 @@ async function pickerClearance(browser: Browser, url: string) {
 		release();
 		await page.evaluate(() => document.fonts.ready);
 		await page.waitForTimeout(SETTLE_MS);
-		return await measureClearance(page);
+		return await page.evaluate(readPickerClearance, {
+			picker: PICKER,
+			fadePx: FADE_PX,
+			slackPx: EDGE_SLACK_PX,
+		});
 	} finally {
 		await page.context().close();
 	}
