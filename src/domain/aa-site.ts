@@ -105,9 +105,8 @@ function aaModel(model: SiteModel): AaModel {
 }
 
 /**
- * Every model on the page, and each costed model's task cost. Throws when
- * the page carries only AA's default chart selection, which a model in it
- * gets instead of every model.
+ * Every model record on the page. Throws when the page carries only AA's
+ * default chart selection, which a model in it gets instead of every model.
  */
 function pageRecords(flight: string): SiteModel[] {
 	const records = [...flight.matchAll(MODEL_START_PATTERN)]
@@ -121,6 +120,10 @@ function pageRecords(flight: string): SiteModel[] {
 	return records;
 }
 
+/**
+ * Every model on the page, and each costed model's task cost. Throws when
+ * the page lists a model twice, or when `pageRecords` rejects the page.
+ */
 export function readAaSite(flight: string): AaSite {
 	const records = pageRecords(flight);
 	const costs = new Map<string, TaskCost>();
