@@ -62,6 +62,6 @@ describe("built site server", () => {
 			),
 		).rejects.toBe(failure);
 		expect(response.writeHead).toHaveBeenCalledWith(500);
-		expect(response.end).toHaveBeenCalledOnce();
+		expect(response.end).toHaveBeenCalledExactlyOnceWith();
 	});
 });
