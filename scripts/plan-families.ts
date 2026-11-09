@@ -4,8 +4,7 @@
 const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-1-terra", "gpt-6-luna"];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 // Monthly usage on Go and Go Plus (opencode.ai/docs/go, 2026-11-06), in dollars
-// at Go's token prices; build-plans' GO_OFF_LIST_PRICES and GO_PROMOS cover
-// those off list.
+// at Go's token prices; build-plans converts the off-list ones.
 export const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	"kimi-k3-1-pro": [15, 60],
 	"kimi-k3": [15, 60],
@@ -53,8 +52,7 @@ export const PLAN_FAMILIES: Record<
 > = {
 	"claude-pro": { lab: "anthropic", families: CLAUDE },
 	// Max and Ultra include Fable at half the weekly limit, plus API credit
-	// (claude.com/pricing, 2026-11-09); links keep their pre-rename ids. Fable
-	// 5.2 replaced 5.1, now a legacy model (platform.claude.com/docs models).
+	// (claude.com/pricing, 2026-11-09). Fable 5.2 replaced the legacy 5.1.
 	"claude-max-5x": {
 		lab: "anthropic",
 		families: [...CLAUDE, "claude-fable-5-2"],
