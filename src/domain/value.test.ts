@@ -138,6 +138,7 @@ describe("weeklyAllowance", () => {
 	it("gives a family the whole reported cap, as an estimate", () => {
 		expect(weeklyAllowance(plan, reported, opus)).toEqual({
 			apiUsd: 1000,
+			capApiUsd: 1000,
 			basis: "estimated",
 			source: "estimate",
 			share: 1,
@@ -148,6 +149,7 @@ describe("weeklyAllowance", () => {
 		const capped = { ...plan, weeklyShareByFamily: { [fable]: 0.5 } };
 		expect(weeklyAllowance(capped, reported, fable)).toEqual({
 			apiUsd: 500,
+			capApiUsd: 1000,
 			basis: "estimated",
 			source: "estimate",
 			share: 0.5,
@@ -165,6 +167,7 @@ describe("weeklyAllowance", () => {
 		} as const;
 		expect(weeklyAllowance(plan, published, opus)).toEqual({
 			apiUsd: 12,
+			capApiUsd: 12,
 			basis: "published",
 			source: "monthly usage by model",
 			share: 1,
@@ -178,7 +181,12 @@ describe("weeklyAllowance", () => {
 });
 
 describe("valueMultiple", () => {
-	const allowance = { apiUsd: 1200, basis: "measured", share: 1 } as const;
+	const allowance = {
+		apiUsd: 1200,
+		capApiUsd: 1200,
+		basis: "measured",
+		share: 1,
+	} as const;
 
 	it("divides a month of weekly usage by the subscription price", () => {
 		expect(valueMultiple({ plan, allowance })).toBeCloseTo(5200 / 200);
@@ -268,6 +276,33 @@ describe("valuePoints", () => {
 			[`${opus}@api`, "low"],
 			[`${opus}@api`, "max"],
 			[`${opus}@${maxPlan}`, "low"],
+		]);
+	});
+
+	it("keeps the plan's discount for a family held to part of the cap", () => {
+		// Fable spends the same weekly gauge per API dollar; it may only use half.
+		const fable = "claude-fable-5-2" as FamilyId;
+		const points = valuePoints({
+			benchmarks: [
+				benchmark("max", 8),
+				{ ...benchmark("max", 8), family: fable, id: "fable-max" },
+			],
+			families: [opus, fable],
+			plans: [
+				{
+					...plan,
+					families: [opus, fable],
+					weeklyShareByFamily: { [fable]: 0.5 },
+				},
+			],
+			samples: [sample(0, 10, 120)],
+			showApi: false,
+			hiddenEfforts: [],
+		});
+		const multiple = (1200 * 52) / 12 / 200;
+		expect(points.map((p) => [p.benchmark.family, p.costPerTaskUsd])).toEqual([
+			[opus, 8 / multiple],
+			[fable, 8 / multiple],
 		]);
 	});
 

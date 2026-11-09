@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { AA_EVAL_IDS, BENCHMARK_IDS, type BenchmarkId, EFFORTS } from "./enums";
+import {
+	AA_EVAL_IDS,
+	BENCHMARK_IDS,
+	type BenchmarkId,
+	EFFORTS,
+} from "./enums.ts";
 
 const Effort = z.enum(EFFORTS);
 export type Effort = z.infer<typeof Effort>;
@@ -154,7 +159,9 @@ const Plan = z.object({
 	publishedAllowance: PublishedAllowance.nullable(),
 	/**
 	 * Fraction of the weekly cap a family may use, where below the whole cap:
-	 * Claude Max and Ultra give Fable "up to half your weekly limit".
+	 * Claude Max and Ultra give Fable "up to half your weekly limit". It limits
+	 * the family's tasks a week, not its price: the gauge fills at the plan's
+	 * usual rate per API dollar.
 	 */
 	weeklyShareByFamily: z.record(z.string(), z.number().gt(0).lte(1)),
 	/** Highest effort the plan serves for a family, where below its maximum. */

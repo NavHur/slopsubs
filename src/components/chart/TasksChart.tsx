@@ -1,7 +1,7 @@
 import type { Plan } from "#/domain/model";
 import type { PlanTasks, TaskRow } from "#/domain/ranges";
 import type { WeeklyAllowance } from "#/domain/value";
-import { formatCount, formatUsd } from "#/lib/format";
+import { formatCapShare, formatCount, formatUsd } from "#/lib/format";
 import {
 	modelRow,
 	RangeChart,
@@ -29,9 +29,9 @@ function capSource(allowance: WeeklyAllowance): string {
 }
 
 /** The plan's whole weekly cap, or how its per-model allowance reads. */
-function capText({ apiUsd, share, basis }: WeeklyAllowance): string {
+function capText({ capApiUsd, basis }: WeeklyAllowance): string {
 	if (basis === "published") return "each model's monthly allowance, per week";
-	return `${formatUsd(apiUsd / share)} a week at API prices`;
+	return `${formatUsd(capApiUsd)} a week at API prices`;
 }
 
 function PlanHeading({
@@ -57,17 +57,10 @@ function PlanHeading({
 	);
 }
 
-function shareNote(share: number): string | undefined {
-	if (share === 1) return undefined;
-	return share === 0.5
-		? "half the cap"
-		: `${Math.round(share * 100)}% of the cap`;
-}
-
 function taskRow(row: TaskRow): RangeRow {
 	const { allowance } = row;
 	return modelRow(row, {
-		note: shareNote(allowance.share),
+		note: formatCapShare(allowance.share),
 		hollow: allowance.basis === "estimated",
 	});
 }

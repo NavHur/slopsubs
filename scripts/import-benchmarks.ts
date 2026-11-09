@@ -6,15 +6,41 @@ import { readFile, writeFile } from "node:fs/promises";
 import { flightFromHtml } from "../src/domain/aa-evals.ts";
 import { readAaSite } from "../src/domain/aa-site.ts";
 import { mergeCatalog, SlopaPoint } from "../src/domain/catalog.ts";
-import { Plans } from "../src/domain/model.ts";
 import { roundedOrNull } from "../src/domain/rounding.ts";
 import { loadAaPage } from "./aa-page.ts";
 import { parseArgs } from "./benchmark-args.ts";
 import { extract, type Literal } from "./bundle-literal.ts";
+import { PLAN_FAMILIES } from "./plan-families.ts";
 
 const SITE = "https://slopalytics.com";
 const OUTPUT = new URL("../src/data/benchmarks.json", import.meta.url);
-const PLANS = new URL("../src/data/plans.json", import.meta.url);
+
+/**
+ * Frontier families slopalytics still names by a predecessor, keyed by that
+ * predecessor. The successor takes its tier, colour and place in the order.
+ * ceiling: a stopgap until slopalytics' frontier names the successor; the
+ * import then fails here, and the entry should be deleted.
+ */
+const FRONTIER_SUCCESSORS: Record<string, string> = {
+	"claude-fable-5-1": "claude-fable-5-2",
+};
+
+function withSuccessors(
+	frontier: Record<string, Literal>,
+): Record<string, Literal> {
+	for (const [predecessor, successor] of Object.entries(FRONTIER_SUCCESSORS)) {
+		if (!(predecessor in frontier) || successor in frontier)
+			throw new Error(
+				`Slopalytics' frontier has moved past ${predecessor}; delete FRONTIER_SUCCESSORS["${predecessor}"].`,
+			);
+	}
+	return Object.fromEntries(
+		Object.entries(frontier).map(([family, entry]) => [
+			FRONTIER_SUCCESSORS[family] ?? family,
+			entry,
+		]),
+	);
+}
 
 async function loadBundle(path: string | undefined): Promise<string> {
 	if (path) return readFile(path, "utf8");
@@ -31,10 +57,9 @@ async function main() {
 		loadAaPage(args.html),
 	]);
 	const dataset = extract(bundle, /=\{fetchedAt:/) as Record<string, Literal>;
-	const frontier = extract(bundle, /=\{"gpt-6-astra":\{tier:/) as Record<
-		string,
-		Literal
-	>;
+	const frontier = withSuccessors(
+		extract(bundle, /=\{"gpt-6-astra":\{tier:/) as Record<string, Literal>,
+	);
 	const slopa = SlopaPoint.array().parse(
 		(dataset.models as Record<string, Literal>[]).map((m) => ({
 			id: m.id,
@@ -57,10 +82,11 @@ async function main() {
 			outputPricePerMTokUsd: m.outputPrice,
 		})),
 	);
-	const plans = Plans.parse(JSON.parse(await readFile(PLANS, "utf8")));
 	const aa = readAaSite(flightFromHtml(page));
 	const merged = mergeCatalog(aa.models, slopa, {
-		coveredFamilies: new Set(plans.flatMap((plan) => plan.families)),
+		coveredFamilies: new Set(
+			Object.values(PLAN_FAMILIES).flatMap((plan) => plan.families),
+		),
 		siteCosts: aa.costs,
 		allowScoreDrift: args.allowScoreDrift,
 	});

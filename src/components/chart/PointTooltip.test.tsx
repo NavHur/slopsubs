@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
-import type { FamilyId } from "#/domain/model";
+import type { FamilyId, Plan, PlanId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { BENCHMARK_VIEWS, type BenchmarkView } from "#/lib/benchmarks";
 import { familyColor } from "#/lib/families";
@@ -30,6 +30,26 @@ const point: ValuePoint = {
 	score: 45.45,
 	costPerTaskUsd: 12.821,
 	pricing: { kind: "api" },
+};
+
+const plan: Plan = {
+	id: "claude-max-20x" as PlanId,
+	vendor: "Anthropic",
+	lab: "anthropic",
+	label: "Max 20x",
+	monthlyPriceUsd: 200,
+	harnesses: ["Claude Code"],
+	families: [opus],
+	limits: "weekly cap",
+	includedApiCreditUsd: 0,
+	thirdPartyHarnessAllowed: false,
+	confidence: "primary",
+	sourceUrl: "https://example.com/pricing",
+	reportedCap: null,
+	publishedAllowance: null,
+	weeklyShareByFamily: {},
+	maxEffortByFamily: {},
+	promotionByFamily: {},
 };
 
 function tooltipHtml(view: BenchmarkView, shown: ValuePoint = point) {
@@ -69,6 +89,32 @@ describe("point tooltip", () => {
 		};
 		expect(tooltipText(BENCHMARK_VIEWS.intelligence, untimed)).not.toContain(
 			"Time per task",
+		);
+	});
+
+	function onUltra(share: number): ValuePoint {
+		const allowance = {
+			apiUsd: 100 * share,
+			capApiUsd: 100,
+			basis: "estimated",
+			source: "estimate",
+			share,
+		} as const;
+		return {
+			...point,
+			pricing: { kind: "plan", plan, allowance, valueMultiple: 3 },
+		};
+	}
+
+	it("says when the plan holds the model to part of its weekly cap", () => {
+		expect(tooltipText(BENCHMARK_VIEWS.intelligence, onUltra(0.5))).toMatch(
+			/Up to half the weekly cap/,
+		);
+	});
+
+	it("leaves out the cap note when the model may use the whole cap", () => {
+		expect(tooltipText(BENCHMARK_VIEWS.intelligence, onUltra(1))).not.toMatch(
+			/weekly cap/,
 		);
 	});
 
