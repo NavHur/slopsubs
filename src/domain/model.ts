@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { AA_EVAL_IDS, BENCHMARK_IDS, type BenchmarkId, EFFORTS } from "./enums";
+import {
+	AA_EVAL_IDS,
+	BENCHMARK_IDS,
+	type BenchmarkId,
+	EFFORTS,
+} from "./enums.ts";
 
 const Effort = z.enum(EFFORTS);
 export type Effort = z.infer<typeof Effort>;
