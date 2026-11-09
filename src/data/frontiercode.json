@@ -1,7 +1,42 @@
 {
-  "fetchedAt": "2026-11-07T04:29:04.586Z",
+  "fetchedAt": "2026-11-09T20:18:33.475Z",
   "source": "Cognition's FrontierCode 2.0",
   "rows": [
+    {
+      "family": "claude-fable-5-2",
+      "effort": "low",
+      "score": 34.2,
+      "costPerTaskUsd": 2.623,
+      "tokensPerTask": 23907
+    },
+    {
+      "family": "claude-fable-5-2",
+      "effort": "medium",
+      "score": 37.59,
+      "costPerTaskUsd": 3.103,
+      "tokensPerTask": 28384
+    },
+    {
+      "family": "claude-fable-5-2",
+      "effort": "high",
+      "score": 45.29,
+      "costPerTaskUsd": 8.402,
+      "tokensPerTask": 75978
+    },
+    {
+      "family": "claude-fable-5-2",
+      "effort": "xhigh",
+      "score": 49.11,
+      "costPerTaskUsd": 17.734,
+      "tokensPerTask": 156009
+    },
+    {
+      "family": "claude-fable-5-2",
+      "effort": "max",
+      "score": 45.65,
+      "costPerTaskUsd": 55.868,
+      "tokensPerTask": 417808
+    },
     {
       "family": "reflection-beam",
       "effort": "minimal",

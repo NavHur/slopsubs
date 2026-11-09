@@ -39,7 +39,7 @@ export const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 const OPENCODE_GO = Object.keys(OPENCODE_GO_USD);
 
 /** "Fable included, up to half your weekly limit" (claude.com/pricing). */
-const FABLE_HALF = { "claude-fable-5-1": 0.5 };
+const FABLE_HALF = { "claude-fable-5-2": 0.5 };
 
 /** Benchmarked families each plan includes. */
 export const PLAN_FAMILIES: Record<
@@ -53,16 +53,17 @@ export const PLAN_FAMILIES: Record<
 > = {
 	"claude-pro": { lab: "anthropic", families: CLAUDE },
 	// Max and Ultra include Fable at half the weekly limit, plus API credit
-	// (claude.com/pricing, 2026-10-31); links keep their pre-rename ids.
+	// (claude.com/pricing, 2026-11-09); links keep their pre-rename ids. Fable
+	// 5.2 replaced 5.1, now a legacy model (platform.claude.com/docs models).
 	"claude-max-5x": {
 		lab: "anthropic",
-		families: [...CLAUDE, "claude-fable-5-1"],
+		families: [...CLAUDE, "claude-fable-5-2"],
 		includedApiCreditUsd: 100,
 		weeklyShareByFamily: FABLE_HALF,
 	},
 	"claude-max-20x": {
 		lab: "anthropic",
-		families: [...CLAUDE, "claude-fable-5-1"],
+		families: [...CLAUDE, "claude-fable-5-2"],
 		includedApiCreditUsd: 200,
 		weeklyShareByFamily: FABLE_HALF,
 	},

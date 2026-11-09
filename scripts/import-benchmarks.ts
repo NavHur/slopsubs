@@ -15,6 +15,33 @@ import { PLAN_FAMILIES } from "./plan-families.ts";
 const SITE = "https://slopalytics.com";
 const OUTPUT = new URL("../src/data/benchmarks.json", import.meta.url);
 
+/**
+ * Frontier families slopalytics still names by a predecessor, keyed by that
+ * predecessor. The successor takes its tier, colour and place in the order.
+ * ceiling: a stopgap until slopalytics' frontier names the successor; the
+ * import then fails here, and the entry should be deleted.
+ */
+const FRONTIER_SUCCESSORS: Record<string, string> = {
+	"claude-fable-5-1": "claude-fable-5-2",
+};
+
+function withSuccessors(
+	frontier: Record<string, Literal>,
+): Record<string, Literal> {
+	for (const [predecessor, successor] of Object.entries(FRONTIER_SUCCESSORS)) {
+		if (!(predecessor in frontier) || successor in frontier)
+			throw new Error(
+				`Slopalytics' frontier has moved past ${predecessor}; delete FRONTIER_SUCCESSORS["${predecessor}"].`,
+			);
+	}
+	return Object.fromEntries(
+		Object.entries(frontier).map(([family, entry]) => [
+			FRONTIER_SUCCESSORS[family] ?? family,
+			entry,
+		]),
+	);
+}
+
 async function loadBundle(path: string | undefined): Promise<string> {
 	if (path) return readFile(path, "utf8");
 	const html = await (await fetch(SITE)).text();
@@ -30,10 +57,9 @@ async function main() {
 		loadAaPage(args.html),
 	]);
 	const dataset = extract(bundle, /=\{fetchedAt:/) as Record<string, Literal>;
-	const frontier = extract(bundle, /=\{"gpt-6-astra":\{tier:/) as Record<
-		string,
-		Literal
-	>;
+	const frontier = withSuccessors(
+		extract(bundle, /=\{"gpt-6-astra":\{tier:/) as Record<string, Literal>,
+	);
 	const slopa = SlopaPoint.array().parse(
 		(dataset.models as Record<string, Literal>[]).map((m) => ({
 			id: m.id,

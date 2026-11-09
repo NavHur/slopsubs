@@ -44,7 +44,7 @@
       "claude-opus-5-5",
       "claude-sonnet-5-5",
       "claude-haiku-5-5",
-      "claude-fable-5-1"
+      "claude-fable-5-2"
     ],
     "limits": "\"5x Pro usage every 5 hours and every week*\" (pricing page). Help center: \"Get five times the Pro plan's usage every five hours and every week.\" Fable: \"Fable included, up to half your weekly limit\".",
     "includedApiCreditUsd": 100,
@@ -59,7 +59,7 @@
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {
-      "claude-fable-5-1": 0.5
+      "claude-fable-5-2": 0.5
     },
     "maxEffortByFamily": {},
     "promotionByFamily": {}
@@ -78,7 +78,7 @@
       "claude-opus-5-5",
       "claude-sonnet-5-5",
       "claude-haiku-5-5",
-      "claude-fable-5-1"
+      "claude-fable-5-2"
     ],
     "limits": "\"No 5-hour limit‡\" and \"10x Pro usage every week*\"; \"‡No 5-hour limit for verified accounts.\" Fable: \"50% of weekly limits*\".",
     "includedApiCreditUsd": 200,
@@ -93,7 +93,7 @@
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {
-      "claude-fable-5-1": 0.5
+      "claude-fable-5-2": 0.5
     },
     "maxEffortByFamily": {},
     "promotionByFamily": {}
