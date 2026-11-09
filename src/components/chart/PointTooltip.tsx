@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { Promotion } from "#/domain/model";
-import type { ValuePoint } from "#/domain/value";
+import type { Pricing, ValuePoint } from "#/domain/value";
 import type { BenchmarkView } from "#/lib/benchmarks";
 import { familyColor, familyLabId, familyName } from "#/lib/families";
 import {
@@ -34,10 +34,31 @@ function useBorderBox<T extends HTMLElement>() {
 	return [ref, box] as const;
 }
 
-/** A plan's discount holds on a capped model; only its weekly quota shrinks. */
-function CapShareNote({ share }: { share: number }) {
-	const cap = formatCapShare(share);
-	return cap ? <p className="text-muted">{`Up to ${cap}`}</p> : null;
+/**
+ * How a plan point compares with paying per token. A model held to part of the
+ * cap keeps the plan's discount; the note says its weekly quota is smaller.
+ */
+function PlanPricing({
+	pricing,
+	apiCostPerTaskUsd,
+}: {
+	pricing: Extract<Pricing, { kind: "plan" }>;
+	apiCostPerTaskUsd: number;
+}) {
+	const cap = formatCapShare(pricing.allowance.share);
+	return (
+		<>
+			<p className="mt-2 border-t border-line pt-2">
+				<span className="font-medium text-fg">
+					{formatApiComparison(pricing.valueMultiple)}
+				</span>{" "}
+				<span className="text-muted tabular-nums">
+					({formatUsd(apiCostPerTaskUsd)})
+				</span>
+			</p>
+			{cap && <p className="text-muted">{`Up to ${cap}`}</p>}
+		</>
+	);
 }
 
 /** Details of one point, placed beside it so it never covers it. */
@@ -86,17 +107,10 @@ export function PointTooltip({
 			</p>
 			<PointMetrics point={point} view={view} />
 			{pricing.kind === "plan" && (
-				<p className="mt-2 border-t border-line pt-2">
-					<span className="font-medium text-fg">
-						{formatApiComparison(pricing.valueMultiple)}
-					</span>{" "}
-					<span className="text-muted tabular-nums">
-						({formatUsd(benchmark.costPerTaskUsd)})
-					</span>
-				</p>
-			)}
-			{pricing.kind === "plan" && (
-				<CapShareNote share={pricing.allowance.share} />
+				<PlanPricing
+					pricing={pricing}
+					apiCostPerTaskUsd={benchmark.costPerTaskUsd}
+				/>
 			)}
 			{promotion && <PromotionNote promotion={promotion} />}
 			<a
