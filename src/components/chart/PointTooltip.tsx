@@ -5,6 +5,7 @@ import type { BenchmarkView } from "#/lib/benchmarks";
 import { familyColor, familyLabId, familyName } from "#/lib/families";
 import {
 	formatApiComparison,
+	formatCapShare,
 	formatDay,
 	formatDuration,
 	formatTokens,
@@ -31,6 +32,12 @@ function useBorderBox<T extends HTMLElement>() {
 		}
 	});
 	return [ref, box] as const;
+}
+
+/** A plan's discount holds on a capped model; only its weekly quota shrinks. */
+function CapShareNote({ share }: { share: number }) {
+	const cap = formatCapShare(share);
+	return cap ? <p className="text-muted">{`Up to ${cap}`}</p> : null;
 }
 
 /** Details of one point, placed beside it so it never covers it. */
@@ -87,6 +94,9 @@ export function PointTooltip({
 						({formatUsd(benchmark.costPerTaskUsd)})
 					</span>
 				</p>
+			)}
+			{pricing.kind === "plan" && (
+				<CapShareNote share={pricing.allowance.share} />
 			)}
 			{promotion && <PromotionNote promotion={promotion} />}
 			<a

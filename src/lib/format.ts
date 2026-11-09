@@ -77,3 +77,11 @@ export function formatApiComparison(valueMultiple: number): string {
 	if (factor === formatMultiple(1)) return "Same cost as API";
 	return `${factor} ${valueMultiple > 1 ? "cheaper" : "pricier"} than API`;
 }
+
+/** The part of a plan's cap a model may use, or undefined for all of it. */
+export function formatCapShare(share: number): string | undefined {
+	if (share === 1) return undefined;
+	return share === 0.5
+		? "half the weekly cap"
+		: `${Math.round(share * 100)}% of the weekly cap`;
+}

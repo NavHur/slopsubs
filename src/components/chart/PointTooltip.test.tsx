@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
+import { plans } from "#/data";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { BENCHMARK_VIEWS, type BenchmarkView } from "#/lib/benchmarks";
@@ -69,6 +70,34 @@ describe("point tooltip", () => {
 		};
 		expect(tooltipText(BENCHMARK_VIEWS.intelligence, untimed)).not.toContain(
 			"Time per task",
+		);
+	});
+
+	function onUltra(share: number): ValuePoint {
+		const plan = plans.find((p) => p.id === "claude-max-20x");
+		if (!plan) throw new Error("claude-max-20x is missing from plans.json");
+		const allowance = {
+			apiUsd: 100 * share,
+			capApiUsd: 100,
+			basis: "estimated",
+			source: "estimate",
+			share,
+		} as const;
+		return {
+			...point,
+			pricing: { kind: "plan", plan, allowance, valueMultiple: 3 },
+		};
+	}
+
+	it("says when the plan holds the model to part of its weekly cap", () => {
+		expect(tooltipText(BENCHMARK_VIEWS.intelligence, onUltra(0.5))).toMatch(
+			/Up to half the weekly cap/,
+		);
+	});
+
+	it("leaves out the cap note when the model may use the whole cap", () => {
+		expect(tooltipText(BENCHMARK_VIEWS.intelligence, onUltra(1))).not.toMatch(
+			/weekly cap/,
 		);
 	});
 
