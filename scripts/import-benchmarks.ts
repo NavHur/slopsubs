@@ -6,15 +6,14 @@ import { readFile, writeFile } from "node:fs/promises";
 import { flightFromHtml } from "../src/domain/aa-evals.ts";
 import { readAaSite } from "../src/domain/aa-site.ts";
 import { mergeCatalog, SlopaPoint } from "../src/domain/catalog.ts";
-import { Plans } from "../src/domain/model.ts";
 import { roundedOrNull } from "../src/domain/rounding.ts";
 import { loadAaPage } from "./aa-page.ts";
 import { parseArgs } from "./benchmark-args.ts";
 import { extract, type Literal } from "./bundle-literal.ts";
+import { PLAN_FAMILIES } from "./plan-families.ts";
 
 const SITE = "https://slopalytics.com";
 const OUTPUT = new URL("../src/data/benchmarks.json", import.meta.url);
-const PLANS = new URL("../src/data/plans.json", import.meta.url);
 
 async function loadBundle(path: string | undefined): Promise<string> {
 	if (path) return readFile(path, "utf8");
@@ -57,10 +56,11 @@ async function main() {
 			outputPricePerMTokUsd: m.outputPrice,
 		})),
 	);
-	const plans = Plans.parse(JSON.parse(await readFile(PLANS, "utf8")));
 	const aa = readAaSite(flightFromHtml(page));
 	const merged = mergeCatalog(aa.models, slopa, {
-		coveredFamilies: new Set(plans.flatMap((plan) => plan.families)),
+		coveredFamilies: new Set(
+			Object.values(PLAN_FAMILIES).flatMap((plan) => plan.families),
+		),
 		siteCosts: aa.costs,
 		allowScoreDrift: args.allowScoreDrift,
 	});
