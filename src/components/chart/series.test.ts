@@ -30,7 +30,13 @@ function plan(id: string, label: string): Pricing {
 	return {
 		kind: "plan",
 		plan: { ...basePlan, id: id as PlanId, label },
-		allowance: { apiUsd: 100, basis: "estimated", source: "x", share: 1 },
+		allowance: {
+			apiUsd: 100,
+			capApiUsd: 100,
+			basis: "estimated",
+			source: "x",
+			share: 1,
+		},
 		valueMultiple: 1,
 	};
 }

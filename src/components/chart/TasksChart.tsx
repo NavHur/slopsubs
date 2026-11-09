@@ -29,9 +29,9 @@ function capSource(allowance: WeeklyAllowance): string {
 }
 
 /** The plan's whole weekly cap, or how its per-model allowance reads. */
-function capText({ apiUsd, share, basis }: WeeklyAllowance): string {
+function capText({ capApiUsd, basis }: WeeklyAllowance): string {
 	if (basis === "published") return "each model's monthly allowance, per week";
-	return `${formatUsd(apiUsd / share)} a week at API prices`;
+	return `${formatUsd(capApiUsd)} a week at API prices`;
 }
 
 function PlanHeading({

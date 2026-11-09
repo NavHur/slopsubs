@@ -68,7 +68,10 @@ type CapSource =
 
 /** API-priced usage one family may spend in a sustained week on a plan. */
 export type WeeklyAllowance = CapSource & {
+	/** What this family may spend: `share` of `capApiUsd`. */
 	apiUsd: number;
+	/** The plan's whole weekly cap, which sets its rate per API dollar. */
+	capApiUsd: number;
 	/** Below 1 when the family only gets part of the cap. */
 	share: number;
 };
@@ -85,7 +88,14 @@ export function weeklyAllowance(
 ): WeeklyAllowance | null {
 	const share = plan.weeklyShareByFamily[family] ?? 1;
 	const whole = wholeWeeklyAllowance(capacity, family);
-	return whole && { ...whole, apiUsd: whole.apiUsd * share, share };
+	return (
+		whole && {
+			...whole,
+			apiUsd: whole.apiUsd * share,
+			capApiUsd: whole.apiUsd,
+			share,
+		}
+	);
 }
 
 function wholeWeeklyAllowance(
@@ -118,8 +128,10 @@ function wholeWeeklyAllowance(
 
 /**
  * API-equivalent dollars a subscriber gets per dollar of subscription when
- * they use everything the plan offers: the family's usage every week of the
- * month plus bundled API credit. Below 1, paying per token is cheaper.
+ * they use everything the plan offers: the whole weekly cap every week of the
+ * month plus bundled API credit. Below 1, paying per token is cheaper. A family
+ * held to part of the cap spends the gauge at the same rate per API dollar, so
+ * it keeps the plan's multiple; only its tasks a week shrink.
  */
 export function valueMultiple({
 	plan,
@@ -129,7 +141,7 @@ export function valueMultiple({
 	allowance: WeeklyAllowance;
 }): number {
 	return (
-		(allowance.apiUsd * WEEKS_PER_MONTH + plan.includedApiCreditUsd) /
+		(allowance.capApiUsd * WEEKS_PER_MONTH + plan.includedApiCreditUsd) /
 		plan.monthlyPriceUsd
 	);
 }

@@ -146,11 +146,12 @@ describe("rankedCost", () => {
 
 	it("ranks rows by their cheapest effort, plan and API alike", () => {
 		// Ultra's $100 weekly cap is $433 a month; with $200 of credit on a
-		// $200 plan that is 3.17x for Opus, and 2.08x on Fable's half cap.
+		// $200 plan that is 3.17x for both models: Fable's half cap limits its
+		// tasks, not its price. Both start at $2, so series ids break the tie.
 		const rows = ranked([ultra], true);
 		expect(rows.map((r) => r.id)).toEqual([
-			"claude-opus-5-5@claude-max-20x",
 			"claude-fable-5-1@claude-max-20x",
+			"claude-opus-5-5@claude-max-20x",
 			"claude-fable-5-1@api",
 			"claude-opus-5-5@api",
 		]);
