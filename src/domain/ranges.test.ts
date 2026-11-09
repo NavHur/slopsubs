@@ -74,12 +74,16 @@ function benchmark(
 const benchmarks = [
 	benchmark(opus, "max", 4),
 	benchmark(opus, "low", 2),
-	benchmark(fable, "low", 2),
+	benchmark(fable, "low", 2.5),
 ];
 
-function pointsOf(plans: Plan[], showApi: boolean) {
+function pointsOf(
+	plans: Plan[],
+	showApi: boolean,
+	chosen: BenchmarkPoint[] = benchmarks,
+) {
 	return valuePoints({
-		benchmarks,
+		benchmarks: chosen,
 		families: [opus, fable],
 		plans,
 		samples: [],
@@ -112,7 +116,7 @@ describe("tasksPerWeek", () => {
 	it("gives a family with half the cap half the tasks", () => {
 		expect(tasksOf([ultra])[0].rows[1]).toEqual({
 			family: fable,
-			tasks: [["low", 25]],
+			tasks: [["low", 20]],
 		});
 	});
 
@@ -137,22 +141,26 @@ describe("tasksPerWeek", () => {
 });
 
 describe("rankedCost", () => {
-	function ranked(plans: Plan[], showApi: boolean) {
-		return rankedCost(pointsOf(plans, showApi)).map((row) => ({
+	function ranked(
+		plans: Plan[],
+		showApi: boolean,
+		chosen: BenchmarkPoint[] = benchmarks,
+	) {
+		return rankedCost(pointsOf(plans, showApi, chosen)).map((row) => ({
 			id: row.seriesId,
 			costs: row.efforts.map((e) => [e.benchmark.effort, e.value]),
 		}));
 	}
 
 	it("ranks rows by their cheapest effort, plan and API alike", () => {
-		// Ultra's $100 weekly cap and $200 of credit on a $200 plan give both
-		// models 3.17x (a half cap limits tasks, not price), so ids break ties.
+		// Ultra gives both models 3.17x (a half cap limits tasks, not price):
+		// Opus's $2 low effort beats Fable's $2.50, but its $4 max effort does not.
 		const rows = ranked([ultra], true);
 		expect(rows.map((r) => r.id)).toEqual([
-			"claude-fable-5-1@claude-max-20x",
 			"claude-opus-5-5@claude-max-20x",
-			"claude-fable-5-1@api",
+			"claude-fable-5-1@claude-max-20x",
 			"claude-opus-5-5@api",
+			"claude-fable-5-1@api",
 		]);
 	});
 
@@ -165,7 +173,8 @@ describe("rankedCost", () => {
 	});
 
 	it("breaks ties by series so the order is stable", () => {
-		const ids = ranked([], true).map((r) => r.id);
-		expect(ids).toEqual([...ids].sort());
+		const tied = [benchmark(opus, "low", 2), benchmark(fable, "low", 2)];
+		const ids = ranked([], true, tied).map((r) => r.id);
+		expect(ids).toEqual([`${fable}@api`, `${opus}@api`]);
 	});
 });

@@ -1,7 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
-import { plans } from "#/data";
-import type { FamilyId } from "#/domain/model";
+import type { FamilyId, Plan, PlanId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { BENCHMARK_VIEWS, type BenchmarkView } from "#/lib/benchmarks";
 import { familyColor } from "#/lib/families";
@@ -31,6 +30,26 @@ const point: ValuePoint = {
 	score: 45.45,
 	costPerTaskUsd: 12.821,
 	pricing: { kind: "api" },
+};
+
+const plan: Plan = {
+	id: "claude-max-20x" as PlanId,
+	vendor: "Anthropic",
+	lab: "anthropic",
+	label: "Max 20x",
+	monthlyPriceUsd: 200,
+	harnesses: ["Claude Code"],
+	families: [opus],
+	limits: "weekly cap",
+	includedApiCreditUsd: 0,
+	thirdPartyHarnessAllowed: false,
+	confidence: "primary",
+	sourceUrl: "https://example.com/pricing",
+	reportedCap: null,
+	publishedAllowance: null,
+	weeklyShareByFamily: {},
+	maxEffortByFamily: {},
+	promotionByFamily: {},
 };
 
 function tooltipHtml(view: BenchmarkView, shown: ValuePoint = point) {
@@ -74,8 +93,6 @@ describe("point tooltip", () => {
 	});
 
 	function onUltra(share: number): ValuePoint {
-		const plan = plans.find((p) => p.id === "claude-max-20x");
-		if (!plan) throw new Error("claude-max-20x is missing from plans.json");
 		const allowance = {
 			apiUsd: 100 * share,
 			capApiUsd: 100,
