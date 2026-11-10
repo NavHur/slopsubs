@@ -132,6 +132,13 @@ function observeEnd<T extends string>(
 	return observer;
 }
 
+/** The scroller shared by the rendered sections, if there are any. */
+function sectionScroller<T extends string>(
+	sections: ReturnType<typeof renderedSections<T>>,
+) {
+	return sections[0] ? scrollerOf(sections[0].el) : null;
+}
+
 /**
  * Keeps `seen` current from IntersectionObserver entries and calls `onChange`
  * after each update. The section observer reads no layout; the end check
@@ -149,8 +156,7 @@ export function observeSections<T extends string>(
 	if (sections.length > 0 && !endMarker) {
 		throw new Error(`#${SCROLL_END_ID} is not rendered`);
 	}
-	const scrollerNow = () => (sections[0] ? scrollerOf(sections[0].el) : null);
-	const scroller = scrollerNow();
+	const scroller = sectionScroller(sections);
 	const box = lineBoxOf(scroller);
 	const observers = [
 		observeReached(sections, box, seen, onChange),
@@ -159,7 +165,7 @@ export function observeSections<T extends string>(
 	return {
 		seen,
 		isCurrent: () => {
-			const now = scrollerNow();
+			const now = sectionScroller(sections);
 			return now === scroller && lineBoxOf(now).margin === box.margin;
 		},
 		stop: () => {
@@ -203,34 +209,40 @@ function useScrollSpy<T extends string>(
 	onCross: (id: T) => void,
 ) {
 	const cross = useEffectEvent(onCross);
-	useEffect(() => {
-		let reported: T | undefined;
-		let scrolled = false;
-		const report = (seen: Sighting<T>) => {
-			if (!scrolled) return;
-			const id = sectionInView(ids, seen);
-			if (id === undefined || id === reported) return;
-			reported = id;
-			cross(id);
-		};
-		const sections = observeAcrossResizes(ids, report);
-		// Quiet until the reader first scrolls: a tall screen keeps its URL on
-		// load even when a later section starts in view.
-		const onFirstScroll = () => {
-			scrolled = true;
-			report(sections.seen);
-		};
-		// Capture: an element's scroll events do not bubble to the window.
-		window.addEventListener("scroll", onFirstScroll, {
-			capture: true,
-			passive: true,
-			once: true,
-		});
-		return () => {
-			window.removeEventListener("scroll", onFirstScroll, true);
-			sections.stop();
-		};
-	}, [ids]);
+	useEffect(() => watchSectionCrossings(ids, cross), [ids]);
+}
+
+/** Reports distinct crossings only after the reader's first scroll. */
+function watchSectionCrossings<T extends string>(
+	ids: readonly T[],
+	onCross: (id: T) => void,
+) {
+	let reported: T | undefined;
+	let scrolled = false;
+	const report = (seen: Sighting<T>) => {
+		if (!scrolled) return;
+		const id = sectionInView(ids, seen);
+		if (id === undefined || id === reported) return;
+		reported = id;
+		onCross(id);
+	};
+	const sections = observeAcrossResizes(ids, report);
+	// Quiet until the reader first scrolls: a tall screen keeps its URL on
+	// load even when a later section starts in view.
+	const onFirstScroll = () => {
+		scrolled = true;
+		report(sections.seen);
+	};
+	// Capture: an element's scroll events do not bubble to the window.
+	window.addEventListener("scroll", onFirstScroll, {
+		capture: true,
+		passive: true,
+		once: true,
+	});
+	return () => {
+		window.removeEventListener("scroll", onFirstScroll, true);
+		sections.stop();
+	};
 }
 
 /** A window after a jump that lasts JUMP_MS, cleared if the page unmounts. */
@@ -257,6 +269,19 @@ function revealSection(section: HTMLElement) {
 		behavior: reduceMotion.matches ? "auto" : "smooth",
 	});
 	section.querySelector("h2")?.focus({ preventScroll: true });
+}
+
+/** Jumps to a rendered section: opens the jump window, selects it, reveals it. */
+function scrollToSection<T extends string>(
+	id: T,
+	beginJump: () => void,
+	select: (id: T) => void,
+) {
+	const section = document.getElementById(id);
+	if (!section) return;
+	beginJump();
+	select(id);
+	revealSection(section);
 }
 
 /**
@@ -306,13 +331,7 @@ export function useSectionNav<T extends string>(
 	});
 	useInitialScroll(current, setActive, jump.begin);
 
-	const scrollTo = (id: T) => {
-		const section = document.getElementById(id);
-		if (!section) return;
-		jump.begin();
-		select(id);
-		revealSection(section);
-	};
+	const scrollTo = (id: T) => scrollToSection(id, jump.begin, select);
 
 	return { active, scrollTo };
 }
