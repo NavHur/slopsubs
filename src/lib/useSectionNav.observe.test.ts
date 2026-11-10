@@ -150,16 +150,28 @@ describe.each<Layout>(["page", "scroller"])(
 		});
 
 		it.each([
-			{ from: [500, 700, 1300], to: 0, expected: "cost" },
-			{ from: [500, 1300, Infinity], to: 0, expected: "cost" },
-			{ from: [500, 1300, Infinity], to: 500, expected: "tasks" },
-		])(
-			"jumps from $from to $to and reports $expected",
-			({ from, to, expected }) => {
-				from.forEach(scrollTo);
-				expect(scrollTo(to)).toBe(expected);
+			{
+				jump: "straight up over a middle one",
+				from: [500, 700, 1300],
+				to: 0,
+				expected: "cost",
 			},
-		);
+			{
+				jump: "from the end to the top",
+				from: [500, 1300, Infinity],
+				to: 0,
+				expected: "cost",
+			},
+			{
+				jump: "from the end up to it",
+				from: [500, 1300, Infinity],
+				to: 500,
+				expected: "tasks",
+			},
+		])("lands on $expected after a jump $jump", ({ from, to, expected }) => {
+			from.forEach(scrollTo);
+			expect(scrollTo(to)).toBe(expected);
+		});
 
 		it("puts the reading line at 40% of the window, not of the scroller", () => {
 			const tasks = SECTIONS[1].offset;
