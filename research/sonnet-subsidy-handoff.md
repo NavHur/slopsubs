@@ -14,6 +14,33 @@ as one Opus API dollar. Two decisions depend on it:
   Medium.
 - The slopsubs value chart, which currently assumes k = 1 for every family.
 
+## Measured on homebox, 2026-11-10
+
+Read with the gateway's own token (`~/.cli-proxy-api/claude-*.json`, which
+refreshes itself; never print it).
+
+- **One account.** The gateway holds one Claude credential, so windows need
+  no per-account split.
+- **No Sonnet bar on this account.** `api/oauth/usage` returns
+  `seven_day_sonnet: null` and `seven_day_opus: null`. Its `limits[]` has only
+  `weekly_all` and a `weekly_scoped` entry for Fable (allowance 50% of the
+  weekly). A Sonnet or Opus request carries only the `7d` headers. Sonnet
+  therefore draws on the all-models gauge (step 2 still has to show it moves
+  it), and the "Sonnet is extra capacity" case below is unlikely.
+- **Header names.** All models: `anthropic-ratelimit-unified-7d-utilization`
+  (a fraction, `0.41`), `-7d-reset` (epoch seconds), `-7d-status`. Fable only
+  adds `anthropic-ratelimit-unified-7d_oi-*`. No `5h` window is reported.
+- **Granularity is 1%.** The endpoint gives `utilization: 42.0`, the header
+  `0.41`, so about $34 of Opus per step. Windows must move 10 points or more.
+- **Chat use is visible.** The endpoint's `seven_day_breakdown.rows` splits
+  the week's use by surface (`claude_code` 98, `chat` 0, `claude_duet` 2 at
+  the time of reading). Record it with each mark; a window whose non-Claude
+  Code share grows is contaminated.
+- **The gateway strips the headers.** A request through
+  `http://100.87.142.7:8317` returns none of the `anthropic-ratelimit-*`
+  headers, so a statusline's `rate_limits` will be empty on every host. Marks
+  must come from polling `api/oauth/usage` on homebox.
+
 ## What is already known
 
 ### Theo's chart (screenshot Pedro shared; no URL recorded)
@@ -134,7 +161,7 @@ rate, so:
 
 ## Plan
 
-1. **Find the source of truth for the gauge.** On homebox, read the gateway's
+1. **Done (see "Measured on homebox").** ~~Find the source of truth for the gauge.~~ On homebox, read the gateway's
    upstream response headers (or call `api/oauth/usage` with the gateway's
    token) and record the exact names and values for the all-models, Sonnet and
    Fable windows. Note the granularity: if utilization is a whole percent,
@@ -145,10 +172,10 @@ rate, so:
    gauge moves about 10 points (or the Sonnet bar moves and all-models does
    not), then the same for Opus. Two or three of each give k and show whether
    Sonnet touches all-models.
-3. **Record marks automatically.** Read the gauge on every response at the
-   gateway, or from a statusline command on each host (fleet's
-   `config/claude-settings.json` is synced to every host by `bin/sync`; no
-   host sets `statusLine` today). Keep every bucket, not one percentage.
+3. **Record marks automatically.** A timer on homebox polls
+   `api/oauth/usage` with the gateway's token and appends `weekly_all`, every
+   `weekly_scoped` entry and `seven_day_breakdown` to the marks. The statusline
+   route is closed: the gateway strips the headers.
 4. **Extend slopsubs.** `Mark` and `LimitSample` store per-bucket readings.
    `measure build` reads logs from every host (`--claude-dir` per host).
    Capacity becomes per family: fit, by non-negative least squares over the
