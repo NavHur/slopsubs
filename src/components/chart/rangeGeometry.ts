@@ -91,10 +91,12 @@ function thin(values: number[], limit: number): number[] {
 function roundValues(lo: number, hi: number, multiples: number[]): number[] {
 	const values: number[] = [];
 	for (let exp = Math.floor(Math.log10(lo)); exp <= Math.log10(hi); exp++) {
-		for (const m of multiples) {
-			const value = m * 10 ** exp;
-			if (value >= lo && value <= hi) values.push(Number(value.toPrecision(1)));
-		}
+		const decade = multiples.map((m) => m * 10 ** exp);
+		values.push(
+			...decade
+				.filter((value) => value >= lo && value <= hi)
+				.map((value) => Number(value.toPrecision(1))),
+		);
 	}
 	return values;
 }

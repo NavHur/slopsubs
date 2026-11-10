@@ -156,11 +156,9 @@ export function logTickValues(
 		e <= Math.ceil(Math.log10(hi));
 		e++
 	) {
-		for (const m of mantissas) {
-			// toPrecision drops float noise such as 3 * 10 ** -3 = 0.0030000000000000005.
-			const tick = Number((m * 10 ** e).toPrecision(12));
-			if (tick >= lo && tick <= hi) ticks.push(tick);
-		}
+		// toPrecision drops float noise such as 3 * 10 ** -3 = 0.0030000000000000005.
+		const decade = mantissas.map((m) => Number((m * 10 ** e).toPrecision(12)));
+		ticks.push(...decade.filter((tick) => tick >= lo && tick <= hi));
 	}
 	return ticks;
 }

@@ -6,6 +6,7 @@ import {
 	type AxisReadouts,
 	axisReadouts,
 	chartLayout,
+	logTickValues,
 	MIN_TICK_LABEL_GAP_PX,
 	overlaps,
 	separateReadouts,
@@ -112,6 +113,19 @@ describe("xTicks", () => {
 				).toBeGreaterThanOrEqual(MIN_TICK_LABEL_GAP_PX);
 			}
 		}
+	});
+});
+
+describe("logTickValues", () => {
+	it("keeps a tick whose float noise would put it above the upper bound", () => {
+		// 3 * 10 ** -1 is 0.30000000000000004, yet the tick is the bound 0.3.
+		expect(logTickValues(0.1, 0.3, [3])).toEqual([0.3]);
+	});
+
+	it("lists ticks decade by decade, each decade in mantissa order", () => {
+		expect(logTickValues(1, 100, [1, 2, 5])).toEqual([
+			1, 2, 5, 10, 20, 50, 100,
+		]);
 	});
 });
 
