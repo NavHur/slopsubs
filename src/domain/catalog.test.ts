@@ -344,9 +344,14 @@ describe("mergeCatalog", () => {
 		}
 	});
 
-	it("follows AA's new slug for a model we already import", () => {
+	it("pairs a bare slug and its preview with their own AA records", () => {
 		const merged = mergeCatalog(
 			[
+				aaModel("mistral-large-4", "Mistral Large 4 (High)", {
+					intelligenceIndex: 26.1,
+					price1mInputTokens: 0.5,
+					price1mOutputTokens: 1.5,
+				}),
 				aaModel("mistral-large-4-preview", "Mistral Large 4 Preview", {
 					intelligenceIndex: 25.3,
 					price1mInputTokens: 0.7,
@@ -357,9 +362,13 @@ describe("mergeCatalog", () => {
 				point({
 					id: "mistral-large-4",
 					family: "mistral-large-4",
+					effort: "high",
+					score: 26.12,
+				}),
+				point({
+					id: "mistral-large-4-preview",
+					family: "mistral-large-4-preview",
 					score: 25.29,
-					inputPricePerMTokUsd: 1.36,
-					outputPricePerMTokUsd: 4.18,
 				}),
 			],
 			{
@@ -367,8 +376,11 @@ describe("mergeCatalog", () => {
 				siteCosts: NO_SITE_COSTS,
 			},
 		);
-		expect(merged.models[0].score).toBe(25.3);
-		expect(merged.models[0].inputPricePerMTokUsd).toBe(0.7);
+		const byId = new Map(merged.models.map((m) => [m.id, m]));
+		expect(byId.get("mistral-large-4")?.score).toBe(26.1);
+		expect(byId.get("mistral-large-4")?.inputPricePerMTokUsd).toBe(0.5);
+		expect(byId.get("mistral-large-4-preview")?.score).toBe(25.3);
+		expect(byId.get("mistral-large-4-preview")?.inputPricePerMTokUsd).toBe(0.7);
 		expect(merged.skipped).toEqual([]);
 	});
 });
