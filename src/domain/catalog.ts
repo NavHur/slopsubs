@@ -27,15 +27,6 @@ export const SlopaPoint = z.object({
 });
 export type SlopaPoint = z.infer<typeof SlopaPoint>;
 
-/**
- * Our id where Artificial Analysis now uses the same slug for another effort:
- * our mistral-large-4 point is AA's Preview, while AA gave the bare slug to
- * its High variant.
- */
-const AA_ALIASES: Record<string, string> = {
-	"mistral-large-4": "mistral-large-4-preview",
-};
-
 /** Two sources rounding to one decimal still agree within this. */
 const SCORE_TOLERANCE = 0.06;
 
@@ -161,15 +152,14 @@ function mergePoint(
 	warnings: string[],
 	allowScoreDrift: boolean,
 ): SlopaPoint {
-	const slug = AA_ALIASES[point.id] ?? point.id;
-	const aa = aaById.get(slug);
+	const aa = aaById.get(point.id);
 	if (!aa) throw new Error(`AA has no model for ${point.id} (${point.name})`);
 	const aaScore = aa.intelligenceIndex;
 	checkScore(point, aaScore, warnings, allowScoreDrift);
 	warnings.push(...priceWarnings(point, aa));
 	return {
 		...point,
-		...siteCostFill(point, siteCosts.get(slug)),
+		...siteCostFill(point, siteCosts.get(point.id)),
 		released: aa.releaseDate,
 		score: roundedOrNull(aaScore, 2),
 		inputPricePerMTokUsd: aa.price1mInputTokens,
@@ -273,10 +263,7 @@ export function mergeCatalog(
 			{ label: point.effortLabel, order: point.effortOrder },
 		]),
 	);
-	const known = new Set([
-		...slopaPoints.map((point) => point.id),
-		...Object.values(AA_ALIASES),
-	]);
+	const known = new Set(slopaPoints.map((point) => point.id));
 	for (const aa of aaModels.filter((model) => !known.has(model.slug))) {
 		const added = aaOnlyModel(aa, options, effortOf);
 		if (!added) {
