@@ -3,6 +3,7 @@ import { spreadLabels } from "#/lib/chart";
 import { ModelTag } from "./ChartParts";
 import { LABEL_GAP } from "./geometry";
 import type { HighlightEvent } from "./highlight";
+import { isFaded, type LitModels } from "./litModels";
 import type { Viewport } from "./projection";
 import type { ModelGroup } from "./series";
 import { hasModelColumn, type TradeoffScene } from "./tradeoffScene";
@@ -33,15 +34,15 @@ export function TradeoffModelColumn({
 	scene,
 	viewport,
 	models,
-	activeModel,
+	lit,
 	pinnedModel,
 	onHighlight,
 }: {
 	scene: TradeoffScene;
 	viewport: Viewport;
 	models: readonly ModelGroup[];
-	/** The highlighted model, or the one whose point shows; the rest fade. */
-	activeModel: FamilyId | null;
+	/** The models that stay lit; the rest fade. */
+	lit: LitModels;
 	pinnedModel: FamilyId | null;
 	onHighlight: (event: HighlightEvent) => void;
 }) {
@@ -56,7 +57,7 @@ export function TradeoffModelColumn({
 					model={model}
 					from={[end.x, end.y]}
 					at={[x, y]}
-					dimmed={activeModel !== null && activeModel !== id}
+					dimmed={isFaded(lit, id)}
 					pinned={pinnedModel === id}
 					onHighlight={onHighlight}
 				/>

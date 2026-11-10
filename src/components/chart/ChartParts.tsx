@@ -24,6 +24,7 @@ import {
 	yTickLabelBox,
 } from "./geometry";
 import type { HighlightEvent, PreviewSource } from "./highlight";
+import { isFaded, type LitModels } from "./litModels";
 import type { PointDetailsEvent } from "./pointDetails";
 import { API_DASH, type ModelGroup, modelEnd, type Series } from "./series";
 
@@ -182,13 +183,7 @@ export function SeriesLine({
 	/** Names and formats the points' scores for screen readers. */
 	benchmark: BenchmarkView;
 }) {
-	const { isApi, marker, lineWidth } = series.pricing;
-	const preview = (source: PreviewSource, point: ValuePoint) => () =>
-		onDetails({ type: "preview", source, point });
-	const endPreview = (source: PreviewSource, point: ValuePoint) => () =>
-		onDetails({ type: "endPreview", source, point });
-	const pin = (point: ValuePoint) => () =>
-		onDetails({ type: "togglePin", point });
+	const { isApi, lineWidth } = series.pricing;
 	return (
 		<g opacity={dimmed ? 0.15 : 1} className="transition-opacity">
 			<path
@@ -200,40 +195,77 @@ export function SeriesLine({
 				opacity={isApi ? 0.6 : 1}
 			/>
 			{series.points.map((p) => (
-				<g
+				<SeriesPoint
 					key={p.benchmark.id}
-					// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- SVG has no native button; the point needs focus to expose its tooltip
-					role="button"
-					tabIndex={0}
-					aria-label={pointLabel(series, p, benchmark)}
-					className="group cursor-pointer outline-none"
-					onMouseEnter={preview("hover", p)}
-					onMouseLeave={endPreview("hover", p)}
-					onClick={pin(p)}
-					onKeyDown={onActivationKey(pin(p))}
-					onFocus={onKeyboardFocus(preview("focus", p))}
-					onBlur={endPreview("focus", p)}
-				>
-					<circle
-						cx={px(x(p.costPerTaskUsd))}
-						cy={px(y(p.score))}
-						r={POINT_HIT_RADIUS}
-						fill="transparent"
-					/>
-					<path
-						d={markerPath(
-							marker,
-							x(p.costPerTaskUsd),
-							y(p.score),
-							shownPoints.includes(p) ? 6 : 4,
-						)}
-						fill={isApi ? "var(--bg)" : series.color}
-						stroke={series.color}
-						strokeWidth={1.5}
-						className="group-focus-visible:stroke-fg"
-					/>
-				</g>
+					series={series}
+					point={p}
+					x={x}
+					y={y}
+					shown={shownPoints.includes(p)}
+					onDetails={onDetails}
+					benchmark={benchmark}
+				/>
 			))}
+		</g>
+	);
+}
+
+function SeriesPoint({
+	series,
+	point,
+	x,
+	y,
+	shown,
+	onDetails,
+	benchmark,
+}: {
+	series: Series;
+	point: ValuePoint;
+	x: XScale;
+	y: ScaleLinear<number, number>;
+	/** Its details show, so it draws larger. */
+	shown: boolean;
+	onDetails: (event: PointDetailsEvent) => void;
+	benchmark: BenchmarkView;
+}) {
+	const { isApi, marker } = series.pricing;
+	const preview = (source: PreviewSource) => () =>
+		onDetails({ type: "preview", source, point });
+	const endPreview = (source: PreviewSource) => () =>
+		onDetails({ type: "endPreview", source, point });
+	const pin = () => onDetails({ type: "togglePin", point });
+	return (
+		<g
+			// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- SVG has no native button; the point needs focus to expose its tooltip
+			role="button"
+			tabIndex={0}
+			aria-label={pointLabel(series, point, benchmark)}
+			className="group cursor-pointer outline-none"
+			onMouseEnter={preview("hover")}
+			onMouseLeave={endPreview("hover")}
+			onClick={pin}
+			onKeyDown={onActivationKey(pin)}
+			onFocus={onKeyboardFocus(preview("focus"))}
+			onBlur={endPreview("focus")}
+		>
+			<circle
+				cx={px(x(point.costPerTaskUsd))}
+				cy={px(y(point.score))}
+				r={POINT_HIT_RADIUS}
+				fill="transparent"
+			/>
+			<path
+				d={markerPath(
+					marker,
+					x(point.costPerTaskUsd),
+					y(point.score),
+					shown ? 6 : 4,
+				)}
+				fill={isApi ? "var(--bg)" : series.color}
+				stroke={series.color}
+				strokeWidth={1.5}
+				className="group-focus-visible:stroke-fg"
+			/>
 		</g>
 	);
 }
@@ -244,7 +276,7 @@ export function ModelTags({
 	models,
 	x,
 	right,
-	activeModel,
+	lit,
 	pinnedModel,
 	onHighlight,
 }: {
@@ -252,7 +284,8 @@ export function ModelTags({
 	models: readonly ModelGroup[];
 	x: XScale;
 	right: number;
-	activeModel: FamilyId | null;
+	/** The models that stay lit; the rest fade. */
+	lit: LitModels;
 	pinnedModel: FamilyId | null;
 	onHighlight: (event: HighlightEvent) => void;
 }) {
@@ -265,7 +298,7 @@ export function ModelTags({
 				model={model}
 				from={[px(x(modelEnd(model).costPerTaskUsd)), label.anchorY]}
 				at={[right + 24, label.y]}
-				dimmed={activeModel !== null && activeModel !== model.id}
+				dimmed={isFaded(lit, model.id)}
 				pinned={pinnedModel === model.id}
 				onHighlight={onHighlight}
 			/>
@@ -356,12 +389,13 @@ export function ModelTag({
 /** Below-chart legend for narrow screens: one entry per model. */
 export function ModelLegend({
 	models,
-	activeModel,
+	lit,
 	pinnedModel,
 	onHighlight,
 }: {
 	models: readonly ModelGroup[];
-	activeModel: FamilyId | null;
+	/** The models that stay lit; the rest fade. */
+	lit: LitModels;
 	pinnedModel: FamilyId | null;
 	onHighlight: (event: HighlightEvent) => void;
 }) {
@@ -372,7 +406,7 @@ export function ModelLegend({
 					<LegendButton
 						model={model}
 						pinned={pinnedModel === model.id}
-						muted={activeModel !== null && activeModel !== model.id}
+						muted={isFaded(lit, model.id)}
 						onHighlight={onHighlight}
 					/>
 				</li>

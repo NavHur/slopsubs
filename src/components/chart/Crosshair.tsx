@@ -6,10 +6,13 @@ import {
 	type AxisReadout,
 	type AxisReadouts,
 	axisReadouts,
+	type Box,
 	type ChartLayout,
 	px,
+	separateReadouts,
 	type XScale,
 } from "./geometry";
+import type { ShownDetails } from "./pointDetails";
 
 /** A point's effective cost and score on the axes, in the tick formats. */
 export function pointReadouts(
@@ -28,6 +31,33 @@ export function pointReadouts(
 		layout,
 		chartWidth,
 	);
+}
+
+/** A shown point with its pills; the selected point's guides draw solid. */
+export type ShownCrosshair = {
+	point: ValuePoint;
+	readouts: AxisReadouts;
+	solid: boolean;
+};
+
+/**
+ * The shown points' crosshairs, the selected one first. The hovered point's
+ * pills move off the selected one's where they would cover them.
+ */
+export function shownCrosshairs(
+	details: ShownDetails | null,
+	project: (point: ValuePoint) => AxisReadouts,
+	bounds: Box,
+): ShownCrosshair[] {
+	if (!details) return [];
+	const readouts = project(details.point);
+	const hovered = { point: details.point, readouts, solid: false };
+	if (!details.selected) return [hovered];
+	const selected = project(details.selected);
+	return [
+		{ point: details.selected, readouts: selected, solid: true },
+		{ ...hovered, readouts: separateReadouts(selected, readouts, bounds) },
+	];
 }
 
 const DASHED = "4 4";

@@ -5,6 +5,7 @@ import { formatDuration, formatUsd } from "#/lib/format";
 import { onActivationKey, onKeyboardFocus } from "./ChartParts";
 import { markerPath } from "./geometry";
 import type { PreviewSource } from "./highlight";
+import { isFaded, type LitModels } from "./litModels";
 import type { AxisId } from "./plotSpace";
 import type { PointDetailsEvent } from "./pointDetails";
 import { API_DASH, type PricingStyle } from "./series";
@@ -88,13 +89,9 @@ const BEATEN_OPACITY = 0.25;
 /** Opacity of a model's points and lines while another is highlighted. */
 const DIMMED_OPACITY = 0.12;
 
-/** Fades a model while another is highlighted, else a beaten option. */
-function emphasis(
-	family: FamilyId,
-	worthWeighing: boolean,
-	active: FamilyId | null,
-) {
-	if (active !== null && active !== family) return DIMMED_OPACITY;
+/** Fades a model while others are lit, else a beaten option. */
+function emphasis(family: FamilyId, worthWeighing: boolean, lit: LitModels) {
+	if (isFaded(lit, family)) return DIMMED_OPACITY;
 	return worthWeighing ? 1 : BEATEN_OPACITY;
 }
 
@@ -111,12 +108,12 @@ function strongColor(family: FamilyId): string {
 export function EffortLines({
 	steps,
 	pricing,
-	activeModel,
+	lit,
 }: {
 	steps: readonly EffortStep[];
 	pricing: PricingStyle;
-	/** The highlighted model, or the one whose point shows; the rest fade. */
-	activeModel: FamilyId | null;
+	/** The models that stay lit: the highlighted one, or those whose points show. */
+	lit: LitModels;
 }) {
 	const { isApi, lineWidth } = pricing;
 	return (
@@ -135,7 +132,7 @@ export function EffortLines({
 					}
 					strokeWidth={step.worthWeighing ? lineWidth + 0.5 : lineWidth}
 					strokeDasharray={isApi ? API_DASH : undefined}
-					opacity={emphasis(step.family, step.worthWeighing, activeModel)}
+					opacity={emphasis(step.family, step.worthWeighing, lit)}
 					className="transition-opacity"
 				/>
 			))}
@@ -167,7 +164,7 @@ export function TradeoffPoint({
 	scenePoint,
 	pricing,
 	active,
-	activeModel,
+	lit,
 	onDetails,
 	view,
 }: {
@@ -175,8 +172,8 @@ export function TradeoffPoint({
 	pricing: PricingStyle;
 	/** Its details show, so it draws larger. */
 	active: boolean;
-	/** The highlighted model, or the one whose point shows; the rest fade. */
-	activeModel: FamilyId | null;
+	/** The models that stay lit: the highlighted one, or those whose points show. */
+	lit: LitModels;
 	onDetails: (event: PointDetailsEvent) => void;
 	/** Names and formats the score for screen readers. */
 	view: BenchmarkView;
@@ -193,7 +190,7 @@ export function TradeoffPoint({
 	const pin = () => onDetails({ type: "togglePin", point });
 	return (
 		<g
-			opacity={active ? 1 : emphasis(family, worthWeighing, activeModel)}
+			opacity={active ? 1 : emphasis(family, worthWeighing, lit)}
 			className="transition-opacity"
 		>
 			<line
