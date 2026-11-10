@@ -36,8 +36,20 @@ describe("point details", () => {
 
 	it("previews a hovered point without pinning it", () => {
 		const state = run({ type: "preview", source: "hover", point: low });
-		expect(shownDetails(state, points)).toEqual({ point: low, pinned: false });
+		expect(shownDetails(state, points)).toEqual({
+			point: low,
+			pinned: false,
+			selected: null,
+		});
 		expect(shownDetails(run(), points)).toBeNull();
+	});
+
+	it("compares nothing while the pinned point itself is hovered", () => {
+		const state = run(
+			{ type: "togglePin", point: low },
+			{ type: "preview", source: "hover", point: low },
+		);
+		expect(shownDetails(state, points)?.selected).toBeNull();
 	});
 
 	it("keeps a clicked point's details after the pointer leaves", () => {
@@ -46,10 +58,14 @@ describe("point details", () => {
 			{ type: "togglePin", point: low },
 			{ type: "endPreview", source: "hover", point: low },
 		);
-		expect(shownDetails(state, points)).toEqual({ point: low, pinned: true });
+		expect(shownDetails(state, points)).toEqual({
+			point: low,
+			pinned: true,
+			selected: null,
+		});
 	});
 
-	it("previews another point over the pin, then returns to it", () => {
+	it("compares another point with the pin, then returns to it", () => {
 		const pinned = run({ type: "togglePin", point: low });
 		const previewing = updatePointDetails(pinned, {
 			type: "preview",
@@ -59,6 +75,7 @@ describe("point details", () => {
 		expect(shownDetails(previewing, points)).toEqual({
 			point: high,
 			pinned: false,
+			selected: low,
 		});
 		const left = updatePointDetails(previewing, {
 			type: "endPreview",
@@ -74,7 +91,11 @@ describe("point details", () => {
 			{ type: "preview", source: "hover", point: high },
 			{ type: "endPreview", source: "hover", point: high },
 		);
-		expect(shownDetails(state, points)).toEqual({ point: low, pinned: false });
+		expect(shownDetails(state, points)).toEqual({
+			point: low,
+			pinned: false,
+			selected: null,
+		});
 	});
 
 	it("keeps the hovered point's details when focus leaves another", () => {
@@ -83,7 +104,11 @@ describe("point details", () => {
 			{ type: "preview", source: "focus", point: low },
 			{ type: "endPreview", source: "focus", point: low },
 		);
-		expect(shownDetails(state, points)).toEqual({ point: high, pinned: false });
+		expect(shownDetails(state, points)).toEqual({
+			point: high,
+			pinned: false,
+			selected: null,
+		});
 	});
 
 	it("previews the hovered point over the focused one", () => {

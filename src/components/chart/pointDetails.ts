@@ -4,8 +4,8 @@ import type { PreviewSource } from "./highlight";
 
 /**
  * Which point's details the chart shows. A click pins a point until it is
- * clicked again, closed, or leaves the chart; hover and focus preview over
- * the pin.
+ * clicked again, closed, or leaves the chart; hover and focus preview another
+ * point over the pin, compared with it.
  */
 export type PointDetails = {
 	hovered: ValuePoint | null;
@@ -86,14 +86,25 @@ function plottedDetails(
 	return unchanged ? state : next;
 }
 
-/** The point whose details show, and whether they are pinned. */
+/**
+ * The point whose details show and whether it is pinned. Previewing another
+ * point over a pin weighs it against the pinned one, the `selected` point.
+ */
+export type ShownDetails = {
+	point: ValuePoint;
+	pinned: boolean;
+	selected: ValuePoint | null;
+};
+
 export function shownDetails(
 	state: PointDetails,
 	points: readonly ValuePoint[],
-): { point: ValuePoint; pinned: boolean } | null {
-	const pinned = points.find((p) => pointKey(p) === state.pinned);
+): ShownDetails | null {
+	const pinned = points.find((p) => pointKey(p) === state.pinned) ?? null;
 	const point = state.hovered ?? state.focused ?? pinned;
-	return point ? { point, pinned: pointKey(point) === state.pinned } : null;
+	if (!point) return null;
+	const isPinned = pointKey(point) === state.pinned;
+	return { point, pinned: isPinned, selected: isPinned ? null : pinned };
 }
 
 export function usePointDetails(points: readonly ValuePoint[]) {
