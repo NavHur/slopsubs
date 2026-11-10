@@ -89,7 +89,6 @@ export function PointTooltip({
 	view: BenchmarkView;
 }) {
 	const [ref, box] = useBorderBox<HTMLDivElement>();
-	const { benchmark, pricing } = point;
 	// Hidden for the one layout before its size is known.
 	const placement = box && tooltipPlacement(anchor, box, bounds);
 	return (
@@ -98,6 +97,31 @@ export function PointTooltip({
 			className={`${pinned ? "" : "pointer-events-none"} absolute z-10 ${selected ? "w-96" : "w-64"} max-w-[calc(100%-16px)] rounded-md border border-line bg-panel px-3 pt-1.5 pb-2.5 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]`}
 			style={placement ?? { left: 0, top: 0, visibility: "hidden" }}
 		>
+			{selected ? (
+				<PointComparison selected={selected} hovered={point} view={view} />
+			) : (
+				<>
+					<PointHeader point={point} pinned={pinned} onClose={onClose} />
+					<PointSummary point={point} view={view} />
+				</>
+			)}
+		</div>
+	);
+}
+
+/** The point's model, effort and pricing, and a close button when pinned. */
+function PointHeader({
+	point,
+	pinned,
+	onClose,
+}: {
+	point: ValuePoint;
+	pinned: boolean;
+	onClose: () => void;
+}) {
+	const { benchmark, pricing } = point;
+	return (
+		<>
 			<div className="flex min-h-7 items-center justify-between gap-2">
 				<div className="flex min-w-0 items-center gap-2 text-[13px] font-semibold text-fg">
 					<ColorDot color={familyColor(benchmark.family)} />
@@ -110,15 +134,7 @@ export function PointTooltip({
 				{benchmark.effortLabel} ·{" "}
 				{pricing.kind === "api" ? "Pay per token (API)" : pricing.plan.label}
 			</p>
-			{selected ? (
-				<>
-					<SelectedLine selected={selected} />
-					<PointComparison selected={selected} hovered={point} view={view} />
-				</>
-			) : (
-				<PointSummary point={point} view={view} />
-			)}
-		</div>
+		</>
 	);
 }
 
@@ -155,19 +171,6 @@ function PointSummary({
 				{source.name}
 			</a>
 		</>
-	);
-}
-
-/** Names the pinned point the figures are compared with. */
-function SelectedLine({ selected }: { selected: ValuePoint }) {
-	const { family, effortLabel } = selected.benchmark;
-	return (
-		<p className="mt-1 flex min-w-0 items-center gap-1.5 text-muted">
-			<ColorDot color={familyColor(family)} />
-			<span className="truncate">
-				vs {familyName(family)} · {effortLabel}
-			</span>
-		</p>
 	);
 }
 

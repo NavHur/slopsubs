@@ -1,12 +1,13 @@
 import type { ValuePoint } from "#/domain/value";
 import type { BenchmarkView } from "#/lib/benchmarks";
-import { familyColor } from "#/lib/families";
+import { familyColor, familyLabId, familyName } from "#/lib/families";
 import {
 	formatDuration,
 	formatMultiple,
 	formatTokens,
 	formatUsd,
 } from "#/lib/format";
+import { ProviderLogo } from "../ProviderLogo";
 import { ColorDot } from "./ColorDot";
 
 const MISSING = "—";
@@ -102,9 +103,51 @@ function changeOf(row: Row, hovered: number | null, selected: number | null) {
 }
 
 /**
- * The selected (pinned) point's figures beside the hovered point's, and how
- * the hovered one compares, coloured by whether that is better or worse.
- * Rows neither point has a figure for are left out.
+ * Which point is which: the selected one, then the hovered one, in the
+ * table's column order. The arrow reads as the Change column does: what
+ * moving from the selected point to the hovered one gains or loses.
+ */
+function ComparisonHeader({
+	selected,
+	hovered,
+}: {
+	selected: ValuePoint;
+	hovered: ValuePoint;
+}) {
+	return (
+		<div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-x-3">
+			<PointIdentity point={selected} />
+			<span className="text-[15px] leading-7 text-muted">
+				<span aria-hidden="true">→</span>
+				<span className="sr-only">versus</span>
+			</span>
+			<PointIdentity point={hovered} />
+		</div>
+	);
+}
+
+/** A point's model on one line, its effort and pricing on the next. */
+function PointIdentity({ point }: { point: ValuePoint }) {
+	const { benchmark, pricing } = point;
+	return (
+		<div className="min-w-0">
+			<div className="flex min-h-7 items-center gap-1.5 text-[13px] font-semibold text-fg">
+				<ColorDot color={familyColor(benchmark.family)} />
+				<ProviderLogo lab={familyLabId(benchmark.family)} size={16} />
+				<span className="truncate">{familyName(benchmark.family)}</span>
+			</div>
+			<p className="truncate text-muted">
+				{benchmark.effortLabel} ·{" "}
+				{pricing.kind === "api" ? "API" : pricing.plan.label}
+			</p>
+		</div>
+	);
+}
+
+/**
+ * The selected (pinned) point beside the hovered one: who each is, then
+ * their figures and how the hovered one compares, coloured by whether that
+ * is better or worse. Rows neither point has a figure for are left out.
  */
 export function PointComparison({
 	selected,
@@ -121,48 +164,51 @@ export function PointComparison({
 	const shown = (value: number | null, row: Row) =>
 		value === null ? MISSING : row.format(value);
 	return (
-		<table className="mt-2 w-full tabular-nums">
-			<thead className="text-[11px] text-subtle">
-				<tr className="border-b border-line">
-					<th scope="col" className="sr-only">
-						Figure
-					</th>
-					<ColumnHead point={selected}>Selected</ColumnHead>
-					<ColumnHead point={hovered}>Hovered</ColumnHead>
-					<th scope="col" className="pb-0.5 pl-3 text-right font-normal">
-						Change
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				{rows.map((row) => {
-					const a = row.value(selected);
-					const b = row.value(hovered);
-					const change = changeOf(row, b, a);
-					return (
-						<tr key={row.label}>
-							<th
-								scope="row"
-								className="pt-0.5 text-left font-normal text-muted"
-							>
-								{row.label}
-							</th>
-							<td className="pt-0.5 pl-3 text-right text-fg">
-								{shown(a, row)}
-							</td>
-							<td className="pt-0.5 pl-3 text-right text-fg">
-								{shown(b, row)}
-							</td>
-							<td
-								className={`pt-0.5 pl-3 text-right font-medium whitespace-nowrap ${TONE_CLASS[change.tone]}`}
-							>
-								{change.text}
-							</td>
-						</tr>
-					);
-				})}
-			</tbody>
-		</table>
+		<>
+			<ComparisonHeader selected={selected} hovered={hovered} />
+			<table className="mt-2 w-full tabular-nums">
+				<thead className="text-[11px] text-subtle">
+					<tr className="border-b border-line">
+						<th scope="col" className="sr-only">
+							Figure
+						</th>
+						<ColumnHead point={selected}>Selected</ColumnHead>
+						<ColumnHead point={hovered}>Hovered</ColumnHead>
+						<th scope="col" className="pb-0.5 pl-3 text-right font-normal">
+							Change
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{rows.map((row) => {
+						const a = row.value(selected);
+						const b = row.value(hovered);
+						const change = changeOf(row, b, a);
+						return (
+							<tr key={row.label}>
+								<th
+									scope="row"
+									className="pt-0.5 text-left font-normal text-muted"
+								>
+									{row.label}
+								</th>
+								<td className="pt-0.5 pl-3 text-right text-fg">
+									{shown(a, row)}
+								</td>
+								<td className="pt-0.5 pl-3 text-right text-fg">
+									{shown(b, row)}
+								</td>
+								<td
+									className={`pt-0.5 pl-3 text-right font-medium whitespace-nowrap ${TONE_CLASS[change.tone]}`}
+								>
+									{change.text}
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</>
 	);
 }
 

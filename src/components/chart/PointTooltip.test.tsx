@@ -156,8 +156,10 @@ describe("point tooltip", () => {
 				" ",
 			);
 
-		it("names the selected point", () => {
-			expect(text()).toContain("vs Opus 5.5 · low");
+		it("names the selected point, then the hovered one, as the columns run", () => {
+			expect(text()).toMatch(
+				/Opus 5\.5 low · API → versus Opus 5\.5 max · API Figure Selected/,
+			);
 		});
 
 		it("gives a score's change in points", () => {
