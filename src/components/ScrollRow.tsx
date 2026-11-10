@@ -111,6 +111,13 @@ function useWheelScroll(
 	}, [frameRef, rowRef]);
 }
 
+/** Reuses unchanged edges so a scroll event does not cause another render. */
+export function reuseOverflow(previous: Overflow, next: Overflow): Overflow {
+	return previous.start === next.start && previous.end === next.end
+		? previous
+		: next;
+}
+
 /** Tracks which ends of the row hide content; only a changed edge re-renders. */
 function useOverflowEdges(ref: RefObject<HTMLElement | null>): Overflow {
 	const [overflow, setOverflow] = useState<Overflow>({
@@ -123,9 +130,7 @@ function useOverflowEdges(ref: RefObject<HTMLElement | null>): Overflow {
 		if (!row) return;
 		const update = () => {
 			const next = overflowOf(row);
-			setOverflow((prev) =>
-				prev.start === next.start && prev.end === next.end ? prev : next,
-			);
+			setOverflow((prev) => reuseOverflow(prev, next));
 		};
 		update();
 		const observer = new ResizeObserver(update);

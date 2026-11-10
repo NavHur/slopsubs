@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { type RefObject, useEffect, useId, useRef, useState } from "react";
 import { toggleTheme } from "#/lib/theme";
 
 const HEADER_BUTTON =
@@ -94,26 +94,35 @@ function useDisclosure() {
 	const trigger = useRef<HTMLButtonElement>(null);
 	useEffect(() => {
 		if (!open) return;
-		const closeOutside = (event: Event) => {
-			if (!isInside(root.current, event.target)) setOpen(false);
-		};
-		const onKeyDown = (event: KeyboardEvent) => {
-			if (event.key !== "Escape") return;
-			// Stop at the document so the chart's window listener keeps its pin.
-			event.stopPropagation();
-			setOpen(false);
-			trigger.current?.focus();
-		};
-		document.addEventListener("pointerdown", closeOutside);
-		document.addEventListener("focusin", closeOutside);
-		document.addEventListener("keydown", onKeyDown);
-		return () => {
-			document.removeEventListener("pointerdown", closeOutside);
-			document.removeEventListener("focusin", closeOutside);
-			document.removeEventListener("keydown", onKeyDown);
-		};
+		return observeDismissal(root, trigger, () => setOpen(false));
 	}, [open]);
 	return { open, setOpen, root, trigger };
+}
+
+/** Watches dismissal while the disclosure is open; refs are read at event time. */
+export function observeDismissal(
+	root: RefObject<Element | null>,
+	trigger: RefObject<HTMLElement | null>,
+	close: () => void,
+) {
+	const closeOutside = (event: Event) => {
+		if (!isInside(root.current, event.target)) close();
+	};
+	const onKeyDown = (event: KeyboardEvent) => {
+		if (event.key !== "Escape") return;
+		// Stop at the document so the chart's window listener keeps its pin.
+		event.stopPropagation();
+		close();
+		trigger.current?.focus();
+	};
+	document.addEventListener("pointerdown", closeOutside);
+	document.addEventListener("focusin", closeOutside);
+	document.addEventListener("keydown", onKeyDown);
+	return () => {
+		document.removeEventListener("pointerdown", closeOutside);
+		document.removeEventListener("focusin", closeOutside);
+		document.removeEventListener("keydown", onKeyDown);
+	};
 }
 
 /** The ⋯ menu of display preferences; for now, the line labels. */
