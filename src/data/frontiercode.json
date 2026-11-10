@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-09T20:18:33.475Z",
+  "fetchedAt": "2026-11-10T00:25:20.528Z",
   "source": "Cognition's FrontierCode 2.0",
   "rows": [
     {
@@ -400,6 +400,27 @@
       "score": 26.3,
       "costPerTaskUsd": 6.514,
       "tokensPerTask": 148569
+    },
+    {
+      "family": "gemini-4-carbon",
+      "effort": "low",
+      "score": 31.88,
+      "costPerTaskUsd": 4.548,
+      "tokensPerTask": 57868
+    },
+    {
+      "family": "gemini-4-carbon",
+      "effort": "medium",
+      "score": 40,
+      "costPerTaskUsd": 4.044,
+      "tokensPerTask": 109126
+    },
+    {
+      "family": "gemini-4-carbon",
+      "effort": "high",
+      "score": 37.48,
+      "costPerTaskUsd": 4.434,
+      "tokensPerTask": 121442
     },
     {
       "family": "grok-4-7",
