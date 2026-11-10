@@ -45,16 +45,22 @@ function pointWith(costPerTaskUsd: number): ValuePoint {
 const REM_PX = 16;
 /** Tabular digits at 12px DM Sans, per character. */
 const FIGURE_CHAR_PX = 7.2;
-/** 11px medium text in a chip, per character, measured in the shipped font. */
-const CHIP_CHAR_PX = 5.8;
+/**
+ * 11px medium text in a chip, per character. Measured in the shipped DM Sans:
+ * the widest 15-character chip is 93px of text. The system fallback is
+ * narrower (about 5.7px), so a measurement in it undercounts.
+ */
+const CHIP_CHAR_PX = 6.2;
 const CELL_PADDING_PX = 4;
 const CHIP_PADDING_PX = 8;
 /**
  * Table widths at 360px, 375px and 390px viewports, and the 28rem desktop
  * card. By ruling, phones narrower than 360px are out of scope.
  */
-const PHONE_TABLES_PX = [286, 301, 316];
+const PHONE_TABLES_PX = [286, 301, 316, 320];
 const DESKTOP_TABLE_PX = 422;
+/** The 21rem table where the change column widens: the tightest figure case. */
+const WIDENING_TABLE_PX = 336;
 
 /** Every shipped point, per benchmark: the comparison never crosses benchmarks. */
 function shippedPointsByBenchmark(): ValuePoint[][] {
@@ -170,7 +176,7 @@ describe("comparison table columns", () => {
 		expect(widestFigureChars).toBeLessThanOrEqual(WIDEST_FIGURE_CHARS);
 	});
 
-	it.each([...PHONE_TABLES_PX, DESKTOP_TABLE_PX])(
+	it.each([...PHONE_TABLES_PX, WIDENING_TABLE_PX, DESKTOP_TABLE_PX])(
 		"leave each figure column room for the widest shipped figure in a %ipx table",
 		(table) => {
 			const { label, change } = labelAndChange(table);
