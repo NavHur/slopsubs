@@ -1,3 +1,4 @@
+import { scaleLog } from "d3-scale";
 import { describe, expect, it } from "vite-plus/test";
 import { formatCount } from "#/lib/format";
 import { rangeLayout, rangeScale, rangeTicks } from "./rangeGeometry";
@@ -58,5 +59,13 @@ describe("rangeTicks", () => {
 		expect(rangeTicks(rangeScale([0.004, 0.09], 600))).toEqual([
 			0.005, 0.01, 0.02, 0.05, 0.1,
 		]);
+	});
+
+	it("keeps a tick at the domain's lower bound despite float noise", () => {
+		// 3 * 10 ** -1 is 0.30000000000000004, the domain's own lower bound.
+		const x = scaleLog()
+			.domain([3 * 10 ** -1, 1000])
+			.range([0, 448]);
+		expect(rangeTicks(x)).toEqual([0.3, 1, 3, 10, 30, 100, 300, 1000]);
 	});
 });
