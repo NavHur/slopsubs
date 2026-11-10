@@ -43,15 +43,14 @@ export function Axes({
 	ticks: number[];
 	scale: AxisScale;
 	layout: ChartLayout;
-	/** The shown point's values, which hide the tick labels they cover. */
-	readouts?: AxisReadouts;
+	/** The shown points' values, which hide the tick labels they cover. */
+	readouts: readonly AxisReadouts[];
 	axisLabel: string;
 }) {
 	const { margin, height } = layout;
 	const bottom = height - margin.bottom;
 	const covered = (label: Rect) =>
-		readouts !== undefined &&
-		(overlaps(label, readouts.x) || overlaps(label, readouts.y));
+		readouts.some((r) => overlaps(label, r.x) || overlaps(label, r.y));
 	return (
 		<g className="fill-muted text-[12px] tabular-nums">
 			{y.ticks(layout.compact ? 5 : 6).map((t) => (
@@ -168,7 +167,7 @@ export function SeriesLine({
 	series,
 	x,
 	y,
-	activePoint,
+	shownPoints,
 	dimmed,
 	onDetails,
 	benchmark,
@@ -176,8 +175,8 @@ export function SeriesLine({
 	series: Series;
 	x: XScale;
 	y: ScaleLinear<number, number>;
-	/** The point whose details show, drawn larger. */
-	activePoint: ValuePoint | null;
+	/** The points whose details show, drawn larger. */
+	shownPoints: readonly ValuePoint[];
 	dimmed: boolean;
 	onDetails: (event: PointDetailsEvent) => void;
 	/** Names and formats the points' scores for screen readers. */
@@ -226,7 +225,7 @@ export function SeriesLine({
 							marker,
 							x(p.costPerTaskUsd),
 							y(p.score),
-							activePoint === p ? 6 : 4,
+							shownPoints.includes(p) ? 6 : 4,
 						)}
 						fill={isApi ? "var(--bg)" : series.color}
 						stroke={series.color}

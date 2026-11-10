@@ -13,6 +13,7 @@ import {
 	formatDuration,
 	formatIntelligence,
 	formatPercent,
+	formatRatio,
 	formatTokens,
 } from "./format";
 
@@ -38,6 +39,19 @@ describe("formatPercent", () => {
 	it("shows a percentage to one decimal, with its sign", () => {
 		expect(formatPercent(45.45)).toBe("45.5%");
 		expect(formatPercent(4)).toBe("4.0%");
+	});
+});
+
+describe("formatRatio", () => {
+	it("keeps three significant digits from 1× up and two below", () => {
+		expect(formatRatio(1.1946)).toBe("1.19×");
+		expect(formatRatio(10.19)).toBe("10.2×");
+		expect(formatRatio(0.006637)).toBe("0.0066×");
+		expect(formatRatio(4)).toBe("4×");
+	});
+
+	it("rounds a hundredfold or more to a whole multiple", () => {
+		expect(formatRatio(152.6)).toBe("153×");
 	});
 });
 

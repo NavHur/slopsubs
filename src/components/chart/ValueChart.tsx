@@ -28,15 +28,17 @@ import { buildSeries, groupByModel, modelEnd, type Series } from "./series";
 import { useChartRef } from "./useChartRef";
 
 /**
- * A line fades unless it holds the shown point or, with none shown, belongs to
- * the highlighted model.
+ * A line fades unless it holds a shown point (the hovered one and any it is
+ * compared with) or, with none shown, belongs to the highlighted model.
  */
 function isDimmed(
 	series: Series,
-	activePoint: ValuePoint | null,
+	shownPoints: readonly ValuePoint[],
 	highlighted: FamilyId | null,
 ) {
-	if (activePoint) return activePoint.seriesId !== series.id;
+	if (shownPoints.length > 0) {
+		return !shownPoints.some((p) => p.seriesId === series.id);
+	}
 	return highlighted !== null && highlighted !== series.modelId;
 }
 
@@ -101,11 +103,20 @@ export function ValueChart({
 		: [];
 	const highlighted = highlightedModel(shown);
 	const activeModel = activePoint?.benchmark.family ?? highlighted;
-	// The shown point is projected once; the guides, pills and tooltip share it.
+	// Shown points are projected once; the guides, pills and tooltip share them.
+	const readoutsOf = (point: ValuePoint) =>
+		pointReadouts(point, { x, y }, layout, width, benchmark);
 	const active = details && {
 		...details,
-		readouts: pointReadouts(details.point, { x, y }, layout, width, benchmark),
+		readouts: readoutsOf(details.point),
+		selectedReadouts: details.selected && readoutsOf(details.selected),
 	};
+	const shownPoints = details
+		? [details.point, details.selected].filter((p) => p !== null)
+		: [];
+	const shownReadouts = active
+		? [active.readouts, active.selectedReadouts].filter((r) => r !== null)
+		: [];
 
 	return (
 		<div
@@ -128,11 +139,19 @@ export function ValueChart({
 					ticks={xTicks(x, scale)}
 					scale={scale}
 					layout={layout}
-					readouts={active?.readouts}
+					readouts={shownReadouts}
 					axisLabel={benchmark.axisLabel}
 				/>
 				{showPareto && (
 					<ParetoLine points={paretoFrontier(points)} x={x} y={y} />
+				)}
+				{active?.selected && active.selectedReadouts && (
+					<Crosshair
+						readouts={active.selectedReadouts}
+						layout={layout}
+						color={familyColor(active.selected.benchmark.family)}
+						solid
+					/>
 				)}
 				{active && (
 					<Crosshair
@@ -147,8 +166,8 @@ export function ValueChart({
 						series={s}
 						x={x}
 						y={y}
-						activePoint={activePoint}
-						dimmed={isDimmed(s, activePoint, highlighted)}
+						shownPoints={shownPoints}
+						dimmed={isDimmed(s, shownPoints, highlighted)}
 						onDetails={dispatchDetails}
 						benchmark={benchmark}
 					/>
@@ -166,6 +185,7 @@ export function ValueChart({
 			{active && (
 				<PointTooltip
 					point={active.point}
+					selected={active.selected}
 					anchor={active.readouts.at}
 					bounds={{ width, height }}
 					pinned={active.pinned}

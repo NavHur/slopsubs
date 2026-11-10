@@ -52,10 +52,15 @@ const plan: Plan = {
 	promotionByFamily: {},
 };
 
-function tooltipHtml(view: BenchmarkView, shown: ValuePoint = point) {
+function tooltipHtml(
+	view: BenchmarkView,
+	shown: ValuePoint = point,
+	selected: ValuePoint | null = null,
+) {
 	return renderToStaticMarkup(
 		<PointTooltip
 			point={shown}
+			selected={selected}
 			anchor={{ x: 0, y: 0 }}
 			bounds={{ width: 800, height: 600 }}
 			pinned={false}
@@ -65,8 +70,12 @@ function tooltipHtml(view: BenchmarkView, shown: ValuePoint = point) {
 	);
 }
 
-function tooltipText(view: BenchmarkView, shown: ValuePoint = point) {
-	return tooltipHtml(view, shown).replace(/<[^>]+>/g, " ");
+function tooltipText(
+	view: BenchmarkView,
+	shown: ValuePoint = point,
+	selected: ValuePoint | null = null,
+) {
+	return tooltipHtml(view, shown, selected).replace(/<[^>]+>/g, " ");
 }
 
 describe("point tooltip", () => {
@@ -126,5 +135,38 @@ describe("point tooltip", () => {
 		);
 		expect(dot?.[1]).toBe(brand);
 		expect(html.split(brand)).toHaveLength(2);
+	});
+
+	describe("compared with a selected point", () => {
+		const cheaper: ValuePoint = {
+			...point,
+			score: 36.36,
+			costPerTaskUsd: 3.2052,
+			benchmark: {
+				...point.benchmark,
+				id: `${opus}-low`,
+				effortLabel: "low",
+				tokensPerTask: null,
+				secondsPerTask: 355.7,
+			},
+		};
+		const text = () =>
+			tooltipText(BENCHMARK_VIEWS.intelligence, point, cheaper).replace(
+				/\s+/g,
+				" ",
+			);
+
+		it("names the selected point", () => {
+			expect(text()).toContain("vs Opus 5.5 · low");
+		});
+
+		it("gives each figure for both points and the hovered one's multiple", () => {
+			expect(text()).toMatch(/Cost per task \$3\.21 \$12\.82 4×/);
+			expect(text()).toMatch(/Time per task 5m 56s 11m 51s 2×/);
+		});
+
+		it("marks a figure only one point has instead of dividing by it", () => {
+			expect(text()).toMatch(/tokens per task — 202k — /i);
+		});
 	});
 });

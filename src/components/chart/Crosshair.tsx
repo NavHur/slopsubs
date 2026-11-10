@@ -30,19 +30,26 @@ export function pointReadouts(
 	);
 }
 
+const DASHED = "4 4";
+
 /**
- * Dashed guides from a point to both axes, where pills show its value; the
- * axes hide the tick labels the pills cover.
+ * Guides from a point to both axes, where pills show its value; the axes hide
+ * the tick labels the pills cover. A compared point's guides are dashed and
+ * the selected point's solid.
  */
 export function Crosshair({
 	readouts,
 	layout,
 	color,
+	solid = false,
 }: {
 	readouts: AxisReadouts;
 	layout: ChartLayout;
 	color: string;
+	/** Draw the guides unbroken, for the selected point under a comparison. */
+	solid?: boolean;
 }) {
+	const dash = solid ? undefined : DASHED;
 	const { margin, height } = layout;
 	const cx = px(readouts.at.x);
 	const cy = px(readouts.at.y);
@@ -59,7 +66,7 @@ export function Crosshair({
 				y1={cy}
 				y2={cy}
 				stroke="currentColor"
-				strokeDasharray="4 4"
+				strokeDasharray={dash}
 			/>
 			<line
 				x1={cx}
@@ -67,7 +74,7 @@ export function Crosshair({
 				y1={cy}
 				y2={height - margin.bottom}
 				stroke="currentColor"
-				strokeDasharray="4 4"
+				strokeDasharray={dash}
 			/>
 			<Readout readout={readouts.y} />
 			<Readout readout={readouts.x} />

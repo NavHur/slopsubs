@@ -87,7 +87,7 @@ export function TradeoffChart({
 						key={`${p.point.seriesId}/${p.point.benchmark.id}`}
 						scenePoint={p}
 						pricing={pricing}
-						active={p === shown}
+						active={p === shown || p.point === details?.selected}
 						activeModel={activeModel}
 						onDetails={dispatch}
 						view={view}
@@ -105,6 +105,7 @@ export function TradeoffChart({
 			{details && shown && (
 				<PointTooltip
 					point={details.point}
+					selected={details.selected}
 					anchor={shown.at}
 					bounds={viewport}
 					pinned={details.pinned}

@@ -14,6 +14,7 @@ import {
 import { ProviderLogo } from "../ProviderLogo";
 import { ColorDot } from "./ColorDot";
 import { type Box, tooltipPlacement } from "./geometry";
+import { PointComparison } from "./PointComparison";
 
 /**
  * The element's border box, or null before its first layout. Measured after
@@ -61,9 +62,13 @@ function PlanPricing({
 	);
 }
 
-/** Details of one point, placed beside it so it never covers it. */
+/**
+ * Details of one point, placed beside it so it never covers it. With a
+ * `selected` point, its figures sit beside the selected one's for comparison.
+ */
 export function PointTooltip({
 	point,
+	selected,
 	anchor,
 	bounds,
 	pinned,
@@ -71,6 +76,8 @@ export function PointTooltip({
 	view,
 }: {
 	point: ValuePoint;
+	/** The pinned point this one is compared with, if another is pinned. */
+	selected: ValuePoint | null;
 	/** The point's position in the chart. */
 	anchor: { x: number; y: number };
 	/** The chart's size; the tooltip stays inside it when it can. */
@@ -90,7 +97,7 @@ export function PointTooltip({
 	return (
 		<div
 			ref={ref}
-			className={`${pinned ? "" : "pointer-events-none"} absolute z-10 w-64 max-w-[calc(100%-16px)] rounded-md border border-line bg-panel px-3 pt-1.5 pb-2.5 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]`}
+			className={`${pinned ? "" : "pointer-events-none"} absolute z-10 ${selected ? "w-[22rem]" : "w-64"} max-w-[calc(100%-16px)] rounded-md border border-line bg-panel px-3 pt-1.5 pb-2.5 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]`}
 			style={placement ?? { left: 0, top: 0, visibility: "hidden" }}
 		>
 			<div className="flex min-h-7 items-center justify-between gap-2">
@@ -105,7 +112,14 @@ export function PointTooltip({
 				{benchmark.effortLabel} ·{" "}
 				{pricing.kind === "api" ? "Pay per token (API)" : pricing.plan.label}
 			</p>
-			<PointMetrics point={point} view={view} />
+			{selected ? (
+				<>
+					<SelectedLine selected={selected} />
+					<PointComparison selected={selected} hovered={point} view={view} />
+				</>
+			) : (
+				<PointMetrics point={point} view={view} />
+			)}
 			{pricing.kind === "plan" && (
 				<PlanPricing
 					pricing={pricing}
@@ -122,6 +136,19 @@ export function PointTooltip({
 				{source.name}
 			</a>
 		</div>
+	);
+}
+
+/** Names the pinned point the figures are compared with. */
+function SelectedLine({ selected }: { selected: ValuePoint }) {
+	const { family, effortLabel } = selected.benchmark;
+	return (
+		<p className="mt-1 flex min-w-0 items-center gap-1.5 text-muted">
+			<ColorDot color={familyColor(family)} />
+			<span className="truncate">
+				vs {familyName(family)} · {effortLabel}
+			</span>
+		</p>
 	);
 }
 
