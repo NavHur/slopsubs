@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
-import { chromium, type Page } from "playwright-core";
+import { chromium, type Locator, type Page } from "playwright-core";
 import { originOf, serveSite } from "./serve-site.ts";
 import { baselineDirectory } from "./smoke-dirs.ts";
 
@@ -17,6 +17,8 @@ const { values } = parseArgs({
 	},
 });
 const baselineDir = baselineDirectory(values.out, values.compare);
+const screenshotResult =
+	baselineDir === undefined ? "screenshots recorded" : "screenshots matched";
 const browser = await chromium.launch({ headless: true });
 const MAX_CHANNEL_DELTA = 1;
 const MAX_CHANGED_CHANNEL_SHARE = 0.0001;
@@ -62,9 +64,11 @@ async function capture(page: Page, name: string) {
 	await page.waitForTimeout(400);
 	const image = await page.screenshot({ animations: "disabled" });
 	const before =
-		baselineDir && (await readFile(join(baselineDir, `${name}.png`)));
+		baselineDir === undefined
+			? undefined
+			: await readFile(join(baselineDir, `${name}.png`));
 	await writeFile(join(values.out, `${name}.png`), image);
-	if (!before) return;
+	if (before === undefined) return;
 	const difference = await imageDifference(page, before, image);
 	console.log(name, difference);
 	assert.ok(difference.sameSize, `${name}: screenshot size differs`);
@@ -80,6 +84,14 @@ async function capture(page: Page, name: string) {
 	);
 }
 
+/** Moves focus off the trigger, so Escape has to bring it back. */
+async function focusInsideMenu(trigger: Locator) {
+	await trigger
+		.locator("xpath=following-sibling::div")
+		.getByRole("button", { name: "Labels", exact: true })
+		.focus();
+}
+
 async function settings(page: Page) {
 	const trigger = page.getByRole("button", {
 		name: "Chart settings",
@@ -87,6 +99,7 @@ async function settings(page: Page) {
 	});
 	await trigger.click();
 	assert.equal(await trigger.getAttribute("aria-expanded"), "true");
+	await focusInsideMenu(trigger);
 	await page.keyboard.press("Escape");
 	assert.equal(await trigger.getAttribute("aria-expanded"), "false");
 	assert.equal(
@@ -114,8 +127,13 @@ async function menuEscapeKeepsPinnedPoint(page: Page) {
 		exact: true,
 	});
 	await trigger.click();
+	await focusInsideMenu(trigger);
 	await page.keyboard.press("Escape");
 	assert.equal(await trigger.getAttribute("aria-expanded"), "false");
+	assert.equal(
+		await trigger.evaluate((el) => el === document.activeElement),
+		true,
+	);
 	assert.equal(await details.count(), 1);
 	await page.keyboard.press("Escape");
 	assert.equal(await details.count(), 0);
@@ -225,7 +243,7 @@ async function viewport(width: number, origin: string) {
 	assert.deepEqual(errors, []);
 	await page.close();
 	console.log(
-		`${width}px: point pinning, section jumps and screenshots passed (settings on desktop)`,
+		`${width}px: point pinning and section jumps passed, ${screenshotResult} (settings on desktop)`,
 	);
 }
 
