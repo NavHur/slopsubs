@@ -3,9 +3,9 @@ import type { BenchmarkView } from "#/lib/benchmarks";
 import { familyColor, familyName } from "#/lib/families";
 import {
 	formatDuration,
-	formatMultiple,
 	formatTokens,
 	formatUsd,
+	ratioFactor,
 } from "#/lib/format";
 import { ColorDot } from "./ColorDot";
 
@@ -44,18 +44,30 @@ function scoreChange(hovered: number, selected: number): Change {
  * A change by a multiple, where less is better, in the words of the figure:
  * "151× cheaper", "2.4× slower". Matches the plan note's "21× cheaper than API".
  */
-function lessIsBetter(fewer: string, more: string) {
-	return (hovered: number, selected: number): Change => {
-		if (hovered <= 0 || selected <= 0) return UNKNOWN;
-		const factor = formatMultiple(
-			Math.max(hovered / selected, selected / hovered),
-		);
-		if (factor === formatMultiple(1)) return SAME;
-		return hovered < selected
-			? { text: `${factor} ${fewer}`, tone: "better" }
-			: { text: `${factor} ${more}`, tone: "worse" };
-	};
+function multipleChange(
+	words: { fewer: string; more: string },
+	hovered: number,
+	selected: number,
+): Change {
+	if (hovered <= 0 || selected <= 0) return UNKNOWN;
+	const { factor, same } = ratioFactor(hovered / selected);
+	if (same) return SAME;
+	return hovered < selected
+		? { text: `${factor} ${words.fewer}`, tone: "better" }
+		: { text: `${factor} ${words.more}`, tone: "worse" };
 }
+
+const COST_WORDS = { fewer: "cheaper", more: "pricier" };
+const TOKEN_WORDS = { fewer: "fewer", more: "more" };
+const TIME_WORDS = { fewer: "faster", more: "slower" };
+
+/**
+ * Fixed widths in rem so the change column holds its widest chip ("1,000×
+ * cheaper", about 6.6rem with the cell's padding) however narrow the card
+ * gets; the model columns share what is left.
+ */
+export const LABEL_COLUMN = "w-[4.5rem]";
+export const CHANGE_COLUMN = "w-[7rem]";
 
 /** The table's head says "Per task", so the labels need not. */
 const PER_TASK = / per task$/;
@@ -82,19 +94,19 @@ function comparisonRows(
 			label: costLabel(points),
 			value: (p) => p.costPerTaskUsd,
 			format: formatUsd,
-			change: lessIsBetter("cheaper", "pricier"),
+			change: (h, s) => multipleChange(COST_WORDS, h, s),
 		},
 		{
 			label: view.tokensLabel.replace(PER_TASK, ""),
 			value: (p) => p.benchmark.tokensPerTask,
 			format: formatTokens,
-			change: lessIsBetter("fewer", "more"),
+			change: (h, s) => multipleChange(TOKEN_WORDS, h, s),
 		},
 		{
 			label: "Time",
 			value: (p) => p.benchmark.secondsPerTask,
 			format: formatDuration,
-			change: lessIsBetter("faster", "slower"),
+			change: (h, s) => multipleChange(TIME_WORDS, h, s),
 		},
 	];
 }
@@ -127,10 +139,10 @@ export function PointComparison({
 	return (
 		<table className="mt-2 w-full table-fixed tabular-nums">
 			<colgroup>
-				<col className="w-[19%]" />
+				<col className={LABEL_COLUMN} />
 				<col />
 				<col />
-				<col className="w-[22%]" />
+				<col className={CHANGE_COLUMN} />
 			</colgroup>
 			<thead>
 				<tr className="border-b border-line align-bottom">
@@ -173,7 +185,8 @@ export function PointComparison({
 	);
 }
 
-const CHIP_BACKGROUND = {
+/** The tint's opacity is read by the contrast test in styles.test.ts. */
+export const CHIP_BACKGROUND = {
 	better: "bg-better/12",
 	worse: "bg-worse/12",
 	same: "",
@@ -204,9 +217,7 @@ function ModelHead({ point, side }: { point: ValuePoint; side: string }) {
 				<ColorDot color={familyColor(benchmark.family)} />
 				<span className="truncate">{familyName(benchmark.family)}</span>
 			</span>
-			<span className="block truncate text-[11px] text-muted" title={detail}>
-				{detail}
-			</span>
+			<span className="block text-[11px] text-muted">{detail}</span>
 		</th>
 	);
 }
