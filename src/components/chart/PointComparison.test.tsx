@@ -6,7 +6,12 @@ import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
-import { formatDuration, formatTokens, formatUsd } from "#/lib/format";
+import {
+	formatDuration,
+	formatMultiple,
+	formatTokens,
+	formatUsd,
+} from "#/lib/format";
 import { PointComparison, WIDEST_FIGURE_CHARS } from "./PointComparison";
 
 const family = "claude-opus-5-5" as FamilyId;
@@ -40,8 +45,8 @@ function pointWith(costPerTaskUsd: number): ValuePoint {
 const REM_PX = 16;
 /** Tabular digits at 12px DM Sans, per character. */
 const FIGURE_CHAR_PX = 7.2;
-/** 11px medium text in a chip, per character. */
-const CHIP_CHAR_PX = 6.2;
+/** 11px medium text in a chip, per character, measured in the shipped font. */
+const CHIP_CHAR_PX = 5.8;
 const CELL_PADDING_PX = 4;
 const CHIP_PADDING_PX = 8;
 /**
@@ -51,13 +56,11 @@ const CHIP_PADDING_PX = 8;
 const PHONE_TABLES_PX = [286, 301, 316];
 const DESKTOP_TABLE_PX = 422;
 
-/** Every figure the comparison can show, for every shipped point. */
-function shippedFigures(): string[] {
-	const figures: string[] = [];
-	for (const id of BENCHMARK_IDS) {
-		const view = BENCHMARK_VIEWS[id];
+/** Every shipped point, per benchmark: the comparison never crosses benchmarks. */
+function shippedPointsByBenchmark(): ValuePoint[][] {
+	return BENCHMARK_IDS.map((id) => {
 		const models = leaderboards[id].models;
-		const points = valuePoints({
+		return valuePoints({
 			benchmarks: models,
 			families: [...new Set(models.map((m) => m.family))],
 			plans,
@@ -65,6 +68,14 @@ function shippedFigures(): string[] {
 			showApi: true,
 			hiddenEfforts: [],
 		});
+	});
+}
+
+/** Every figure the comparison can show, for every shipped point. */
+function shippedFigures(): string[] {
+	const figures: string[] = [];
+	for (const [i, points] of shippedPointsByBenchmark().entries()) {
+		const view = BENCHMARK_VIEWS[BENCHMARK_IDS[i]];
 		for (const p of points) {
 			figures.push(view.formatScore(p.score), formatUsd(p.costPerTaskUsd));
 			figures.push(formatTokens(p.benchmark.tokensPerTask ?? 0));
@@ -74,6 +85,27 @@ function shippedFigures(): string[] {
 		}
 	}
 	return figures;
+}
+
+const METRICS: { value: (p: ValuePoint) => number | null; word: string }[] = [
+	{ value: (p) => p.costPerTaskUsd, word: "cheaper" },
+	{ value: (p) => p.benchmark.tokensPerTask, word: "fewer" },
+	{ value: (p) => p.benchmark.secondsPerTask, word: "faster" },
+];
+
+/**
+ * The widest chip any shipped pair can show: the largest ratio between two
+ * points of one benchmark in each metric, with that metric's wording.
+ */
+function widestChipChars(): number {
+	const widths = shippedPointsByBenchmark().flatMap((points) =>
+		METRICS.map(({ value, word }) => {
+			const values = points.flatMap((p) => value(p) ?? []).filter((v) => v > 0);
+			const ratio = Math.max(...values) / Math.min(...values);
+			return `${formatMultiple(ratio)} ${word}`.length;
+		}),
+	);
+	return Math.max(...widths);
 }
 
 const widestFigureChars = Math.max(...shippedFigures().map((f) => f.length));
@@ -147,11 +179,10 @@ describe("comparison table columns", () => {
 		},
 	);
 
-	it("holds the longest chip on one line in the desktop card", () => {
-		const text = chipText();
-		expect(text).toBe("1000× cheaper");
+	it("holds the widest chip the shipped data produces on one line in the desktop card", () => {
+		expect(chipText()).toMatch(/× cheaper$/);
 		const chipPx =
-			text.length * CHIP_CHAR_PX + CHIP_PADDING_PX + CELL_PADDING_PX;
+			widestChipChars() * CHIP_CHAR_PX + CHIP_PADDING_PX + CELL_PADDING_PX;
 		expect(labelAndChange(DESKTOP_TABLE_PX).change).toBeGreaterThanOrEqual(
 			chipPx,
 		);

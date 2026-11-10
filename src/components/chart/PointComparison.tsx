@@ -73,7 +73,8 @@ export const WIDEST_FIGURE_CHARS = 10;
  * ~76px, so label and change together stay under 134px. Labels, chips and
  * model names wrap on a narrow card; figures never do. Each column's longest
  * word must fit: "Effective" in the label, "cheaper" in the chip. From a
- * 20rem table the change column widens so "1000× cheaper" stays on one line.
+ * 20rem table the change column widens so the widest shipped chip, such as
+ * "108850× cheaper", stays on one line (a test recomputes it).
  */
 export const LABEL_COLUMN = "w-[4.25rem]";
 export const CHANGE_COLUMN = "w-[4rem] @[20rem]:w-[6.25rem]";
