@@ -156,23 +156,27 @@ describe("point tooltip", () => {
 				" ",
 			);
 
-		it("names the selected point, then the hovered one, as the columns run", () => {
+		it("keeps the hovered point's usual header", () => {
+			expect(text()).toMatch(/^ ?Opus 5\.5 max · Pay per token \(API\)/);
+		});
+
+		it("heads each column with its point, selected first", () => {
 			expect(text()).toMatch(
-				/Opus 5\.5 low · API → versus Opus 5\.5 max · API Figure Selected/,
+				/Per task Selected: Opus 5\.5 low · API Hovered: Opus 5\.5 max · API Change/,
 			);
 		});
 
 		it("gives a score's change in points", () => {
-			expect(text()).toMatch(/Intelligence index 36\.4 45\.5 \+9\.1 pts/);
+			expect(text()).toMatch(/Score 36\.4 45\.5 \+9\.1 pts/);
 		});
 
 		it("says which way a cost or time moved instead of a bare ratio", () => {
-			expect(text()).toMatch(/Cost per task \$3\.21 \$12\.82 4\.0× pricier/);
-			expect(text()).toMatch(/Time per task 5m 56s 11m 51s 2\.0× slower/);
+			expect(text()).toMatch(/Cost \$3\.21 \$12\.82 4\.0× pricier/);
+			expect(text()).toMatch(/Time 5m 56s 11m 51s 2\.0× slower/);
 		});
 
 		it("marks a figure only one point has instead of dividing by it", () => {
-			expect(text()).toMatch(/tokens per task — 202k — /i);
+			expect(text()).toMatch(/Tokens — 202K — /);
 		});
 
 		it("leaves out the plan note and source to stay on the table", () => {
