@@ -2,7 +2,7 @@
 // the prerendered build: no figure or change chip breaks over two lines, and
 // the table never spills out of its card. Phones from 360px wide are covered.
 
-import { type Browser, chromium } from "playwright-core";
+import { type Browser, chromium, type Page } from "playwright-core";
 import { originOf, serveSite } from "./serve-site.ts";
 
 const VIEWPORTS = [
@@ -40,29 +40,54 @@ function pairsToCompare(labels: string[]): [number, number][] {
 	return [[cheapest, priciest], [priciest, cheapest], ...spread];
 }
 
-/** What breaks the table's fit in the shown comparison, if anything. */
+/**
+ * What breaks the table's fit in the shown comparison, if anything. It runs
+ * in the page, so it calls no helper of its own.
+ */
 function fitProblems(): string[] {
 	const table = document.querySelector("div.absolute.z-10 table");
 	if (!table) return ["no comparison table is shown"];
-	const problems: string[] = [];
 	const card = table.parentElement as HTMLElement;
-	if (table.scrollWidth > card.clientWidth) {
-		problems.push(
-			`table is ${table.scrollWidth}px in a ${card.clientWidth}px card`,
-		);
-	}
+	const problems =
+		table.scrollWidth > card.clientWidth
+			? [`table is ${table.scrollWidth}px in a ${card.clientWidth}px card`]
+			: [];
 	// A row is as tall as its wrapped label, so count each text's own lines.
-	for (const cell of table.querySelectorAll("tbody td")) {
-		const texts = document.createTreeWalker(cell, NodeFilter.SHOW_TEXT);
-		for (let node = texts.nextNode(); node; node = texts.nextNode()) {
-			const text = document.createRange();
-			text.selectNodeContents(node);
-			if (text.getClientRects().length > 1) {
-				problems.push(`"${node.textContent}" breaks over two lines`);
-			}
+	const texts = document.evaluate(
+		"./tbody//td//text()",
+		table,
+		null,
+		XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+		null,
+	);
+	for (let i = 0; i < texts.snapshotLength; i++) {
+		const text = document.createRange();
+		text.selectNodeContents(texts.snapshotItem(i) as Node);
+		if (text.getClientRects().length > 1) {
+			problems.push(`"${text.toString()}" breaks over two lines`);
 		}
 	}
 	return problems;
+}
+
+/** Pins one point, hovers another, and reports whether their table fits. */
+async function comparisonFits(
+	page: Page,
+	labels: string[],
+	[pinned, hovered]: [number, number],
+): Promise<boolean> {
+	const points = page.locator(POINTS);
+	await points.nth(pinned).dispatchEvent("click");
+	await points.nth(hovered).dispatchEvent("mouseover");
+	await page.waitForTimeout(SETTLE_MS);
+	const problems = await page.evaluate(fitProblems);
+	const width = page.viewportSize()?.width;
+	const verdict = problems.length === 0 ? "ok  " : "FAIL";
+	console.log(`${verdict} ${width}px ${labels[pinned]} → ${labels[hovered]}`);
+	for (const problem of problems) console.log(`     ${problem}`);
+	await points.nth(hovered).dispatchEvent("mouseout");
+	await page.keyboard.press("Escape");
+	return problems.length === 0;
 }
 
 async function checkViewport(
@@ -72,23 +97,12 @@ async function checkViewport(
 ): Promise<number> {
 	const page = await browser.newPage({ viewport });
 	await page.goto(origin, { waitUntil: "networkidle" });
-	const points = page.locator(POINTS);
-	const labels = await points.evaluateAll((els) =>
-		els.map((el) => el.getAttribute("aria-label") ?? ""),
-	);
+	const labels = await page
+		.locator(POINTS)
+		.evaluateAll((els) => els.map((el) => el.getAttribute("aria-label") ?? ""));
 	let failures = 0;
-	for (const [pinned, hovered] of pairsToCompare(labels)) {
-		await points.nth(pinned).dispatchEvent("click");
-		await points.nth(hovered).dispatchEvent("mouseover");
-		await page.waitForTimeout(SETTLE_MS);
-		const problems = await page.evaluate(fitProblems);
-		if (problems.length > 0) failures++;
-		console.log(
-			`${problems.length === 0 ? "ok  " : "FAIL"} ${viewport.width}px ${labels[pinned]} → ${labels[hovered]}`,
-		);
-		for (const problem of problems) console.log(`     ${problem}`);
-		await points.nth(hovered).dispatchEvent("mouseout");
-		await page.keyboard.press("Escape");
+	for (const pair of pairsToCompare(labels)) {
+		if (!(await comparisonFits(page, labels, pair))) failures++;
 	}
 	await page.close();
 	return failures;
