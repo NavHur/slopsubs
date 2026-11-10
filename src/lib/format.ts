@@ -9,15 +9,6 @@ export function formatMultiple(value: number): string {
 	return value >= 10 ? `${Math.round(value)}×` : `${value.toFixed(1)}×`;
 }
 
-/**
- * One figure over another: "0.21×", "1.19×", "10.2×", "153×". Three
- * significant digits from 1×, two below, where a third adds only noise.
- */
-export function formatRatio(value: number): string {
-	if (value >= 100) return `${Math.round(value)}×`;
-	return `${Number(value.toPrecision(value >= 1 ? 3 : 2))}×`;
-}
-
 const DAY_FORMAT = new Intl.DateTimeFormat("en-US", {
 	month: "short",
 	day: "numeric",

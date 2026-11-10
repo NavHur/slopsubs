@@ -160,13 +160,23 @@ describe("point tooltip", () => {
 			expect(text()).toContain("vs Opus 5.5 · low");
 		});
 
-		it("gives each figure for both points and the hovered one's multiple", () => {
-			expect(text()).toMatch(/Cost per task \$3\.21 \$12\.82 4×/);
-			expect(text()).toMatch(/Time per task 5m 56s 11m 51s 2×/);
+		it("gives a score's change in points", () => {
+			expect(text()).toMatch(/Intelligence index 36\.4 45\.5 \+9\.1 pts/);
+		});
+
+		it("says which way a cost or time moved instead of a bare ratio", () => {
+			expect(text()).toMatch(/Cost per task \$3\.21 \$12\.82 4\.0× pricier/);
+			expect(text()).toMatch(/Time per task 5m 56s 11m 51s 2\.0× slower/);
 		});
 
 		it("marks a figure only one point has instead of dividing by it", () => {
 			expect(text()).toMatch(/tokens per task — 202k — /i);
+		});
+
+		it("calls figures that round to the same multiple the same", () => {
+			const twin = { ...cheaper, costPerTaskUsd: 3.25 };
+			const html = tooltipText(BENCHMARK_VIEWS.intelligence, twin, cheaper);
+			expect(html.replace(/\s+/g, " ")).toMatch(/\$3\.21 \$3\.25 Same/);
 		});
 	});
 });
