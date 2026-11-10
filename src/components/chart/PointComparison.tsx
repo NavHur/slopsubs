@@ -62,14 +62,21 @@ const TOKEN_WORDS = { fewer: "fewer", more: "more" };
 const TIME_WORDS = { fewer: "faster", more: "slower" };
 
 /**
- * Width budget, tuned to the narrowest table (246px at a 320px viewport):
- * the figure columns need ~55px each for "11m 51s", so label and change
- * together stay under 137px. Labels, chips and model names wrap on a narrow
- * card; figures never do. Each column's longest word must fit: "Effective"
- * in the label, "cheaper" in the chip.
+ * The widest figure the formatters produce over the shipped data is a
+ * sub-cent plan cost, "$0.0000066"; a test recomputes it from the data.
  */
-export const LABEL_COLUMN = "w-[4rem]";
-export const CHANGE_COLUMN = "w-[4.5rem]";
+export const WIDEST_FIGURE_CHARS = 10;
+
+/**
+ * Width budget for the narrowest supported table, 286px (a 360px viewport):
+ * each figure column holds WIDEST_FIGURE_CHARS at ~7.2px plus 4px of padding,
+ * ~76px, so label and change together stay under 134px. Labels, chips and
+ * model names wrap on a narrow card; figures never do. Each column's longest
+ * word must fit: "Effective" in the label, "cheaper" in the chip. From a
+ * 20rem table the change column widens so "1000× cheaper" stays on one line.
+ */
+export const LABEL_COLUMN = "w-[4.25rem]";
+export const CHANGE_COLUMN = "w-[4rem] @[20rem]:w-[6.25rem]";
 
 /** The table's head says "Per task", so the labels need not. */
 const PER_TASK = / per task$/;
@@ -139,55 +146,57 @@ export function PointComparison({
 	const shown = (value: number | null, row: Row) =>
 		value === null ? MISSING : row.format(value);
 	return (
-		<table className="mt-2 w-full table-fixed tabular-nums">
-			<colgroup>
-				<col className={LABEL_COLUMN} />
-				<col />
-				<col />
-				<col className={CHANGE_COLUMN} />
-			</colgroup>
-			<thead>
-				<tr className="border-b border-line align-bottom">
-					<th
-						scope="col"
-						className="pb-1 text-left text-[11px] font-normal text-subtle"
-					>
-						Per task
-					</th>
-					<ModelHead point={selected} side="Selected" />
-					<ModelHead point={hovered} side="Hovered" />
-					<th scope="col" className="pb-1 text-right">
-						<span className="sr-only">Change</span>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				{rows.map((row) => {
-					const a = row.value(selected);
-					const b = row.value(hovered);
-					const change = changeOf(row, b, a);
-					return (
-						<tr key={row.label}>
-							<th
-								scope="row"
-								className="pt-1 text-left font-normal break-words text-muted"
-							>
-								{row.label}
-							</th>
-							<td className="pt-1 pl-1 text-right whitespace-nowrap text-fg">
-								{shown(a, row)}
-							</td>
-							<td className="pt-1 pl-1 text-right whitespace-nowrap text-fg">
-								{shown(b, row)}
-							</td>
-							<td className="pt-1 pl-1 text-right">
-								<ChangeChip change={change} />
-							</td>
-						</tr>
-					);
-				})}
-			</tbody>
-		</table>
+		<div className="@container mt-2">
+			<table className="w-full table-fixed tabular-nums">
+				<colgroup>
+					<col className={LABEL_COLUMN} />
+					<col />
+					<col />
+					<col className={CHANGE_COLUMN} />
+				</colgroup>
+				<thead>
+					<tr className="border-b border-line align-bottom">
+						<th
+							scope="col"
+							className="pb-1 text-left text-[11px] font-normal text-subtle"
+						>
+							Per task
+						</th>
+						<ModelHead point={selected} side="Selected" />
+						<ModelHead point={hovered} side="Hovered" />
+						<th scope="col" className="pb-1 text-right">
+							<span className="sr-only">Change</span>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{rows.map((row) => {
+						const a = row.value(selected);
+						const b = row.value(hovered);
+						const change = changeOf(row, b, a);
+						return (
+							<tr key={row.label}>
+								<th
+									scope="row"
+									className="pt-1 text-left font-normal break-words text-muted"
+								>
+									{row.label}
+								</th>
+								<td className="pt-1 pl-1 text-right whitespace-nowrap text-fg">
+									{shown(a, row)}
+								</td>
+								<td className="pt-1 pl-1 text-right whitespace-nowrap text-fg">
+									{shown(b, row)}
+								</td>
+								<td className="pt-1 pl-1 text-right">
+									<ChangeChip change={change} />
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		</div>
 	);
 }
 
