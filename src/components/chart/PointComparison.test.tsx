@@ -34,40 +34,47 @@ function pointWith(costPerTaskUsd: number): ValuePoint {
 }
 
 const REM_PX = 16;
-/** Pixel width of the chip's longest text at 11px medium, with its padding. */
-const CHIP_PX = "1,000× cheaper".length * 6 + 12;
-const CELL_PADDING_PX = 8;
-/** The narrowest table a phone card leaves: 100% − 16px card, less its padding. */
-const PHONE_TABLE_PX = 303;
+/** Tabular digits at 12px DM Sans, per character. */
+const FIGURE_CHAR_PX = 7.2;
+/** The widest figure formatUsd, formatTokens and formatDuration produce: "11m 51s". */
+const WIDEST_FIGURE_PX = 7 * FIGURE_CHAR_PX;
+const CELL_PADDING_PX = 4;
+/** Table widths at 320px, 375px and 390px viewports, and the 28rem desktop card. */
+const TABLE_WIDTHS_PX = [246, 301, 316, 422];
 
-function columnClasses() {
-	const html = renderToStaticMarkup(
+function render() {
+	return renderToStaticMarkup(
 		<PointComparison
 			selected={pointWith(1000)}
 			hovered={pointWith(1)}
 			view={BENCHMARK_VIEWS.intelligence}
 		/>,
 	);
-	return [...html.matchAll(/<col(?: class="([^"]*)")?\/>/g)].map(
-		(m) => m[1] ?? "",
+}
+
+function columnPx() {
+	return [...render().matchAll(/<col(?: class="([^"]*)")?\/>/g)].map(
+		(m) => Number(m[1]?.match(/([\d.]+)rem/)?.[1] ?? 0) * REM_PX,
 	);
 }
 
 describe("comparison table columns", () => {
-	it("gives the change column room for its widest chip, not a share of the card", () => {
-		const change = columnClasses().at(-1) ?? "";
-		const rem = change.match(/^w-\[([\d.]+)rem\]$/);
-		expect(rem, `change column is "${change}"`).not.toBeNull();
-		const width = Number(rem?.[1]) * REM_PX;
-		expect(width).toBeGreaterThanOrEqual(CHIP_PX + CELL_PADDING_PX);
-	});
+	it.each(TABLE_WIDTHS_PX)(
+		"leave each figure column room for the widest figure in a %ipx table",
+		(table) => {
+			const [label, , , change] = columnPx();
+			const figure = (table - label - change) / 2;
+			expect(figure).toBeGreaterThanOrEqual(WIDEST_FIGURE_PX + CELL_PADDING_PX);
+		},
+	);
 
-	it("still leaves the model columns room for a figure on a phone", () => {
-		const [label, , , change] = columnClasses().map(
-			(c) => Number(c.match(/([\d.]+)rem/)?.[1] ?? 0) * REM_PX,
-		);
-		const models = (PHONE_TABLE_PX - label - change) / 2;
-		expect(models).toBeGreaterThanOrEqual(56);
+	it("lets names, labels and chips wrap, and keeps figures on one line", () => {
+		const html = render();
+		expect(html).not.toMatch(/class="[^"]*truncate[^"]*"/);
+		expect(html).toMatch(/class="[^"]*break-words[^"]*">Opus 5.5/);
+		const chip = html.match(/<span class="[^"]*rounded[^"]*"/)?.[0] ?? "";
+		expect(chip).not.toContain("whitespace-nowrap");
+		expect(html.match(/<td class="[^"]*whitespace-nowrap/g)).toHaveLength(8);
 	});
 });
 

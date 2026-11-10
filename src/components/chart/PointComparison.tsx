@@ -62,12 +62,14 @@ const TOKEN_WORDS = { fewer: "fewer", more: "more" };
 const TIME_WORDS = { fewer: "faster", more: "slower" };
 
 /**
- * Fixed widths in rem so the change column holds its widest chip ("1,000×
- * cheaper", about 6.6rem with the cell's padding) however narrow the card
- * gets; the model columns share what is left.
+ * Width budget, tuned to the narrowest table (246px at a 320px viewport):
+ * the figure columns need ~55px each for "11m 51s", so label and change
+ * together stay under 137px. Labels, chips and model names wrap on a narrow
+ * card; figures never do. Each column's longest word must fit: "Effective"
+ * in the label, "cheaper" in the chip.
  */
-export const LABEL_COLUMN = "w-[4.5rem]";
-export const CHANGE_COLUMN = "w-[7rem]";
+export const LABEL_COLUMN = "w-[4rem]";
+export const CHANGE_COLUMN = "w-[4.5rem]";
 
 /** The table's head says "Per task", so the labels need not. */
 const PER_TASK = / per task$/;
@@ -168,13 +170,17 @@ export function PointComparison({
 						<tr key={row.label}>
 							<th
 								scope="row"
-								className="truncate pt-1 text-left font-normal text-muted"
+								className="pt-1 text-left font-normal break-words text-muted"
 							>
 								{row.label}
 							</th>
-							<td className="pt-1 pl-2 text-right text-fg">{shown(a, row)}</td>
-							<td className="pt-1 pl-2 text-right text-fg">{shown(b, row)}</td>
-							<td className="pt-1 pl-2 text-right">
+							<td className="pt-1 pl-1 text-right whitespace-nowrap text-fg">
+								{shown(a, row)}
+							</td>
+							<td className="pt-1 pl-1 text-right whitespace-nowrap text-fg">
+								{shown(b, row)}
+							</td>
+							<td className="pt-1 pl-1 text-right">
 								<ChangeChip change={change} />
 							</td>
 						</tr>
@@ -196,7 +202,7 @@ function ChangeChip({ change }: { change: Change }) {
 	const { text, tone } = change;
 	return (
 		<span
-			className={`rounded px-1.5 py-px text-[11px] font-medium whitespace-nowrap ${TONE_CLASS[tone]} ${CHIP_BACKGROUND[tone]}`}
+			className={`rounded px-1 py-px text-[11px] leading-tight font-medium ${TONE_CLASS[tone]} ${CHIP_BACKGROUND[tone]}`}
 		>
 			{text}
 		</span>
@@ -211,11 +217,15 @@ function ModelHead({ point, side }: { point: ValuePoint; side: string }) {
 	const { benchmark, pricing } = point;
 	const detail = `${benchmark.effortLabel} · ${pricing.kind === "api" ? "API" : pricing.plan.label}`;
 	return (
-		<th scope="col" className="pb-1 pl-2 text-right font-normal">
+		<th scope="col" className="pb-1 text-right font-normal">
 			<span className="sr-only">{side}: </span>
-			<span className="flex items-center justify-end gap-1 text-[12px] font-semibold text-fg">
-				<ColorDot color={familyColor(benchmark.family)} />
-				<span className="truncate">{familyName(benchmark.family)}</span>
+			<span className="flex items-start justify-end gap-1 text-[12px] leading-snug font-semibold text-fg">
+				<span className="mt-[0.3rem] shrink-0">
+					<ColorDot color={familyColor(benchmark.family)} />
+				</span>
+				<span className="min-w-0 break-words">
+					{familyName(benchmark.family)}
+				</span>
 			</span>
 			<span className="block text-[11px] text-muted">{detail}</span>
 		</th>
