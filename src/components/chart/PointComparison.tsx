@@ -9,22 +9,23 @@ import {
 } from "#/lib/format";
 import { ProviderLogo } from "../ProviderLogo";
 import { ColorDot } from "./ColorDot";
+import { PrototypeComparison } from "./PointComparison.prototype";
 
-const MISSING = "—";
+export const MISSING = "—";
 
 /** How the hovered figure moved from the selected one, for the hovered model. */
-type Change = { text: string; tone: "better" | "worse" | "same" };
+export type Change = { text: string; tone: "better" | "worse" | "same" };
 
 const SAME: Change = { text: "Same", tone: "same" };
 const UNKNOWN: Change = { text: MISSING, tone: "same" };
 
-const TONE_CLASS = {
+export const TONE_CLASS = {
 	better: "text-better",
 	worse: "text-worse",
 	same: "text-muted",
 } as const;
 
-type Row = {
+export type Row = {
 	label: string;
 	value: (point: ValuePoint) => number | null;
 	format: (value: number) => string;
@@ -65,7 +66,7 @@ function costLabel(points: readonly ValuePoint[]) {
 		: "Cost per task";
 }
 
-function comparisonRows(
+export function comparisonRows(
 	points: readonly ValuePoint[],
 	view: BenchmarkView,
 ): Row[] {
@@ -97,7 +98,11 @@ function comparisonRows(
 	];
 }
 
-function changeOf(row: Row, hovered: number | null, selected: number | null) {
+export function changeOf(
+	row: Row,
+	hovered: number | null,
+	selected: number | null,
+) {
 	if (hovered === null || selected === null) return UNKNOWN;
 	return row.change(hovered, selected);
 }
@@ -127,7 +132,7 @@ function ComparisonHeader({
 }
 
 /** A point's model on one line, its effort and pricing on the next. */
-function PointIdentity({ point }: { point: ValuePoint }) {
+export function PointIdentity({ point }: { point: ValuePoint }) {
 	const { benchmark, pricing } = point;
 	return (
 		<div className="min-w-0">
@@ -149,7 +154,16 @@ function PointIdentity({ point }: { point: ValuePoint }) {
  * their figures and how the hovered one compares, coloured by whether that
  * is better or worse. Rows neither point has a figure for are left out.
  */
-export function PointComparison({
+/** PROTOTYPE: picks the comparison variant from `?variant=`. */
+export function PointComparison(props: {
+	selected: ValuePoint;
+	hovered: ValuePoint;
+	view: BenchmarkView;
+}) {
+	return <PrototypeComparison {...props} Current={CurrentComparison} />;
+}
+
+function CurrentComparison({
 	selected,
 	hovered,
 	view,
@@ -213,7 +227,7 @@ export function PointComparison({
 }
 
 /** A point's column, marked with its model's colour as on the chart. */
-function ColumnHead({
+export function ColumnHead({
 	point,
 	children,
 }: {

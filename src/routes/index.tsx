@@ -10,6 +10,7 @@ import { ChartSection } from "#/components/ChartSection";
 import { ChartSettingsMenu, ThemeToggle } from "#/components/HeaderActions";
 import { ReasoningFilter } from "#/components/ModelFilters";
 import { PageFooter } from "#/components/PageFooter";
+import { PrototypeSwitcher } from "#/components/PrototypeSwitcher";
 import { ScrollRow } from "#/components/ScrollRow";
 import { SectionNav } from "#/components/SectionNav";
 import { Segmented, Toggle } from "#/components/Segmented";
@@ -356,6 +357,7 @@ function ValueView() {
 						)}
 					</ChartSection>
 					<PageFooter benchmark={benchmark} fetchedAt={leaderboard.fetchedAt} />
+					<PrototypeSwitcher />
 					{/* Overlaps the footer's last pixel, so it adds no height. */}
 					<div
 						id={SCROLL_END_ID}
