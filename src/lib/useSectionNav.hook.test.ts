@@ -51,6 +51,13 @@ const SECTIONS = [
 const ids = SECTIONS.map((s) => s.id);
 type Id = (typeof ids)[number];
 
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+/** A matchMedia that matches only the reduced-motion query, and only when `reduced`. */
+const motionPreference = (reduced: boolean) => (query: string) => ({
+	matches: reduced && query === REDUCED_MOTION_QUERY,
+});
+
 /** A section element at `offset` that records its scroll and heading focus calls. */
 function fakeElement(
 	id: string,
@@ -95,7 +102,7 @@ function buildBrowser() {
 		setTimeout: (fn: () => void, ms: number) => setTimeout(fn, ms),
 		clearTimeout: (id: number) => clearTimeout(id),
 	});
-	vi.stubGlobal("matchMedia", () => ({ matches: true }));
+	vi.stubGlobal("matchMedia", motionPreference(true));
 	vi.stubGlobal("getComputedStyle", () => ({ overflowY: "visible" }));
 	vi.stubGlobal("document", {
 		getElementById: (id: string) => elements.get(id) ?? null,
@@ -172,7 +179,7 @@ describe("useSectionNav", () => {
 	});
 
 	it("scrolls smoothly unless the reader prefers reduced motion", () => {
-		vi.stubGlobal("matchMedia", () => ({ matches: false }));
+		vi.stubGlobal("matchMedia", motionPreference(false));
 		const nav = runner.mount(() => useSectionNav(ids, undefined, onChange));
 		nav.scrollTo("ranked");
 
