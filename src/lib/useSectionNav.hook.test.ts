@@ -150,6 +150,37 @@ describe("useSectionNav", () => {
 		expect(onChange).toHaveBeenCalledExactlyOnceWith("tasks");
 	});
 
+	it("reports a section once while the reader stays inside it", () => {
+		runner.mount(() => useSectionNav(ids, undefined, onChange));
+		browser.scrollTo(1300);
+		browser.fireScroll();
+		expect(onChange).toHaveBeenCalledExactlyOnceWith("ranked");
+
+		browser.scrollTo(1601);
+		expect(onChange).toHaveBeenCalledTimes(1);
+	});
+
+	it("reports nothing once the page unmounts", () => {
+		runner.mount(() => useSectionNav(ids, undefined, onChange));
+		browser.scrollTo(500);
+		browser.fireScroll();
+		expect(onChange).toHaveBeenCalledExactlyOnceWith("tasks");
+
+		runner.reset();
+		browser.scrollTo(1300);
+		browser.fireScroll();
+		expect(onChange).toHaveBeenCalledTimes(1);
+	});
+
+	it("drops the first-scroll listener when the page unmounts before any scroll", () => {
+		runner.mount(() => useSectionNav(ids, undefined, onChange));
+		browser.scrollTo(500);
+
+		runner.reset();
+		browser.fireScroll();
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
 	it("ignores what the observers see while a jump to a section runs", () => {
 		const nav = runner.mount(() => useSectionNav(ids, undefined, onChange));
 		browser.fireScroll();
