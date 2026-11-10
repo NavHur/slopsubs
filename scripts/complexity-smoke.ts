@@ -5,6 +5,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { chromium, type Locator, type Page } from "playwright-core";
+import { VIEWPORTS } from "./page-session.ts";
 import { originOf, serveSite } from "./serve-site.ts";
 import { baselineDirectory } from "./smoke-dirs.ts";
 
@@ -22,6 +23,12 @@ const screenshotResult =
 const browser = await chromium.launch({ headless: true });
 const MAX_CHANNEL_DELTA = 1;
 const MAX_CHANGED_CHANNEL_SHARE = 0.0001;
+/** Long enough for the pointer-leave preview to clear before a screenshot. */
+const PREVIEW_CLEAR_MS = 400;
+/** Long enough for a section-jump scroll to end and the nav to mark its target. */
+const SECTION_JUMP_MS = 1100;
+/** The viewport width from which the chart settings menu is shown. */
+const SETTINGS_MENU_MIN_WIDTH = 640;
 await mkdir(values.out, { recursive: true });
 
 async function imageDifference(page: Page, before: Buffer, after: Buffer) {
@@ -61,7 +68,7 @@ async function imageDifference(page: Page, before: Buffer, after: Buffer) {
 
 async function capture(page: Page, name: string) {
 	await page.mouse.move(0, 0);
-	await page.waitForTimeout(400);
+	await page.waitForTimeout(PREVIEW_CLEAR_MS);
 	const image = await page.screenshot({ animations: "disabled" });
 	const before =
 		baselineDir === undefined
@@ -92,11 +99,22 @@ async function focusInsideMenu(trigger: Locator) {
 		.focus();
 }
 
+function settingsTrigger(page: Page) {
+	return page.getByRole("button", { name: "Chart settings", exact: true });
+}
+
+function detailsCloser(page: Page) {
+	return page.getByRole("button", { name: "Close details" });
+}
+
+/** Pins the first point of the cost vs score chart from the keyboard. */
+async function pinFirstPoint(page: Page) {
+	await page.locator('#cost-vs-score svg g[role="button"]').first().focus();
+	await page.keyboard.press("Enter");
+}
+
 async function settings(page: Page) {
-	const trigger = page.getByRole("button", {
-		name: "Chart settings",
-		exact: true,
-	});
+	const trigger = settingsTrigger(page);
 	await trigger.click();
 	assert.equal(await trigger.getAttribute("aria-expanded"), "true");
 	await focusInsideMenu(trigger);
@@ -118,14 +136,10 @@ async function settings(page: Page) {
 
 /** Escape that closes the menu must stop there, leaving a pinned point open. */
 async function menuEscapeKeepsPinnedPoint(page: Page) {
-	const details = page.getByRole("button", { name: "Close details" });
-	await page.locator('#cost-vs-score svg g[role="button"]').first().focus();
-	await page.keyboard.press("Enter");
+	const details = detailsCloser(page);
+	await pinFirstPoint(page);
 	assert.equal(await details.count(), 1);
-	const trigger = page.getByRole("button", {
-		name: "Chart settings",
-		exact: true,
-	});
+	const trigger = settingsTrigger(page);
 	await trigger.click();
 	await focusInsideMenu(trigger);
 	await page.keyboard.press("Escape");
@@ -140,18 +154,11 @@ async function menuEscapeKeepsPinnedPoint(page: Page) {
 }
 
 async function points(page: Page) {
-	const point = page.locator('#cost-vs-score svg g[role="button"]').first();
-	await point.focus();
-	await page.keyboard.press("Enter");
-	assert.equal(
-		await page.getByRole("button", { name: "Close details" }).count(),
-		1,
-	);
+	const details = detailsCloser(page);
+	await pinFirstPoint(page);
+	assert.equal(await details.count(), 1);
 	await page.keyboard.press("Escape");
-	assert.equal(
-		await page.getByRole("button", { name: "Close details" }).count(),
-		0,
-	);
+	assert.equal(await details.count(), 0);
 }
 
 async function navigation(page: Page) {
@@ -160,13 +167,13 @@ async function navigation(page: Page) {
 	await page.waitForFunction(
 		() => new URL(location.href).searchParams.get("chart") === "tasks-per-week",
 	);
-	await page.waitForTimeout(1100);
+	await page.waitForTimeout(SECTION_JUMP_MS);
 	assert.equal(
 		await nav.locator('[aria-current="location"]').textContent(),
 		"Tasks per week",
 	);
 	await nav.getByRole("link", { name: "Cost vs score", exact: true }).click();
-	await page.waitForTimeout(1100);
+	await page.waitForTimeout(SECTION_JUMP_MS);
 	assert.equal(
 		await nav.locator('[aria-current="location"]').textContent(),
 		"Cost vs score",
@@ -205,9 +212,13 @@ async function overflow(page: Page) {
 	);
 }
 
-async function viewport(width: number, origin: string) {
+async function viewport(
+	size: { width: number; height: number },
+	origin: string,
+) {
+	const { width } = size;
 	const page = await browser.newPage({
-		viewport: { width, height: 900 },
+		viewport: size,
 		reducedMotion: "reduce",
 		colorScheme: "dark",
 	});
@@ -228,12 +239,10 @@ async function viewport(width: number, origin: string) {
 	});
 	await page.evaluate(() => document.fonts.ready);
 	await capture(page, `${width}-initial`);
-	if (width >= 640) {
+	if (width >= SETTINGS_MENU_MIN_WIDTH) {
 		await settings(page);
 		await menuEscapeKeepsPinnedPoint(page);
-		await page
-			.getByRole("button", { name: "Chart settings", exact: true })
-			.click();
+		await settingsTrigger(page).click();
 		await capture(page, `${width}-settings`);
 		await page.keyboard.press("Escape");
 	}
@@ -243,7 +252,7 @@ async function viewport(width: number, origin: string) {
 	assert.deepEqual(errors, []);
 	await page.close();
 	console.log(
-		`${width}px: point pinning and section jumps passed, ${screenshotResult} (settings on desktop)`,
+		`${width}px: point pinning, overflow arrows and section jumps passed, ${screenshotResult} (settings on desktop)`,
 	);
 }
 
@@ -256,8 +265,8 @@ async function siteToCheck(explicit: string | undefined) {
 
 const site = await siteToCheck(values.origin);
 try {
-	await viewport(1440, site.origin);
-	await viewport(390, site.origin);
+	await viewport(VIEWPORTS.desktop, site.origin);
+	await viewport(VIEWPORTS.phone, site.origin);
 } finally {
 	await browser.close();
 	site.close();

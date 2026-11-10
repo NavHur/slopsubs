@@ -159,9 +159,11 @@ bun run complexity-smoke -- --out /tmp/after --compare /tmp/before
 ```
 
 It builds first, serves `dist/client` (or opens `--origin URL`), and at a
-desktop and a phone width checks the chart settings menu, point pinning,
-overflow arrows and section jumps. With `--compare` it also fails on
-screenshots that differ. `--compare` must not be the `--out` directory.
+desktop and a phone width checks point pinning, overflow arrows and section
+jumps. At the desktop width only, it also checks the chart settings menu,
+including that an Escape that closes the menu keeps a pinned point open. With
+`--compare` it also fails on screenshots that differ. `--compare` must not be
+the `--out` directory.
 
 ## Paint Metrics
 
