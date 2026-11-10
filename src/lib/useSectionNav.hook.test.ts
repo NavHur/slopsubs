@@ -13,15 +13,16 @@ import { SCROLL_END_ID, useSectionNav } from "./useSectionNav";
 // runner that mounts once and runs the effects, as a first render would.
 const runner = vi.hoisted(() => {
 	const effects: Array<() => void | (() => void)> = [];
+	const runEffect = (effect: () => void | (() => void)) => {
+		const cleanup = effect();
+		if (cleanup) runner.cleanups.push(cleanup);
+	};
 	return {
 		effects,
 		cleanups: [] as Array<() => void>,
 		mount: <R>(hook: () => R): R => {
 			const result = hook();
-			for (const effect of effects) {
-				const cleanup = effect();
-				if (cleanup) runner.cleanups.push(cleanup);
-			}
+			for (const effect of effects) runEffect(effect);
 			return result;
 		},
 		reset: () => {
@@ -50,16 +51,39 @@ const SECTIONS = [
 const ids = SECTIONS.map((s) => s.id);
 type Id = (typeof ids)[number];
 
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+/** A matchMedia that matches only the reduced-motion query, and only when `reduced`. */
+const motionPreference = (reduced: boolean) => (query: string) => ({
+	matches: reduced && query === REDUCED_MOTION_QUERY,
+});
+
+/** A section element at `offset` that records its scroll and heading focus calls. */
+function fakeElement(
+	id: string,
+	offset: number,
+	height: number,
+	scrollY: () => number,
+) {
+	const heading = { focus: vi.fn() };
+	return {
+		id,
+		parentElement: null,
+		heading,
+		span: () => ({
+			top: offset - scrollY(),
+			bottom: offset + height - scrollY(),
+		}),
+		scrollIntoView: vi.fn(),
+		querySelector: (selector: string) => (selector === "h2" ? heading : null),
+	};
+}
+
 function buildBrowser() {
 	let scrollY = 0;
 	const fake = createFakeObservers(() => VIEWPORT);
-	const element = (id: string, offset: number, height: number) => ({
-		id,
-		parentElement: null,
-		span: () => ({ top: offset - scrollY, bottom: offset + height - scrollY }),
-		scrollIntoView: () => {},
-		querySelector: () => null,
-	});
+	const element = (id: string, offset: number, height: number) =>
+		fakeElement(id, offset, height, () => scrollY);
 	const elements = new Map([
 		...SECTIONS.map((s) => [s.id, element(s.id, s.offset, s.height)] as const),
 		[SCROLL_END_ID, element(SCROLL_END_ID, 2600, 1)],
@@ -78,7 +102,7 @@ function buildBrowser() {
 		setTimeout: (fn: () => void, ms: number) => setTimeout(fn, ms),
 		clearTimeout: (id: number) => clearTimeout(id),
 	});
-	vi.stubGlobal("matchMedia", () => ({ matches: true }));
+	vi.stubGlobal("matchMedia", motionPreference(true));
 	vi.stubGlobal("getComputedStyle", () => ({ overflowY: "visible" }));
 	vi.stubGlobal("document", {
 		getElementById: (id: string) => elements.get(id) ?? null,
@@ -86,6 +110,8 @@ function buildBrowser() {
 		documentElement: page,
 	});
 	return {
+		/** A rendered section's element, whose scroll and heading focus calls are recorded. */
+		section: (id: Id) => elements.get(id)!,
 		/** Scrolls the page to `y` and lets the observers see it. */
 		scrollTo: (y: number) => {
 			scrollY = y;
@@ -124,6 +150,37 @@ describe("useSectionNav", () => {
 		expect(onChange).toHaveBeenCalledExactlyOnceWith("tasks");
 	});
 
+	it("reports a section once while the reader stays inside it", () => {
+		runner.mount(() => useSectionNav(ids, undefined, onChange));
+		browser.scrollTo(1300);
+		browser.fireScroll();
+		expect(onChange).toHaveBeenCalledExactlyOnceWith("ranked");
+
+		browser.scrollTo(1601);
+		expect(onChange).toHaveBeenCalledTimes(1);
+	});
+
+	it("reports nothing once the page unmounts", () => {
+		runner.mount(() => useSectionNav(ids, undefined, onChange));
+		browser.scrollTo(500);
+		browser.fireScroll();
+		expect(onChange).toHaveBeenCalledExactlyOnceWith("tasks");
+
+		runner.reset();
+		browser.scrollTo(1300);
+		browser.fireScroll();
+		expect(onChange).toHaveBeenCalledTimes(1);
+	});
+
+	it("drops the first-scroll listener when the page unmounts before any scroll", () => {
+		runner.mount(() => useSectionNav(ids, undefined, onChange));
+		browser.scrollTo(500);
+
+		runner.reset();
+		browser.fireScroll();
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
 	it("ignores what the observers see while a jump to a section runs", () => {
 		const nav = runner.mount(() => useSectionNav(ids, undefined, onChange));
 		browser.fireScroll();
@@ -136,5 +193,42 @@ describe("useSectionNav", () => {
 		vi.advanceTimersByTime(1000);
 		browser.scrollTo(1300);
 		expect(onChange).toHaveBeenCalledTimes(2);
+	});
+
+	it("scrolls to the section and focuses its heading without scrolling again", () => {
+		const nav = runner.mount(() => useSectionNav(ids, undefined, onChange));
+		nav.scrollTo("tasks");
+
+		const tasks = browser.section("tasks");
+		expect(tasks.scrollIntoView).toHaveBeenCalledExactlyOnceWith({
+			behavior: "auto",
+		});
+		expect(tasks.heading.focus).toHaveBeenCalledExactlyOnceWith({
+			preventScroll: true,
+		});
+		expect(browser.section("cost").scrollIntoView).not.toHaveBeenCalled();
+	});
+
+	it("scrolls smoothly unless the reader prefers reduced motion", () => {
+		vi.stubGlobal("matchMedia", motionPreference(false));
+		const nav = runner.mount(() => useSectionNav(ids, undefined, onChange));
+		nav.scrollTo("ranked");
+
+		expect(browser.section("ranked").scrollIntoView).toHaveBeenCalledWith({
+			behavior: "smooth",
+		});
+	});
+
+	it("starts no jump for a section that is not rendered", () => {
+		const unselected = vi.fn<(id: string | undefined) => void>();
+		const nav = runner.mount(() =>
+			useSectionNav([...ids, "ghost"], undefined, unselected),
+		);
+		browser.fireScroll();
+		nav.scrollTo("ghost");
+		expect(unselected).not.toHaveBeenCalled();
+
+		browser.scrollTo(500);
+		expect(unselected).toHaveBeenCalledExactlyOnceWith("tasks");
 	});
 });
