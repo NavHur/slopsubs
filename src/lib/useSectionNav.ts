@@ -156,8 +156,7 @@ export function observeSections<T extends string>(
 	if (sections.length > 0 && !endMarker) {
 		throw new Error(`#${SCROLL_END_ID} is not rendered`);
 	}
-	const scrollerNow = () => sectionScroller(sections);
-	const scroller = scrollerNow();
+	const scroller = sectionScroller(sections);
 	const box = lineBoxOf(scroller);
 	const observers = [
 		observeReached(sections, box, seen, onChange),
@@ -166,7 +165,7 @@ export function observeSections<T extends string>(
 	return {
 		seen,
 		isCurrent: () => {
-			const now = scrollerNow();
+			const now = sectionScroller(sections);
 			return now === scroller && lineBoxOf(now).margin === box.margin;
 		},
 		stop: () => {
