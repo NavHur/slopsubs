@@ -272,11 +272,16 @@ function revealSection(section: HTMLElement) {
 	section.querySelector("h2")?.focus({ preventScroll: true });
 }
 
-/** Runs the jump's state updates only when its section can be revealed. */
-function scrollToSection(id: string, beforeScroll: () => void) {
+/** Jumps to a rendered section: opens the jump window, selects it, reveals it. */
+function scrollToSection<T extends string>(
+	id: T,
+	beginJump: () => void,
+	select: (id: T) => void,
+) {
 	const section = document.getElementById(id);
 	if (!section) return;
-	beforeScroll();
+	beginJump();
+	select(id);
 	revealSection(section);
 }
 
@@ -327,11 +332,7 @@ export function useSectionNav<T extends string>(
 	});
 	useInitialScroll(current, setActive, jump.begin);
 
-	const scrollTo = (id: T) =>
-		scrollToSection(id, () => {
-			jump.begin();
-			select(id);
-		});
+	const scrollTo = (id: T) => scrollToSection(id, jump.begin, select);
 
 	return { active, scrollTo };
 }
