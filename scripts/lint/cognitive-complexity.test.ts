@@ -1,7 +1,8 @@
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vite-plus/test";
 
@@ -9,8 +10,14 @@ const directory = mkdtempSync(join(tmpdir(), "slopsubs-complexity-"));
 const plugin = fileURLToPath(
 	new URL("./cognitive-complexity.mjs", import.meta.url),
 );
-const oxlint = fileURLToPath(
-	new URL("../../node_modules/oxlint/bin/oxlint", import.meta.url),
+// oxlint is vite-plus's dependency; resolve it from there so the path holds
+// whether or not the installer hoists it to the project root.
+const fromVitePlus = createRequire(
+	createRequire(import.meta.url).resolve("vite-plus/package.json"),
+);
+const oxlint = join(
+	dirname(fromVitePlus.resolve("oxlint/package.json")),
+	"bin/oxlint",
 );
 afterAll(() => rmSync(directory, { recursive: true, force: true }));
 
@@ -50,6 +57,7 @@ describe("local complexity rules", () => {
 	it.each([
 		["function f(x) { if (x) { while (x) { if (x) x--; } } }", 6],
 		["function f(x) { if (x) x--; else if (x) x++; else x = 0; }", 3],
+		["function f(x) { while (x) { if (x) x--; else if (x) x++; } }", 4],
 		["function f(a,b,c,d) { if (a && b || c && d) return 1; }", 4],
 		["function f(x) { return () => { if (x) return 1; }; }", 2],
 		[
