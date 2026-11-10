@@ -5,14 +5,18 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { chromium, type Page } from "playwright-core";
+import { originOf, serveSite } from "./serve-site.ts";
+import { baselineDirectory } from "./smoke-dirs.ts";
 
+// Without --origin the prerendered build is served from dist/client: `vp build` first.
 const { values } = parseArgs({
 	options: {
-		origin: { type: "string", default: "http://localhost:4400" },
+		origin: { type: "string" },
 		out: { type: "string", default: "/tmp/slopsubs-smoke" },
 		compare: { type: "string" },
 	},
 });
+const baselineDir = baselineDirectory(values.out, values.compare);
 const browser = await chromium.launch({ headless: true });
 const MAX_CHANNEL_DELTA = 1;
 const MAX_CHANGED_CHANNEL_SHARE = 0.0001;
@@ -57,9 +61,10 @@ async function capture(page: Page, name: string) {
 	await page.mouse.move(0, 0);
 	await page.waitForTimeout(400);
 	const image = await page.screenshot({ animations: "disabled" });
+	const before =
+		baselineDir && (await readFile(join(baselineDir, `${name}.png`)));
 	await writeFile(join(values.out, `${name}.png`), image);
-	if (!values.compare) return;
-	const before = await readFile(join(values.compare, `${name}.png`));
+	if (!before) return;
 	const difference = await imageDifference(page, before, image);
 	console.log(name, difference);
 	assert.ok(difference.sameSize, `${name}: screenshot size differs`);
@@ -96,6 +101,24 @@ async function settings(page: Page) {
 		.getByRole("button", { name: "Toggle light and dark theme" })
 		.focus();
 	assert.equal(await trigger.getAttribute("aria-expanded"), "false");
+}
+
+/** Escape that closes the menu must stop there, leaving a pinned point open. */
+async function menuEscapeKeepsPinnedPoint(page: Page) {
+	const details = page.getByRole("button", { name: "Close details" });
+	await page.locator('#cost-vs-score svg g[role="button"]').first().focus();
+	await page.keyboard.press("Enter");
+	assert.equal(await details.count(), 1);
+	const trigger = page.getByRole("button", {
+		name: "Chart settings",
+		exact: true,
+	});
+	await trigger.click();
+	await page.keyboard.press("Escape");
+	assert.equal(await trigger.getAttribute("aria-expanded"), "false");
+	assert.equal(await details.count(), 1);
+	await page.keyboard.press("Escape");
+	assert.equal(await details.count(), 0);
 }
 
 async function points(page: Page) {
@@ -164,7 +187,7 @@ async function overflow(page: Page) {
 	);
 }
 
-async function viewport(width: number) {
+async function viewport(width: number, origin: string) {
 	const page = await browser.newPage({
 		viewport: { width, height: 900 },
 		reducedMotion: "reduce",
@@ -172,7 +195,7 @@ async function viewport(width: number) {
 	});
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
-	await page.goto(values.origin, { waitUntil: "networkidle" });
+	await page.goto(origin, { waitUntil: "networkidle" });
 	await page.locator('[aria-current="location"]').waitFor();
 	await page.waitForFunction(() => {
 		const plot = document.querySelector<HTMLElement>(
@@ -189,6 +212,7 @@ async function viewport(width: number) {
 	await capture(page, `${width}-initial`);
 	if (width >= 640) {
 		await settings(page);
+		await menuEscapeKeepsPinnedPoint(page);
 		await page
 			.getByRole("button", { name: "Chart settings", exact: true })
 			.click();
@@ -205,9 +229,18 @@ async function viewport(width: number) {
 	);
 }
 
+/** The page to check: the --origin given, or the served build. */
+async function siteToCheck(explicit: string | undefined) {
+	if (explicit) return { origin: explicit, close: () => {} };
+	const server = await serveSite();
+	return { origin: originOf(server), close: () => server.close() };
+}
+
+const site = await siteToCheck(values.origin);
 try {
-	await viewport(1440);
-	await viewport(390);
+	await viewport(1440, site.origin);
+	await viewport(390, site.origin);
 } finally {
 	await browser.close();
+	site.close();
 }

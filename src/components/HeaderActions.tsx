@@ -100,7 +100,7 @@ function useDisclosure() {
 }
 
 /** Watches dismissal while the disclosure is open; refs are read at event time. */
-function observeDismissal(
+export function observeDismissal(
 	root: RefObject<Element | null>,
 	trigger: RefObject<HTMLElement | null>,
 	close: () => void,

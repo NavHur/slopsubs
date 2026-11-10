@@ -1,5 +1,29 @@
 import { describe, expect, it } from "vite-plus/test";
-import { FADE_PX, revealScrollLeft, wheelScrollLeft } from "./ScrollRow";
+import {
+	FADE_PX,
+	reuseOverflow,
+	revealScrollLeft,
+	wheelScrollLeft,
+} from "./ScrollRow";
+
+describe("reuseOverflow", () => {
+	const previous = { start: false, end: true };
+
+	it("keeps the previous object when both edges are unchanged", () => {
+		const next = { start: false, end: true };
+		expect(reuseOverflow(previous, next)).toBe(previous);
+	});
+
+	it("takes the next object when the start edge changed", () => {
+		const next = { start: true, end: true };
+		expect(reuseOverflow(previous, next)).toBe(next);
+	});
+
+	it("takes the next object when the end edge changed", () => {
+		const next = { start: false, end: false };
+		expect(reuseOverflow(previous, next)).toBe(next);
+	});
+});
 
 const row = { scrollLeft: 100, clientWidth: 300, margin: FADE_PX };
 

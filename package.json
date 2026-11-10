@@ -22,6 +22,7 @@
     "profile-page": "vp build --minify false && node scripts/profile-page.ts",
     "check-shared-links": "vp build && node scripts/check-shared-links.ts",
     "check-comparison-fit": "vp build && node scripts/check-comparison-fit.ts",
+    "complexity-smoke": "vp build && node scripts/complexity-smoke.ts",
     "deploy": "vp run build && wrangler deploy"
   },
   "dependencies": {

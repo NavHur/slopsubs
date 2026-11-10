@@ -70,7 +70,11 @@ describe("SeriesLine", () => {
 		"keeps marker style and selected size for API=%s",
 		(isApi) => {
 			const built = buildSeries([point])[0];
-			const series = { ...built, pricing: { ...built.pricing, isApi } };
+			const marker = isApi ? built.pricing.marker : "diamond";
+			const series = {
+				...built,
+				pricing: { ...built.pricing, isApi, marker },
+			} as typeof built;
 			const x = scaleLinear().domain([0, 2]).range([0, 200]);
 			const y = scaleLinear().domain([0, 80]).range([400, 0]);
 			const html = renderToStaticMarkup(

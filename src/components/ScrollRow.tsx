@@ -112,7 +112,7 @@ function useWheelScroll(
 }
 
 /** Reuses unchanged edges so a scroll event does not cause another render. */
-function reuseOverflow(previous: Overflow, next: Overflow): Overflow {
+export function reuseOverflow(previous: Overflow, next: Overflow): Overflow {
 	return previous.start === next.start && previous.end === next.end
 		? previous
 		: next;

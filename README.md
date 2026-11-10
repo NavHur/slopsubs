@@ -148,6 +148,21 @@ widest change chip) and a spread of other pairs at 360px, 390px and desktop
 widths, and fails if a figure or chip breaks over two lines or the table spills
 out of its card. Phones narrower than 360px are out of scope.
 
+## Complexity Smoke
+
+Before a refactor, record screenshots of the built page, then compare the
+refactored build against them:
+
+```bash
+bun run complexity-smoke -- --out /tmp/before
+bun run complexity-smoke -- --out /tmp/after --compare /tmp/before
+```
+
+It builds first, serves `dist/client` (or opens `--origin URL`), and at a
+desktop and a phone width checks the chart settings menu, point pinning,
+overflow arrows and section jumps. With `--compare` it also fails on
+screenshots that differ. `--compare` must not be the `--out` directory.
+
 ## Paint Metrics
 
 ```bash
