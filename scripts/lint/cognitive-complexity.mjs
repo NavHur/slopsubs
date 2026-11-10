@@ -53,9 +53,8 @@ function functionName(node) {
 	}
 }
 
-// Call forms that count as recursion for this function. A bare name inside a
-// method or object property refers to an outer binding, so those recurse only
-// through `this.`.
+// A bare name in a method or object property refers to an outer binding, so
+// those recurse only through `this.name`.
 function ownCallForms(node) {
 	const name = functionName(node);
 	if (name === "<anonymous>") return new Set();
@@ -152,6 +151,16 @@ function visitCatch(node, nesting, state) {
 
 function visitIf(node, nesting, state) {
 	state.total += 1 + nesting;
+	visitIfBranches(node, nesting, state);
+}
+
+// An `else if` continues its chain at the same nesting and costs one.
+function visitElseIf(node, nesting, state) {
+	state.total += 1;
+	visitIfBranches(node, nesting, state);
+}
+
+function visitIfBranches(node, nesting, state) {
 	walk(node.test, nesting, state);
 	walk(node.consequent, nesting + 1, state);
 	visitAlternate(node.alternate, nesting, state);
@@ -159,11 +168,7 @@ function visitIf(node, nesting, state) {
 
 function visitAlternate(node, nesting, state) {
 	if (!node) return;
-	if (node.type === "IfStatement") {
-		state.total -= nesting;
-		visitIf(node, nesting, state);
-		return;
-	}
+	if (node.type === "IfStatement") return visitElseIf(node, nesting, state);
 	state.total += 1;
 	walk(node, nesting + 1, state);
 }
