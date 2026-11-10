@@ -14,7 +14,20 @@ import {
 	formatIntelligence,
 	formatPercent,
 	formatTokens,
+	ratioFactor,
 } from "./format";
+
+describe("ratioFactor", () => {
+	it("reads a ratio of either side as a multiple above one", () => {
+		expect(ratioFactor(2.46)).toEqual({ factor: "2.5×", same: false });
+		expect(ratioFactor(0.4)).toEqual({ factor: "2.5×", same: false });
+	});
+
+	it("is the same when it rounds to 1.0×", () => {
+		expect(ratioFactor(1.02).same).toBe(true);
+		expect(ratioFactor(0.98).same).toBe(true);
+	});
+});
 
 describe("formatDay", () => {
 	it("names the UTC day of an ISO timestamp", () => {

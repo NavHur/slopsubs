@@ -73,9 +73,18 @@ export function formatCount(value: number): string {
  * multiple: "2.0× cheaper than API", "Same cost as API".
  */
 export function formatApiComparison(valueMultiple: number): string {
-	const factor = formatMultiple(Math.max(valueMultiple, 1 / valueMultiple));
-	if (factor === formatMultiple(1)) return "Same cost as API";
+	const { factor, same } = ratioFactor(valueMultiple);
+	if (same) return "Same cost as API";
 	return `${factor} ${valueMultiple > 1 ? "cheaper" : "pricier"} than API`;
+}
+
+/**
+ * A ratio of either side as a multiple of at least 1: 0.4 and 2.5 are both
+ * "2.5×". `same` is true when it rounds to "1.0×".
+ */
+export function ratioFactor(ratio: number): { factor: string; same: boolean } {
+	const factor = formatMultiple(Math.max(ratio, 1 / ratio));
+	return { factor, same: factor === formatMultiple(1) };
 }
 
 /** The part of a plan's cap a model may use, or undefined for all of it. */

@@ -4,6 +4,7 @@ import type { BenchmarkView } from "#/lib/benchmarks";
 import { useChartEscape } from "./chartEscape";
 import { ModelLegend } from "./ChartParts";
 import { highlightedModel, useModelHighlight } from "./highlight";
+import { litModels } from "./litModels";
 import { usePointDetails } from "./pointDetails";
 import { PointTooltip } from "./PointTooltip";
 import type { Angles } from "./projection";
@@ -51,8 +52,7 @@ export function TradeoffChart({
 	const models = useMemo(() => groupByModel(buildSeries(points)), [points]);
 	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
 	const [highlight, dispatchHighlight] = useModelHighlight(plotted);
-	const activeModel =
-		details?.point.benchmark.family ?? highlightedModel(highlight);
+	const lit = litModels(details, highlightedModel(highlight));
 	useChartEscape(element, [
 		{ open: details !== null, close: () => dispatch({ type: "close" }) },
 		{
@@ -77,18 +77,14 @@ export function TradeoffChart({
 				className={`block touch-pan-y select-none outline-none focus-visible:outline-1 focus-visible:outline-line ${camera.dragging ? "cursor-grabbing" : "cursor-grab"}`}
 			>
 				<SceneFrame scene={scene} view={view} />
-				<EffortLines
-					steps={scene.efforts}
-					pricing={pricing}
-					activeModel={activeModel}
-				/>
+				<EffortLines steps={scene.efforts} pricing={pricing} lit={lit} />
 				{scene.points.map((p) => (
 					<TradeoffPoint
 						key={`${p.point.seriesId}/${p.point.benchmark.id}`}
 						scenePoint={p}
 						pricing={pricing}
-						active={p === shown}
-						activeModel={activeModel}
+						active={p === shown || p.point === details?.selected}
+						lit={lit}
 						onDetails={dispatch}
 						view={view}
 					/>
@@ -97,7 +93,7 @@ export function TradeoffChart({
 					scene={scene}
 					viewport={viewport}
 					models={models}
-					activeModel={activeModel}
+					lit={lit}
 					pinnedModel={highlight.pinned}
 					onHighlight={dispatchHighlight}
 				/>
@@ -105,6 +101,7 @@ export function TradeoffChart({
 			{details && shown && (
 				<PointTooltip
 					point={details.point}
+					selected={details.selected}
 					anchor={shown.at}
 					bounds={viewport}
 					pinned={details.pinned}
@@ -115,7 +112,7 @@ export function TradeoffChart({
 			{!hasModelColumn(width) && (
 				<ModelLegend
 					models={models}
-					activeModel={activeModel}
+					lit={lit}
 					pinnedModel={highlight.pinned}
 					onHighlight={dispatchHighlight}
 				/>

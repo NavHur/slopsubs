@@ -134,6 +134,20 @@ never loads keeps the view hidden for 10 s (`src/styles.css`), so a shorter net
 would flash the default view and shift the layout. It prints each link's layout
 shift too. Like the brand images, it needs Chromium for `playwright-core`.
 
+## Comparison Fit
+
+Pin a point and hover another, and the tooltip compares them in a table whose
+columns take their content's width. To check it fits:
+
+```bash
+bun run check-comparison-fit
+```
+
+It builds first, then compares the cheapest point with the priciest (the
+widest change chip) and a spread of other pairs at 360px, 390px and desktop
+widths, and fails if a figure or chip breaks over two lines or the table spills
+out of its card. Phones narrower than 360px are out of scope.
+
 ## Paint Metrics
 
 ```bash

@@ -14,6 +14,7 @@ import {
 import { ProviderLogo } from "../ProviderLogo";
 import { ColorDot } from "./ColorDot";
 import { type Box, tooltipPlacement } from "./geometry";
+import { PointComparison } from "./PointComparison";
 
 /**
  * The element's border box, or null before its first layout. Measured after
@@ -61,9 +62,13 @@ function PlanPricing({
 	);
 }
 
-/** Details of one point, placed beside it so it never covers it. */
+/**
+ * Details of one point, placed beside it so it never covers it. With a
+ * `selected` point, its figures sit beside the selected one's for comparison.
+ */
 export function PointTooltip({
 	point,
+	selected,
 	anchor,
 	bounds,
 	pinned,
@@ -71,6 +76,8 @@ export function PointTooltip({
 	view,
 }: {
 	point: ValuePoint;
+	/** The pinned point this one is compared with, if another is pinned. */
+	selected: ValuePoint | null;
 	/** The point's position in the chart. */
 	anchor: { x: number; y: number };
 	/** The chart's size; the tooltip stays inside it when it can. */
@@ -82,17 +89,37 @@ export function PointTooltip({
 	view: BenchmarkView;
 }) {
 	const [ref, box] = useBorderBox<HTMLDivElement>();
-	const { benchmark, pricing } = point;
-	const promotion = planPromotion(point);
-	const source = view.pointSource(benchmark);
 	// Hidden for the one layout before its size is known.
 	const placement = box && tooltipPlacement(anchor, box, bounds);
 	return (
 		<div
 			ref={ref}
-			className={`${pinned ? "" : "pointer-events-none"} absolute z-10 w-64 max-w-[calc(100%-16px)] rounded-md border border-line bg-panel px-3 pt-1.5 pb-2.5 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]`}
+			className={`${pinned ? "" : "pointer-events-none"} absolute z-10 ${selected ? "w-[28rem]" : "w-64"} max-w-[calc(100%-16px)] rounded-md border border-line bg-panel px-3 pt-1.5 pb-2.5 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]`}
 			style={placement ?? { left: 0, top: 0, visibility: "hidden" }}
 		>
+			<PointHeader point={point} pinned={pinned} onClose={onClose} />
+			{selected ? (
+				<PointComparison selected={selected} hovered={point} view={view} />
+			) : (
+				<PointSummary point={point} view={view} />
+			)}
+		</div>
+	);
+}
+
+/** The point's model, effort and pricing, and a close button when pinned. */
+function PointHeader({
+	point,
+	pinned,
+	onClose,
+}: {
+	point: ValuePoint;
+	pinned: boolean;
+	onClose: () => void;
+}) {
+	const { benchmark, pricing } = point;
+	return (
+		<>
 			<div className="flex min-h-7 items-center justify-between gap-2">
 				<div className="flex min-w-0 items-center gap-2 text-[13px] font-semibold text-fg">
 					<ColorDot color={familyColor(benchmark.family)} />
@@ -105,6 +132,26 @@ export function PointTooltip({
 				{benchmark.effortLabel} ·{" "}
 				{pricing.kind === "api" ? "Pay per token (API)" : pricing.plan.label}
 			</p>
+		</>
+	);
+}
+
+/**
+ * One point's figures, how its plan compares with the API, any promo behind
+ * them, and their source. A comparison leaves these out to stay on the table.
+ */
+function PointSummary({
+	point,
+	view,
+}: {
+	point: ValuePoint;
+	view: BenchmarkView;
+}) {
+	const { benchmark, pricing } = point;
+	const promotion = planPromotion(point);
+	const source = view.pointSource(benchmark);
+	return (
+		<>
 			<PointMetrics point={point} view={view} />
 			{pricing.kind === "plan" && (
 				<PlanPricing
@@ -121,7 +168,7 @@ export function PointTooltip({
 			>
 				{source.name}
 			</a>
-		</div>
+		</>
 	);
 }
 

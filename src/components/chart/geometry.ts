@@ -394,3 +394,70 @@ export function axisReadouts(
 		},
 	};
 }
+
+const HORIZONTAL = { start: "left", size: "width" } as const;
+const VERTICAL = { start: "top", size: "height" } as const;
+/** Clear space left between two pills pushed apart; matches `overlaps`. */
+const PILL_GAP_PX = 2;
+
+type Axis = typeof HORIZONTAL | typeof VERTICAL;
+
+const nearestTo = (target: number, starts: number[]) =>
+	starts.reduce((best, s) =>
+		Math.abs(s - target) < Math.abs(best - target) ? s : best,
+	);
+
+/**
+ * Where `moved` goes to clear every pill in `blockers` along `axis`: the
+ * nearest start beside a blocker that stays in [0, max] and hits none, else
+ * the nearest in-bounds one, else as near as fits.
+ */
+function clearStart(
+	moved: AxisReadout,
+	blockers: AxisReadout[],
+	{ start, size }: Axis,
+	max: number,
+): number {
+	const span = moved[size];
+	const inBounds = blockers
+		.flatMap((b) => [
+			b[start] + b[size] + PILL_GAP_PX,
+			b[start] - span - PILL_GAP_PX,
+		])
+		.filter((s) => s >= 0 && s + span <= max);
+	const clear = inBounds.filter(
+		(s) => !blockers.some((b) => overlaps(b, { ...moved, [start]: s })),
+	);
+	const pool = clear.length > 0 ? clear : inBounds;
+	if (pool.length === 0) return clampSpan(moved[start], span, 0, max);
+	return nearestTo(moved[start], pool);
+}
+
+/** `moved`, shifted along `axis` off any `fixed` pill it hits or kept as is. */
+function clearPill(
+	fixed: AxisReadout[],
+	moved: AxisReadout,
+	sibling: AxisReadout,
+	axis: Axis,
+	max: number,
+): AxisReadout {
+	if (!fixed.some((f) => overlaps(f, moved))) return moved;
+	const blockers = [...fixed, sibling];
+	return { ...moved, [axis.start]: clearStart(moved, blockers, axis, max) };
+}
+
+/**
+ * `moved`'s pills nudged off every pill of `fixed` where they collide, y
+ * pills vertically and x pills horizontally, by the least that clears them
+ * and keeps them in `bounds`. The guides stay at the true values.
+ */
+export function separateReadouts(
+	fixed: AxisReadouts,
+	moved: AxisReadouts,
+	bounds: Box,
+): AxisReadouts {
+	const obstacles = [fixed.x, fixed.y];
+	const y = clearPill(obstacles, moved.y, moved.x, VERTICAL, bounds.height);
+	const x = clearPill(obstacles, moved.x, y, HORIZONTAL, bounds.width);
+	return { ...moved, x, y };
+}

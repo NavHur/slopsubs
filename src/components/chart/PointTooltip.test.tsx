@@ -52,10 +52,15 @@ const plan: Plan = {
 	promotionByFamily: {},
 };
 
-function tooltipHtml(view: BenchmarkView, shown: ValuePoint = point) {
+function tooltipHtml(
+	view: BenchmarkView,
+	shown: ValuePoint = point,
+	selected: ValuePoint | null = null,
+) {
 	return renderToStaticMarkup(
 		<PointTooltip
 			point={shown}
+			selected={selected}
 			anchor={{ x: 0, y: 0 }}
 			bounds={{ width: 800, height: 600 }}
 			pinned={false}
@@ -65,8 +70,12 @@ function tooltipHtml(view: BenchmarkView, shown: ValuePoint = point) {
 	);
 }
 
-function tooltipText(view: BenchmarkView, shown: ValuePoint = point) {
-	return tooltipHtml(view, shown).replace(/<[^>]+>/g, " ");
+function tooltipText(
+	view: BenchmarkView,
+	shown: ValuePoint = point,
+	selected: ValuePoint | null = null,
+) {
+	return tooltipHtml(view, shown, selected).replace(/<[^>]+>/g, " ");
 }
 
 describe("point tooltip", () => {
@@ -126,5 +135,64 @@ describe("point tooltip", () => {
 		);
 		expect(dot?.[1]).toBe(brand);
 		expect(html.split(brand)).toHaveLength(2);
+	});
+
+	describe("compared with a selected point", () => {
+		const cheaper: ValuePoint = {
+			...point,
+			score: 36.36,
+			costPerTaskUsd: 3.2052,
+			benchmark: {
+				...point.benchmark,
+				id: `${opus}-low`,
+				effortLabel: "low",
+				tokensPerTask: null,
+				secondsPerTask: 355.7,
+			},
+		};
+		const text = () =>
+			tooltipText(BENCHMARK_VIEWS.intelligence, point, cheaper).replace(
+				/\s+/g,
+				" ",
+			);
+
+		it("keeps the hovered point's usual header", () => {
+			expect(text()).toMatch(/^ ?Opus 5\.5 max · Pay per token \(API\)/);
+		});
+
+		it("heads each column with its point, selected first", () => {
+			expect(text()).toMatch(
+				/Per task Selected: Opus 5\.5 low · API Hovered: Opus 5\.5 max · API Change/,
+			);
+		});
+
+		it("gives a score's change in points", () => {
+			expect(text()).toMatch(/Score 36\.4 45\.5 \+9\.1 pts/);
+		});
+
+		it("says which way a cost or time moved instead of a bare ratio", () => {
+			expect(text()).toMatch(/Cost \$3\.21 \$12\.82 4\.0× pricier/);
+			expect(text()).toMatch(/Time 5m 56s 11m 51s 2\.0× slower/);
+		});
+
+		it("marks a figure only one point has instead of dividing by it", () => {
+			expect(text()).toMatch(/Tokens — 202K — /);
+		});
+
+		it("leaves out the plan note and source to stay on the table", () => {
+			const text = tooltipText(
+				BENCHMARK_VIEWS.intelligence,
+				onUltra(1),
+				cheaper,
+			);
+			expect(text).not.toMatch(/than API/);
+			expect(text).not.toContain("Artificial Analysis");
+		});
+
+		it("calls figures that round to the same multiple the same", () => {
+			const twin = { ...cheaper, costPerTaskUsd: 3.25 };
+			const html = tooltipText(BENCHMARK_VIEWS.intelligence, twin, cheaper);
+			expect(html.replace(/\s+/g, " ")).toMatch(/\$3\.21 \$3\.25 Same/);
+		});
 	});
 });
