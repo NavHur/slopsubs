@@ -93,14 +93,14 @@ describe("local complexity rules", () => {
 		expect(over.stdout).toContain(`cognitive complexity ${score}`);
 	});
 	it("reports only the top-level function, scoring nested ones in it", () => {
-		const source =
-			"function outer(x) { function inner(y) { if (y) { if (y) y--; } } if (x) x--; }";
-		const result = lintCognitive(source, 5);
+		// inner alone scores 6, over the limit, so a reported inner would show.
+		const inner = `function inner(y) { ${"if (y) y--;".repeat(6)} }`;
+		const result = lintCognitive(`function outer() { ${inner} }`, 5);
 		const messages = JSON.parse(result.stdout).diagnostics.map(
 			(diagnostic: { message: string }) => diagnostic.message,
 		);
 		expect(messages).toHaveLength(1);
-		expect(messages[0]).toContain("`outer` has cognitive complexity 6");
+		expect(messages[0]).toContain("`outer` has cognitive complexity 12");
 	});
 	it("accepts classic cyclomatic 18 and rejects 19", () => {
 		const expression = (conditions: number) =>
