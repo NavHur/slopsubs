@@ -173,6 +173,16 @@ describe("point tooltip", () => {
 			expect(text()).toMatch(/tokens per task — 202k — /i);
 		});
 
+		it("leaves out the plan note and source to stay on the table", () => {
+			const text = tooltipText(
+				BENCHMARK_VIEWS.intelligence,
+				onUltra(1),
+				cheaper,
+			);
+			expect(text).not.toMatch(/than API/);
+			expect(text).not.toContain("Artificial Analysis");
+		});
+
 		it("calls figures that round to the same multiple the same", () => {
 			const twin = { ...cheaper, costPerTaskUsd: 3.25 };
 			const html = tooltipText(BENCHMARK_VIEWS.intelligence, twin, cheaper);

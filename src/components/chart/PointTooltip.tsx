@@ -90,8 +90,6 @@ export function PointTooltip({
 }) {
 	const [ref, box] = useBorderBox<HTMLDivElement>();
 	const { benchmark, pricing } = point;
-	const promotion = planPromotion(point);
-	const source = view.pointSource(benchmark);
 	// Hidden for the one layout before its size is known.
 	const placement = box && tooltipPlacement(anchor, box, bounds);
 	return (
@@ -118,8 +116,29 @@ export function PointTooltip({
 					<PointComparison selected={selected} hovered={point} view={view} />
 				</>
 			) : (
-				<PointMetrics point={point} view={view} />
+				<PointSummary point={point} view={view} />
 			)}
+		</div>
+	);
+}
+
+/**
+ * One point's figures, how its plan compares with the API, any promo behind
+ * them, and their source. A comparison leaves these out to stay on the table.
+ */
+function PointSummary({
+	point,
+	view,
+}: {
+	point: ValuePoint;
+	view: BenchmarkView;
+}) {
+	const { benchmark, pricing } = point;
+	const promotion = planPromotion(point);
+	const source = view.pointSource(benchmark);
+	return (
+		<>
+			<PointMetrics point={point} view={view} />
 			{pricing.kind === "plan" && (
 				<PlanPricing
 					pricing={pricing}
@@ -135,7 +154,7 @@ export function PointTooltip({
 			>
 				{source.name}
 			</a>
-		</div>
+		</>
 	);
 }
 
