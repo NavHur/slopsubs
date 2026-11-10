@@ -394,3 +394,53 @@ export function axisReadouts(
 		},
 	};
 }
+
+const HORIZONTAL = { start: "left", size: "width" } as const;
+const VERTICAL = { start: "top", size: "height" } as const;
+/** Clear space left between two pills pushed apart; matches `overlaps`. */
+const PILL_GAP_PX = 2;
+
+/**
+ * Where a span of `size` goes to clear the fixed one: past the side it
+ * already leans to, else the other side, else as near as fits in [0, max].
+ */
+function clearSpan(
+	start: number,
+	size: number,
+	fixed: { start: number; size: number },
+	max: number,
+): number {
+	const after = fixed.start + fixed.size + PILL_GAP_PX;
+	const before = fixed.start - size - PILL_GAP_PX;
+	const sides = start >= fixed.start ? [after, before] : [before, after];
+	const fits = sides.find((s) => s >= 0 && s + size <= max);
+	return fits ?? clampSpan(sides[0], size, 0, max);
+}
+
+function clearPill(
+	fixed: AxisReadout,
+	moved: AxisReadout,
+	{ start, size }: typeof HORIZONTAL | typeof VERTICAL,
+	max: number,
+): AxisReadout {
+	if (!overlaps(fixed, moved)) return moved;
+	const span = { start: fixed[start], size: fixed[size] };
+	return { ...moved, [start]: clearSpan(moved[start], moved[size], span, max) };
+}
+
+/**
+ * `moved`'s pills nudged off `fixed`'s where they collide, y pills
+ * vertically and x pills horizontally, by the least that clears them and
+ * keeps them in `bounds`. The guides stay at the true values.
+ */
+export function separateReadouts(
+	fixed: AxisReadouts,
+	moved: AxisReadouts,
+	bounds: Box,
+): AxisReadouts {
+	return {
+		...moved,
+		x: clearPill(fixed.x, moved.x, HORIZONTAL, bounds.width),
+		y: clearPill(fixed.y, moved.y, VERTICAL, bounds.height),
+	};
+}

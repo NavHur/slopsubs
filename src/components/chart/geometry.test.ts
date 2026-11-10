@@ -6,6 +6,7 @@ import {
 	chartLayout,
 	MIN_TICK_LABEL_GAP_PX,
 	overlaps,
+	separateReadouts,
 	tooltipPlacement,
 	xTickLabelBox,
 	xTicks,
@@ -239,5 +240,51 @@ describe("axisReadouts", () => {
 		expect(overlaps(x, xTickLabelBox("$0.5", 600, desktop))).toBe(false);
 		expect(overlaps(y, yTickLabelBox("55", 212, desktop))).toBe(true);
 		expect(overlaps(y, yTickLabelBox("50", 279, desktop))).toBe(false);
+	});
+});
+
+describe("separateReadouts", () => {
+	const layout = chartLayout({ width: 960, height: 620 }, { labels: true });
+	const bounds = { width: 960, height: layout.height };
+	const text = { x: "$0.15", y: "51.33" };
+	const at = (x: number, y: number) =>
+		axisReadouts({ x, y }, text, layout, bounds.width);
+
+	it("moves a hovered score pill off a selected one 1.7px away", () => {
+		const selected = at(500, 200);
+		const hovered = at(500, 201.7);
+		const moved = separateReadouts(selected, hovered, bounds);
+		expect(overlaps(selected.y, moved.y)).toBe(false);
+		expect(moved.y.top - selected.y.top).toBeGreaterThanOrEqual(
+			selected.y.height,
+		);
+		expect(moved.at).toEqual(hovered.at);
+	});
+
+	it("moves a hovered cost pill off a selected one beside it", () => {
+		const selected = at(500, 200);
+		const hovered = at(496, 300);
+		const moved = separateReadouts(selected, hovered, bounds);
+		expect(overlaps(selected.x, moved.x)).toBe(false);
+		expect(moved.x.top).toBe(hovered.x.top);
+		expect(moved.y).toEqual(hovered.y);
+	});
+
+	it("leaves pills that do not collide where they are", () => {
+		const selected = at(300, 100);
+		const hovered = at(700, 400);
+		expect(separateReadouts(selected, hovered, bounds)).toEqual(hovered);
+	});
+
+	it("keeps a pill inside the chart by going to the other side", () => {
+		const selected = at(500, 4);
+		const hovered = at(500, 3);
+		const moved = separateReadouts(selected, hovered, bounds);
+		expect(overlaps(selected.y, moved.y)).toBe(false);
+		expect(moved.y.top).toBeGreaterThanOrEqual(0);
+		const low = at(500, bounds.height - 4);
+		const lower = separateReadouts(low, at(500, bounds.height - 3), bounds);
+		expect(overlaps(low.y, lower.y)).toBe(false);
+		expect(lower.y.top + lower.y.height).toBeLessThanOrEqual(bounds.height);
 	});
 });
