@@ -1,18 +1,9 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
-import { leaderboards, plans, samples } from "#/data";
-import { BENCHMARK_IDS } from "#/domain/enums";
 import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
-import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
-import {
-	formatDuration,
-	formatMultiple,
-	formatTokens,
-	formatUsd,
-} from "#/lib/format";
-import { PointComparison, WIDEST_FIGURE_CHARS } from "./PointComparison";
+import { PointComparison } from "./PointComparison";
 
 const family = "claude-opus-5-5" as FamilyId;
 
@@ -42,81 +33,6 @@ function pointWith(costPerTaskUsd: number): ValuePoint {
 	};
 }
 
-const REM_PX = 16;
-/** Tabular digits at 12px DM Sans, per character. */
-const FIGURE_CHAR_PX = 7.2;
-/**
- * 11px medium text in a chip, per character. Measured in the shipped DM Sans:
- * the widest 15-character chip is 93px of text. The system fallback is
- * narrower (about 5.7px), so a measurement in it undercounts.
- */
-const CHIP_CHAR_PX = 6.2;
-const CELL_PADDING_PX = 4;
-const CHIP_PADDING_PX = 8;
-/**
- * Table widths at 360px, 375px and 390px viewports, and the 28rem desktop
- * card. By ruling, phones narrower than 360px are out of scope.
- */
-const PHONE_TABLES_PX = [286, 301, 316, 320];
-const DESKTOP_TABLE_PX = 422;
-/** The 21rem table where the change column widens: the tightest figure case. */
-const WIDENING_TABLE_PX = 336;
-
-/** Every shipped point, per benchmark: the comparison never crosses benchmarks. */
-function shippedPointsByBenchmark(): ValuePoint[][] {
-	return BENCHMARK_IDS.map((id) => {
-		const models = leaderboards[id].models;
-		return valuePoints({
-			benchmarks: models,
-			families: [...new Set(models.map((m) => m.family))],
-			plans,
-			samples,
-			showApi: true,
-			hiddenEfforts: [],
-		});
-	});
-}
-
-/** Every figure the comparison can show, for every shipped point. */
-function shippedFigures(): string[] {
-	const figures: string[] = [];
-	for (const [i, points] of shippedPointsByBenchmark().entries()) {
-		const view = BENCHMARK_VIEWS[BENCHMARK_IDS[i]];
-		for (const p of points) {
-			figures.push(view.formatScore(p.score), formatUsd(p.costPerTaskUsd));
-			figures.push(formatTokens(p.benchmark.tokensPerTask ?? 0));
-			if (p.benchmark.secondsPerTask !== null) {
-				figures.push(formatDuration(p.benchmark.secondsPerTask));
-			}
-		}
-	}
-	return figures;
-}
-
-const METRICS: { value: (p: ValuePoint) => number | null; word: string }[] = [
-	{ value: (p) => p.costPerTaskUsd, word: "cheaper" },
-	{ value: (p) => p.benchmark.tokensPerTask, word: "fewer" },
-	{ value: (p) => p.benchmark.secondsPerTask, word: "faster" },
-];
-
-/**
- * The widest chip any shipped pair can show: the largest ratio between two
- * points of one benchmark in each metric, with that metric's wording.
- */
-function widestChipChars(): number {
-	const widths = shippedPointsByBenchmark().flatMap((points) =>
-		METRICS.map(({ value, word }) => {
-			const values = points.flatMap((p) => value(p) ?? []).filter((v) => v > 0);
-			const ratio = Math.max(...values) / Math.min(...values);
-			return `${formatMultiple(ratio)} ${word}`.length;
-		}),
-	);
-	return Math.max(...widths);
-}
-
-const widestFigureChars = Math.max(...shippedFigures().map((f) => f.length));
-const widestFigurePx = widestFigureChars * FIGURE_CHAR_PX;
-
 function render() {
 	return renderToStaticMarkup(
 		<PointComparison
@@ -127,86 +43,21 @@ function render() {
 	);
 }
 
-/**
- * A column's width in a table of `table` px: its rem width, or the one of a
- * container-query variant the table is wide enough for. Throws on any class
- * it cannot read, so a changed class fails instead of reading as 0px.
- */
-function widthPx(classes: string, table: number): number {
-	const rules = [
-		...classes.matchAll(/(?:@\[([\d.]+)rem\]:)?w-\[([\d.]+)rem\]/g),
-	];
-	const applicable = rules
-		.map((m) => ({
-			from: Number(m[1] ?? 0) * REM_PX,
-			px: Number(m[2]) * REM_PX,
-		}))
-		.filter((rule) => table >= rule.from)
-		.sort((a, b) => b.from - a.from);
-	if (applicable.length === 0 || Number.isNaN(applicable[0].px)) {
-		throw new Error(`no readable width in "${classes}" at ${table}px`);
-	}
-	return applicable[0].px;
-}
-
-function columnClasses(): string[] {
-	const cols = [...render().matchAll(/<col(?: class="([^"]*)")?\/>/g)];
-	expect(cols).toHaveLength(4);
-	return cols.map((m) => m[1] ?? "");
-}
-
-function labelAndChange(table: number) {
-	const classes = columnClasses();
-	return {
-		label: widthPx(classes[0], table),
-		change: widthPx(classes[3], table),
-	};
-}
-
-function chipText() {
-	const chip = render().match(
-		/<span class="[^"]*rounded[^"]*">([^<]*cheaper)<\/span>/,
-	);
-	expect(chip).not.toBeNull();
-	return chip?.[1] ?? "";
-}
-
+// Whether the table fits a phone is checked in a browser, against the build:
+// `bun run check-comparison-fit`. These pin what that relies on.
 describe("comparison table columns", () => {
-	it("sizes the figure budget for the widest figure the shipped data produces", () => {
-		expect(widestFigureChars).toBeLessThanOrEqual(WIDEST_FIGURE_CHARS);
-	});
-
-	it.each([...PHONE_TABLES_PX, WIDENING_TABLE_PX, DESKTOP_TABLE_PX])(
-		"leave each figure column room for the widest shipped figure in a %ipx table",
-		(table) => {
-			const { label, change } = labelAndChange(table);
-			const figure = (table - label - change) / 2;
-			expect(figure).toBeGreaterThanOrEqual(widestFigurePx + CELL_PADDING_PX);
-		},
-	);
-
-	it("holds the widest chip the shipped data produces on one line in the desktop card", () => {
-		expect(chipText()).toMatch(/× cheaper$/);
-		const chipPx =
-			widestChipChars() * CHIP_CHAR_PX + CHIP_PADDING_PX + CELL_PADDING_PX;
-		expect(labelAndChange(DESKTOP_TABLE_PX).change).toBeGreaterThanOrEqual(
-			chipPx,
-		);
-	});
-
-	it("reads no width from a class it cannot parse", () => {
-		expect(() => widthPx("w-4", PHONE_TABLES_PX[0])).toThrow();
-		expect(() => widthPx("", PHONE_TABLES_PX[0])).toThrow();
-	});
-
-	it("lets names, labels and chips wrap, and keeps figures on one line", () => {
+	it("take their content's width, not fixed widths", () => {
 		const html = render();
-		expect(html).not.toMatch(/class="[^"]*truncate[^"]*"/);
-		expect(html).toMatch(/class="[^"]*break-words[^"]*">Opus 5.5/);
-		const chip = html.match(/<span class="[^"]*rounded[^"]*"/)?.[0];
-		expect(chip).toBeDefined();
-		expect(chip).not.toContain("whitespace-nowrap");
+		expect(html).not.toContain("<col");
+		expect(html).not.toContain("table-fixed");
+	});
+
+	it("keep figures and change chips on one line, and let labels and heads wrap", () => {
+		const html = render();
 		expect(html.match(/<td class="[^"]*whitespace-nowrap/g)).toHaveLength(8);
+		const chip = html.match(/<span class="[^"]*rounded[^"]*">1000× cheaper/);
+		expect(chip?.[0]).toContain("whitespace-nowrap");
+		expect(html.match(/<th[^>]*whitespace-nowrap/g)).toBeNull();
 	});
 });
 

@@ -21,6 +21,7 @@
     "render-brand-images": "vp build && node scripts/render-brand-images.ts",
     "profile-page": "vp build --minify false && node scripts/profile-page.ts",
     "check-shared-links": "vp build && node scripts/check-shared-links.ts",
+    "check-comparison-fit": "vp build && node scripts/check-comparison-fit.ts",
     "deploy": "vp run build && wrangler deploy"
   },
   "dependencies": {

@@ -69,24 +69,6 @@ const COST_WORDS = { fewer: "cheaper", more: "pricier" };
 const TOKEN_WORDS = { fewer: "fewer", more: "more" };
 const TIME_WORDS = { fewer: "faster", more: "slower" };
 
-/**
- * The widest figure the formatters produce over the shipped data is a
- * sub-cent plan cost, "$0.0000066"; a test recomputes it from the data.
- */
-export const WIDEST_FIGURE_CHARS = 10;
-
-/**
- * Width budget for the narrowest supported table, 286px (a 360px viewport):
- * each figure column holds WIDEST_FIGURE_CHARS at ~7.2px plus 4px of padding,
- * ~76px, so label and change together stay under 134px. Labels, chips and
- * model names wrap on a narrow card; figures never do. Each column's longest
- * word must fit: "Effective" in the label, "cheaper" in the chip. From a
- * 21rem table the change column is 7rem, which holds the widest shipped chip
- * (15 characters, about 93px of text) on one line; a test recomputes it.
- */
-export const LABEL_COLUMN = "w-[4.25rem]";
-export const CHANGE_COLUMN = "w-[4rem] @[21rem]:w-[7rem]";
-
 /** The table's head says "Per task", so the labels need not. */
 const PER_TASK = / per task$/;
 
@@ -138,7 +120,9 @@ function changeOf(row: Row, hovered: number | null, selected: number | null) {
  * The selected (pinned) point's figures beside the hovered point's, each
  * column headed by its model, and a chip with how the hovered one compares,
  * coloured by whether that is better or worse. Rows neither point has a
- * figure for are left out.
+ * figure for are left out. Columns take their content's width: figures and
+ * chips stay on one line, and row labels and column heads wrap to make room.
+ * `check-comparison-fit` renders the built page to confirm it at phone width.
  */
 export function PointComparison({
 	selected,
@@ -155,57 +139,46 @@ export function PointComparison({
 	const shown = (value: number | null, row: Row) =>
 		value === null ? MISSING : row.format(value);
 	return (
-		<div className="@container mt-2">
-			<table className="w-full table-fixed tabular-nums">
-				<colgroup>
-					<col className={LABEL_COLUMN} />
-					<col />
-					<col />
-					<col className={CHANGE_COLUMN} />
-				</colgroup>
-				<thead>
-					<tr className="border-b border-line align-bottom">
-						<th
-							scope="col"
-							className="pb-1 text-left text-[11px] font-normal text-subtle"
-						>
-							Per task
-						</th>
-						<ModelHead point={selected} side="Selected" />
-						<ModelHead point={hovered} side="Hovered" />
-						<th scope="col" className="pb-1 text-right">
-							<span className="sr-only">Change</span>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					{rows.map((row) => {
-						const a = row.value(selected);
-						const b = row.value(hovered);
-						const change = changeOf(row, b, a);
-						return (
-							<tr key={row.label}>
-								<th
-									scope="row"
-									className="pt-1 text-left font-normal break-words text-muted"
-								>
-									{row.label}
-								</th>
-								<td className="pt-1 pl-1 text-right whitespace-nowrap text-fg">
-									{shown(a, row)}
-								</td>
-								<td className="pt-1 pl-1 text-right whitespace-nowrap text-fg">
-									{shown(b, row)}
-								</td>
-								<td className="pt-1 pl-1 text-right">
-									<ChangeChip change={change} />
-								</td>
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
-		</div>
+		<table className="mt-2 w-full tabular-nums">
+			<thead>
+				<tr className="border-b border-line align-bottom">
+					<th
+						scope="col"
+						className="pb-1 text-left text-[11px] font-normal text-subtle"
+					>
+						Per task
+					</th>
+					<ModelHead point={selected} side="Selected" />
+					<ModelHead point={hovered} side="Hovered" />
+					<th scope="col" className="pb-1 text-right">
+						<span className="sr-only">Change</span>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{rows.map((row) => {
+					const a = row.value(selected);
+					const b = row.value(hovered);
+					const change = changeOf(row, b, a);
+					return (
+						<tr key={row.label}>
+							<th scope="row" className="pt-1 text-left font-normal text-muted">
+								{row.label}
+							</th>
+							<td className="pt-1 pl-1 text-right whitespace-nowrap text-fg">
+								{shown(a, row)}
+							</td>
+							<td className="pt-1 pl-1 text-right whitespace-nowrap text-fg">
+								{shown(b, row)}
+							</td>
+							<td className="pt-1 pl-1 text-right">
+								<ChangeChip change={change} />
+							</td>
+						</tr>
+					);
+				})}
+			</tbody>
+		</table>
 	);
 }
 
@@ -220,7 +193,7 @@ function ChangeChip({ change }: { change: Change }) {
 	const { text, tone } = change;
 	return (
 		<span
-			className={`rounded px-1 py-px text-[11px] leading-tight font-medium ${TONE_CLASS[tone]} ${CHIP_BACKGROUND[tone]}`}
+			className={`rounded px-1 py-px text-[11px] leading-tight font-medium whitespace-nowrap ${TONE_CLASS[tone]} ${CHIP_BACKGROUND[tone]}`}
 		>
 			{text}
 		</span>
