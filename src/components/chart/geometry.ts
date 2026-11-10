@@ -400,47 +400,64 @@ const VERTICAL = { start: "top", size: "height" } as const;
 /** Clear space left between two pills pushed apart; matches `overlaps`. */
 const PILL_GAP_PX = 2;
 
+type Axis = typeof HORIZONTAL | typeof VERTICAL;
+
+const nearestTo = (target: number, starts: number[]) =>
+	starts.reduce((best, s) =>
+		Math.abs(s - target) < Math.abs(best - target) ? s : best,
+	);
+
 /**
- * Where a span of `size` goes to clear the fixed one: past the side it
- * already leans to, else the other side, else as near as fits in [0, max].
+ * Where `moved` goes to clear every pill in `blockers` along `axis`: the
+ * nearest start beside a blocker that stays in [0, max] and hits none, else
+ * the nearest in-bounds one, else as near as fits.
  */
-function clearSpan(
-	start: number,
-	size: number,
-	fixed: { start: number; size: number },
+function clearStart(
+	moved: AxisReadout,
+	blockers: AxisReadout[],
+	{ start, size }: Axis,
 	max: number,
 ): number {
-	const after = fixed.start + fixed.size + PILL_GAP_PX;
-	const before = fixed.start - size - PILL_GAP_PX;
-	const sides = start >= fixed.start ? [after, before] : [before, after];
-	const fits = sides.find((s) => s >= 0 && s + size <= max);
-	return fits ?? clampSpan(sides[0], size, 0, max);
+	const span = moved[size];
+	const inBounds = blockers
+		.flatMap((b) => [
+			b[start] + b[size] + PILL_GAP_PX,
+			b[start] - span - PILL_GAP_PX,
+		])
+		.filter((s) => s >= 0 && s + span <= max);
+	const clear = inBounds.filter(
+		(s) => !blockers.some((b) => overlaps(b, { ...moved, [start]: s })),
+	);
+	const pool = clear.length > 0 ? clear : inBounds;
+	if (pool.length === 0) return clampSpan(moved[start], span, 0, max);
+	return nearestTo(moved[start], pool);
 }
 
+/** `moved`, shifted along `axis` off any `fixed` pill it hits or kept as is. */
 function clearPill(
-	fixed: AxisReadout,
+	fixed: AxisReadout[],
 	moved: AxisReadout,
-	{ start, size }: typeof HORIZONTAL | typeof VERTICAL,
+	sibling: AxisReadout,
+	axis: Axis,
 	max: number,
 ): AxisReadout {
-	if (!overlaps(fixed, moved)) return moved;
-	const span = { start: fixed[start], size: fixed[size] };
-	return { ...moved, [start]: clearSpan(moved[start], moved[size], span, max) };
+	if (!fixed.some((f) => overlaps(f, moved))) return moved;
+	const blockers = [...fixed, sibling];
+	return { ...moved, [axis.start]: clearStart(moved, blockers, axis, max) };
 }
 
 /**
- * `moved`'s pills nudged off `fixed`'s where they collide, y pills
- * vertically and x pills horizontally, by the least that clears them and
- * keeps them in `bounds`. The guides stay at the true values.
+ * `moved`'s pills nudged off every pill of `fixed` where they collide, y
+ * pills vertically and x pills horizontally, by the least that clears them
+ * and keeps them in `bounds`. The guides stay at the true values.
  */
 export function separateReadouts(
 	fixed: AxisReadouts,
 	moved: AxisReadouts,
 	bounds: Box,
 ): AxisReadouts {
-	return {
-		...moved,
-		x: clearPill(fixed.x, moved.x, HORIZONTAL, bounds.width),
-		y: clearPill(fixed.y, moved.y, VERTICAL, bounds.height),
-	};
+	const obstacles = [fixed.x, fixed.y];
+	const y = clearPill(obstacles, moved.y, moved.x, VERTICAL, bounds.height);
+	const x = clearPill(obstacles, moved.x, y, HORIZONTAL, bounds.width);
+	return { ...moved, x, y };
 }

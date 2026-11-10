@@ -2,6 +2,8 @@ import { scaleLinear, scaleLog } from "d3-scale";
 import { describe, expect, it } from "vite-plus/test";
 import { formatUsd } from "#/lib/format";
 import {
+	type AxisReadout,
+	type AxisReadouts,
 	axisReadouts,
 	chartLayout,
 	MIN_TICK_LABEL_GAP_PX,
@@ -286,5 +288,34 @@ describe("separateReadouts", () => {
 		const lower = separateReadouts(low, at(500, bounds.height - 3), bounds);
 		expect(overlaps(low.y, lower.y)).toBe(false);
 		expect(lower.y.top + lower.y.height).toBeLessThanOrEqual(bounds.height);
+	});
+
+	const pills = (r: { x: AxisReadout; y: AxisReadout }) => [r.x, r.y];
+	const collides = (a: AxisReadouts, b: AxisReadouts) =>
+		pills(a).some((p) => pills(b).some((q) => overlaps(p, q)));
+
+	it("keeps a pushed score pill off the selected cost pill", () => {
+		const phone = chartLayout({ width: 288, height: 288 }, { labels: true });
+		const box = { width: 288, height: phone.height };
+		const make = (x: number, y: number, t: { x: string; y: string }) =>
+			axisReadouts({ x, y }, t, phone, box.width);
+		const selected = make(45.1, 299.5, { x: "$0.0073", y: "1.7%" });
+		const hovered = make(200, 303, { x: "$0.0052", y: "1.6%" });
+		expect(overlaps(selected.y, hovered.y)).toBe(true);
+		const moved = separateReadouts(selected, hovered, box);
+		expect(collides(selected, moved)).toBe(false);
+		expect(moved.at).toEqual(hovered.at);
+	});
+
+	it("keeps a pushed cost pill off the selected score pill", () => {
+		const phone = chartLayout({ width: 288, height: 288 }, { labels: true });
+		const box = { width: 288, height: phone.height };
+		const make = (x: number, y: number) =>
+			axisReadouts({ x, y }, { x: "$0.01", y: "1.6%" }, phone, box.width);
+		const selected = make(100, 312);
+		const hovered = make(60, 100);
+		const moved = separateReadouts(selected, hovered, box);
+		expect(collides(selected, moved)).toBe(false);
+		expect(moved.at).toEqual(hovered.at);
 	});
 });
