@@ -210,6 +210,34 @@ describe("comparison table columns", () => {
 	});
 });
 
+describe("score change chip", () => {
+	function chipFor(selected: number, hovered: number): string {
+		const html = renderToStaticMarkup(
+			<PointComparison
+				selected={{ ...pointWith(1), score: selected }}
+				hovered={{ ...pointWith(1), score: hovered }}
+				view={BENCHMARK_VIEWS.intelligence}
+			/>,
+		);
+		const scoreRow = html.match(
+			/<tr[^>]*>(?:(?!<\/tr>)[\s\S])*Score[\s\S]*?<\/tr>/,
+		);
+		if (!scoreRow) throw new Error("no Score row rendered");
+		return scoreRow[0]
+			.replace(/<[^>]+>/g, " ")
+			.replace(/\s+/g, " ")
+			.trim();
+	}
+
+	it("agrees with the shown figures when two different scores show alike", () => {
+		expect(chipFor(23.06, 23.11)).toBe("Score 23.1 23.1 Same");
+	});
+
+	it("shows the tenth between two figures whose raw scores are 0.04 apart", () => {
+		expect(chipFor(65.52, 65.558)).toBe("Score 65.5 65.6 +0.1 pts");
+	});
+});
+
 describe("comparison column heads", () => {
 	it("show the whole effort and pricing line, since a tooltip title cannot appear", () => {
 		const html = renderToStaticMarkup(

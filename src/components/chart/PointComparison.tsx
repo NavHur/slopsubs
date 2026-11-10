@@ -30,9 +30,17 @@ type Row = {
 	change: (hovered: number, selected: number) => Change;
 };
 
-/** A score's change in points, where higher is better: "+3.8 pts". */
+/** A score as the figure cells show it, to the tenth. */
+function shownScore(score: number): number {
+	return Number(score.toFixed(1));
+}
+
+/**
+ * A score's change in points, where higher is better: "+3.8 pts". Taken from
+ * the scores as shown, so the chip agrees with the two figures beside it.
+ */
 function scoreChange(hovered: number, selected: number): Change {
-	const points = hovered - selected;
+	const points = shownScore(hovered) - shownScore(selected);
 	const size = Math.abs(points).toFixed(1);
 	if (Number(size) === 0) return SAME;
 	return points > 0
