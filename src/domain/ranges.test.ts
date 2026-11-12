@@ -20,7 +20,7 @@ const ultra: Plan = {
 	confidence: "primary",
 	sourceUrl: "https://example.com/pricing",
 	reportedCap: {
-		weeklyCapApiUsd: 100,
+		weeklyCapApiUsdByFamily: { [opus]: 100, [fable]: 100 },
 		by: "Theo",
 		url: "https://example.com/video",
 		basis: "estimate",

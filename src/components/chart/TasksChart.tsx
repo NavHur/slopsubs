@@ -1,7 +1,12 @@
-import type { Plan } from "#/domain/model";
 import type { PlanTasks, TaskRow } from "#/domain/ranges";
 import type { WeeklyAllowance } from "#/domain/value";
-import { formatCapShare, formatCount, formatUsd } from "#/lib/format";
+import { familyName } from "#/lib/families";
+import {
+	formatCapShare,
+	formatCount,
+	formatFasterFill,
+	formatUsd,
+} from "#/lib/format";
 import {
 	modelRow,
 	RangeChart,
@@ -20,7 +25,7 @@ const TASK_UNITS: RangeUnits = {
 function capSource(allowance: WeeklyAllowance): string {
 	switch (allowance.basis) {
 		case "estimated":
-			return `${allowance.source}. Not measured yet.`;
+			return `${allowance.source}. Not measured by us yet.`;
 		case "published":
 			return `${allowance.source}, averaged over the weeks of a month`;
 		case "measured":
@@ -28,19 +33,31 @@ function capSource(allowance: WeeklyAllowance): string {
 	}
 }
 
-/** The plan's whole weekly cap, or how its per-model allowance reads. */
-function capText({ capApiUsd, basis }: WeeklyAllowance): string {
+/**
+ * The plan's whole weekly cap, or how its per-model allowance reads. A model
+ * that fills the cap faster has a smaller one of its own, so the heading
+ * gives the largest: the model it is compared with.
+ */
+function capText({ capApiUsd, basis, fillsFaster }: WeeklyAllowance): string {
 	if (basis === "published") return "each model's monthly allowance, per week";
-	return `${formatUsd(capApiUsd)} a week at API prices`;
+	const fullest = capApiUsd * (fillsFaster?.times ?? 1);
+	return `${formatUsd(fullest)} a week at API prices`;
 }
 
-function PlanHeading({
-	plan,
-	allowance,
-}: {
-	plan: Plan;
-	allowance: WeeklyAllowance;
-}) {
+/** A sentence per model that fills the plan's cap faster than its fullest
+ * model, such as "Fable 5.2 fills it 2.4× faster than Opus 5.5." */
+function fasterFillNotes(rows: readonly TaskRow[]): string[] {
+	return rows.flatMap(({ family, allowance: { fillsFaster } }) =>
+		fillsFaster
+			? [
+					`${familyName(family)} fills it ${formatFasterFill(fillsFaster.times, familyName(fillsFaster.than))}.`,
+				]
+			: [],
+	);
+}
+
+function PlanHeading({ plan, rows }: PlanTasks) {
+	const { allowance } = rows[0];
 	return (
 		<>
 			<p className="flex flex-wrap items-baseline gap-x-2">
@@ -51,7 +68,7 @@ function PlanHeading({
 				</span>
 			</p>
 			<p className="mt-0.5 text-[12px] text-subtle [overflow-wrap:anywhere]">
-				{capSource(allowance)}
+				{[capSource(allowance), ...fasterFillNotes(rows)].join(" ")}
 			</p>
 		</>
 	);
@@ -68,7 +85,7 @@ function taskRow(row: TaskRow): RangeRow {
 function planGroup({ plan, rows }: PlanTasks): RangeGroup {
 	return {
 		id: plan.id,
-		heading: <PlanHeading plan={plan} allowance={rows[0].allowance} />,
+		heading: <PlanHeading plan={plan} rows={rows} />,
 		rows: rows.map(taskRow),
 	};
 }

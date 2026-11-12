@@ -23,7 +23,7 @@ const plan: Plan = {
 	confidence: "primary",
 	sourceUrl: "https://example.com/pricing",
 	reportedCap: {
-		weeklyCapApiUsd: 50,
+		weeklyCapApiUsdByFamily: { [opus]: 50 },
 		by: "Theo",
 		url: "https://example.com/video",
 		basis: capBasis,
@@ -52,11 +52,11 @@ const benchmark: BenchmarkPoint = {
 	outputPricePerMTokUsd: 25,
 };
 
-function markup() {
+function markup(onPlan = plan, benchmarks = [benchmark]) {
 	const points = valuePoints({
-		benchmarks: [benchmark],
-		families: [opus],
-		plans: [plan],
+		benchmarks,
+		families: onPlan.families,
+		plans: [onPlan],
 		samples: [],
 		showApi: false,
 		hiddenEfforts: [],
@@ -66,9 +66,31 @@ function markup() {
 
 describe("TasksChart", () => {
 	it("shows where a plan's cap comes from as visible text", () => {
-		const text = `${capBasis}. Not measured yet.`;
+		const text = `${capBasis}. Not measured by us yet.`;
 		const elementText = markup().replaceAll("&#x27;", "'");
 		expect(elementText).toContain(`>${text}</`);
+	});
+
+	it("heads a plan with its fullest cap and says why a model's quota is smaller", () => {
+		const fable = "claude-fable-5-2" as FamilyId;
+		const withFable: Plan = {
+			...plan,
+			families: [opus, fable],
+			reportedCap: {
+				...plan.reportedCap!,
+				weeklyCapApiUsdByFamily: { [fable]: 20, [opus]: 50 },
+			},
+			weeklyShareByFamily: { [fable]: 0.5 },
+		};
+		const html = markup(withFable, [
+			benchmark,
+			{ ...benchmark, id: "fable-low", family: fable, name: "Fable" },
+		]);
+		expect(html).toContain("$50 a week at API prices");
+		expect(html).toContain("· half the weekly cap<");
+		expect(html).toContain(
+			"Not measured by us yet. Fable 5.2 fills it 2.5× faster than Opus 5.5.",
+		);
 	});
 
 	it("names each model in the text colour, its brand on an SVG dot the PNG export draws", () => {

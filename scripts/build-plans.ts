@@ -17,6 +17,7 @@ import {
 	type PublishedAllowance,
 	type ReportedCap,
 } from "../src/domain/model.ts";
+import { claudeCap } from "./claude-caps.ts";
 import { OPENCODE_GO_USD, PLAN_FAMILIES } from "./plan-families.ts";
 
 const ROOT = new URL("..", import.meta.url);
@@ -93,41 +94,41 @@ const SHORT_LABELS: Record<string, string> = {
 	"opencode-go-plus": "OpenCode Go Plus",
 };
 
-// Theo (t3.gg), "OpenAI is getting desperate", 2026-11-02, from 5:08: "on the
-// $500 plan, you now get around $10.5,000 of usage. And on the $200 plan, you
-// get around 4.3K", and "the $200 Claude plan gets you 12 grand in usage".
+// Theo (t3.gg), "OpenAI is getting desperate", 2026-11-02, 5:08: "on the $500
+// plan, you now get around $10.5,000 of usage. And on the $200 plan... 4.3K".
 const THEO = "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s";
 const WEEKS_PER_MONTH = 52 / 12;
-const CLAUDE_MULTIPLIER = 60;
 const CODEX_PRO_MULTIPLIER = 21;
 /** Pro 100, 200 and 500 give 10x, 20x and 50x Plus's usage, so a Pro dollar
  * buys twice what a Plus dollar does. */
 const CODEX_PLUS_MULTIPLIER = CODEX_PRO_MULTIPLIER / 2;
 
 /**
- * API-priced dollars a month per subscription dollar: Theo's flat 60x on
- * Claude and 21x on every Codex Pro tier (2026-11-02), with Plus at half.
+ * API-priced dollars a month per subscription dollar: Theo's 21x on every
+ * Codex Pro tier (2026-11-02), with Plus at half.
  */
-const THEO_MULTIPLIERS: Record<string, number> = {
-	"claude-pro": CLAUDE_MULTIPLIER,
-	"claude-max-5x": CLAUDE_MULTIPLIER,
-	"claude-max-20x": CLAUDE_MULTIPLIER,
+const CODEX_MULTIPLIERS: Record<string, number> = {
 	"chatgpt-plus": CODEX_PLUS_MULTIPLIER,
 	"chatgpt-pro-100": CODEX_PRO_MULTIPLIER,
 	"chatgpt-pro-200": CODEX_PRO_MULTIPLIER,
 	"chatgpt-pro-500": CODEX_PRO_MULTIPLIER,
 };
 
-/** A reported weekly cap, used until a plan has measured samples. */
-function reportedCap(
+/** Theo's Codex weekly cap for each of the plan's models, or null for a plan
+ * he did not report. */
+function codexCap(
 	planId: string,
 	monthlyPriceUsd: number,
+	families: readonly string[],
 ): ReportedCap | null {
-	const multiplier = THEO_MULTIPLIERS[planId];
+	const multiplier = CODEX_MULTIPLIERS[planId];
 	if (multiplier === undefined) return null;
 	const monthlyApiUsd = monthlyPriceUsd * multiplier;
+	const weekly = monthlyApiUsd / WEEKS_PER_MONTH;
 	return {
-		weeklyCapApiUsd: monthlyApiUsd / WEEKS_PER_MONTH,
+		weeklyCapApiUsdByFamily: Object.fromEntries(
+			families.map((family) => [family, weekly]),
+		),
 		by: "Theo",
 		url: THEO,
 		basis: `Theo: ${multiplier}x the price, $${monthlyApiUsd.toLocaleString("en-US")} a month of API-priced inference`,
@@ -246,7 +247,10 @@ const plans = Plans.parse(
 				thirdPartyHarnessAllowed: p.thirdPartyHarnessAllowed,
 				confidence: p.confidence,
 				sourceUrl: p.sources[0].url,
-				reportedCap: reportedCap(p.planId, p.monthlyPriceUsd),
+				reportedCap:
+					lab === "anthropic"
+						? claudeCap(p.monthlyPriceUsd, families)
+						: codexCap(p.planId, p.monthlyPriceUsd, families),
 				publishedAllowance: publishedAllowance(p.planId),
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},

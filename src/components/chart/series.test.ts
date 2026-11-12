@@ -36,6 +36,7 @@ function plan(id: string, label: string): Pricing {
 			basis: "estimated",
 			source: "x",
 			share: 1,
+			fillsFaster: null,
 		},
 		valueMultiple: 1,
 	};

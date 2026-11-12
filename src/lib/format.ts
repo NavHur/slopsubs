@@ -94,3 +94,9 @@ export function formatCapShare(share: number): string | undefined {
 		? "half the weekly cap"
 		: `${Math.round(share * 100)}% of the weekly cap`;
 }
+
+/** How much faster a model fills a plan's weekly cap than the plan's model
+ * with the largest cap, named `than`: "2.4× faster than Opus 5.5". */
+export function formatFasterFill(times: number, than: string): string {
+	return `${formatMultiple(times)} faster than ${than}`;
+}

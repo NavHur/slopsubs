@@ -14,7 +14,7 @@ const FULL_GAUGE_PERCENT = 100;
 
 export type PlanCapacity =
 	| { kind: "unmeasured" }
-	| { kind: "reported"; weeklyCapApiUsd: number; report: ReportedCap }
+	| { kind: "reported"; report: ReportedCap }
 	| { kind: "published"; allowance: PublishedAllowance }
 	| {
 			kind: "measured";
@@ -53,9 +53,7 @@ function unsampledCapacity(plan: Plan): PlanCapacity {
 		return { kind: "published", allowance: plan.publishedAllowance };
 	}
 	const report = plan.reportedCap;
-	return report
-		? { kind: "reported", weeklyCapApiUsd: report.weeklyCapApiUsd, report }
-		: { kind: "unmeasured" };
+	return report ? { kind: "reported", report } : { kind: "unmeasured" };
 }
 
 /** How a plan's weekly cap is known. */
@@ -74,7 +72,15 @@ export type WeeklyAllowance = CapSource & {
 	capApiUsd: number;
 	/** Below 1 when the family only gets part of the cap. */
 	share: number;
+	/** Set when the family's cap is smaller than the plan's fullest one. */
+	fillsFaster: FasterFill | null;
 };
+
+/**
+ * A family that fills the weekly gauge faster per API dollar than `than`, the
+ * plan's model with the largest cap: `times` is that cap over the family's.
+ */
+export type FasterFill = { times: number; than: FamilyId };
 
 /**
  * The family's weekly allowance on the plan, or null when the plan's capacity
@@ -94,8 +100,26 @@ export function weeklyAllowance(
 			apiUsd: whole.apiUsd * share,
 			capApiUsd: whole.apiUsd,
 			share,
+			fillsFaster:
+				capacity.kind === "reported"
+					? fasterFill(capacity.report, whole.apiUsd)
+					: null,
 		}
 	);
+}
+
+/** How much faster a cap of `capApiUsd` fills than the report's largest; ties
+ * for the largest go to the first listed family. */
+function fasterFill(report: ReportedCap, capApiUsd: number): FasterFill | null {
+	const caps = Object.entries(report.weeklyCapApiUsdByFamily) as [
+		FamilyId,
+		number,
+	][];
+	const [than, fullest] = caps.reduce((best, entry) =>
+		entry[1] > best[1] ? entry : best,
+	);
+	if (fullest <= capApiUsd) return null;
+	return { times: fullest / capApiUsd, than };
 }
 
 function wholeWeeklyAllowance(
@@ -115,24 +139,27 @@ function wholeWeeklyAllowance(
 						source: capacity.allowance.basis,
 					};
 		}
-		case "reported":
-			return {
-				apiUsd: capacity.weeklyCapApiUsd,
-				basis: "estimated",
-				source: capacity.report.basis,
-			};
+		case "reported": {
+			const weekly = capacity.report.weeklyCapApiUsdByFamily[family];
+			return weekly === undefined
+				? null
+				: {
+						apiUsd: weekly,
+						basis: "estimated",
+						source: capacity.report.basis,
+					};
+		}
 		case "measured":
 			return { apiUsd: capacity.weeklyCapApiUsd, basis: "measured" };
 	}
 }
 
 /**
- * API-equivalent dollars a subscriber gets per dollar of subscription when
- * they use everything the plan offers: the family's whole weekly allowance
- * every week of the month plus bundled API credit. Below 1, paying per token
- * is cheaper. A family held to part of the cap spends the gauge at the same
- * rate per API dollar, so it keeps the plan's multiple; only its tasks a week
- * shrink.
+ * API-equivalent dollars per dollar of subscription at the family's full-gauge
+ * rate (its whole weekly cap every week of the month, plus bundled API credit),
+ * for comparing cost per task. Below 1, paying per token is cheaper. A family
+ * held to part of the cap keeps the multiple its own cap gives; the share
+ * limits only how much of it a week can use, so its tasks a week shrink.
  */
 export function valueMultiple({
 	plan,

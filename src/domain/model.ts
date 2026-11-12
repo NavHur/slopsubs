@@ -111,8 +111,11 @@ export type ChartData = z.infer<typeof ChartData>;
 
 /** A weekly cap someone else published, used until we measure our own. */
 const ReportedCap = z.object({
-	/** API-equivalent spend that fills the weekly cap once. */
-	weeklyCapApiUsd: Usd.positive(),
+	/**
+	 * API-equivalent spend on each model that fills the weekly cap once. Models
+	 * differ: a model that fills the gauge faster gets fewer API dollars.
+	 */
+	weeklyCapApiUsdByFamily: z.record(FamilyId, Usd.positive()),
 	by: z.string(),
 	url: z.url(),
 	/** How the figure was reached, shown next to it. */
@@ -160,8 +163,8 @@ const Plan = z.object({
 	/**
 	 * Fraction of the weekly cap a family may use, where below the whole cap:
 	 * Claude Max and Ultra give Fable "up to half your weekly limit". It limits
-	 * the family's tasks a week, not its price: the gauge fills at the plan's
-	 * usual rate per API dollar.
+	 * the family's tasks a week, not its price, which comes from the family's
+	 * own weekly cap.
 	 */
 	weeklyShareByFamily: z.record(z.string(), z.number().gt(0).lte(1)),
 	/** Highest effort the plan serves for a family, where below its maximum. */

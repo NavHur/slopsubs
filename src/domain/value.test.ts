@@ -74,7 +74,7 @@ function benchmark(
 
 describe("planCapacity", () => {
 	const reportedCap = {
-		weeklyCapApiUsd: 1800,
+		weeklyCapApiUsdByFamily: { [opus]: 1800 },
 		by: "Theo",
 		url: "https://example.com/video",
 		basis: "$8,000 a month",
@@ -87,7 +87,6 @@ describe("planCapacity", () => {
 	it("falls back to a reported cap without samples", () => {
 		expect(planCapacity({ ...plan, reportedCap }, [])).toEqual({
 			kind: "reported",
-			weeklyCapApiUsd: 1800,
 			report: reportedCap,
 		});
 	});
@@ -126,9 +125,8 @@ describe("weeklyAllowance", () => {
 	const fable = "claude-fable-5-1" as FamilyId;
 	const reported = {
 		kind: "reported",
-		weeklyCapApiUsd: 1000,
 		report: {
-			weeklyCapApiUsd: 1000,
+			weeklyCapApiUsdByFamily: { [opus]: 1000, [fable]: 1000 },
 			by: "Theo",
 			url: "https://example.com/video",
 			basis: "estimate",
@@ -142,6 +140,7 @@ describe("weeklyAllowance", () => {
 			basis: "estimated",
 			source: "estimate",
 			share: 1,
+			fillsFaster: null,
 		});
 	});
 
@@ -153,6 +152,41 @@ describe("weeklyAllowance", () => {
 			basis: "estimated",
 			source: "estimate",
 			share: 0.5,
+			fillsFaster: null,
+		});
+	});
+
+	it("gives each family its own reported cap, and none to an unreported one", () => {
+		const perModel = {
+			kind: "reported",
+			report: {
+				...reported.report,
+				weeklyCapApiUsdByFamily: { [opus]: 1000, [fable]: 400 },
+			},
+		} as const;
+		const both = { ...plan, families: [opus, fable] };
+		expect(weeklyAllowance(both, perModel, fable)).toMatchObject({
+			apiUsd: 400,
+			fillsFaster: { times: 2.5, than: opus },
+		});
+		expect(weeklyAllowance(both, perModel, opus)?.fillsFaster).toBeNull();
+		const sonnet = "claude-sonnet-5-5" as FamilyId;
+		expect(weeklyAllowance(both, perModel, sonnet)).toBeNull();
+	});
+
+	it("compares to the first listed family when caps tie for the largest", () => {
+		const sonnet = "claude-sonnet-5-5" as FamilyId;
+		const tied = {
+			kind: "reported",
+			report: {
+				...reported.report,
+				weeklyCapApiUsdByFamily: { [opus]: 1000, [sonnet]: 1000, [fable]: 400 },
+			},
+		} as const;
+		const all = { ...plan, families: [opus, sonnet, fable] };
+		expect(weeklyAllowance(all, tied, fable)?.fillsFaster).toEqual({
+			times: 2.5,
+			than: opus,
 		});
 	});
 
@@ -171,6 +205,7 @@ describe("weeklyAllowance", () => {
 			basis: "published",
 			source: "monthly usage by model",
 			share: 1,
+			fillsFaster: null,
 		});
 		expect(weeklyAllowance(plan, published, fable)).toBeNull();
 	});
@@ -186,6 +221,7 @@ describe("valueMultiple", () => {
 		capApiUsd: 1200,
 		basis: "measured",
 		share: 1,
+		fillsFaster: null,
 	} as const;
 
 	it("divides a month of weekly usage by the subscription price", () => {
