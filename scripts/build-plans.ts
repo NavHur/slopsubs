@@ -118,16 +118,21 @@ const THEO_MULTIPLIERS: Record<string, number> = {
 	"chatgpt-pro-500": CODEX_PRO_MULTIPLIER,
 };
 
-/** A reported weekly cap, used until a plan has measured samples. */
+/** A reported weekly cap for each of the plan's models, used until the plan
+ * has measured samples. */
 function reportedCap(
 	planId: string,
 	monthlyPriceUsd: number,
+	families: readonly string[],
 ): ReportedCap | null {
 	const multiplier = THEO_MULTIPLIERS[planId];
 	if (multiplier === undefined) return null;
 	const monthlyApiUsd = monthlyPriceUsd * multiplier;
+	const weekly = monthlyApiUsd / WEEKS_PER_MONTH;
 	return {
-		weeklyCapApiUsd: monthlyApiUsd / WEEKS_PER_MONTH,
+		weeklyCapApiUsdByFamily: Object.fromEntries(
+			families.map((family) => [family, weekly]),
+		),
 		by: "Theo",
 		url: THEO,
 		basis: `Theo: ${multiplier}x the price, $${monthlyApiUsd.toLocaleString("en-US")} a month of API-priced inference`,
@@ -246,7 +251,7 @@ const plans = Plans.parse(
 				thirdPartyHarnessAllowed: p.thirdPartyHarnessAllowed,
 				confidence: p.confidence,
 				sourceUrl: p.sources[0].url,
-				reportedCap: reportedCap(p.planId, p.monthlyPriceUsd),
+				reportedCap: reportedCap(p.planId, p.monthlyPriceUsd, families),
 				publishedAllowance: publishedAllowance(p.planId),
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},

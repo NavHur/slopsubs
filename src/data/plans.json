@@ -20,7 +20,11 @@
     "confidence": "primary",
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 276.92307692307696,
+      "weeklyCapApiUsdByFamily": {
+        "claude-opus-5-5": 276.92307692307696,
+        "claude-sonnet-5-5": 276.92307692307696,
+        "claude-haiku-5-5": 276.92307692307696
+      },
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
       "basis": "Theo: 60x the price, $1,200 a month of API-priced inference"
@@ -52,7 +56,12 @@
     "confidence": "primary",
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 1384.6153846153848,
+      "weeklyCapApiUsdByFamily": {
+        "claude-opus-5-5": 1384.6153846153848,
+        "claude-sonnet-5-5": 1384.6153846153848,
+        "claude-haiku-5-5": 1384.6153846153848,
+        "claude-fable-5-2": 1384.6153846153848
+      },
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
       "basis": "Theo: 60x the price, $6,000 a month of API-priced inference"
@@ -86,7 +95,12 @@
     "confidence": "primary",
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 2769.2307692307695,
+      "weeklyCapApiUsdByFamily": {
+        "claude-opus-5-5": 2769.2307692307695,
+        "claude-sonnet-5-5": 2769.2307692307695,
+        "claude-haiku-5-5": 2769.2307692307695,
+        "claude-fable-5-2": 2769.2307692307695
+      },
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
       "basis": "Theo: 60x the price, $12,000 a month of API-priced inference"
@@ -133,7 +147,12 @@
     "confidence": "primary",
     "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 48.46153846153847,
+      "weeklyCapApiUsdByFamily": {
+        "gpt-6-astra": 48.46153846153847,
+        "gpt-6-1-sol": 48.46153846153847,
+        "gpt-6-1-terra": 48.46153846153847,
+        "gpt-6-luna": 48.46153846153847
+      },
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
       "basis": "Theo: 10.5x the price, $210 a month of API-priced inference"
@@ -178,7 +197,12 @@
     "confidence": "primary",
     "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
     "reportedCap": {
-      "weeklyCapApiUsd": 484.61538461538464,
+      "weeklyCapApiUsdByFamily": {
+        "gpt-6-astra": 484.61538461538464,
+        "gpt-6-1-sol": 484.61538461538464,
+        "gpt-6-1-terra": 484.61538461538464,
+        "gpt-6-luna": 484.61538461538464
+      },
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
       "basis": "Theo: 21x the price, $2,100 a month of API-priced inference"
@@ -223,7 +247,12 @@
     "confidence": "primary",
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
     "reportedCap": {
-      "weeklyCapApiUsd": 969.2307692307693,
+      "weeklyCapApiUsdByFamily": {
+        "gpt-6-astra": 969.2307692307693,
+        "gpt-6-1-sol": 969.2307692307693,
+        "gpt-6-1-terra": 969.2307692307693,
+        "gpt-6-luna": 969.2307692307693
+      },
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
       "basis": "Theo: 21x the price, $4,200 a month of API-priced inference"
@@ -268,7 +297,12 @@
     "confidence": "primary",
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
     "reportedCap": {
-      "weeklyCapApiUsd": 2423.0769230769233,
+      "weeklyCapApiUsdByFamily": {
+        "gpt-6-astra": 2423.0769230769233,
+        "gpt-6-1-sol": 2423.0769230769233,
+        "gpt-6-1-terra": 2423.0769230769233,
+        "gpt-6-luna": 2423.0769230769233
+      },
       "by": "Theo",
       "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
       "basis": "Theo: 21x the price, $10,500 a month of API-priced inference"

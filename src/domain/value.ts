@@ -14,7 +14,7 @@ const FULL_GAUGE_PERCENT = 100;
 
 export type PlanCapacity =
 	| { kind: "unmeasured" }
-	| { kind: "reported"; weeklyCapApiUsd: number; report: ReportedCap }
+	| { kind: "reported"; report: ReportedCap }
 	| { kind: "published"; allowance: PublishedAllowance }
 	| {
 			kind: "measured";
@@ -53,9 +53,7 @@ function unsampledCapacity(plan: Plan): PlanCapacity {
 		return { kind: "published", allowance: plan.publishedAllowance };
 	}
 	const report = plan.reportedCap;
-	return report
-		? { kind: "reported", weeklyCapApiUsd: report.weeklyCapApiUsd, report }
-		: { kind: "unmeasured" };
+	return report ? { kind: "reported", report } : { kind: "unmeasured" };
 }
 
 /** How a plan's weekly cap is known. */
@@ -115,12 +113,16 @@ function wholeWeeklyAllowance(
 						source: capacity.allowance.basis,
 					};
 		}
-		case "reported":
-			return {
-				apiUsd: capacity.weeklyCapApiUsd,
-				basis: "estimated",
-				source: capacity.report.basis,
-			};
+		case "reported": {
+			const weekly = capacity.report.weeklyCapApiUsdByFamily[family];
+			return weekly === undefined
+				? null
+				: {
+						apiUsd: weekly,
+						basis: "estimated",
+						source: capacity.report.basis,
+					};
+		}
 		case "measured":
 			return { apiUsd: capacity.weeklyCapApiUsd, basis: "measured" };
 	}

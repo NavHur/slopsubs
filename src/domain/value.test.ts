@@ -74,7 +74,7 @@ function benchmark(
 
 describe("planCapacity", () => {
 	const reportedCap = {
-		weeklyCapApiUsd: 1800,
+		weeklyCapApiUsdByFamily: { [opus]: 1800 },
 		by: "Theo",
 		url: "https://example.com/video",
 		basis: "$8,000 a month",
@@ -87,7 +87,6 @@ describe("planCapacity", () => {
 	it("falls back to a reported cap without samples", () => {
 		expect(planCapacity({ ...plan, reportedCap }, [])).toEqual({
 			kind: "reported",
-			weeklyCapApiUsd: 1800,
 			report: reportedCap,
 		});
 	});
@@ -126,9 +125,8 @@ describe("weeklyAllowance", () => {
 	const fable = "claude-fable-5-1" as FamilyId;
 	const reported = {
 		kind: "reported",
-		weeklyCapApiUsd: 1000,
 		report: {
-			weeklyCapApiUsd: 1000,
+			weeklyCapApiUsdByFamily: { [opus]: 1000, [fable]: 1000 },
 			by: "Theo",
 			url: "https://example.com/video",
 			basis: "estimate",
@@ -154,6 +152,20 @@ describe("weeklyAllowance", () => {
 			source: "estimate",
 			share: 0.5,
 		});
+	});
+
+	it("gives each family its own reported cap, and none to an unreported one", () => {
+		const perModel = {
+			kind: "reported",
+			report: {
+				...reported.report,
+				weeklyCapApiUsdByFamily: { [opus]: 1000, [fable]: 400 },
+			},
+		} as const;
+		const both = { ...plan, families: [opus, fable] };
+		expect(weeklyAllowance(both, perModel, fable)?.apiUsd).toBe(400);
+		const sonnet = "claude-sonnet-5-5" as FamilyId;
+		expect(weeklyAllowance(both, perModel, sonnet)).toBeNull();
 	});
 
 	it("averages a published monthly allowance over the weeks of a month", () => {

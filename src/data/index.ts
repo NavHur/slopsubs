@@ -7,5 +7,5 @@ import samplesJson from "./samples.json";
 // the page skips parsing; the step through unknown is for JSON-widened enums.
 const chart = chartJson as unknown as ChartData;
 export const { frontier, leaderboards } = chart;
-export const plans = plansJson as Plan[];
+export const plans = plansJson as unknown as Plan[];
 export const samples = samplesJson as LimitSample[];

@@ -111,8 +111,11 @@ export type ChartData = z.infer<typeof ChartData>;
 
 /** A weekly cap someone else published, used until we measure our own. */
 const ReportedCap = z.object({
-	/** API-equivalent spend that fills the weekly cap once. */
-	weeklyCapApiUsd: Usd.positive(),
+	/**
+	 * API-equivalent spend on each model that fills the weekly cap once. Models
+	 * differ: a model that fills the gauge faster gets fewer API dollars.
+	 */
+	weeklyCapApiUsdByFamily: z.record(z.string(), Usd.positive()),
 	by: z.string(),
 	url: z.url(),
 	/** How the figure was reached, shown next to it. */

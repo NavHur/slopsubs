@@ -23,7 +23,7 @@ const plan: Plan = {
 	confidence: "primary",
 	sourceUrl: "https://example.com/pricing",
 	reportedCap: {
-		weeklyCapApiUsd: 50,
+		weeklyCapApiUsdByFamily: { [opus]: 50 },
 		by: "Theo",
 		url: "https://example.com/video",
 		basis: capBasis,
