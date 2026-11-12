@@ -45,6 +45,11 @@ describe("litModels", () => {
 		expect(litModels(null, gemini)).toEqual([gemini]);
 	});
 
+	it("falls back to the resting models when nothing else stands out", () => {
+		expect(litModels(null, null, [gpt, haiku])).toEqual([gpt, haiku]);
+		expect(litModels(null, gemini, [gpt])).toEqual([gemini]);
+	});
+
 	it("fades nothing when nothing stands out", () => {
 		expect(isFaded(litModels(null, null), gpt)).toBe(false);
 	});

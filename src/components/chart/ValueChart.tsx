@@ -10,6 +10,7 @@ import {
 	Axes,
 	ModelLegend,
 	ModelTags,
+	type LineEmphasis,
 	ParetoLine,
 	SeriesLine,
 } from "./ChartParts";
@@ -24,7 +25,7 @@ import {
 	xTicks,
 } from "./geometry";
 import { highlightedModel, useModelHighlight } from "./highlight";
-import { litModels } from "./litModels";
+import { type LitModels, litModels } from "./litModels";
 import { usePointDetails } from "./pointDetails";
 import { PointTooltip } from "./PointTooltip";
 import {
@@ -37,18 +38,62 @@ import {
 import { useChartRef } from "./useChartRef";
 
 /**
- * A line fades unless it holds a shown point (the hovered one and any it is
- * compared with) or, with none shown, belongs to the highlighted model.
+ * The Pareto frontier's `vertices`, the plotted points on it (`lit`, which
+ * includes points tied with a vertex), and their models; all empty in NO_FRONTIER.
  */
-function isDimmed(
+type Frontier = {
+	vertices: readonly ValuePoint[];
+	lit: ReadonlySet<ValuePoint>;
+	models: LitModels;
+};
+
+const NO_FRONTIER: Frontier = {
+	vertices: [],
+	lit: new Set<ValuePoint>(),
+	models: [],
+};
+
+const tieKey = (p: ValuePoint) => `${p.costPerTaskUsd}|${p.score}`;
+
+function frontierOf(points: readonly ValuePoint[]): Frontier {
+	const vertices = paretoFrontier(points);
+	const vertexKeys = new Set(vertices.map(tieKey));
+	const lit = points.filter((p) => vertexKeys.has(tieKey(p)));
+	return {
+		vertices,
+		lit: new Set(lit),
+		models: [...new Set(lit.map((p) => p.benchmark.family))],
+	};
+}
+
+function useFrontier(points: readonly ValuePoint[], showPareto: boolean) {
+	return useMemo(
+		() => (showPareto ? frontierOf(points) : NO_FRONTIER),
+		[points, showPareto],
+	);
+}
+
+const litIf = (lit: boolean): LineEmphasis => ({
+	kind: lit ? "lit" : "dimmed",
+});
+
+/**
+ * A line draws whole if it holds a shown point (the hovered one and any it is
+ * compared with); with none shown, if it belongs to the highlighted model.
+ * With neither, a shown Pareto frontier keeps only its own points lit.
+ */
+function emphasisOf(
 	series: Series,
 	shownPoints: readonly ValuePoint[],
 	highlighted: FamilyId | null,
-) {
+	frontier: Frontier,
+): LineEmphasis {
 	if (shownPoints.length > 0) {
-		return !shownPoints.some((p) => p.seriesId === series.id);
+		return litIf(shownPoints.some((p) => p.seriesId === series.id));
 	}
-	return highlighted !== null && highlighted !== series.modelId;
+	if (highlighted !== null) return litIf(highlighted === series.modelId);
+	if (frontier.vertices.length === 0) return { kind: "lit" };
+	return { kind: "points", lit: frontier.lit };
 }
 
 /** Where each model's name sits beside the plot, spread so none overlap. */
@@ -89,6 +134,7 @@ export function ValueChart({
 	const series = useMemo(() => buildSeries(points), [points]);
 	const models = useMemo(() => groupByModel(series), [series]);
 	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
+	const frontier = useFrontier(points, showPareto);
 	const [shown, dispatchHighlight] = useModelHighlight(plotted);
 	useChartEscape(element, [
 		{
@@ -118,7 +164,7 @@ export function ValueChart({
 	const { x, y, right } = makeScales(points, scale, width, layout);
 	const labels = endLabels(models, y, layout);
 	const highlighted = highlightedModel(shown);
-	const lit = litModels(details, highlighted);
+	const lit = litModels(details, highlighted, frontier.models);
 	// Shown points are projected once; the guides, pills and tooltip share them.
 	const crosshairs = shownCrosshairs(
 		details,
@@ -152,9 +198,7 @@ export function ValueChart({
 					readouts={crosshairs.map((c) => c.readouts)}
 					axisLabel={benchmark.axisLabel}
 				/>
-				{showPareto && (
-					<ParetoLine points={paretoFrontier(points)} x={x} y={y} />
-				)}
+				{showPareto && <ParetoLine points={frontier.vertices} x={x} y={y} />}
 				{crosshairs.map((c) => (
 					<Crosshair
 						key={c.solid ? "selected" : "shown"}
@@ -171,7 +215,7 @@ export function ValueChart({
 						x={x}
 						y={y}
 						shownPoints={shownPoints}
-						dimmed={isDimmed(s, shownPoints, highlighted)}
+						emphasis={emphasisOf(s, shownPoints, highlighted, frontier)}
 						onDetails={dispatchDetails}
 						benchmark={benchmark}
 					/>

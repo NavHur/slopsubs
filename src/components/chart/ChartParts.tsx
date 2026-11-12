@@ -115,7 +115,7 @@ export function ParetoLine({
 	x,
 	y,
 }: {
-	points: ValuePoint[];
+	points: readonly ValuePoint[];
 	x: XScale;
 	y: ScaleLinear<number, number>;
 }) {
@@ -160,6 +160,29 @@ export function onKeyboardFocus(action: () => void) {
 	};
 }
 
+/** How strongly a line draws: whole, faded, or faded but for some points. */
+export type LineEmphasis =
+	| { kind: "lit" }
+	| { kind: "dimmed" }
+	| { kind: "points"; lit: ReadonlySet<ValuePoint> };
+
+const DIMMED_OPACITY = 0.15;
+
+/**
+ * A whole or dimmed series fades as one group, so a hollow marker hides the
+ * line beneath it; only `points` fades its line and each point on their own.
+ */
+const groupOpacity = (emphasis: LineEmphasis) =>
+	emphasis.kind === "dimmed" ? DIMMED_OPACITY : 1;
+
+const lineOpacity = (emphasis: LineEmphasis) =>
+	emphasis.kind === "points" ? DIMMED_OPACITY : undefined;
+
+function pointOpacity(emphasis: LineEmphasis, point: ValuePoint) {
+	if (emphasis.kind !== "points") return undefined;
+	return emphasis.lit.has(point) ? 1 : DIMMED_OPACITY;
+}
+
 /**
  * Hover or focus previews a point's details; click, Enter or Space pins them,
  * or unpins them.
@@ -169,7 +192,7 @@ export function SeriesLine({
 	x,
 	y,
 	shownPoints,
-	dimmed,
+	emphasis,
 	onDetails,
 	benchmark,
 }: {
@@ -178,33 +201,40 @@ export function SeriesLine({
 	y: ScaleLinear<number, number>;
 	/** The points whose details show, drawn larger. */
 	shownPoints: readonly ValuePoint[];
-	dimmed: boolean;
+	emphasis: LineEmphasis;
 	onDetails: (event: PointDetailsEvent) => void;
 	/** Names and formats the points' scores for screen readers. */
 	benchmark: BenchmarkView;
 }) {
 	const { isApi, lineWidth } = series.pricing;
 	return (
-		<g opacity={dimmed ? 0.15 : 1} className="transition-opacity">
-			<path
-				d={pathOf(series.points, x, y)}
-				fill="none"
-				stroke={series.color}
-				strokeWidth={lineWidth}
-				strokeDasharray={isApi ? API_DASH : undefined}
-				opacity={isApi ? 0.6 : 1}
-			/>
-			{series.points.map((p) => (
-				<SeriesPoint
-					key={p.benchmark.id}
-					series={series}
-					point={p}
-					x={x}
-					y={y}
-					shown={shownPoints.includes(p)}
-					onDetails={onDetails}
-					benchmark={benchmark}
+		<g opacity={groupOpacity(emphasis)} className="transition-opacity">
+			<g opacity={lineOpacity(emphasis)} className="transition-opacity">
+				<path
+					d={pathOf(series.points, x, y)}
+					fill="none"
+					stroke={series.color}
+					strokeWidth={lineWidth}
+					strokeDasharray={isApi ? API_DASH : undefined}
+					opacity={isApi ? 0.6 : 1}
 				/>
+			</g>
+			{series.points.map((p) => (
+				<g
+					key={p.benchmark.id}
+					opacity={pointOpacity(emphasis, p)}
+					className="transition-opacity"
+				>
+					<SeriesPoint
+						series={series}
+						point={p}
+						x={x}
+						y={y}
+						shown={shownPoints.includes(p)}
+						onDetails={onDetails}
+						benchmark={benchmark}
+					/>
+				</g>
 			))}
 		</g>
 	);
