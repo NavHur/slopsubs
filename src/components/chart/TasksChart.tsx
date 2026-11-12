@@ -26,7 +26,7 @@ const TASK_UNITS: RangeUnits = {
 function capSource(allowance: WeeklyAllowance): string {
 	switch (allowance.basis) {
 		case "estimated":
-			return `${allowance.source}. Not measured yet.`;
+			return `${allowance.source}. Not measured by us yet.`;
 		case "published":
 			return `${allowance.source}, averaged over the weeks of a month`;
 		case "measured":

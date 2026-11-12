@@ -66,7 +66,7 @@ function markup(onPlan = plan, benchmarks = [benchmark]) {
 
 describe("TasksChart", () => {
 	it("shows where a plan's cap comes from as visible text", () => {
-		const text = `${capBasis}. Not measured yet.`;
+		const text = `${capBasis}. Not measured by us yet.`;
 		const elementText = markup().replaceAll("&#x27;", "'");
 		expect(elementText).toContain(`>${text}</`);
 	});

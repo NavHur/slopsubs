@@ -87,7 +87,7 @@ function PlanValue({ plan, capacity }: ValuedPlan) {
 			rel="noreferrer"
 			onClick={(event) => event.stopPropagation()}
 			className="whitespace-nowrap tabular-nums text-[12px] text-muted underline decoration-dotted underline-offset-2 hover:text-fg"
-			title={`${source.basis}. Not measured yet.`}
+			title={`${source.basis}. Not measured by us yet.`}
 		>
 			{text}
 		</a>
