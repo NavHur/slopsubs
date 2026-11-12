@@ -8,8 +8,8 @@ import { PLAN_FAMILIES } from "./plan-families.ts";
 // Nov 9, 2026. "One week of only Opus 5.5 is worth $3,421." Fable "has its own
 // limit, and it is half of each week": a 30-day month of only Fable 5.2 is
 // worth $3,021, and of Fable 5.1 $2,197, which Max and Ultra no longer serve.
-const THEO_ULTRA =
-	"https://github.com/NavHur/slopsubs/blob/main/research/theo-claude-ultra-2026-11.png";
+// A copy of the chart is kept at research/theo-claude-ultra-2026-11.png.
+const THEO_ULTRA = "https://x.com/theo/status/2119960608816988596";
 const THEO_WEEKS_PER_MONTH = 30 / 7;
 const ULTRA = "claude-max-20x";
 const ULTRA_PRICE_USD = 200;
