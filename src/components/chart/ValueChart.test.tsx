@@ -80,11 +80,17 @@ function pointOpacities(html: string, points: readonly ValuePoint[]) {
 	});
 }
 
-/** Each point's series line, found as the path before the series' first point. */
+const LINE_WRAPPER = /<g opacity="([\d.]+)"[^>]*>$/;
+
+/** Each series' line wrapper: the group opening right at the path before its first point. */
 function lineOpacities(html: string, firstPoints: readonly ValuePoint[]) {
 	return firstPoints.map((p) => {
 		const before = html.slice(0, indexOfLabel(html, pointLabelOf(p)));
-		return opacitiesIn(before.slice(0, before.lastIndexOf("<path d="))).at(-1);
+		const wrapper = before
+			.slice(0, before.lastIndexOf("<path d="))
+			.match(LINE_WRAPPER);
+		if (!wrapper) throw new Error("the series' line has no opacity wrapper");
+		return Number(wrapper[1]);
 	});
 }
 
