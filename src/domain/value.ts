@@ -108,7 +108,8 @@ export function weeklyAllowance(
 	);
 }
 
-/** How much faster a cap of `capApiUsd` fills than the report's largest. */
+/** How much faster a cap of `capApiUsd` fills than the report's largest; ties
+ * for the largest go to the first listed family. */
 function fasterFill(report: ReportedCap, capApiUsd: number): FasterFill | null {
 	const caps = Object.entries(report.weeklyCapApiUsdByFamily) as [
 		FamilyId,
@@ -154,11 +155,11 @@ function wholeWeeklyAllowance(
 }
 
 /**
- * API-equivalent dollars a subscriber gets per dollar of subscription when
- * they use everything the plan offers: the family's whole weekly allowance
- * every week of the month plus bundled API credit. Below 1, paying per token
- * is cheaper. A family held to part of the cap keeps the multiple its own cap
- * gives; only its tasks a week shrink.
+ * API-equivalent dollars per dollar of subscription at the family's full-gauge
+ * rate (its whole weekly cap every week of the month, plus bundled API credit),
+ * for comparing cost per task. Below 1, paying per token is cheaper. A family
+ * held to part of the cap keeps the multiple its own cap gives; the share
+ * limits only how much of it a week can use, so its tasks a week shrink.
  */
 export function valueMultiple({
 	plan,

@@ -174,6 +174,22 @@ describe("weeklyAllowance", () => {
 		expect(weeklyAllowance(both, perModel, sonnet)).toBeNull();
 	});
 
+	it("compares to the first listed family when caps tie for the largest", () => {
+		const sonnet = "claude-sonnet-5-5" as FamilyId;
+		const tied = {
+			kind: "reported",
+			report: {
+				...reported.report,
+				weeklyCapApiUsdByFamily: { [opus]: 1000, [sonnet]: 1000, [fable]: 400 },
+			},
+		} as const;
+		const all = { ...plan, families: [opus, sonnet, fable] };
+		expect(weeklyAllowance(all, tied, fable)?.fillsFaster).toEqual({
+			times: 2.5,
+			than: opus,
+		});
+	});
+
 	it("averages a published monthly allowance over the weeks of a month", () => {
 		const published = {
 			kind: "published",
