@@ -1,4 +1,3 @@
-import type { Plan } from "#/domain/model";
 import type { PlanTasks, TaskRow } from "#/domain/ranges";
 import type { WeeklyAllowance } from "#/domain/value";
 import { familyName } from "#/lib/families";
@@ -45,23 +44,20 @@ function capText({ capApiUsd, basis, fillsFaster }: WeeklyAllowance): string {
 	return `${formatUsd(fullest)} a week at API prices`;
 }
 
-/** Why a model's quota is below the plan's whole cap, if it is. */
-function quotaNote({ share, fillsFaster }: WeeklyAllowance) {
-	const notes = [
-		formatCapShare(share),
-		fillsFaster &&
-			`fills it ${formatFasterFill(fillsFaster.times, familyName(fillsFaster.than))}`,
-	].filter(Boolean);
-	return notes.length ? notes.join(", ") : undefined;
+/** A sentence per model that fills the plan's cap faster than its fullest
+ * model, such as "Fable 5.2 fills it 2.4× faster than Opus 5.5." */
+function fasterFillNotes(rows: readonly TaskRow[]): string[] {
+	return rows.flatMap(({ family, allowance: { fillsFaster } }) =>
+		fillsFaster
+			? [
+					`${familyName(family)} fills it ${formatFasterFill(fillsFaster.times, familyName(fillsFaster.than))}.`,
+				]
+			: [],
+	);
 }
 
-function PlanHeading({
-	plan,
-	allowance,
-}: {
-	plan: Plan;
-	allowance: WeeklyAllowance;
-}) {
+function PlanHeading({ plan, rows }: PlanTasks) {
+	const { allowance } = rows[0];
 	return (
 		<>
 			<p className="flex flex-wrap items-baseline gap-x-2">
@@ -72,7 +68,7 @@ function PlanHeading({
 				</span>
 			</p>
 			<p className="mt-0.5 text-[12px] text-subtle [overflow-wrap:anywhere]">
-				{capSource(allowance)}
+				{[capSource(allowance), ...fasterFillNotes(rows)].join(" ")}
 			</p>
 		</>
 	);
@@ -81,7 +77,7 @@ function PlanHeading({
 function taskRow(row: TaskRow): RangeRow {
 	const { allowance } = row;
 	return modelRow(row, {
-		note: quotaNote(allowance),
+		note: formatCapShare(allowance.share),
 		hollow: allowance.basis === "estimated",
 	});
 }
@@ -89,7 +85,7 @@ function taskRow(row: TaskRow): RangeRow {
 function planGroup({ plan, rows }: PlanTasks): RangeGroup {
 	return {
 		id: plan.id,
-		heading: <PlanHeading plan={plan} allowance={rows[0].allowance} />,
+		heading: <PlanHeading plan={plan} rows={rows} />,
 		rows: rows.map(taskRow),
 	};
 }

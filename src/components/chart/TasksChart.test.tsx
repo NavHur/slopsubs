@@ -87,8 +87,9 @@ describe("TasksChart", () => {
 			{ ...benchmark, id: "fable-low", family: fable, name: "Fable" },
 		]);
 		expect(html).toContain("$50 a week at API prices");
+		expect(html).toContain("· half the weekly cap<");
 		expect(html).toContain(
-			"half the weekly cap, fills it 2.5× faster than Opus 5.5",
+			"Not measured by us yet. Fable 5.2 fills it 2.5× faster than Opus 5.5.",
 		);
 	});
 
