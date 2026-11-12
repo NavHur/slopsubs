@@ -132,9 +132,8 @@ function wholeWeeklyAllowance(
  * API-equivalent dollars a subscriber gets per dollar of subscription when
  * they use everything the plan offers: the family's whole weekly allowance
  * every week of the month plus bundled API credit. Below 1, paying per token
- * is cheaper. A family held to part of the cap spends the gauge at the same
- * rate per API dollar, so it keeps the plan's multiple; only its tasks a week
- * shrink.
+ * is cheaper. A family held to part of the cap keeps the multiple its own cap
+ * gives; only its tasks a week shrink.
  */
 export function valueMultiple({
 	plan,

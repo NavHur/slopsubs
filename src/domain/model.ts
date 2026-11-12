@@ -163,8 +163,8 @@ const Plan = z.object({
 	/**
 	 * Fraction of the weekly cap a family may use, where below the whole cap:
 	 * Claude Max and Ultra give Fable "up to half your weekly limit". It limits
-	 * the family's tasks a week, not its price: the gauge fills at the plan's
-	 * usual rate per API dollar.
+	 * the family's tasks a week, not its price, which comes from the family's
+	 * own weekly cap.
 	 */
 	weeklyShareByFamily: z.record(z.string(), z.number().gt(0).lte(1)),
 	/** Highest effort the plan serves for a family, where below its maximum. */

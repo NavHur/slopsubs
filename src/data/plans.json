@@ -21,13 +21,13 @@
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
       "weeklyCapApiUsdByFamily": {
-        "claude-opus-5-5": 276.92307692307696,
-        "claude-sonnet-5-5": 276.92307692307696,
-        "claude-haiku-5-5": 276.92307692307696
+        "claude-opus-5-5": 342.1,
+        "claude-sonnet-5-5": 342.1,
+        "claude-haiku-5-5": 342.1
       },
       "by": "Theo",
-      "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
-      "basis": "Theo: 60x the price, $1,200 a month of API-priced inference"
+      "url": "https://github.com/NavHur/slopsubs/blob/main/research/theo-claude-ultra-2026-11.png",
+      "basis": "Theo's Ultra measurement from 1.1M requests, scaled to the $20 price"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
@@ -57,14 +57,14 @@
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
       "weeklyCapApiUsdByFamily": {
-        "claude-opus-5-5": 1384.6153846153848,
-        "claude-sonnet-5-5": 1384.6153846153848,
-        "claude-haiku-5-5": 1384.6153846153848,
-        "claude-fable-5-2": 1384.6153846153848
+        "claude-opus-5-5": 1710.5,
+        "claude-sonnet-5-5": 1710.5,
+        "claude-haiku-5-5": 1710.5,
+        "claude-fable-5-2": 704.9
       },
       "by": "Theo",
-      "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
-      "basis": "Theo: 60x the price, $6,000 a month of API-priced inference"
+      "url": "https://github.com/NavHur/slopsubs/blob/main/research/theo-claude-ultra-2026-11.png",
+      "basis": "Theo's Ultra measurement from 1.1M requests, scaled to the $100 price"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {
@@ -96,14 +96,14 @@
     "sourceUrl": "https://claude.com/pricing",
     "reportedCap": {
       "weeklyCapApiUsdByFamily": {
-        "claude-opus-5-5": 2769.2307692307695,
-        "claude-sonnet-5-5": 2769.2307692307695,
-        "claude-haiku-5-5": 2769.2307692307695,
-        "claude-fable-5-2": 2769.2307692307695
+        "claude-opus-5-5": 3421,
+        "claude-sonnet-5-5": 3421,
+        "claude-haiku-5-5": 3421,
+        "claude-fable-5-2": 1409.8
       },
       "by": "Theo",
-      "url": "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
-      "basis": "Theo: 60x the price, $12,000 a month of API-priced inference"
+      "url": "https://github.com/NavHur/slopsubs/blob/main/research/theo-claude-ultra-2026-11.png",
+      "basis": "Theo measured Ultra from 1.1M requests"
     },
     "publishedAllowance": null,
     "weeklyShareByFamily": {
