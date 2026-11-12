@@ -8,6 +8,7 @@ import {
 	formatCapShare,
 	formatDay,
 	formatDuration,
+	formatFasterFill,
 	formatTokens,
 	formatUsd,
 } from "#/lib/format";
@@ -36,8 +37,9 @@ function useBorderBox<T extends HTMLElement>() {
 }
 
 /**
- * How a plan point compares with paying per token. A model held to part of the
- * cap keeps the plan's discount; the note says its weekly quota is smaller.
+ * How a plan point compares with paying per token. The notes say when the
+ * model's weekly quota is smaller: held to part of the cap, or filling it
+ * faster per API dollar than the plan's other models.
  */
 function PlanPricing({
 	pricing,
@@ -46,7 +48,8 @@ function PlanPricing({
 	pricing: Extract<Pricing, { kind: "plan" }>;
 	apiCostPerTaskUsd: number;
 }) {
-	const cap = formatCapShare(pricing.allowance.share);
+	const { share, fillsFaster } = pricing.allowance;
+	const cap = formatCapShare(share);
 	return (
 		<>
 			<p className="mt-2 border-t border-line pt-2">
@@ -58,6 +61,11 @@ function PlanPricing({
 				</span>
 			</p>
 			{cap && <p className="text-muted">{`Up to ${cap}`}</p>}
+			{fillsFaster && (
+				<p className="text-muted">
+					{`Fills the cap ${formatFasterFill(fillsFaster.times, familyName(fillsFaster.than))}`}
+				</p>
+			)}
 		</>
 	);
 }

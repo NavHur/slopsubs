@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
 import type { FamilyId, Plan, PlanId } from "#/domain/model";
-import type { ValuePoint } from "#/domain/value";
+import type { ValuePoint, WeeklyAllowance } from "#/domain/value";
 import { BENCHMARK_VIEWS, type BenchmarkView } from "#/lib/benchmarks";
 import { familyColor } from "#/lib/families";
 import { PointTooltip } from "./PointTooltip";
@@ -101,14 +101,18 @@ describe("point tooltip", () => {
 		);
 	});
 
-	function onUltra(share: number): ValuePoint {
-		const allowance = {
+	function onUltra(
+		share: number,
+		fillsFaster: WeeklyAllowance["fillsFaster"] = null,
+	): ValuePoint {
+		const allowance: WeeklyAllowance = {
 			apiUsd: 100 * share,
 			capApiUsd: 100,
 			basis: "estimated",
 			source: "estimate",
 			share,
-		} as const;
+			fillsFaster,
+		};
 		return {
 			...point,
 			pricing: { kind: "plan", plan, allowance, valueMultiple: 3 },
@@ -118,6 +122,13 @@ describe("point tooltip", () => {
 	it("says when the plan holds the model to part of its weekly cap", () => {
 		expect(tooltipText(BENCHMARK_VIEWS.intelligence, onUltra(0.5))).toMatch(
 			/Up to half the weekly cap/,
+		);
+	});
+
+	it("says how much faster the model fills the cap than the plan's fullest model", () => {
+		const fable = onUltra(0.5, { times: 2.43, than: opus });
+		expect(tooltipText(BENCHMARK_VIEWS.intelligence, fable)).toMatch(
+			/Fills the cap 2\.4× faster than Opus 5\.5/,
 		);
 	});
 

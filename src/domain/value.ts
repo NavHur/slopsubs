@@ -72,7 +72,15 @@ export type WeeklyAllowance = CapSource & {
 	capApiUsd: number;
 	/** Below 1 when the family only gets part of the cap. */
 	share: number;
+	/** Set when the family's cap is smaller than the plan's fullest one. */
+	fillsFaster: FasterFill | null;
 };
+
+/**
+ * A family that fills the weekly gauge faster per API dollar than `than`, the
+ * plan's model with the largest cap: `times` is that cap over the family's.
+ */
+export type FasterFill = { times: number; than: FamilyId };
 
 /**
  * The family's weekly allowance on the plan, or null when the plan's capacity
@@ -92,8 +100,25 @@ export function weeklyAllowance(
 			apiUsd: whole.apiUsd * share,
 			capApiUsd: whole.apiUsd,
 			share,
+			fillsFaster:
+				capacity.kind === "reported"
+					? fasterFill(capacity.report, whole.apiUsd)
+					: null,
 		}
 	);
+}
+
+/** How much faster a cap of `capApiUsd` fills than the report's largest. */
+function fasterFill(report: ReportedCap, capApiUsd: number): FasterFill | null {
+	const caps = Object.entries(report.weeklyCapApiUsdByFamily) as [
+		FamilyId,
+		number,
+	][];
+	const [than, fullest] = caps.reduce((best, entry) =>
+		entry[1] > best[1] ? entry : best,
+	);
+	if (fullest <= capApiUsd) return null;
+	return { times: fullest / capApiUsd, than };
 }
 
 function wholeWeeklyAllowance(

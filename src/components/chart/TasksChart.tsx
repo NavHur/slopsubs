@@ -1,7 +1,13 @@
 import type { Plan } from "#/domain/model";
 import type { PlanTasks, TaskRow } from "#/domain/ranges";
 import type { WeeklyAllowance } from "#/domain/value";
-import { formatCapShare, formatCount, formatUsd } from "#/lib/format";
+import { familyName } from "#/lib/families";
+import {
+	formatCapShare,
+	formatCount,
+	formatFasterFill,
+	formatUsd,
+} from "#/lib/format";
 import {
 	modelRow,
 	RangeChart,
@@ -28,10 +34,25 @@ function capSource(allowance: WeeklyAllowance): string {
 	}
 }
 
-/** The plan's whole weekly cap, or how its per-model allowance reads. */
-function capText({ capApiUsd, basis }: WeeklyAllowance): string {
+/**
+ * The plan's whole weekly cap, or how its per-model allowance reads. A model
+ * that fills the cap faster has a smaller one of its own, so the heading
+ * gives the largest: the model it is compared with.
+ */
+function capText({ capApiUsd, basis, fillsFaster }: WeeklyAllowance): string {
 	if (basis === "published") return "each model's monthly allowance, per week";
-	return `${formatUsd(capApiUsd)} a week at API prices`;
+	const fullest = capApiUsd * (fillsFaster?.times ?? 1);
+	return `${formatUsd(fullest)} a week at API prices`;
+}
+
+/** Why a model's quota is below the plan's whole cap, if it is. */
+function quotaNote({ share, fillsFaster }: WeeklyAllowance) {
+	const notes = [
+		formatCapShare(share),
+		fillsFaster &&
+			`fills it ${formatFasterFill(fillsFaster.times, familyName(fillsFaster.than))}`,
+	].filter(Boolean);
+	return notes.length ? notes.join(", ") : undefined;
 }
 
 function PlanHeading({
@@ -60,7 +81,7 @@ function PlanHeading({
 function taskRow(row: TaskRow): RangeRow {
 	const { allowance } = row;
 	return modelRow(row, {
-		note: formatCapShare(allowance.share),
+		note: quotaNote(allowance),
 		hollow: allowance.basis === "estimated",
 	});
 }

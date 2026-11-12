@@ -140,6 +140,7 @@ describe("weeklyAllowance", () => {
 			basis: "estimated",
 			source: "estimate",
 			share: 1,
+			fillsFaster: null,
 		});
 	});
 
@@ -151,6 +152,7 @@ describe("weeklyAllowance", () => {
 			basis: "estimated",
 			source: "estimate",
 			share: 0.5,
+			fillsFaster: null,
 		});
 	});
 
@@ -163,7 +165,11 @@ describe("weeklyAllowance", () => {
 			},
 		} as const;
 		const both = { ...plan, families: [opus, fable] };
-		expect(weeklyAllowance(both, perModel, fable)?.apiUsd).toBe(400);
+		expect(weeklyAllowance(both, perModel, fable)).toMatchObject({
+			apiUsd: 400,
+			fillsFaster: { times: 2.5, than: opus },
+		});
+		expect(weeklyAllowance(both, perModel, opus)?.fillsFaster).toBeNull();
 		const sonnet = "claude-sonnet-5-5" as FamilyId;
 		expect(weeklyAllowance(both, perModel, sonnet)).toBeNull();
 	});
@@ -183,6 +189,7 @@ describe("weeklyAllowance", () => {
 			basis: "published",
 			source: "monthly usage by model",
 			share: 1,
+			fillsFaster: null,
 		});
 		expect(weeklyAllowance(plan, published, fable)).toBeNull();
 	});
@@ -198,6 +205,7 @@ describe("valueMultiple", () => {
 		capApiUsd: 1200,
 		basis: "measured",
 		share: 1,
+		fillsFaster: null,
 	} as const;
 
 	it("divides a month of weekly usage by the subscription price", () => {
