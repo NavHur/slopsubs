@@ -24,7 +24,7 @@ import {
 	xTicks,
 } from "./geometry";
 import { highlightedModel, useModelHighlight } from "./highlight";
-import { litModels } from "./litModels";
+import { type LitModels, litModels } from "./litModels";
 import { usePointDetails } from "./pointDetails";
 import { PointTooltip } from "./PointTooltip";
 import {
@@ -37,18 +37,43 @@ import {
 import { useChartRef } from "./useChartRef";
 
 /**
+ * The shown Pareto frontier, and the series and models with a point on it;
+ * all empty while the frontier is hidden.
+ */
+type Frontier = {
+	points: ValuePoint[];
+	seriesIds: ReadonlySet<string>;
+	models: LitModels;
+};
+
+function shownFrontier(
+	points: readonly ValuePoint[],
+	shown: boolean,
+): Frontier {
+	const frontier = shown ? paretoFrontier(points) : [];
+	return {
+		points: frontier,
+		seriesIds: new Set(frontier.map((p) => p.seriesId)),
+		models: [...new Set(frontier.map((p) => p.benchmark.family))],
+	};
+}
+
+/**
  * A line fades unless it holds a shown point (the hovered one and any it is
- * compared with) or, with none shown, belongs to the highlighted model.
+ * compared with); with none shown, unless it belongs to the highlighted
+ * model; with neither, unless it reaches the shown Pareto frontier.
  */
 function isDimmed(
 	series: Series,
 	shownPoints: readonly ValuePoint[],
 	highlighted: FamilyId | null,
+	frontier: Frontier,
 ) {
 	if (shownPoints.length > 0) {
 		return !shownPoints.some((p) => p.seriesId === series.id);
 	}
-	return highlighted !== null && highlighted !== series.modelId;
+	if (highlighted !== null) return highlighted !== series.modelId;
+	return frontier.seriesIds.size > 0 && !frontier.seriesIds.has(series.id);
 }
 
 /** Where each model's name sits beside the plot, spread so none overlap. */
@@ -89,6 +114,10 @@ export function ValueChart({
 	const series = useMemo(() => buildSeries(points), [points]);
 	const models = useMemo(() => groupByModel(series), [series]);
 	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
+	const frontier = useMemo(
+		() => shownFrontier(points, showPareto),
+		[points, showPareto],
+	);
 	const [shown, dispatchHighlight] = useModelHighlight(plotted);
 	useChartEscape(element, [
 		{
@@ -118,7 +147,7 @@ export function ValueChart({
 	const { x, y, right } = makeScales(points, scale, width, layout);
 	const labels = endLabels(models, y, layout);
 	const highlighted = highlightedModel(shown);
-	const lit = litModels(details, highlighted);
+	const lit = litModels(details, highlighted, frontier.models);
 	// Shown points are projected once; the guides, pills and tooltip share them.
 	const crosshairs = shownCrosshairs(
 		details,
@@ -152,9 +181,7 @@ export function ValueChart({
 					readouts={crosshairs.map((c) => c.readouts)}
 					axisLabel={benchmark.axisLabel}
 				/>
-				{showPareto && (
-					<ParetoLine points={paretoFrontier(points)} x={x} y={y} />
-				)}
+				{showPareto && <ParetoLine points={frontier.points} x={x} y={y} />}
 				{crosshairs.map((c) => (
 					<Crosshair
 						key={c.solid ? "selected" : "shown"}
@@ -171,7 +198,7 @@ export function ValueChart({
 						x={x}
 						y={y}
 						shownPoints={shownPoints}
-						dimmed={isDimmed(s, shownPoints, highlighted)}
+						dimmed={isDimmed(s, shownPoints, highlighted, frontier)}
 						onDetails={dispatchDetails}
 						benchmark={benchmark}
 					/>

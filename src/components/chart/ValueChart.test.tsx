@@ -32,12 +32,12 @@ const point: ValuePoint = {
 };
 const benchmark = BENCHMARK_VIEWS.intelligence;
 
-function chart(points: ValuePoint[], labels = true) {
+function chart(points: ValuePoint[], labels = true, pareto = false) {
 	return renderToStaticMarkup(
 		<ValueChart
 			points={points}
 			scale="log"
-			showPareto={false}
+			showPareto={pareto}
 			showLabels={labels}
 			benchmark={benchmark}
 		/>,
@@ -62,6 +62,26 @@ describe("ValueChart", () => {
 		expect(chart([point], false)).not.toContain(
 			`>${familyName(point.benchmark.family)}<`,
 		);
+	});
+	it("fades the lines and tags off the shown Pareto frontier", () => {
+		size.width = 960;
+		const other = leaderboards.intelligence.models.find(
+			(m) => m.family !== point.benchmark.family,
+		);
+		if (!other) throw new Error("fixture needs a second family");
+		const dominated: ValuePoint = {
+			...point,
+			seriesId: `${other.family}@api`,
+			score: 30,
+			costPerTaskUsd: 2,
+			benchmark: { ...other, score: 30, costPerTaskUsd: 2 },
+		};
+		const faded = (html: string) => html.match(/opacity="0\.(15|25)"/g) ?? [];
+		expect(faded(chart([point, dominated], true, false))).toEqual([]);
+		expect(faded(chart([point, dominated], true, true))).toEqual([
+			'opacity="0.15"',
+			'opacity="0.25"',
+		]);
 	});
 });
 
