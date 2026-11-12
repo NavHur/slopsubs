@@ -94,9 +94,8 @@ const SHORT_LABELS: Record<string, string> = {
 	"opencode-go-plus": "OpenCode Go Plus",
 };
 
-// Theo (t3.gg), "OpenAI is getting desperate", 2026-11-02, from 5:08: "on the
-// $500 plan, you now get around $10.5,000 of usage. And on the $200 plan, you
-// get around 4.3K". Claude's caps come from his later measurement instead.
+// Theo (t3.gg), "OpenAI is getting desperate", 2026-11-02, 5:08: "on the $500
+// plan, you now get around $10.5,000 of usage. And on the $200 plan... 4.3K".
 const THEO = "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s";
 const WEEKS_PER_MONTH = 52 / 12;
 const CODEX_PRO_MULTIPLIER = 21;
@@ -115,15 +114,13 @@ const CODEX_MULTIPLIERS: Record<string, number> = {
 	"chatgpt-pro-500": CODEX_PRO_MULTIPLIER,
 };
 
-/** A reported weekly cap for each of the plan's models, used until the plan
- * has measured samples. */
-function reportedCap(
+/** Theo's Codex weekly cap for each of the plan's models, or null for a plan
+ * he did not report. */
+function codexCap(
 	planId: string,
-	lab: string,
 	monthlyPriceUsd: number,
 	families: readonly string[],
 ): ReportedCap | null {
-	if (lab === "anthropic") return claudeCap(monthlyPriceUsd, families);
 	const multiplier = CODEX_MULTIPLIERS[planId];
 	if (multiplier === undefined) return null;
 	const monthlyApiUsd = monthlyPriceUsd * multiplier;
@@ -250,7 +247,10 @@ const plans = Plans.parse(
 				thirdPartyHarnessAllowed: p.thirdPartyHarnessAllowed,
 				confidence: p.confidence,
 				sourceUrl: p.sources[0].url,
-				reportedCap: reportedCap(p.planId, lab, p.monthlyPriceUsd, families),
+				reportedCap:
+					lab === "anthropic"
+						? claudeCap(p.monthlyPriceUsd, families)
+						: codexCap(p.planId, p.monthlyPriceUsd, families),
 				publishedAllowance: publishedAllowance(p.planId),
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vite-plus/test";
+import { describe, expect, it, vi } from "vite-plus/test";
 import type { FamilyId } from "../src/domain/model.ts";
 import { claudeCap } from "./claude-caps.ts";
 
@@ -30,5 +30,16 @@ describe("claudeCap", () => {
 		expect(() => claudeCap(200, ["claude-fable-5-1"])).toThrow(
 			/claude-fable-5-1/,
 		);
+	});
+
+	it("keeps Theo's Fable figure when the plan config drops its share", async () => {
+		vi.resetModules();
+		vi.doMock("./plan-families.ts", () => ({
+			PLAN_FAMILIES: { "claude-max-20x": { families: [], lab: "anthropic" } },
+		}));
+		const fresh = await import("./claude-caps.ts");
+		vi.doUnmock("./plan-families.ts");
+		const cap = fresh.claudeCap(200, [fable]).weeklyCapApiUsdByFamily[fable];
+		expect(cap).toBeCloseTo(1409.8, 1);
 	});
 });
