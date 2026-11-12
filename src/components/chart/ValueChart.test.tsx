@@ -5,7 +5,7 @@ import { leaderboards } from "#/data";
 import type { ValuePoint } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
 import { familyName } from "#/lib/families";
-import { SeriesLine } from "./ChartParts";
+import { type LineEmphasis, SeriesLine } from "./ChartParts";
 import { markerPath } from "./geometry";
 import { buildSeries } from "./series";
 import { ValueChart } from "./ValueChart";
@@ -72,26 +72,44 @@ const OPACITY = /opacity="([\d.]+)"/g;
 const opacitiesIn = (html: string) =>
 	[...html.matchAll(OPACITY)].map((m) => Number(m[1]));
 
-/** Each point's own wrapper, found by the point's aria-label. */
-function pointOpacities(html: string, points: readonly ValuePoint[]) {
-	return points.map((p) => {
-		const before = html.slice(0, indexOfLabel(html, pointLabelOf(p)));
-		return opacitiesIn(before).at(-1);
-	});
+const TAG = /<(\/?)[a-zA-Z][^\s>/]*([^>]*?)(\/?)>/g;
+const OWN_OPACITY = / opacity="([\d.]+)"/;
+
+/** The opacity of each element still open at the end of `html`; 1 if unset. */
+function openOpacities(html: string) {
+	const open: number[] = [];
+	for (const [, closing, attrs, selfClosing] of html.matchAll(TAG)) {
+		if (closing) open.pop();
+		else if (!selfClosing)
+			open.push(Number(attrs.match(OWN_OPACITY)?.[1] ?? 1));
+	}
+	return open;
 }
 
-const LINE_WRAPPER = /<g opacity="([\d.]+)"[^>]*>$/;
+/** The opacities among them that fade. */
+const fading = (opacities: readonly number[]) => opacities.filter((o) => o < 1);
 
-/** Each series' line wrapper: the group opening right at the path before its first point. */
+const product = (factors: readonly number[]) =>
+	factors.reduce((acc, factor) => acc * factor, 1);
+
+/** The markup before each point's `<g>`, found by the point's aria-label. */
+const beforePoint = (html: string, p: ValuePoint) =>
+	html.slice(0, indexOfLabel(html, pointLabelOf(p)));
+
+/** The markup before the path of the series whose first point is `p`. */
+function beforeLine(html: string, p: ValuePoint) {
+	const before = beforePoint(html, p);
+	return before.slice(0, before.lastIndexOf("<path d="));
+}
+
+/** What a user sees of each point: its open ancestors' opacities multiplied. */
+function pointOpacities(html: string, points: readonly ValuePoint[]) {
+	return points.map((p) => product(openOpacities(beforePoint(html, p))));
+}
+
+/** The same for each series' line, not counting the path's own opacity. */
 function lineOpacities(html: string, firstPoints: readonly ValuePoint[]) {
-	return firstPoints.map((p) => {
-		const before = html.slice(0, indexOfLabel(html, pointLabelOf(p)));
-		const wrapper = before
-			.slice(0, before.lastIndexOf("<path d="))
-			.match(LINE_WRAPPER);
-		if (!wrapper) throw new Error("the series' line has no opacity wrapper");
-		return Number(wrapper[1]);
-	});
+	return firstPoints.map((p) => product(openOpacities(beforeLine(html, p))));
 }
 
 /** Each point's model tag, whose opacity follows its aria-label. */
@@ -157,7 +175,36 @@ describe("ValueChart", () => {
 	});
 });
 
+function renderLine(emphasis: LineEmphasis) {
+	const x = scaleLinear().domain([0, 2]).range([0, 200]);
+	const y = scaleLinear().domain([0, 80]).range([400, 0]);
+	return renderToStaticMarkup(
+		<SeriesLine
+			series={buildSeries([point])[0]}
+			x={x}
+			y={y}
+			shownPoints={[]}
+			emphasis={emphasis}
+			onDetails={() => {}}
+			benchmark={benchmark}
+		/>,
+	);
+}
+
 describe("SeriesLine", () => {
+	it("fades a dimmed series as one group, so its hollow marker hides the line", () => {
+		const html = renderLine({ kind: "dimmed" });
+		expect(pointOpacities(html, [point])).toEqual([0.15]);
+		expect(lineOpacities(html, [point])).toEqual([0.15]);
+		expect(fading(openOpacities(beforePoint(html, point)))).toEqual([0.15]);
+		expect(fading(openOpacities(beforeLine(html, point)))).toEqual([0.15]);
+		expect(html.match(/<g opacity="0.15"/g)).toHaveLength(1);
+	});
+	it("draws a lit series at full opacity", () => {
+		const html = renderLine({ kind: "lit" });
+		expect(pointOpacities(html, [point])).toEqual([1]);
+		expect(lineOpacities(html, [point])).toEqual([1]);
+	});
 	it.each([true, false])(
 		"keeps marker style and selected size for API=%s",
 		(isApi) => {

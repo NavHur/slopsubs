@@ -115,7 +115,7 @@ export function ParetoLine({
 	x,
 	y,
 }: {
-	points: ValuePoint[];
+	points: readonly ValuePoint[];
 	x: XScale;
 	y: ScaleLinear<number, number>;
 }) {
@@ -168,11 +168,18 @@ export type LineEmphasis =
 
 const DIMMED_OPACITY = 0.15;
 
+/**
+ * A whole or dimmed series fades as one group, so a hollow marker hides the
+ * line beneath it; only `points` fades its line and each point on their own.
+ */
+const groupOpacity = (emphasis: LineEmphasis) =>
+	emphasis.kind === "dimmed" ? DIMMED_OPACITY : 1;
+
 const lineOpacity = (emphasis: LineEmphasis) =>
-	emphasis.kind === "lit" ? 1 : DIMMED_OPACITY;
+	emphasis.kind === "points" ? DIMMED_OPACITY : undefined;
 
 function pointOpacity(emphasis: LineEmphasis, point: ValuePoint) {
-	if (emphasis.kind !== "points") return lineOpacity(emphasis);
+	if (emphasis.kind !== "points") return undefined;
 	return emphasis.lit.has(point) ? 1 : DIMMED_OPACITY;
 }
 
@@ -201,7 +208,7 @@ export function SeriesLine({
 }) {
 	const { isApi, lineWidth } = series.pricing;
 	return (
-		<g>
+		<g opacity={groupOpacity(emphasis)} className="transition-opacity">
 			<g opacity={lineOpacity(emphasis)} className="transition-opacity">
 				<path
 					d={pathOf(series.points, x, y)}

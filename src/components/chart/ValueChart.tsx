@@ -38,20 +38,20 @@ import {
 import { useChartRef } from "./useChartRef";
 
 /**
- * The Pareto frontier's vertices, the plotted points on it (`lit`, which
+ * The Pareto frontier's `vertices`, the plotted points on it (`lit`, which
  * includes points tied with a vertex), and their models; all empty in NO_FRONTIER.
  */
 type Frontier = {
-	points: ValuePoint[];
+	vertices: readonly ValuePoint[];
 	lit: ReadonlySet<ValuePoint>;
 	models: LitModels;
 };
 
-const NO_FRONTIER: Frontier = Object.freeze({
-	points: [],
+const NO_FRONTIER: Frontier = {
+	vertices: [],
 	lit: new Set<ValuePoint>(),
 	models: [],
-});
+};
 
 const tieKey = (p: ValuePoint) => `${p.costPerTaskUsd}|${p.score}`;
 
@@ -60,7 +60,7 @@ function frontierOf(points: readonly ValuePoint[]): Frontier {
 	const vertexKeys = new Set(vertices.map(tieKey));
 	const lit = points.filter((p) => vertexKeys.has(tieKey(p)));
 	return {
-		points: vertices,
+		vertices,
 		lit: new Set(lit),
 		models: [...new Set(lit.map((p) => p.benchmark.family))],
 	};
@@ -92,7 +92,7 @@ function emphasisOf(
 		return litIf(shownPoints.some((p) => p.seriesId === series.id));
 	}
 	if (highlighted !== null) return litIf(highlighted === series.modelId);
-	if (frontier.points.length === 0) return { kind: "lit" };
+	if (frontier.vertices.length === 0) return { kind: "lit" };
 	return { kind: "points", lit: frontier.lit };
 }
 
@@ -198,7 +198,7 @@ export function ValueChart({
 					readouts={crosshairs.map((c) => c.readouts)}
 					axisLabel={benchmark.axisLabel}
 				/>
-				{showPareto && <ParetoLine points={frontier.points} x={x} y={y} />}
+				{showPareto && <ParetoLine points={frontier.vertices} x={x} y={y} />}
 				{crosshairs.map((c) => (
 					<Crosshair
 						key={c.solid ? "selected" : "shown"}
