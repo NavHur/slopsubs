@@ -63,12 +63,13 @@ describe("ValueChart", () => {
 			`>${familyName(point.benchmark.family)}<`,
 		);
 	});
-	it("fades the lines and tags off the shown Pareto frontier", () => {
+	it("fades all but the frontier's points, and tags off it, while the Pareto line shows", () => {
 		size.width = 960;
 		const other = leaderboards.intelligence.models.find(
 			(m) => m.family !== point.benchmark.family,
 		);
 		if (!other) throw new Error("fixture needs a second family");
+		const pricier: ValuePoint = { ...point, score: 35, costPerTaskUsd: 3 };
 		const dominated: ValuePoint = {
 			...point,
 			seriesId: `${other.family}@api`,
@@ -76,10 +77,12 @@ describe("ValueChart", () => {
 			costPerTaskUsd: 2,
 			benchmark: { ...other, score: 30, costPerTaskUsd: 2 },
 		};
+		const points = [point, pricier, dominated];
 		const faded = (html: string) => html.match(/opacity="0\.(15|25)"/g) ?? [];
-		expect(faded(chart([point, dominated], true, false))).toEqual([]);
-		expect(faded(chart([point, dominated], true, true))).toEqual([
-			'opacity="0.15"',
+		expect(faded(chart(points, true, false))).toEqual([]);
+		// Both lines and the two off-frontier points fade, then the dominated tag.
+		expect(faded(chart(points, true, true))).toEqual([
+			...Array(4).fill('opacity="0.15"'),
 			'opacity="0.25"',
 		]);
 	});
@@ -103,7 +106,7 @@ describe("SeriesLine", () => {
 					x={x}
 					y={y}
 					shownPoints={[point]}
-					dimmed
+					emphasis={{ kind: "dimmed" }}
 					onDetails={() => {}}
 					benchmark={benchmark}
 				/>,

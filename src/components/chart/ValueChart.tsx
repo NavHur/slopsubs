@@ -10,6 +10,7 @@ import {
 	Axes,
 	ModelLegend,
 	ModelTags,
+	type LineEmphasis,
 	ParetoLine,
 	SeriesLine,
 } from "./ChartParts";
@@ -37,12 +38,12 @@ import {
 import { useChartRef } from "./useChartRef";
 
 /**
- * The shown Pareto frontier, and the series and models with a point on it;
- * all empty while the frontier is hidden.
+ * The shown Pareto frontier and the models with a point on it; all empty while
+ * the frontier is hidden.
  */
 type Frontier = {
 	points: ValuePoint[];
-	seriesIds: ReadonlySet<string>;
+	lit: ReadonlySet<ValuePoint>;
 	models: LitModels;
 };
 
@@ -53,27 +54,32 @@ function shownFrontier(
 	const frontier = shown ? paretoFrontier(points) : [];
 	return {
 		points: frontier,
-		seriesIds: new Set(frontier.map((p) => p.seriesId)),
+		lit: new Set(frontier),
 		models: [...new Set(frontier.map((p) => p.benchmark.family))],
 	};
 }
 
+const litIf = (lit: boolean): LineEmphasis => ({
+	kind: lit ? "lit" : "dimmed",
+});
+
 /**
- * A line fades unless it holds a shown point (the hovered one and any it is
- * compared with); with none shown, unless it belongs to the highlighted
- * model; with neither, unless it reaches the shown Pareto frontier.
+ * A line draws whole if it holds a shown point (the hovered one and any it is
+ * compared with); with none shown, if it belongs to the highlighted model.
+ * With neither, a shown Pareto frontier keeps only its own points lit.
  */
-function isDimmed(
+function emphasisOf(
 	series: Series,
 	shownPoints: readonly ValuePoint[],
 	highlighted: FamilyId | null,
 	frontier: Frontier,
-) {
+): LineEmphasis {
 	if (shownPoints.length > 0) {
-		return !shownPoints.some((p) => p.seriesId === series.id);
+		return litIf(shownPoints.some((p) => p.seriesId === series.id));
 	}
-	if (highlighted !== null) return highlighted !== series.modelId;
-	return frontier.seriesIds.size > 0 && !frontier.seriesIds.has(series.id);
+	if (highlighted !== null) return litIf(highlighted === series.modelId);
+	if (frontier.points.length === 0) return { kind: "lit" };
+	return { kind: "points", lit: frontier.lit };
 }
 
 /** Where each model's name sits beside the plot, spread so none overlap. */
@@ -198,7 +204,7 @@ export function ValueChart({
 						x={x}
 						y={y}
 						shownPoints={shownPoints}
-						dimmed={isDimmed(s, shownPoints, highlighted, frontier)}
+						emphasis={emphasisOf(s, shownPoints, highlighted, frontier)}
 						onDetails={dispatchDetails}
 						benchmark={benchmark}
 					/>
