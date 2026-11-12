@@ -1,7 +1,10 @@
 import type { FamilyId } from "#/domain/model";
 import type { ShownDetails } from "./pointDetails";
 
-/** The models drawn at full strength; empty when none stands out. */
+/**
+ * The models whose tag and legend entry stay solid; empty when no model is
+ * singled out. How a line or point draws is `LineEmphasis`'s call.
+ */
 export type LitModels = readonly FamilyId[];
 
 /**

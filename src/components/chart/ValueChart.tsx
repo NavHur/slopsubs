@@ -38,8 +38,8 @@ import {
 import { useChartRef } from "./useChartRef";
 
 /**
- * The shown Pareto frontier and the models with a point on it; all empty while
- * the frontier is hidden.
+ * The Pareto frontier's vertices, the plotted points on it (`lit`, which
+ * includes points tied with a vertex), and their models; all empty in NO_FRONTIER.
  */
 type Frontier = {
 	points: ValuePoint[];
@@ -47,16 +47,30 @@ type Frontier = {
 	models: LitModels;
 };
 
-function shownFrontier(
-	points: readonly ValuePoint[],
-	shown: boolean,
-): Frontier {
-	const frontier = shown ? paretoFrontier(points) : [];
+const NO_FRONTIER: Frontier = Object.freeze({
+	points: [],
+	lit: new Set<ValuePoint>(),
+	models: [],
+});
+
+const tieKey = (p: ValuePoint) => `${p.costPerTaskUsd}|${p.score}`;
+
+function frontierOf(points: readonly ValuePoint[]): Frontier {
+	const vertices = paretoFrontier(points);
+	const vertexKeys = new Set(vertices.map(tieKey));
+	const lit = points.filter((p) => vertexKeys.has(tieKey(p)));
 	return {
-		points: frontier,
-		lit: new Set(frontier),
-		models: [...new Set(frontier.map((p) => p.benchmark.family))],
+		points: vertices,
+		lit: new Set(lit),
+		models: [...new Set(lit.map((p) => p.benchmark.family))],
 	};
+}
+
+function useFrontier(points: readonly ValuePoint[], showPareto: boolean) {
+	return useMemo(
+		() => (showPareto ? frontierOf(points) : NO_FRONTIER),
+		[points, showPareto],
+	);
 }
 
 const litIf = (lit: boolean): LineEmphasis => ({
@@ -120,10 +134,7 @@ export function ValueChart({
 	const series = useMemo(() => buildSeries(points), [points]);
 	const models = useMemo(() => groupByModel(series), [series]);
 	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
-	const frontier = useMemo(
-		() => shownFrontier(points, showPareto),
-		[points, showPareto],
-	);
+	const frontier = useFrontier(points, showPareto);
 	const [shown, dispatchHighlight] = useModelHighlight(plotted);
 	useChartEscape(element, [
 		{
