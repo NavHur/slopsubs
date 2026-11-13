@@ -22,10 +22,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Format & lint
+          # Lint runs with typeCheck on (tsrs-lint), so this is also the type check.
+          - name: Format, lint & typecheck
             command: vp check
-          - name: Typecheck
-            command: vp run typecheck
           - name: Tests
             command: vp test run
           - name: Build
