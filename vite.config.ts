@@ -1,7 +1,15 @@
+import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig, lazyPlugins } from "vite-plus";
+
+// Run type-aware rules and the type check on tsrs-lint instead of the tsgolint
+// Vite+ bundles. Vite+ presets this variable before loading the config, so
+// assign it: `??=` never takes effect.
+process.env.OXLINT_TSGOLINT_PATH = fileURLToPath(
+	new URL("./node_modules/.bin/tsrs-lint", import.meta.url),
+);
 
 const config = defineConfig({
 	fmt: {
@@ -99,6 +107,8 @@ const config = defineConfig({
 			},
 		],
 		ignorePatterns: ["src/routeTree.gen.ts", "src/data/*.json"],
+		// typeCheck makes lint report TypeScript's compiler errors, so it is the
+		// repository's only type check.
 		options: { typeAware: true, typeCheck: true },
 	},
 	run: {

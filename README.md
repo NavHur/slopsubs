@@ -216,6 +216,10 @@ vp fmt
 vp check # format, lint, and type-aware checks together
 ```
 
+`vite.config.ts` points type-aware lint at tsrs-lint and sets `typeCheck`, so
+lint also reports TypeScript's compiler errors. There is no separate typecheck
+command. `bun run format` and `bun run lint` run the same two steps.
+
 
 
 ## Routing
