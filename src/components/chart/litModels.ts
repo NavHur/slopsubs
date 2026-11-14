@@ -9,19 +9,19 @@ export type LitModels = readonly FamilyId[];
 
 /**
  * Models that stay lit: those of the shown points (the hovered one and the
- * pinned one it is compared with), else the highlighted model, else the
+ * pinned one it is compared with), else the highlighted models, else the
  * `resting` ones (such as the models on the Pareto frontier).
  */
 export function litModels(
 	details: ShownDetails | null,
-	highlighted: FamilyId | null,
+	highlighted: LitModels,
 	resting: LitModels = [],
 ): LitModels {
 	if (details) {
 		const shown = [details.point, details.selected].filter((p) => p !== null);
 		return [...new Set(shown.map((p) => p.benchmark.family))];
 	}
-	return highlighted === null ? resting : [highlighted];
+	return highlighted.length > 0 ? highlighted : resting;
 }
 
 /** Whether a model fades because others are lit and it is not one. */

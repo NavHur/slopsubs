@@ -3,7 +3,7 @@ import type { TimedPoint } from "#/domain/tradeoffs";
 import type { BenchmarkView } from "#/lib/benchmarks";
 import { useChartEscape } from "./chartEscape";
 import { ModelLegend } from "./ChartParts";
-import { highlightedModel, useModelHighlight } from "./highlight";
+import { highlightedModels, useModelHighlight } from "./highlight";
 import { litModels } from "./litModels";
 import { usePointDetails } from "./pointDetails";
 import { PointTooltip } from "./PointTooltip";
@@ -52,11 +52,11 @@ export function TradeoffChart({
 	const models = useMemo(() => groupByModel(buildSeries(points)), [points]);
 	const plotted = useMemo(() => new Set(models.map((m) => m.id)), [models]);
 	const [highlight, dispatchHighlight] = useModelHighlight(plotted);
-	const lit = litModels(details, highlightedModel(highlight));
+	const lit = litModels(details, highlightedModels(highlight));
 	useChartEscape(element, [
 		{ open: details !== null, close: () => dispatch({ type: "close" }) },
 		{
-			open: highlight.pinned !== null,
+			open: highlight.pinned.length > 0,
 			close: () => dispatchHighlight({ type: "clear" }),
 		},
 	]);
@@ -94,7 +94,7 @@ export function TradeoffChart({
 					viewport={viewport}
 					models={models}
 					lit={lit}
-					pinnedModel={highlight.pinned}
+					pinnedModels={highlight.pinned}
 					onHighlight={dispatchHighlight}
 				/>
 			</svg>
@@ -113,7 +113,7 @@ export function TradeoffChart({
 				<ModelLegend
 					models={models}
 					lit={lit}
-					pinnedModel={highlight.pinned}
+					pinnedModels={highlight.pinned}
 					onHighlight={dispatchHighlight}
 				/>
 			)}

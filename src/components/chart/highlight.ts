@@ -2,11 +2,13 @@ import { useReducer, useState } from "react";
 import type { FamilyId } from "#/domain/model";
 
 /**
- * Which model the chart emphasizes. A click pins a model until it is clicked
- * again, cleared, or leaves the chart; hover and focus preview over the pin.
+ * Which models the chart emphasizes. A click pins a model, alongside any
+ * already pinned, until it is clicked again, cleared, or leaves the chart;
+ * hover and focus preview one more beside the pins.
  */
 type ModelHighlight = {
-	pinned: FamilyId | null;
+	/** In the order they were pinned; never repeats a model. */
+	pinned: readonly FamilyId[];
 	hovered: FamilyId | null;
 	focused: FamilyId | null;
 };
@@ -21,7 +23,7 @@ export type HighlightEvent =
 	| { type: "clear" };
 
 export const NO_HIGHLIGHT: ModelHighlight = {
-	pinned: null,
+	pinned: [],
 	hovered: null,
 	focused: null,
 };
@@ -38,15 +40,26 @@ export function updateHighlight(
 		case "endPreview":
 			return endPreview(state, event.source, event.modelId);
 		case "toggle":
-			// Unpinning also drops both previews so the clear shows while hovered.
-			return state.pinned === event.modelId
-				? NO_HIGHLIGHT
-				: { ...state, pinned: event.modelId };
+			return togglePin(state, event.modelId);
 		case "prune":
 			return plottedHighlight(state, event.plotted);
 		case "clear":
 			return NO_HIGHLIGHT;
 	}
+}
+
+/** Pins the model beside the others, or unpins it. Unpinning also drops its
+ * previews, so the unpin shows while the pointer is still on its label. */
+function togglePin(state: ModelHighlight, modelId: FamilyId): ModelHighlight {
+	if (!state.pinned.includes(modelId)) {
+		return { ...state, pinned: [...state.pinned, modelId] };
+	}
+	const unless = (id: FamilyId | null) => (id === modelId ? null : id);
+	return {
+		pinned: state.pinned.filter((id) => id !== modelId),
+		hovered: unless(state.hovered),
+		focused: unless(state.focused),
+	};
 }
 
 /** A leave can arrive after that source already moved to another model. */
@@ -67,19 +80,22 @@ function plottedHighlight(
 	const keep = (id: FamilyId | null) =>
 		id !== null && plotted.has(id) ? id : null;
 	const next = {
-		pinned: keep(state.pinned),
+		pinned: state.pinned.filter((id) => plotted.has(id)),
 		hovered: keep(state.hovered),
 		focused: keep(state.focused),
 	};
 	const unchanged =
-		next.pinned === state.pinned &&
+		next.pinned.length === state.pinned.length &&
 		next.hovered === state.hovered &&
 		next.focused === state.focused;
 	return unchanged ? state : next;
 }
 
-export function highlightedModel(state: ModelHighlight): FamilyId | null {
-	return state.hovered ?? state.focused ?? state.pinned;
+/** The pinned models, then the previewed one if it is not pinned already. */
+export function highlightedModels(state: ModelHighlight): readonly FamilyId[] {
+	const preview = state.hovered ?? state.focused;
+	if (preview === null || state.pinned.includes(preview)) return state.pinned;
+	return [...state.pinned, preview];
 }
 
 /** Shared label and legend highlight. */

@@ -77,7 +77,8 @@ function TradeoffPlot({
 					}}
 				/>
 				<span className="text-[12px] text-subtle">
-					Drag, or focus the chart and use the arrow keys, to turn it
+					Drag, or focus the chart and use the arrow keys, to turn it. Click
+					model names to pick out several.
 				</span>
 			</div>
 			<TradeoffChart

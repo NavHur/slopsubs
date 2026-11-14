@@ -112,7 +112,7 @@ export function EffortLines({
 }: {
 	steps: readonly EffortStep[];
 	pricing: PricingStyle;
-	/** The models that stay lit: the highlighted one, or those whose points show. */
+	/** The models that stay lit: the highlighted ones, or those whose points show. */
 	lit: LitModels;
 }) {
 	const { isApi, lineWidth } = pricing;
@@ -172,7 +172,7 @@ export function TradeoffPoint({
 	pricing: PricingStyle;
 	/** Its details show, so it draws larger. */
 	active: boolean;
-	/** The models that stay lit: the highlighted one, or those whose points show. */
+	/** The models that stay lit: the highlighted ones, or those whose points show. */
 	lit: LitModels;
 	onDetails: (event: PointDetailsEvent) => void;
 	/** Names and formats the score for screen readers. */

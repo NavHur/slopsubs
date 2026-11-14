@@ -307,7 +307,7 @@ export function ModelTags({
 	x,
 	right,
 	lit,
-	pinnedModel,
+	pinnedModels,
 	onHighlight,
 }: {
 	labels: readonly LineLabel[];
@@ -316,7 +316,8 @@ export function ModelTags({
 	right: number;
 	/** The models that stay lit; the rest fade. */
 	lit: LitModels;
-	pinnedModel: FamilyId | null;
+	/** Models clicked to stay lit, in the order they were pinned. */
+	pinnedModels: readonly FamilyId[];
 	onHighlight: (event: HighlightEvent) => void;
 }) {
 	return labels.map((label) => {
@@ -329,7 +330,7 @@ export function ModelTags({
 				from={[px(x(modelEnd(model).costPerTaskUsd)), label.anchorY]}
 				at={[right + 24, label.y]}
 				dimmed={isFaded(lit, model.id)}
-				pinned={pinnedModel === model.id}
+				pinned={pinnedModels.includes(model.id)}
 				onHighlight={onHighlight}
 			/>
 		);
@@ -420,13 +421,14 @@ export function ModelTag({
 export function ModelLegend({
 	models,
 	lit,
-	pinnedModel,
+	pinnedModels,
 	onHighlight,
 }: {
 	models: readonly ModelGroup[];
 	/** The models that stay lit; the rest fade. */
 	lit: LitModels;
-	pinnedModel: FamilyId | null;
+	/** Models clicked to stay lit, in the order they were pinned. */
+	pinnedModels: readonly FamilyId[];
 	onHighlight: (event: HighlightEvent) => void;
 }) {
 	return (
@@ -435,7 +437,7 @@ export function ModelLegend({
 				<li key={model.id} className="min-w-0">
 					<LegendButton
 						model={model}
-						pinned={pinnedModel === model.id}
+						pinned={pinnedModels.includes(model.id)}
 						muted={isFaded(lit, model.id)}
 						onHighlight={onHighlight}
 					/>

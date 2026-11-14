@@ -2,7 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import type { FamilyId } from "#/domain/model";
 import {
 	type HighlightEvent,
-	highlightedModel,
+	highlightedModels,
 	NO_HIGHLIGHT,
 	updateHighlight,
 } from "./highlight";
@@ -13,18 +13,18 @@ const b = "claude-haiku-5-5" as FamilyId;
 const reduce = (...events: HighlightEvent[]) =>
 	events.reduce(updateHighlight, NO_HIGHLIGHT);
 const run = (...events: HighlightEvent[]) =>
-	highlightedModel(reduce(...events));
+	highlightedModels(reduce(...events));
 
 describe("model highlight", () => {
 	it("previews a model only while hovered or focused", () => {
-		expect(run({ type: "preview", source: "hover", modelId: a })).toBe(a);
-		expect(run({ type: "preview", source: "focus", modelId: a })).toBe(a);
+		expect(run({ type: "preview", source: "hover", modelId: a })).toEqual([a]);
+		expect(run({ type: "preview", source: "focus", modelId: a })).toEqual([a]);
 		expect(
 			run(
 				{ type: "preview", source: "hover", modelId: a },
 				{ type: "endPreview", source: "hover", modelId: a },
 			),
-		).toBeNull();
+		).toEqual([]);
 	});
 
 	it("keeps a clicked model highlighted after the pointer leaves", () => {
@@ -34,21 +34,21 @@ describe("model highlight", () => {
 				{ type: "toggle", modelId: a },
 				{ type: "endPreview", source: "hover", modelId: a },
 			),
-		).toBe(a);
+		).toEqual([a]);
 	});
 
-	it("lets a hovered model show over the pinned one, then returns to it", () => {
+	it("previews a hovered model beside the pinned one, then drops it", () => {
 		const pinned: HighlightEvent = { type: "toggle", modelId: a };
-		expect(run(pinned, { type: "preview", source: "hover", modelId: b })).toBe(
-			b,
-		);
+		expect(
+			run(pinned, { type: "preview", source: "hover", modelId: b }),
+		).toEqual([a, b]);
 		expect(
 			run(
 				pinned,
 				{ type: "preview", source: "hover", modelId: b },
 				{ type: "endPreview", source: "hover", modelId: b },
 			),
-		).toBe(a);
+		).toEqual([a]);
 	});
 
 	it("returns to the focused model after hovering another one", () => {
@@ -58,7 +58,7 @@ describe("model highlight", () => {
 				{ type: "preview", source: "hover", modelId: b },
 				{ type: "endPreview", source: "hover", modelId: b },
 			),
-		).toBe(a);
+		).toEqual([a]);
 	});
 
 	it("clears when the pinned model is toggled again, even while hovered", () => {
@@ -68,13 +68,24 @@ describe("model highlight", () => {
 				{ type: "toggle", modelId: a },
 				{ type: "toggle", modelId: a },
 			),
-		).toBeNull();
+		).toEqual([]);
 	});
 
-	it("moves the pin when another model is toggled", () => {
+	it("pins another model beside the first", () => {
 		expect(
 			run({ type: "toggle", modelId: a }, { type: "toggle", modelId: b }),
-		).toBe(b);
+		).toEqual([a, b]);
+	});
+
+	it("unpins one model and keeps the others pinned", () => {
+		expect(
+			run(
+				{ type: "toggle", modelId: a },
+				{ type: "toggle", modelId: b },
+				{ type: "preview", source: "hover", modelId: b },
+				{ type: "toggle", modelId: b },
+			),
+		).toEqual([a]);
 	});
 
 	it("clears pin and previews on Escape", () => {
@@ -85,7 +96,7 @@ describe("model highlight", () => {
 				{ type: "preview", source: "focus", modelId: b },
 				{ type: "clear" },
 			),
-		).toBeNull();
+		).toEqual([]);
 	});
 
 	it("ignores a stale leave from a model that is no longer previewed", () => {
@@ -95,7 +106,7 @@ describe("model highlight", () => {
 				{ type: "preview", source: "hover", modelId: b },
 				{ type: "endPreview", source: "hover", modelId: a },
 			),
-		).toBe(b);
+		).toEqual([b]);
 	});
 
 	it("forgets a pinned model that leaves the chart, so a reselect starts clean", () => {
@@ -104,8 +115,7 @@ describe("model highlight", () => {
 			{ type: "prune", plotted: new Set([b]) },
 			{ type: "prune", plotted: new Set([a, b]) },
 		);
-		expect(state.pinned).toBeNull();
-		expect(highlightedModel(state)).toBeNull();
+		expect(highlightedModels(state)).toEqual([]);
 	});
 
 	it("keeps the same state when every highlighted model is still plotted", () => {
@@ -127,13 +137,13 @@ describe("model highlight", () => {
 			{ type: "preview", source: "focus", modelId: a },
 			{ type: "preview", source: "hover", modelId: a },
 		];
-		expect(run(...previews)).toBe(a);
+		expect(run(...previews)).toEqual([b, a]);
 		expect(
 			run(
 				...previews,
 				{ type: "endPreview", source: "hover", modelId: a },
 				{ type: "endPreview", source: "focus", modelId: a },
 			),
-		).toBe(b);
+		).toEqual([b]);
 	});
 });
