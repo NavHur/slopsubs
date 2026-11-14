@@ -1,5 +1,6 @@
 import type { FamilyId } from "#/domain/model";
 import { type TimedPoint, tradeoffFrontier } from "#/domain/tradeoffs";
+import type { Pricing } from "#/domain/value";
 import { formatUsd } from "#/lib/format";
 import { COMPACT_WIDTH, LABEL_COLUMN_PX } from "./geometry";
 import { AXES, type AxisId, FRAME_ANCHORS, plotSpace } from "./plotSpace";
@@ -62,11 +63,12 @@ export type ScenePoint = {
 /** A model's rightmost point, where its label's leader line starts. */
 export type ModelEnd = { family: FamilyId; at: Anchor };
 
-/** One step between two efforts of a model under the shown pricing. */
+/** One step between two efforts of a model under one pricing. */
 export type EffortStep = Segment & {
 	key: string;
 	seriesId: string;
 	family: FamilyId;
+	pricing: Pricing;
 	/** Both ends are worth weighing. */
 	worthWeighing: boolean;
 };
@@ -234,6 +236,7 @@ function effortSteps(points: readonly ScenePoint[]): EffortStep[] {
 				key: `${end.point.seriesId}/${end.point.benchmark.id}`,
 				seriesId: end.point.seriesId,
 				family: end.point.benchmark.family,
+				pricing: end.point.pricing,
 				x1: start.at.x,
 				y1: start.at.y,
 				x2: end.at.x,

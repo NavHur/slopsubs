@@ -129,6 +129,17 @@ export function pricingStyles(
 	return new Map(series.map((s) => [s.pricing.id, s.pricing]));
 }
 
+/** How a point's pricing draws, from a map built over every point. */
+export function styleOf(
+	pricings: ReadonlyMap<PricingId, PricingStyle>,
+	pricing: Pricing,
+): PricingStyle {
+	const id = pricingIdOf(pricing);
+	const style = pricings.get(id);
+	if (!style) throw new Error(`No style for pricing ${id}`);
+	return style;
+}
+
 /** The model's line end furthest right, where its label's leader line starts. */
 export function modelEnd(model: ModelGroup): ValuePoint {
 	const lineEnd = (s: Series) => s.points[s.points.length - 1];

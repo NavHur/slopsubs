@@ -8,7 +8,7 @@ import type { PreviewSource } from "./highlight";
 import { isFaded, type LitModels } from "./litModels";
 import type { AxisId } from "./plotSpace";
 import type { PointDetailsEvent } from "./pointDetails";
-import { API_DASH, type PricingStyle } from "./series";
+import { API_DASH, type PricingId, type PricingStyle, styleOf } from "./series";
 import type { EffortStep, ScenePoint, TradeoffScene } from "./tradeoffScene";
 
 /** How an axis's title stands off the axis's end (px). */
@@ -102,41 +102,55 @@ function strongColor(family: FamilyId): string {
 }
 
 /**
- * Each model's efforts joined low to high, drawn as the cost and score chart
- * draws the pricing's lines.
+ * Each model's efforts joined low to high under each pricing, drawn as the
+ * cost and score chart draws that pricing's lines.
  */
 export function EffortLines({
 	steps,
-	pricing,
+	pricings,
 	lit,
 }: {
 	steps: readonly EffortStep[];
-	pricing: PricingStyle;
+	pricings: ReadonlyMap<PricingId, PricingStyle>;
 	/** The models that stay lit: the highlighted ones, or those whose points show. */
 	lit: LitModels;
 }) {
-	const { isApi, lineWidth } = pricing;
 	return (
 		<g aria-hidden="true" pointerEvents="none">
 			{steps.map((step) => (
-				<line
+				<EffortLine
 					key={step.key}
-					x1={step.x1}
-					y1={step.y1}
-					x2={step.x2}
-					y2={step.y2}
-					stroke={
-						step.worthWeighing
-							? strongColor(step.family)
-							: familyColor(step.family)
-					}
-					strokeWidth={step.worthWeighing ? lineWidth + 0.5 : lineWidth}
-					strokeDasharray={isApi ? API_DASH : undefined}
-					opacity={emphasis(step.family, step.worthWeighing, lit)}
-					className="transition-opacity"
+					step={step}
+					pricing={styleOf(pricings, step.pricing)}
+					lit={lit}
 				/>
 			))}
 		</g>
+	);
+}
+
+function EffortLine({
+	step,
+	pricing: { isApi, lineWidth },
+	lit,
+}: {
+	step: EffortStep;
+	pricing: PricingStyle;
+	lit: LitModels;
+}) {
+	const { family, worthWeighing } = step;
+	return (
+		<line
+			x1={step.x1}
+			y1={step.y1}
+			x2={step.x2}
+			y2={step.y2}
+			stroke={worthWeighing ? strongColor(family) : familyColor(family)}
+			strokeWidth={worthWeighing ? lineWidth + 0.5 : lineWidth}
+			strokeDasharray={isApi ? API_DASH : undefined}
+			opacity={emphasis(family, worthWeighing, lit)}
+			className="transition-opacity"
+		/>
 	);
 }
 

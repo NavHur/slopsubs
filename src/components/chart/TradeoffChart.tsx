@@ -8,7 +8,13 @@ import { litModels } from "./litModels";
 import { usePointDetails } from "./pointDetails";
 import { PointTooltip } from "./PointTooltip";
 import type { Angles } from "./projection";
-import { buildSeries, groupByModel, type PricingStyle } from "./series";
+import {
+	buildSeries,
+	groupByModel,
+	type PricingId,
+	type PricingStyle,
+	styleOf,
+} from "./series";
 import { TradeoffModelColumn } from "./TradeoffModelColumn";
 import { EffortLines, SceneFrame, TradeoffPoint } from "./TradeoffParts";
 import {
@@ -27,14 +33,15 @@ import { useChartRef } from "./useChartRef";
  */
 export function TradeoffChart({
 	points,
-	pricing,
+	pricings,
 	angles,
 	onAnglesChange,
 	view,
 }: {
-	/** Every point under `pricing`. */
+	/** Every option, under every pricing on the page. */
 	points: readonly [TimedPoint, ...TimedPoint[]];
-	pricing: PricingStyle;
+	/** How each pricing draws: its marker, and its line's dash and width. */
+	pricings: ReadonlyMap<PricingId, PricingStyle>;
 	angles: Angles;
 	onAnglesChange: (angles: Angles) => void;
 	/** The benchmark the points score on. */
@@ -77,12 +84,12 @@ export function TradeoffChart({
 				className={`block touch-pan-y select-none outline-none focus-visible:outline-1 focus-visible:outline-line ${camera.dragging ? "cursor-grabbing" : "cursor-grab"}`}
 			>
 				<SceneFrame scene={scene} view={view} />
-				<EffortLines steps={scene.efforts} pricing={pricing} lit={lit} />
+				<EffortLines steps={scene.efforts} pricings={pricings} lit={lit} />
 				{scene.points.map((p) => (
 					<TradeoffPoint
 						key={`${p.point.seriesId}/${p.point.benchmark.id}`}
 						scenePoint={p}
-						pricing={pricing}
+						pricing={styleOf(pricings, p.point.pricing)}
 						active={p === shown || p.point === details?.selected}
 						lit={lit}
 						onDetails={dispatch}

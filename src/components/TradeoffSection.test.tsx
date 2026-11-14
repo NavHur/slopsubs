@@ -35,20 +35,25 @@ function markup(benchmark: BenchmarkId) {
 }
 
 describe("TradeoffSection", () => {
-	it("plots each timed option at API prices, names each model and counts those worth weighing", () => {
-		const api = timedPoints(pagePoints("intelligence")).filter(
-			(p) => p.pricing.kind === "api",
-		);
+	it("plots each timed option under every pricing, names each model and counts those worth weighing", () => {
+		const timed = timedPoints(pagePoints("intelligence"));
 		const html = markup("intelligence");
 		// Model labels are buttons too, but pressed or not.
 		const points = html.match(/<g role="button" tabindex="0" aria-label=/g);
 		const labels = html.match(/aria-label="Highlight /g);
-		const families = new Set(api.map((p) => p.benchmark.family));
-		expect(api.length).toBeGreaterThan(0);
-		expect(points).toHaveLength(api.length);
+		const families = new Set(timed.map((p) => p.benchmark.family));
+		const kinds = new Set(timed.map((p) => p.pricing.kind));
+		expect(kinds).toEqual(new Set(["api", "plan"]));
+		expect(points).toHaveLength(timed.length);
 		expect(labels).toHaveLength(families.size);
-		const worth = tradeoffFrontier(api).size;
-		expect(html).toContain(`API prices: ${worth} of ${api.length} options`);
+		const worth = tradeoffFrontier(timed).size;
+		expect(html).toContain(
+			`${worth} of ${timed.length} options worth weighing`,
+		);
+	});
+
+	it("leaves choosing pricings to the side panel", () => {
+		expect(markup("intelligence")).not.toContain('aria-label="Prices to plot"');
 	});
 
 	it("hands the PNG export a key of short one-line text nodes with the counts and meanings", () => {
@@ -56,10 +61,10 @@ describe("TradeoffSection", () => {
 			(p) => p.pricing.kind === "api",
 		);
 		const [first, ...rest] = api;
-		const pricing = pricingStyles(buildSeries(api)).values().next().value;
-		if (!first || !pricing) throw new Error("no API points to export");
+		if (!first) throw new Error("no API points to export");
+		const pricings = pricingStyles(buildSeries(api));
 		const { legend } = tradeoffPng(
-			{ pricing, shown: [first, ...rest] },
+			{ pricings, shown: [first, ...rest] },
 			VIEW_PRESETS.perspective,
 			BENCHMARK_VIEWS.intelligence,
 		);
