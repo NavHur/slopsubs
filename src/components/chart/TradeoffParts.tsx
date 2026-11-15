@@ -84,7 +84,8 @@ export function SceneFrame({
 	);
 }
 
-/** Opacity of an option another matches or beats on every measure. */
+/** Opacity of an option another is no worse than on every measure and better
+ * than on one. */
 const BEATEN_OPACITY = 0.25;
 /** Opacity of a model's points and lines while another is highlighted. */
 const DIMMED_OPACITY = 0.12;

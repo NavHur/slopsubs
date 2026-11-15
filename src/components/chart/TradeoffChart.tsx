@@ -27,7 +27,7 @@ import { useChartRef } from "./useChartRef";
 
 /**
  * Every option's cost, time and score in one turnable cube. Options another
- * matches or beats on every measure fade. Drag or use
+ * is no worse than on every measure and better than on one fade. Drag or use
  * the arrow keys to turn it; the camera's angles belong to the caller, so the
  * view presets and the PNG export share them.
  */

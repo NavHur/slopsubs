@@ -98,6 +98,19 @@ describe("buildSeries", () => {
 		]);
 	});
 
+	it("keeps five plans and the API apart by marker", () => {
+		const five = ["a", "b", "c", "d", "e"].map((id) => plan(id, id));
+		const everyPricing = [api, ...five];
+		const all = everyPricing.flatMap((pricing, i) =>
+			line(i % 2 ? haiku : opus, pricing, [1, 2]),
+		);
+		const markers = [...pricingStyles(buildSeries(all)).values()].map(
+			(s) => s.marker,
+		);
+		expect(markers).toHaveLength(6);
+		expect(new Set(markers).size).toBe(6);
+	});
+
 	it("names model and plan on every line", () => {
 		const labels = buildSeries(points).map((s) => s.label);
 		expect(labels).toContain("Haiku 5.5 · OpenCode Go");

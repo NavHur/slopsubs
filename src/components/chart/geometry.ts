@@ -213,6 +213,11 @@ export function markerPath(
 			const h = r * 1.3;
 			return `M${at(0, -h)}L${at(h * 0.87, h / 2)}L${at(-h * 0.87, h / 2)}Z`;
 		}
+		case "cross": {
+			const h = r * 1.2;
+			const t = r * 0.4;
+			return `M${at(-t, -h)}L${at(t, -h)}L${at(t, -t)}L${at(h, -t)}L${at(h, t)}L${at(t, t)}L${at(t, h)}L${at(-t, h)}L${at(-t, t)}L${at(-h, t)}L${at(-h, -t)}L${at(-t, -t)}Z`;
+		}
 		case "triangle-down": {
 			const h = r * 1.3;
 			return `M${at(0, h)}L${at(h * 0.87, -h / 2)}L${at(-h * 0.87, -h / 2)}Z`;

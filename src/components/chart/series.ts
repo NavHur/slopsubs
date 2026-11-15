@@ -5,7 +5,7 @@ import { familyColor, familyName } from "#/lib/families";
 /**
  * Point shapes for subscription plans, handed out in the order plans first
  * appear. The circle is API's alone, on a dashed line, so no plan shares it.
- * ceiling: plans past the fourth reuse shapes; add more if people often
+ * ceiling: plans past the fifth reuse shapes; add more if people often
  * compare that many at once.
  */
 const PLAN_MARKERS = [
@@ -13,6 +13,7 @@ const PLAN_MARKERS = [
 	"diamond",
 	"triangle",
 	"triangle-down",
+	"cross",
 ] as const;
 export type PointMarker = "circle" | (typeof PLAN_MARKERS)[number];
 
