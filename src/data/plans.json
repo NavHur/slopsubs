@@ -308,6 +308,93 @@
     }
   },
   {
+    "id": "google-ai-pro",
+    "vendor": "Antigravity",
+    "lab": "google",
+    "label": "Google AI Pro",
+    "monthlyPriceUsd": 19.99,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "families": [
+      "gemini-4-argon",
+      "gemini-3-8-flash"
+    ],
+    "limits": "\"Get 4x higher usage access than Free\"; Antigravity: \"Entry rate limits to agent model in Google Antigravity\"; Antigravity docs: \"A high, generous quota, refreshed every five hours until the weekly limit is reached\" / \"A higher weekly rate limit\"; overage via purchased AI credits \"consumed at standard Gemini Enterprise consumption pricing\". No numeric quota published.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": false,
+    "confidence": "primary",
+    "sourceUrl": "https://gemini.google/subscriptions/",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "google-ai-ultra-5x",
+    "vendor": "Antigravity",
+    "lab": "google",
+    "label": "Google AI Ultra (5x)",
+    "monthlyPriceUsd": 99.99,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "families": [
+      "gemini-4-argon",
+      "gemini-3-8-flash"
+    ],
+    "limits": "\"$99.99 / month: 5x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 5x: Higher rate limits to agent model in Google Antigravity\"; docs: \"The highest, most generous quota, refreshed every five hours\" / \"The highest weekly rate limits\" / \"Access to third-party models\".",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": false,
+    "confidence": "primary",
+    "sourceUrl": "https://gemini.google/subscriptions/",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "google-ai-ultra-20x",
+    "vendor": "Antigravity",
+    "lab": "google",
+    "label": "Google AI Ultra (20x)",
+    "monthlyPriceUsd": 199.99,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "families": [
+      "gemini-4-argon",
+      "gemini-3-8-flash"
+    ],
+    "limits": "\"$199.99 / month: 20x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 20x: Highest rate limits to agent model in Google Antigravity\"; refreshed every five hours up to weekly limit.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": false,
+    "confidence": "primary",
+    "sourceUrl": "https://gemini.google/subscriptions/",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
     "id": "jetbrains-ai-pro",
     "vendor": "JetBrains AI",
     "lab": "jetbrains",
@@ -383,6 +470,232 @@
       "url": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
       "basis": "35 AI credits of $1 a month for $30. JetBrains doesn't publish its per-model rates, so this assumes list price"
     },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "kimi-plus",
+    "vendor": "Kimi Code",
+    "lab": "kimi",
+    "label": "Kimi Plus",
+    "monthlyPriceUsd": 19,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "JetBrains/Zed via ACP",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key (OpenAI- and Anthropic-compatible)"
+    ],
+    "families": [
+      "kimi-k3",
+      "kimi-k3-1-pro"
+    ],
+    "limits": "New plans with Kimi Code access (Plus and higher) have a rolling 5-hour usage limit and no weekly limit... Exhausting the monthly shared credit pool also affects Kimi Code. Both monthly and annual subscriptions refresh credits monthly, with no rollover.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://www.kimi.ai/help/membership/membership-pricing",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "kimi-pro",
+    "vendor": "Kimi Code",
+    "lab": "kimi",
+    "label": "Kimi Pro",
+    "monthlyPriceUsd": 39,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key"
+    ],
+    "families": [
+      "kimi-k3",
+      "kimi-k3-1-pro",
+      "kimi-k2-7-code"
+    ],
+    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit, monthly shared credit pool ('More credits, Goal Mode, and a dedicated Kimi Claw').",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://www.kimi.ai/help/membership/membership-pricing",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "kimi-max",
+    "vendor": "Kimi Code",
+    "lab": "kimi",
+    "label": "Kimi Max",
+    "monthlyPriceUsd": 99,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key"
+    ],
+    "families": [
+      "kimi-k3",
+      "kimi-k3-1-pro",
+      "kimi-k2-7-code"
+    ],
+    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit, monthly shared credit pool ('More credits and higher Agent task concurrency').",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://www.kimi.ai/help/membership/membership-pricing",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "kimi-ultra",
+    "vendor": "Kimi Code",
+    "lab": "kimi",
+    "label": "Kimi Ultra",
+    "monthlyPriceUsd": 199,
+    "harnesses": [
+      "Kimi Code CLI",
+      "Kimi Code Desktop",
+      "Kimi Code for VS Code",
+      "Claude Code",
+      "OpenCode",
+      "Codex",
+      "Hermes Agent",
+      "third-party via API key"
+    ],
+    "families": [
+      "kimi-k3",
+      "kimi-k3-1-pro",
+      "kimi-k2-7-code"
+    ],
+    "limits": "Rolling 5-hour Kimi Code limit, no weekly limit; 'The largest credit pool among these international plans.'",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://www.kimi.ai/help/membership/membership-pricing",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "minimax-m-plan-go",
+    "vendor": "MiniMax Code",
+    "lab": "minimax",
+    "label": "MiniMax Go",
+    "monthlyPriceUsd": 22,
+    "harnesses": [
+      "MiniMax Code",
+      "Claude Code",
+      "Codex",
+      "Cursor",
+      "OpenCode",
+      "Pi",
+      "Hermes Agent",
+      "OpenClaw",
+      "other tools via Subscription Key"
+    ],
+    "families": [
+      "minimax-m3-1-flash"
+    ],
+    "limits": "Usage relative to Go: 1x (baseline). Text, image, audio: 'Subject to a 5-hour window and a weekly window.' 'Both windows start with your first use: the 5-hour window lasts 5 hours, and the weekly window lasts 7 days.' No absolute numbers published.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://platform.minimax.io/docs/m-plan/intro",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "minimax-m-plan-explore",
+    "vendor": "MiniMax Code",
+    "lab": "minimax",
+    "label": "MiniMax Explore",
+    "monthlyPriceUsd": 55,
+    "harnesses": [
+      "MiniMax Code",
+      "Claude Code",
+      "Codex",
+      "Cursor",
+      "OpenCode",
+      "Pi",
+      "Hermes Agent",
+      "OpenClaw"
+    ],
+    "families": [
+      "minimax-m3-1-flash"
+    ],
+    "limits": "3x Go usage; 5-hour + weekly windows (video weekly only).",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://platform.minimax.io/docs/m-plan/faq.md",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "minimax-m-plan-build",
+    "vendor": "MiniMax Code",
+    "lab": "minimax",
+    "label": "MiniMax Build",
+    "monthlyPriceUsd": 132,
+    "harnesses": [
+      "MiniMax Code",
+      "Claude Code",
+      "Codex",
+      "Cursor",
+      "OpenCode",
+      "Pi",
+      "Hermes Agent",
+      "OpenClaw"
+    ],
+    "families": [
+      "minimax-m3-1-flash"
+    ],
+    "limits": "7.5x Go usage; 5-hour + weekly windows.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://platform.minimax.io/docs/m-plan/faq.md",
+    "reportedCap": null,
+    "publishedAllowance": null,
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
     "promotionByFamily": {}
@@ -1015,6 +1328,113 @@
       "url": "https://www.warp.dev/pricing",
       "basis": "$200 of agent usage a month at API rates, for $200"
     },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "x-subscription-plus",
+    "vendor": "Cursor and Grok",
+    "lab": "xai",
+    "label": "X Plus",
+    "monthlyPriceUsd": 8,
+    "harnesses": [
+      "Cursor (Agent, CLI)",
+      "Grok Build",
+      "Grok apps"
+    ],
+    "families": [
+      "grok-4-7"
+    ],
+    "limits": "Usage \"Basic\"; \"Shared AI usage pool\"; \"Your allowance refreshes weekly\"; Cursor models \"at fixed settings: Fast is off, effort is medium, and Grok 4.7 uses the 256k context window\".",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": "unclear",
+    "confidence": "primary",
+    "sourceUrl": "https://cursor.com/pricing",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "x-subscription-premium",
+    "vendor": "Cursor and Grok",
+    "lab": "xai",
+    "label": "X Premium",
+    "monthlyPriceUsd": 30,
+    "harnesses": [
+      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
+      "Grok Build",
+      "Grok Bot",
+      "Grok apps"
+    ],
+    "families": [
+      "grok-4-7"
+    ],
+    "limits": "\"4x more usage compared to Plus\"; weekly shared pool across Cursor and Grok; \"Third-party models at API list price\".",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": "unclear",
+    "confidence": "primary",
+    "sourceUrl": "https://cursor.com/pricing",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "x-subscription-super",
+    "vendor": "Cursor and Grok",
+    "lab": "xai",
+    "label": "X Super",
+    "monthlyPriceUsd": 100,
+    "harnesses": [
+      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
+      "Grok Build",
+      "Grok Bot",
+      "Grok apps"
+    ],
+    "families": [
+      "grok-4-7"
+    ],
+    "limits": "\"15x more usage compared to Plus\"; \"Priority model access at peak times\"; weekly shared pool.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": "unclear",
+    "confidence": "primary",
+    "sourceUrl": "https://cursor.com/pricing",
+    "reportedCap": null,
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "x-subscription-ultra",
+    "vendor": "Cursor and Grok",
+    "lab": "xai",
+    "label": "X Ultra",
+    "monthlyPriceUsd": 200,
+    "harnesses": [
+      "Cursor (Agent, CLI, Cloud Agents, Automations, Bugbot)",
+      "Grok Build",
+      "Grok Bot",
+      "Grok apps"
+    ],
+    "families": [
+      "grok-4-7"
+    ],
+    "limits": "\"50x more usage compared to Plus\"; \"Earliest access to all products & models\"; weekly shared pool.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": "unclear",
+    "confidence": "primary",
+    "sourceUrl": "https://cursor.com/pricing",
+    "reportedCap": null,
+    "publishedAllowance": null,
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
     "promotionByFamily": {}

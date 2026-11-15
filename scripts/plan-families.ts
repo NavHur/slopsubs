@@ -146,6 +146,32 @@ const ZAI = {
 	vendor: "GLM Coding Plan",
 	families: ["glm-5-3", "glm-5-3-flash"],
 };
+/** Google AI Pro, and Ultra at "5x" and "20x higher usage limits vs. AI Pro". */
+const GOOGLE = {
+	lab: "google",
+	vendor: "Antigravity",
+	families: ["gemini-4-argon", "gemini-3-8-flash"],
+};
+const googleTier = (times: number): Tier => ({ ladder: "google-ai", times });
+const KIMI_PLUS = ["kimi-k3", "kimi-k3-1-pro"];
+/** Pro and up add K2.7 Code HighSpeed. */
+const KIMI = {
+	lab: "kimi",
+	vendor: "Kimi Code",
+	families: [...KIMI_PLUS, "kimi-k2-7-code"],
+};
+/** M Plan Go, Explore "3x Go usage" and Build "7.5x Go usage". */
+const MINIMAX = {
+	lab: "minimax",
+	vendor: "MiniMax Code",
+	families: ["minimax-m3-1-flash"],
+};
+const minimaxTier = (times: number): Tier => ({ ladder: "minimax-m", times });
+/** The pool covers Grok models only; third-party models bill at API list
+ * price, so they are not part of the plan. Premium, Super and Ultra give
+ * "4x", "15x" and "50x more usage compared to Plus". */
+const X = { lab: "xai", vendor: "Cursor and Grok", families: ["grok-4-7"] };
+const xTier = (times: number): Tier => ({ ladder: "x-subscription", times });
 const claudeTier = (times: number): Tier => ({ ladder: "claude", times });
 
 /** Each plan's families, and how it is grouped, labelled and scaled. */
@@ -205,4 +231,37 @@ export const PLAN_FAMILIES: Record<string, PlanEntry> = {
 	"zai-glm-coding-lite": { ...ZAI, shortLabel: "GLM Coding Lite" },
 	"zai-glm-coding-pro": { ...ZAI, shortLabel: "GLM Coding Pro" },
 	"zai-glm-coding-max": { ...ZAI, shortLabel: "GLM Coding Max" },
+	// Rate-window plans that publish only multiples between their tiers, so
+	// they ship unmeasured until one tier's cap is known.
+	"google-ai-pro": { ...GOOGLE, tier: googleTier(1) },
+	"google-ai-ultra-5x": { ...GOOGLE, tier: googleTier(5) },
+	"google-ai-ultra-20x": { ...GOOGLE, tier: googleTier(20) },
+	// Kimi's tier multiples are secondary only, so its plans carry none.
+	"kimi-plus": { ...KIMI, shortLabel: "Kimi Plus", families: KIMI_PLUS },
+	"kimi-pro": KIMI,
+	"kimi-max": KIMI,
+	"kimi-ultra": KIMI,
+	"minimax-m-plan-go": {
+		...MINIMAX,
+		shortLabel: "MiniMax Go",
+		tier: minimaxTier(1),
+	},
+	"minimax-m-plan-explore": {
+		...MINIMAX,
+		shortLabel: "MiniMax Explore",
+		tier: minimaxTier(3),
+	},
+	"minimax-m-plan-build": {
+		...MINIMAX,
+		shortLabel: "MiniMax Build",
+		tier: minimaxTier(7.5),
+	},
+	"x-subscription-plus": { ...X, shortLabel: "X Plus", tier: xTier(1) },
+	"x-subscription-premium": {
+		...X,
+		shortLabel: "X Premium",
+		tier: xTier(4),
+	},
+	"x-subscription-super": { ...X, shortLabel: "X Super", tier: xTier(15) },
+	"x-subscription-ultra": { ...X, shortLabel: "X Ultra", tier: xTier(50) },
 };
