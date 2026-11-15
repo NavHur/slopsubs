@@ -188,6 +188,24 @@ describe("summarizeDataChanges", () => {
 		]);
 	});
 
+	it("reads a family's list price from a priced point", () => {
+		const unpriced = point(astra, {
+			id: "gpt-6-astra-low",
+			effort: "low",
+			inputPricePerMTokUsd: null,
+			outputPricePerMTokUsd: null,
+		});
+		const changes = summarizeDataChanges(
+			snapshot({ shipped: [unpriced, point(astra)] }),
+			snapshot({
+				shipped: [unpriced, point(astra, { outputPricePerMTokUsd: 12 })],
+			}),
+		);
+		expect(changes.prices.map((p) => p.after)).toEqual([
+			{ input: 2, output: 12 },
+		]);
+	});
+
 	it("reports a plan whose value multiple changed", () => {
 		const changes = summarizeDataChanges(
 			snapshot(),

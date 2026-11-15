@@ -20,13 +20,21 @@ type Args = {
 
 const IMPORT_FLAGS = new Set(["--allow-score-drift", "--allow-missing-cost"]);
 
+/** The value after a flag, which must be there. */
+function valueOf(argv: string[], i: number): string {
+	const value = argv[i + 1];
+	if (value === undefined || value.startsWith("--"))
+		throw new Error(`${argv[i]} needs a value`);
+	return value;
+}
+
 function parseArgs(argv: string[]): Args {
 	const args: Args = { importFlags: [], base: "HEAD" };
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
 		if (IMPORT_FLAGS.has(arg)) args.importFlags.push(arg);
-		else if (arg === "--base") args.base = argv[++i];
-		else if (arg === "--summary") args.summary = argv[++i];
+		else if (arg === "--base") args.base = valueOf(argv, i++);
+		else if (arg === "--summary") args.summary = valueOf(argv, i++);
 		else throw new Error(`Unknown argument ${arg}`);
 	}
 	return args;

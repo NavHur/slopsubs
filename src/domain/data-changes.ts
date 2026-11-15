@@ -159,7 +159,7 @@ function scoreChanges(
 function listPrices(chart: ChartData) {
 	const prices = new Map<FamilyId, { name: string; price: ListPrice }>();
 	for (const p of chart.leaderboards.intelligence.models) {
-		if (prices.has(p.family)) continue;
+		if (prices.has(p.family) || p.inputPricePerMTokUsd === null) continue;
 		prices.set(p.family, {
 			name: p.name,
 			price: { input: p.inputPricePerMTokUsd, output: p.outputPricePerMTokUsd },
@@ -211,7 +211,8 @@ function valueChanges(
 		const now = fresh.multiples.get(key) ?? null;
 		if (sameValue(was, now)) return [];
 		const plan = fresh.values.get(key) ?? old.values.get(key);
-		return plan ? [{ ...plan, before: was, after: now }] : [];
+		if (!plan) throw new Error(`No plan for value key ${key}`);
+		return [{ ...plan, before: was, after: now }];
 	});
 }
 

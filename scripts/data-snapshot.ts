@@ -23,6 +23,8 @@ import {
 const ROOT = new URL("..", import.meta.url);
 const DATA_DIR = "src/data/";
 const run = promisify(execFile);
+/** Room for `git show` of the largest generated file, several times over. */
+const GIT_SHOW_MAX_BYTES = 64 * 1024 * 1024;
 
 type FileName = GeneratedFile | "samples.json";
 type Texts = Record<FileName, string>;
@@ -38,7 +40,7 @@ function fromRef(ref: string): Reader {
 		(
 			await run("git", ["show", `${ref}:${DATA_DIR}${file}`], {
 				cwd: ROOT,
-				maxBuffer: 64 * 1024 * 1024,
+				maxBuffer: GIT_SHOW_MAX_BYTES,
 			})
 		).stdout;
 }
