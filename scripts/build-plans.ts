@@ -8,6 +8,7 @@ import type { AaEvalId } from "../src/domain/eval-units.ts";
 import { evalPoints, frontierCodePoints } from "../src/domain/leaderboards.ts";
 import {
 	AaEvalsDataset,
+	AllowanceKind,
 	BenchmarkDataset,
 	type BenchmarkPoint,
 	ChartData,
@@ -23,7 +24,7 @@ import {
 	PLAN_FAMILIES,
 	type PlanEntry,
 } from "./plan-families.ts";
-import { type KnownTier, scaledCap } from "./tier-ladder.ts";
+import { type KnownTier, type Ladder, scaledCap } from "./tier-ladder.ts";
 
 const ROOT = new URL("..", import.meta.url);
 
@@ -88,7 +89,9 @@ const PUBLISHED_ALLOWANCES: Record<string, 0 | 1> = {
 
 /** Each tier ladder's reported tier, which its other tiers scale from. A
  * ladder without one ships its plans unmeasured. */
-const KNOWN_TIERS: Record<string, KnownTier> = { claude: CLAUDE_ULTRA };
+const KNOWN_TIERS: Partial<Record<Ladder, KnownTier>> = {
+	claude: CLAUDE_ULTRA,
+};
 
 /** The known tier's caps scaled to the plan's own multiple, if its ladder has
  * a known tier. */
@@ -150,7 +153,7 @@ const ResearchPlan = z.object({
 	monthlyPriceUsd: z.number(),
 	harnesses: z.array(z.string()),
 	limits: z.string(),
-	allowanceKind: z.enum(["credit", "rate-window"]),
+	allowanceKind: AllowanceKind,
 	/** Only plans on sale ship; the others stay in research with the reason. */
 	availability: z.enum(["on-sale", "closed", "discontinued"]),
 	thirdPartyHarnessAllowed: z.union([z.boolean(), z.literal("unclear")]),

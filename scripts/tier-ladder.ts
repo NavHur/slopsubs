@@ -3,8 +3,11 @@
 
 import type { ReportedCap } from "../src/domain/model.ts";
 
+/** A vendor's family of tiers priced as multiples of one base tier. */
+export type Ladder = "claude";
+
 /** A plan's usage as a multiple of its ladder's base tier, per the vendor. */
-export type Tier = { ladder: string; times: number };
+export type Tier = { ladder: Ladder; times: number };
 
 /**
  * The one tier of a ladder whose weekly cap someone reported. `base` names the
