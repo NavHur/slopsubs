@@ -61,7 +61,7 @@
       }
     ],
     "confidence": "primary",
-    "notes": "The $18 monthly price is primary (docs: 'Starting at just 18 USD per month'). The $12.60/mo annual figure is secondary: 30% yearly discount, 20% quarterly ($14.40). z.ai/subscribe renders prices client-side, so it couldn't be scraped. Since 2026-07-30 the plan bills in credits instead of prompts. FAQ: 'strictly limited to use within officially supported tools and products', with a list of about 20 tools including Claude Code, Codex, and OpenCode. Third-party use is fine within that list and forbidden outside it. ZCode and AutoClaw consume 1.5x usage. Plan quota can't be used for general API calls; from 2026-10-16 coding-plan API keys are separate keys. No refunds."
+    "notes": "The $18 monthly price is primary (docs: 'Starting at just 18 USD per month'). The $12.60/mo annual figure is secondary: 30% yearly discount, 20% quarterly ($14.40). z.ai/subscribe renders prices client-side, so it couldn't be scraped. Since 2026-07-30 the plan bills in credits instead of prompts. FAQ: 'strictly limited to use within officially supported tools and products', with a list of about 20 tools including Claude Code, Codex, and OpenCode. Third-party use is fine within that list and forbidden outside it. ZCode and AutoClaw consume 1.5x usage. Plan quota can't be used for general API calls; from 2026-10-16 coding-plan API keys are separate keys. No refunds. Credit rates (overview, 2026-11-15): usage = (input × multiplier + cached × multiplier + output × multiplier) / 10,000, with GLM-5.3 at 6.9 / 1.7 / 24 and GLM-5.3-Flash at 2.3 / 0.56 / 8. The weekly token estimates assume a 95–98% cache hit rate; the site prices the weekly credits at these rates instead, uncached, at peak."
   },
   {
     "vendor": "Zhipu / Z.ai",
@@ -113,7 +113,7 @@
       }
     ],
     "confidence": "secondary",
-    "notes": "Credit limits are primary. The $80 price is secondary: the official 2026-04-21 Legacy Plan Migration Notice still shows $72 for the old prompt-based plan, and third parties report the live subscribe page shows $80 for the credit plan. Annual $56/mo is secondary. Supported-tools-only restriction as for Lite."
+    "notes": "Credit limits are primary. The $80 price is secondary: the official 2026-04-21 Legacy Plan Migration Notice still shows $72 for the old prompt-based plan, and third parties report the live subscribe page shows $80 for the credit plan. Annual $56/mo is secondary. Supported-tools-only restriction as for Lite. Credit rates (overview, 2026-11-15): usage = (input × multiplier + cached × multiplier + output × multiplier) / 10,000, with GLM-5.3 at 6.9 / 1.7 / 24 and GLM-5.3-Flash at 2.3 / 0.56 / 8. The weekly token estimates assume a 95–98% cache hit rate; the site prices the weekly credits at these rates instead, uncached, at peak."
   },
   {
     "vendor": "Zhipu / Z.ai",
@@ -161,6 +161,6 @@
       }
     ],
     "confidence": "secondary",
-    "notes": "The $168 price is secondary; the legacy prompt plan was $160 per the official migration notice. Credit limits are primary."
+    "notes": "The $168 price is secondary; the legacy prompt plan was $160 per the official migration notice. Credit limits are primary. Credit rates (overview, 2026-11-15): usage = (input × multiplier + cached × multiplier + output × multiplier) / 10,000, with GLM-5.3 at 6.9 / 1.7 / 24 and GLM-5.3-Flash at 2.3 / 0.56 / 8. The weekly token estimates assume a 95–98% cache hit rate; the site prices the weekly credits at these rates instead, uncached, at peak."
   }
 ]

@@ -28,6 +28,7 @@ import {
 	type PlanEntry,
 } from "./plan-families.ts";
 import { type KnownTier, type Ladder, scaledCap } from "./tier-ladder.ts";
+import { WEEKLY_CREDIT_PLANS, weeklyCreditCap } from "./weekly-credit-caps.ts";
 
 const ROOT = new URL("..", import.meta.url);
 
@@ -241,6 +242,15 @@ function publishedAllowance(
 	};
 }
 
+/** A weekly credit quota's estimated cap, for plans billed in credits. */
+function creditCap(
+	planId: string,
+	families: readonly string[],
+): ReportedCap | null {
+	const plan = WEEKLY_CREDIT_PLANS[planId];
+	return plan ? weeklyCreditCap(plan, families, listRates) : null;
+}
+
 /** The limited-time discounts a plan's allowance counts, by family. */
 function promotions(
 	planId: string,
@@ -309,6 +319,7 @@ const plans = Plans.parse(
 				sourceUrl: p.sources[0].url,
 				reportedCap:
 					codexCap(p.planId, p.monthlyPriceUsd, families) ??
+					creditCap(p.planId, families) ??
 					tierCap(entry, label, families),
 				publishedAllowance: allowance,
 				weeklyShareByFamily,
