@@ -6,7 +6,6 @@ import {
 	VIEW_PRESETS,
 	type ViewPreset,
 } from "#/components/chart/projection";
-import { buildSeries, pricingStyles } from "#/components/chart/series";
 import { TradeoffChart } from "#/components/chart/TradeoffChart";
 import { type TimedPoint, timedPoints } from "#/domain/tradeoffs";
 import type { ValuePoint } from "#/domain/value";
@@ -97,15 +96,17 @@ function isNonEmpty<T>(items: readonly T[]): items is readonly [T, ...T[]] {
  */
 export function TradeoffSection({
 	points,
+	pricings,
 	view,
 }: {
 	points: readonly ValuePoint[];
+	/** The styles the side panel uses, built from every point, not only timed
+	 * ones. */
+	pricings: Plotted["pricings"];
 	/** The benchmark the points score on. */
 	view: BenchmarkView;
 }) {
 	const timed = useMemo(() => timedPoints(points), [points]);
-	// From every point, not only timed ones, so markers match the side panel's.
-	const pricings = useMemo(() => pricingStyles(buildSeries(points)), [points]);
 	const [angles, setAngles] = useState<Angles>(VIEW_PRESETS.perspective);
 	const plotted = plottedFor(pricings, timed);
 

@@ -1,7 +1,11 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
 import { VIEW_PRESETS } from "#/components/chart/projection";
-import { buildSeries, pricingStyles } from "#/components/chart/series";
+import {
+	buildSeries,
+	pricingIdOf,
+	pricingStyles,
+} from "#/components/chart/series";
 import { leaderboards, plans, samples } from "#/data";
 import type { BenchmarkId } from "#/domain/enums";
 import {
@@ -9,7 +13,7 @@ import {
 	tradeoffFrontier,
 	timedPoints,
 } from "#/domain/tradeoffs";
-import { valuePoints } from "#/domain/value";
+import { type ValuePoint, valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
 import { familyName } from "#/lib/families";
 import { formatUsd } from "#/lib/format";
@@ -31,13 +35,19 @@ function pagePoints(benchmark: BenchmarkId) {
 	});
 }
 
-function markup(benchmark: BenchmarkId) {
+/** The section as the page renders it: styles built over every point. */
+function markupOf(points: readonly ValuePoint[], benchmark: BenchmarkId) {
 	return renderToStaticMarkup(
 		<TradeoffSection
-			points={pagePoints(benchmark)}
+			points={points}
+			pricings={pricingStyles(buildSeries(points))}
 			view={BENCHMARK_VIEWS[benchmark]}
 		/>,
 	);
+}
+
+function markup(benchmark: BenchmarkId) {
+	return markupOf(pagePoints(benchmark), benchmark);
 }
 
 const HTML_ENTITIES: Record<string, string> = {
@@ -48,13 +58,35 @@ const HTML_ENTITIES: Record<string, string> = {
 	"&#x27;": "'",
 };
 
+function unescapeHtml(text: string): string {
+	return text.replace(/&(?:amp|lt|gt|quot|#x27);/g, (e) => HTML_ENTITIES[e]);
+}
+
+const POINT_OPENING = '<g role="button" tabindex="0" aria-label="';
+
 /** The accessible names of the chart's point buttons, in markup order. */
 function pointLabels(html: string): string[] {
-	return [
-		...html.matchAll(/<g role="button" tabindex="0" aria-label="([^"]*)"/g),
-	].map(([, label]) =>
-		label.replace(/&(?:amp|lt|gt|quot|#x27);/g, (e) => HTML_ENTITIES[e]),
-	);
+	return drawnPoints(html).map((p) => p.label);
+}
+
+/** Each chart point's accessible name and the path of its marker. */
+function drawnPoints(html: string): { label: string; marker: string }[] {
+	return html
+		.split(POINT_OPENING)
+		.slice(1)
+		.map((chunk) => ({
+			label: unescapeHtml(chunk.slice(0, chunk.indexOf('"'))),
+			marker: /<path d="([^"]*)"/.exec(chunk)?.[1] ?? "",
+		}));
+}
+
+/** Which marker a path draws, told apart by its corners. */
+function markerShape(path: string): "circle" | "square" | "diamond" | "other" {
+	if (path.includes("a")) return "circle";
+	const corners = [...path.matchAll(/(-?[\d.]+),(-?[\d.]+)/g)];
+	if (corners.length !== 4) return "other";
+	// A square's first two corners share a height; a diamond's do not.
+	return corners[0][2] === corners[1][2] ? "square" : "diamond";
 }
 
 function pricingName({ pricing }: TimedPoint): string {
@@ -97,6 +129,19 @@ function beatenPoint(): TimedPoint {
 	const beaten = timed.find((p) => !worth.has(p));
 	if (!beaten) throw new Error("no beaten point on the page");
 	return beaten;
+}
+
+/** The points with the first plan's time per task unknown, as a benchmark
+ * that never timed that plan's runs would leave them. */
+function untimedFirstPlan(points: readonly ValuePoint[]): ValuePoint[] {
+	const firstPlan = points.find((p) => p.pricing.kind === "plan");
+	if (!firstPlan) throw new Error("no plan on the page");
+	const id = pricingIdOf(firstPlan.pricing);
+	return points.map((p) =>
+		pricingIdOf(p.pricing) === id
+			? { ...p, benchmark: { ...p.benchmark, secondsPerTask: null } }
+			: p,
+	);
 }
 
 /** The PNG key's text lines when every timed point of the page is exported. */
@@ -178,6 +223,29 @@ describe("TradeoffSection", () => {
 			"Hollow: another is no worse on all, better on one",
 		);
 		expect(lines.join(" ")).not.toMatch(stale);
+	});
+
+	it("draws a plan's marker as the side panel does when the plans before it have no time per task", () => {
+		const points = untimedFirstPlan(pagePoints("intelligence"));
+		const planStyles = [...pricingStyles(buildSeries(points)).values()].filter(
+			(style) => !style.isApi,
+		);
+		const later = planStyles[1];
+		if (!later) throw new Error("fewer than two plans on the page");
+		const timedOnly = pricingStyles(buildSeries(timedPoints(points)));
+		expect(later.marker).toBe("diamond");
+		// Styles built from timed points alone would hand the later plan a square.
+		expect(timedOnly.get(later.id)?.marker).toBe("square");
+		const drawn = drawnPoints(markupOf(points, "intelligence"));
+		const laterPoints = timedPoints(points).filter(
+			(p) => pricingIdOf(p.pricing) === later.id,
+		);
+		expect(laterPoints.length).toBeGreaterThan(0);
+		const shapes = laterPoints.map((p) => {
+			const found = drawn.find((d) => d.label.startsWith(labelPrefix(p)));
+			return markerShape(found?.marker ?? "");
+		});
+		expect(shapes).toEqual(laterPoints.map(() => "diamond"));
 	});
 
 	it("explains an empty chart on a benchmark that never times its tasks", () => {
