@@ -45,7 +45,8 @@ const FABLE_HALF = { "claude-fable-5-2": 0.5 };
 
 /** How a plan is shown and which of its models the site benchmarks. */
 export type PlanEntry = {
-	/** The lab whose models the plan sells, such as "anthropic". */
+	/** The plan provider's id, such as "anthropic"; not every model it includes
+	 * comes from that lab. */
 	lab: string;
 	/** The harness people buy the plan for, which groups it in the list. */
 	vendor: string;
