@@ -26,7 +26,14 @@ assets, configured in `wrangler.jsonc`) from CI on every push to `main`.
 
 ## Benchmark Data
 
-The charts ship generated data, refreshed by four scripts in this order:
+The charts ship generated data. One command refreshes all of it:
+
+```bash
+bun run refresh-data
+```
+
+It runs four scripts in this order and stops at the first that fails, with
+that script's exit code:
 
 ```bash
 bun run import-benchmarks    # src/data/benchmarks.json
@@ -34,6 +41,24 @@ bun run import-aa-evals      # src/data/aa-evals.json
 bun run import-frontiercode  # src/data/frontiercode.json
 bun run build-plans          # plans.json and chart-benchmarks.json
 ```
+
+Then it prints what changed since `HEAD` (`--base <ref>` picks another
+commit): plan value multiples, list prices, scores that moved by 0.1 points or
+more, and models AA added or dropped. When nothing but fetch dates moved, it
+puts the files back, so the footer's "Data as of" date is when the data last
+changed. `--allow-score-drift` and `--allow-missing-cost` pass through to
+`import-benchmarks`, and `--summary <file.md>` saves the summary.
+
+The **Refresh data** workflow runs it every day at 02:41 UTC, after slopalytics
+refreshes, and on demand from the Actions tab (with both flags as inputs).
+When the data changed, it checks the result with `vp check` and `vp test run`,
+force-pushes it to `data-refresh/main`, and opens or updates one draft PR whose
+body lists the changes; a maintainer reviews and merges it. A failed run opens
+or updates the "Data refresh failing" issue with the step and its output, and
+the next good run closes it. It pushes with the `DATA_REFRESH_TOKEN` secret, a
+fine-grained token with Contents and Pull requests write access, because
+events from the default `GITHUB_TOKEN` start no workflows and Verify would not
+run on the PR.
 
 [Artificial Analysis](https://artificialanalysis.ai) is the source of the
 model list, Intelligence Index scores, list prices and release dates, and the
