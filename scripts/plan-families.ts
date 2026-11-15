@@ -94,6 +94,7 @@ const OLLAMA_CLOUD = [
 	"mimo-v2-6-pro",
 	"mimo-v2-6-flash",
 	"mistral-large-4",
+	"muse-spark-open",
 	"gpt-oss-120b",
 ];
 const JETBRAINS_AI = [

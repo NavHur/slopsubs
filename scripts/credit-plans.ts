@@ -1,6 +1,5 @@
 // Credit plans: a fixed amount of usage a month at the vendor's own token
-// rates. build-plans turns each into a published monthly allowance at list
-// price, so the value multiple is the credit ratio.
+// rates, which build-plans values at list price as a published allowance.
 
 import type { Promotion, PublishedAllowance } from "../src/domain/model.ts";
 import { listPriced, type TokenRates } from "./list-price.ts";
@@ -61,9 +60,14 @@ function vendorRates(
 	return listRates(family);
 }
 
-/** The promotions a credit plan's allowance counts, by family. */
-export function creditPromotions(plan: CreditPlan): Record<string, Promotion> {
+/** The promotions a credit plan's allowance counts: its families' only. */
+export function creditPromotions(
+	plan: CreditPlan,
+	families: readonly string[],
+): Record<string, Promotion> {
 	return Object.fromEntries(
-		Object.entries(plan.promos).map(([family, p]) => [family, p.promotion]),
+		Object.entries(plan.promos)
+			.filter(([family]) => families.includes(family))
+			.map(([family, p]) => [family, p.promotion]),
 	);
 }

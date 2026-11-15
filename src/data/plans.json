@@ -161,18 +161,7 @@
     },
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
-    "promotionByFamily": {
-      "gemini-4-argon": {
-        "summary": "Copilot bills Gemini 4 Argon at 50% off, doubling its usage",
-        "endsOn": "2026-11-30",
-        "url": "https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing"
-      },
-      "gemini-4-carbon": {
-        "summary": "Copilot bills Gemini 4 Carbon at 50% off, doubling its usage",
-        "endsOn": "2026-11-30",
-        "url": "https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing"
-      }
-    }
+    "promotionByFamily": {}
   },
   {
     "id": "copilot-pro-plus",
@@ -420,6 +409,7 @@
       "mimo-v2-6-pro",
       "mimo-v2-6-flash",
       "mistral-large-4",
+      "muse-spark-open",
       "gpt-oss-120b"
     ],
     "limits": "\"$60 of usage credits per month\"; \"Access to larger pro models\"; \"Run multiple models concurrently\"; resets monthly, no rollover; off-peak pricing outside 12:00-18:00 UTC on weekdays and all day on weekends.",
@@ -443,6 +433,7 @@
         "mimo-v2-6-pro": 60,
         "mimo-v2-6-flash": 60,
         "mistral-large-4": 60,
+        "muse-spark-open": 60,
         "gpt-oss-120b": 60
       },
       "url": "https://ollama.com/pricing",
@@ -474,6 +465,7 @@
       "mimo-v2-6-pro",
       "mimo-v2-6-flash",
       "mistral-large-4",
+      "muse-spark-open",
       "gpt-oss-120b"
     ],
     "limits": "\"$300 of usage credits per month\"; \"10 concurrent requests\".",
@@ -497,6 +489,7 @@
         "mimo-v2-6-pro": 300,
         "mimo-v2-6-flash": 300,
         "mistral-large-4": 300,
+        "muse-spark-open": 300,
         "gpt-oss-120b": 300
       },
       "url": "https://ollama.com/pricing",

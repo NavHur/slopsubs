@@ -1,5 +1,5 @@
-// Each credit plan's monthly credit and the rates it is spent at, from the
-// vendors' own pages (accessed 2026-11-15; research/plans/ cites them).
+// Each credit plan's credit and spend rates, from the vendors' pages (accessed
+// 2026-11-15, cited in research/plans/); JetBrains publishes none, so list price.
 
 import type { CreditPlan } from "./credit-plans.ts";
 import type { TokenRates } from "./list-price.ts";

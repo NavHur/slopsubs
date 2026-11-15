@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
+import plansJson from "../src/data/plans.json";
 import type { FamilyId, Plan, PlanId } from "../src/domain/model.ts";
 import {
 	planCapacity,
@@ -65,7 +66,7 @@ function shipped(credit: CreditPlan, priceUsd: number): Plan {
 		),
 		weeklyShareByFamily: {},
 		maxEffortByFamily: {},
-		promotionByFamily: creditPromotions(credit),
+		promotionByFamily: creditPromotions(credit, [sonnet, argon]),
 	};
 }
 
@@ -91,6 +92,13 @@ describe("a credit plan", () => {
 		if (!promoted) throw new Error("no allowance");
 		expect(valueMultiple({ plan, allowance: promoted })).toBeCloseTo(3);
 		expect(plan.promotionByFamily[argon]?.summary).toBe("half price");
+	});
+
+	it("counts only the promotions of models the plan includes", () => {
+		expect(creditPromotions(copilot, [sonnet])).toEqual({});
+		expect(Object.keys(creditPromotions(copilot, [sonnet, argon]))).toEqual([
+			argon,
+		]);
 	});
 
 	it("divides a model billed above list price by the markup", () => {
@@ -133,4 +141,16 @@ describe("a credit plan in the vendor's own credits", () => {
 			/gemini-4-argon: no credit rate/,
 		);
 	});
+});
+
+describe("the shipped Ollama plans", () => {
+	it.each(["ollama-pro", "ollama-max"])(
+		"%s credits Muse Spark Open, which its rate table lists",
+		(id) => {
+			const plan = plansJson.find((p) => p.id === id);
+			const credit =
+				plan?.publishedAllowance?.apiUsdPerMonthByFamily["muse-spark-open"];
+			expect(credit).toBeGreaterThan(0);
+		},
+	);
 });

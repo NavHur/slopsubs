@@ -242,9 +242,13 @@ function publishedAllowance(
 }
 
 /** The limited-time discounts a plan's allowance counts, by family. */
-function promotions(planId: string, lab: string): Record<string, Promotion> {
+function promotions(
+	planId: string,
+	lab: string,
+	families: readonly string[],
+): Record<string, Promotion> {
 	const credit = CREDIT_PLANS[planId];
-	if (credit) return creditPromotions(credit);
+	if (credit) return creditPromotions(credit, families);
 	return lab === "opencode" ? OPENCODE_PROMOTIONS : {};
 }
 
@@ -303,7 +307,7 @@ const plans = Plans.parse(
 				publishedAllowance: allowance,
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
-				promotionByFamily: promotions(p.planId, lab),
+				promotionByFamily: promotions(p.planId, lab, families),
 			};
 		}),
 );
