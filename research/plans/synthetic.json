@@ -19,6 +19,8 @@
       "Nemotron-3-Super"
     ],
     "limits": "\"Credits regenerate over the week and apply at discounted model rates.\"; \"Allows extra usage at API pricing\"; \"1 Usage Reset/month\".",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -42,6 +44,8 @@
       "as Go"
     ],
     "limits": "\"Larger limits for more demanding projects\"; weekly regenerating credits.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -65,6 +69,8 @@
       "as Go"
     ],
     "limits": "\"Biggest limits for the biggest projects\"; Fast mode \"uses 2× as much of your rate limit\"; Infinite mode \"never count against your rate limit\" (DeepSeek V4.1 Flash only).",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {

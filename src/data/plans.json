@@ -15,6 +15,7 @@
       "claude-haiku-5-5"
     ],
     "limits": "\"More usage than Free, every 5 hours and every week*\" (pricing page). \"Your activity across Claude on web, desktop, mobile, and Claude Code all draws from the same pool.\" Max is \"5x Pro usage\" and Ultra \"10x Pro usage every week\".",
+    "allowanceKind": "rate-window",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
@@ -51,6 +52,7 @@
       "claude-fable-5-2"
     ],
     "limits": "\"5x Pro usage every 5 hours and every week*\" (pricing page). Help center: \"Get five times the Pro plan's usage every five hours and every week.\" Fable: \"Fable included, up to half your weekly limit\".",
+    "allowanceKind": "rate-window",
     "includedApiCreditUsd": 100,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
@@ -90,6 +92,7 @@
       "claude-fable-5-2"
     ],
     "limits": "\"No 5-hour limit‡\" and \"10x Pro usage every week*\"; \"‡No 5-hour limit for verified accounts.\" Fable: \"50% of weekly limits*\".",
+    "allowanceKind": "rate-window",
     "includedApiCreditUsd": 200,
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
@@ -142,6 +145,7 @@
       "gpt-6-luna"
     ],
     "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6.1 Terra 35-285, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
+    "allowanceKind": "rate-window",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
@@ -192,6 +196,7 @@
       "gpt-6-luna"
     ],
     "limits": "\"Pro plans currently have no five-hour limit.\" Help center: \"Pro 200 includes more usage than Pro 100.\" \"Pro 100 and Pro 500 now include twice their previous Work and Codex allowance.\" Weekly limits apply. At launch (2026-04-09) OpenAI said: \"Pro $100 unlocks 5x higher usage than Plus\" (secondary report of the launch statement).",
+    "allowanceKind": "rate-window",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
@@ -242,6 +247,7 @@
       "gpt-6-luna"
     ],
     "limits": "\"Pro plans currently have no five-hour limit.\" \"Pro 200 includes more usage than Pro 100.\" \"All Pro 200 subscriptions now include the same Work and Codex allowance.\" \"Plus usage is unchanged.\"",
+    "allowanceKind": "rate-window",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
@@ -292,6 +298,7 @@
       "gpt-6-luna"
     ],
     "limits": "\"Pro 500 offers the highest included usage of the three plans.\" \"Pro 100 and Pro 500 now include twice their previous Work and Codex allowance.\" \"Pro plans currently have no five-hour limit.\" Ultrafast \"uses your plan's included usage first at 8x the Standard rate for the selected model, then draws from your credit balance at 6x the Standard credit rate\".",
+    "allowanceKind": "rate-window",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
@@ -351,6 +358,7 @@
       "grok-4-7"
     ],
     "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\"; the 5-hour window gets 20% of the monthly dollars and the weekly window 50%. E.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K3.1 Pro 147 / $15; Kimi K2.7 Code 1,350 / $60; LongCat-2.0 11,400 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 43,330 / $100; Hy4 2,710 / $60. Beam Free, Iceman Contributor Free and Crouton Alpha Free are unlimited for a limited time.",
+    "allowanceKind": "rate-window",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",
@@ -440,6 +448,7 @@
       "grok-4-7"
     ],
     "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K3.1 Pro 588 / $60; Kimi K2.7 Code 4,050 / $180; LongCat-2.0 45,600 / $240; DeepSeek V4.1 Flash 86,670 / $200; Hy4 10,840 / $240.",
+    "allowanceKind": "rate-window",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
     "confidence": "primary",

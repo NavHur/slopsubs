@@ -42,6 +42,7 @@ const plan: Plan = {
 	families: [opus],
 	limits: "weekly cap",
 	includedApiCreditUsd: 0,
+	allowanceKind: "rate-window",
 	thirdPartyHarnessAllowed: false,
 	confidence: "primary",
 	sourceUrl: "https://example.com/pricing",

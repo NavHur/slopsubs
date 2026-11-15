@@ -1,6 +1,6 @@
 # Coding subscription plans: caveats (accessed 2026-11-06)
 
-The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an access date and a confidence level (`primary`, `secondary` or `unverified`). Prices are in USD and exclude tax.
+The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an access date and a confidence level (`primary`, `secondary` or `unverified`). It also records how the allowance works (`allowanceKind`: `credit` or `rate-window`) and whether the plan is still sold (`availability`: `on-sale`, `closed` to new customers, or `discontinued`). Only plans on sale ship. Prices are in USD and exclude tax.
 
 ## Market changes in the last month
 

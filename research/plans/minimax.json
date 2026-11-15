@@ -21,6 +21,8 @@
       "image and audio models"
     ],
     "limits": "Usage relative to Go: 1x (baseline). Text, image, audio: 'Subject to a 5-hour window and a weekly window.' 'Both windows start with your first use: the 5-hour window lasts 5 hours, and the weekly window lasts 7 days.' No absolute numbers published.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -65,6 +67,8 @@
       "image and audio models"
     ],
     "limits": "3x Go usage; 5-hour + weekly windows (video weekly only).",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -101,6 +105,8 @@
       "image and audio models"
     ],
     "limits": "7.5x Go usage; 5-hour + weekly windows.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {

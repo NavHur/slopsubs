@@ -17,6 +17,8 @@
       "MiniMax-M2.5"
     ],
     "limits": "Reportedly 1,200 requests/5h, 9,000/week, 18,000/month (conflicting third-party figures of ~750/5h exist).",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": "unclear",
     "sources": [
       {

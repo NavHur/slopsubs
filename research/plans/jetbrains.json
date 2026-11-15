@@ -12,6 +12,8 @@
       "JetBrains-hosted cloud models (multi-vendor)"
     ],
     "limits": "\"10 AI credits per 30-days\"; \"Each AI credit equals $1 USD\".",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
@@ -35,6 +37,8 @@
       "JetBrains-hosted cloud models"
     ],
     "limits": "\"35 AI credits per 30-days\" (includes \"a small bonus\").",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {

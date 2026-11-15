@@ -150,6 +150,9 @@ const ResearchPlan = z.object({
 	monthlyPriceUsd: z.number(),
 	harnesses: z.array(z.string()),
 	limits: z.string(),
+	allowanceKind: z.enum(["credit", "rate-window"]),
+	/** Only plans on sale ship; the others stay in research with the reason. */
+	availability: z.enum(["on-sale", "closed", "discontinued"]),
 	thirdPartyHarnessAllowed: z.union([z.boolean(), z.literal("unclear")]),
 	sources: z.array(z.object({ url: z.url(), accessed: z.string() })).min(1),
 	confidence: z.enum(["primary", "secondary", "unverified"]),
@@ -196,6 +199,13 @@ const missing = Object.keys(PLAN_FAMILIES).filter(
 );
 if (missing.length)
 	throw new Error(`Plans not in research: ${missing.join(", ")}`);
+const offSale = research.filter(
+	(p) => p.planId in PLAN_FAMILIES && p.availability !== "on-sale",
+);
+if (offSale.length)
+	throw new Error(
+		`Plans no longer on sale can't ship: ${offSale.map((p) => `${p.planId} (${p.availability})`).join(", ")}`,
+	);
 
 /** Converts a Go-priced dollar allowance into list-priced (API) dollars. */
 function listPricedUsd(family: string, goUsd: number): number {
@@ -246,6 +256,8 @@ const plans = Plans.parse(
 				throw new Error(`${p.planId}: unbenchmarked ${unknown.join(", ")}`);
 			const label = entry.shortLabel ?? p.label;
 			const allowance = publishedAllowance(p.planId);
+			if (p.allowanceKind === "credit" && !allowance)
+				throw new Error(`${p.planId}: a credit plan needs its sourced credit`);
 			return {
 				id: p.planId,
 				vendor,
@@ -255,6 +267,7 @@ const plans = Plans.parse(
 				harnesses: p.harnesses,
 				families,
 				limits: p.limits,
+				allowanceKind: p.allowanceKind,
 				includedApiCreditUsd,
 				thirdPartyHarnessAllowed: p.thirdPartyHarnessAllowed,
 				confidence: p.confidence,

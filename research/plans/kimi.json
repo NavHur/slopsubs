@@ -22,6 +22,8 @@
       "K2.8 Preview (kimi-for-coding)"
     ],
     "limits": "New plans with Kimi Code access (Plus and higher) have a rolling 5-hour usage limit and no weekly limit... Exhausting the monthly shared credit pool also affects Kimi Code. Both monthly and annual subscriptions refresh credits monthly, with no rollover.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -64,6 +66,8 @@
       "K2.7 Code HighSpeed (kimi-for-coding-highspeed)"
     ],
     "limits": "Rolling 5-hour Kimi Code limit, no weekly limit, monthly shared credit pool ('More credits, Goal Mode, and a dedicated Kimi Claw').",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -102,6 +106,8 @@
       "K2.7 Code HighSpeed"
     ],
     "limits": "Rolling 5-hour Kimi Code limit, no weekly limit, monthly shared credit pool ('More credits and higher Agent task concurrency').",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -136,6 +142,8 @@
       "K2.7 Code HighSpeed"
     ],
     "limits": "Rolling 5-hour Kimi Code limit, no weekly limit; 'The largest credit pool among these international plans.'",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {

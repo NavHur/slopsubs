@@ -44,6 +44,8 @@
       "Crouton Alpha Free"
     ],
     "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\"; the 5-hour window gets 20% of the monthly dollars and the weekly window 50%. E.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K3.1 Pro 147 / $15; Kimi K2.7 Code 1,350 / $60; LongCat-2.0 11,400 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 43,330 / $100; Hy4 2,710 / $60. Beam Free, Iceman Contributor Free and Crouton Alpha Free are unlimited for a limited time.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -76,6 +78,8 @@
       "same as Go"
     ],
     "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K3.1 Pro 588 / $60; Kimi K2.7 Code 4,050 / $180; LongCat-2.0 45,600 / $240; DeepSeek V4.1 Flash 86,670 / $200; Hy4 10,840 / $240.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {

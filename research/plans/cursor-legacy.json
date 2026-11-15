@@ -14,6 +14,8 @@
       "third-party models via 'Other Models' pool at API price"
     ],
     "limits": "\"Two monthly pools: Cursor Models and Other Models\"; Other Models pool is \"drawn down at each model's API price\". Dollar amounts not stated.",
+    "allowanceKind": "rate-window",
+    "availability": "closed",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
@@ -39,6 +41,8 @@
       "third-party models via Other Models pool"
     ],
     "limits": "\"Pro+ and Ultra include more of each pool than Pro.\"",
+    "allowanceKind": "rate-window",
+    "availability": "closed",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
@@ -64,6 +68,8 @@
       "third-party models via Other Models pool"
     ],
     "limits": "\"Pro+ and Ultra include more of each pool than Pro.\"",
+    "allowanceKind": "rate-window",
+    "availability": "closed",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {

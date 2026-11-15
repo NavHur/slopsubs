@@ -12,6 +12,8 @@
       "GPT-6 Luna (Standard speed)"
     ],
     "limits": "\"GPT-6 Luna at Standard speed in the desktop app, subject to rollout\"; \"Use Codex for lightweight coding tasks.\" No numeric limits published.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": "unclear",
     "sources": [
       {
@@ -53,6 +55,8 @@
       "GPT-6 Astra"
     ],
     "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6.1 Terra 35-285, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -99,6 +103,8 @@
       "Pro models (ChatGPT)"
     ],
     "limits": "\"Pro plans currently have no five-hour limit.\" Help center: \"Pro 200 includes more usage than Pro 100.\" \"Pro 100 and Pro 500 now include twice their previous Work and Codex allowance.\" Weekly limits apply. At launch (2026-04-09) OpenAI said: \"Pro $100 unlocks 5x higher usage than Plus\" (secondary report of the launch statement).",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -149,6 +155,8 @@
       "Pro models (ChatGPT)"
     ],
     "limits": "\"Pro plans currently have no five-hour limit.\" \"Pro 200 includes more usage than Pro 100.\" \"All Pro 200 subscriptions now include the same Work and Codex allowance.\" \"Plus usage is unchanged.\"",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -197,6 +205,8 @@
       "Pro models (ChatGPT)"
     ],
     "limits": "\"Pro 500 offers the highest included usage of the three plans.\" \"Pro 100 and Pro 500 now include twice their previous Work and Codex allowance.\" \"Pro plans currently have no five-hour limit.\" Ultrafast \"uses your plan's included usage first at 8x the Standard rate for the selected model, then draws from your credit balance at 6x the Standard credit rate\".",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {

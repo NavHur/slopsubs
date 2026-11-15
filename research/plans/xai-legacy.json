@@ -13,6 +13,8 @@
       "Grok 4.x"
     ],
     "limits": "Not verified.",
+    "allowanceKind": "rate-window",
+    "availability": "closed",
     "thirdPartyHarnessAllowed": "unclear",
     "sources": [
       {

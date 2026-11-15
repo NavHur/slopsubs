@@ -153,6 +153,11 @@ const Plan = z.object({
 	harnesses: z.array(z.string()).min(1),
 	families: z.array(FamilyId).min(1),
 	limits: z.string(),
+	/**
+	 * How the allowance works: a credit plan pays a fixed dollar amount of usage
+	 * a month, a rate-window plan caps usage per 5-hour window or week.
+	 */
+	allowanceKind: z.enum(["credit", "rate-window"]),
 	/** Pay-per-token credit bundled with the plan, usable from any harness. */
 	includedApiCreditUsd: Usd,
 	thirdPartyHarnessAllowed: z.union([z.boolean(), z.literal("unclear")]),

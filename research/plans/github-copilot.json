@@ -16,6 +16,8 @@
       "Multi-vendor: Claude (Haiku/Sonnet/Opus/Fable), GPT-5.x/6.x, Gemini 3.x/4 Argon, Grok 4.x, Kimi K2.7 Code/K3, MAI-Code-1.1-Flash; availability varies by plan"
     ],
     "limits": "\"Every plan includes a monthly allowance: 1 AI credit = $0.01 USD.\" Pro: Base 1,000 + flex 500 = 1,500 credits/month ($15). \"Flex allotments may change over time.\" \"Code completions and next edit suggestions don't use credits.\"",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -60,6 +62,8 @@
       "Multi-vendor incl. Claude Opus/Fable, GPT-6.x, Gemini 4 Argon, Grok 4.x, Kimi K3"
     ],
     "limits": "Base 3,900 + flex 3,100 = 7,000 AI credits/month ($70). \"1 AI credit = $0.01 USD.\" \"Flex allotments may change over time.\"",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -100,6 +104,8 @@
       "Multi-vendor; priority access to premium models"
     ],
     "limits": "Base 10,000 + flex 10,000 = 20,000 AI credits/month ($200). \"built for heavy Copilot usage, including sustained agent-driven workflows\".",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {

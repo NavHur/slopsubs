@@ -16,6 +16,8 @@
       "Mistral models"
     ],
     "limits": "\"All-day coding in the CLI, IDE, or on web.\"; \"Subject to fair usage limits and Mistral's Terms of Service.\"; includes \"$25.5 /mo in API credits\" (card attribution uncertain, see notes).",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": "unclear",
     "sources": [
       {

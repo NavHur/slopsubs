@@ -44,6 +44,7 @@ const uncoveredPlan: Plan = {
 	families: [scored],
 	limits: "monthly allowance",
 	includedApiCreditUsd: 0,
+	allowanceKind: "rate-window",
 	thirdPartyHarnessAllowed: false,
 	confidence: "primary",
 	sourceUrl: "https://example.com/pricing",
