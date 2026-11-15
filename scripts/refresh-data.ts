@@ -10,7 +10,7 @@ import { spawnSync } from "node:child_process";
 import { writeFile } from "node:fs/promises";
 import { hasDataChanges } from "../src/domain/data-changes.ts";
 import { renderDataChanges } from "./data-changes-markdown.ts";
-import { changesSince, restore, setOutput } from "./data-snapshot.ts";
+import { changesSince, restore } from "./data-snapshot.ts";
 
 type Args = {
 	importFlags: string[];
@@ -73,7 +73,6 @@ async function main() {
 	if (!changed) await restore(base);
 	const summary = renderDataChanges(changes);
 	if (args.summary) await writeFile(args.summary, `${summary}\n`);
-	await setOutput("changed", String(changed));
 	console.log(
 		changed
 			? `\nData changed since ${args.base}:\n\n${summary}`

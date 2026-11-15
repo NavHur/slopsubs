@@ -49,16 +49,13 @@ puts the files back, so the footer's "Data as of" date is when the data last
 changed. `--allow-score-drift` and `--allow-missing-cost` pass through to
 `import-benchmarks`, and `--summary <file.md>` saves the summary.
 
-The **Refresh data** workflow runs it every day at 02:41 UTC, after slopalytics
-refreshes, and on demand from the Actions tab (with both flags as inputs).
-When the data changed, it checks the result with `vp check` and `vp test run`,
-force-pushes it to `data-refresh/main`, and opens or updates one draft PR whose
-body lists the changes; a maintainer reviews and merges it. A failed run opens
-or updates the "Data refresh failing" issue with the step and its output, and
-the next good run closes it. It pushes with the `DATA_REFRESH_TOKEN` secret, a
-fine-grained token with Contents and Pull requests write access, because
-events from the default `GITHUB_TOKEN` start no workflows and Verify would not
-run on the PR.
+A scheduled agent runs it twice a day. When the data changed, it checks the
+result with `vp check` and `vp test run`, force-pushes it to
+`data-refresh/main`, and opens or updates one draft PR whose body lists the
+changes; a maintainer reviews and merges it. `bun scripts/data-changes.ts
+<ref>` prints the same summary against any ref, so a rerun whose numbers match
+the open PR pushes nothing. A failed run opens or updates the "Data refresh
+failing" issue with the step and its output, and the next good run closes it.
 
 [Artificial Analysis](https://artificialanalysis.ai) is the source of the
 model list, Intelligence Index scores, list prices and release dates, and the

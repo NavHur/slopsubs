@@ -81,9 +81,3 @@ export async function restore(base: Texts): Promise<void> {
 		),
 	);
 }
-
-/** Records a step output for GitHub Actions; a no-op elsewhere. */
-export async function setOutput(name: string, value: string): Promise<void> {
-	const path = process.env.GITHUB_OUTPUT;
-	if (path) await writeFile(path, `${name}=${value}\n`, { flag: "a" });
-}
