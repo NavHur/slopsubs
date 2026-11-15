@@ -129,4 +129,27 @@ describe("PlanList", () => {
 		);
 		expect(section).toContain(`${familyName(scored)}, ${familyName(unscored)}`);
 	});
+
+	it("shows an unmeasured plan's limits in a disclosure, not only a tooltip", () => {
+		const html = renderToStaticMarkup(
+			<PlanList
+				plans={[
+					{
+						...uncoveredPlan,
+						label: "Unmeasured",
+						limits: "5x higher usage limits",
+						publishedAllowance: null,
+					},
+				]}
+				selected={[]}
+				styles={new Map()}
+				showApi={false}
+				onToggle={() => {}}
+				onToggleApi={() => {}}
+			/>,
+		);
+		expect(html).toMatch(
+			/<details[^>]*><summary[^>]*>Limits<\/summary><p>5x higher usage limits<\/p><\/details>/,
+		);
+	});
 });

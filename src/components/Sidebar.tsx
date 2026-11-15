@@ -273,7 +273,6 @@ function UnmeasuredRow({ plan }: { plan: Plan }) {
 					href={plan.sourceUrl}
 					target="_blank"
 					rel="noreferrer"
-					title={plan.limits}
 					className="block truncate text-muted hover:text-fg"
 				>
 					{plan.label}
@@ -281,6 +280,10 @@ function UnmeasuredRow({ plan }: { plan: Plan }) {
 				<span className="block text-[11px] leading-4 text-subtle">
 					{plan.families.map(familyName).join(", ")}
 				</span>
+				<details className="text-[11px] leading-4 text-subtle">
+					<summary className="cursor-pointer max-lg:py-2">Limits</summary>
+					<p>{plan.limits}</p>
+				</details>
 			</span>
 			<span className="ml-auto">
 				<PlanPrice plan={plan} />
