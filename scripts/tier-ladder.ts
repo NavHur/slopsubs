@@ -54,7 +54,7 @@ export function scaledCap(
 
 /**
  * The plan's cap scaled from its ladder's known tier, or null when the plan is
- * on no ladder or its ladder has no known tier, which ships it unmeasured.
+ * on no ladder or its ladder has no known tier. Other sources may still cap it.
  */
 export function ladderCap<L extends string>(
 	knownTiers: Readonly<Partial<Record<L, KnownTier>>>,

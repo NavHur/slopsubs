@@ -251,28 +251,41 @@ function UnmeasuredPlans({ plans }: { plans: readonly Plan[] }) {
 			<summary className="cursor-pointer py-1 text-muted hover:text-fg max-lg:py-3">
 				Not yet measured ({plans.length})
 			</summary>
-			<ul className="mt-1">
-				{plans.map((plan) => (
-					<li
-						key={plan.id}
-						className="flex items-center gap-2 py-0.5 max-lg:min-h-11"
-					>
-						<a
-							href={plan.sourceUrl}
-							target="_blank"
-							rel="noreferrer"
-							title={plan.limits}
-							className="truncate text-muted hover:text-fg"
-						>
-							{plan.label}
-						</a>
-						<span className="ml-auto">
-							<PlanPrice plan={plan} />
-						</span>
-					</li>
-				))}
-			</ul>
+			{[...Map.groupBy(plans, (plan) => plan.vendor)].map(([vendor, group]) => (
+				<div key={vendor} className="mt-2">
+					<h3 className="text-[12px] font-medium text-subtle">{vendor}</h3>
+					<ul>
+						{group.map((plan) => (
+							<UnmeasuredRow key={plan.id} plan={plan} />
+						))}
+					</ul>
+				</div>
+			))}
 		</details>
+	);
+}
+
+function UnmeasuredRow({ plan }: { plan: Plan }) {
+	return (
+		<li className="flex items-center gap-2 py-0.5 max-lg:min-h-11">
+			<span className="min-w-0">
+				<a
+					href={plan.sourceUrl}
+					target="_blank"
+					rel="noreferrer"
+					title={plan.limits}
+					className="block truncate text-muted hover:text-fg"
+				>
+					{plan.label}
+				</a>
+				<span className="block text-[11px] leading-4 text-subtle">
+					{plan.families.map(familyName).join(", ")}
+				</span>
+			</span>
+			<span className="ml-auto">
+				<PlanPrice plan={plan} />
+			</span>
+		</li>
 	);
 }
 
