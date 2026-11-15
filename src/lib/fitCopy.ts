@@ -26,6 +26,29 @@ export function formatAmount(
 		: `${formatCount(amount)} ${benchmarkName} tasks`;
 }
 
+/**
+ * The quiz's answers in one line, above its result: "Opus 5.5 · $250 of API
+ * usage a week · no budget".
+ */
+export function answersSummary(
+	inputs: FitInputs,
+	benchmarkName: string,
+): string {
+	const models = inputs.any
+		? "Any flagship"
+		: inputs.models.map(familyName).join(" and ");
+	const effort = inputs.unit === "tasks" ? ` at ${inputs.effort} effort` : "";
+	const budget =
+		inputs.budget === null
+			? "no budget"
+			: `up to ${formatUsd(inputs.budget)} a month`;
+	return [
+		models,
+		`${formatAmount(inputs, inputs.amount, benchmarkName)} a week${effort}`,
+		budget,
+	].join(" · ");
+}
+
 /** The section's one-line answer. */
 export function verdictHeadline(result: Ranked): string {
 	const [cheapest] = result.fits;

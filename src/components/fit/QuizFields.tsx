@@ -27,30 +27,8 @@ const EFFORT_OPTIONS = FIT_EFFORTS.map((effort) => ({
 
 type Patch = (patch: Partial<FitSearch>) => void;
 
-/** The three things the visitor tells the section: models, usage, budget. */
-export function FitControls({
-	inputs,
-	benchmarkName,
-	onChange,
-}: {
-	inputs: FitInputs;
-	benchmarkName: string;
-	onChange: Patch;
-}) {
-	return (
-		<div className="flex flex-col gap-4">
-			<ModelPicker inputs={inputs} onChange={onChange} />
-			<UsageField
-				inputs={inputs}
-				benchmarkName={benchmarkName}
-				onChange={onChange}
-			/>
-			<BudgetField budget={inputs.budget} onChange={onChange} />
-		</div>
-	);
-}
-
-function ModelPicker({
+/** The first question's answer: the models, or Any flagship, and their shares. */
+export function ModelPicker({
 	inputs,
 	onChange,
 }: {
@@ -62,8 +40,7 @@ function ModelPicker({
 		if (patch) onChange(patch);
 	};
 	return (
-		<fieldset className="flex flex-col gap-2">
-			<legend className="mb-2 text-[13px] text-muted">Models you use</legend>
+		<div className="flex flex-col gap-3">
 			<div className="flex flex-wrap gap-x-4 gap-y-1">
 				<Chip
 					label="Any flagship"
@@ -82,7 +59,7 @@ function ModelPicker({
 			{!inputs.any && inputs.models.length > 1 && (
 				<ShareFields inputs={inputs} onChange={onChange} />
 			)}
-		</fieldset>
+		</div>
 	);
 }
 
@@ -129,7 +106,8 @@ function ShareFields({
 	);
 }
 
-function UsageField({
+/** The second question's answer: an amount a week, in a unit, at an effort. */
+export function UsageField({
 	inputs,
 	benchmarkName,
 	onChange,
@@ -174,7 +152,8 @@ function UsageField({
 	);
 }
 
-function BudgetField({
+/** The last question's answer: an optional monthly budget. */
+export function BudgetField({
 	budget,
 	onChange,
 }: {

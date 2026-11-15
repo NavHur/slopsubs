@@ -3,6 +3,7 @@ import { describe, expect, it } from "vite-plus/test";
 import type { FitSearch } from "#/lib/fit";
 import { ViewSearch } from "#/lib/view";
 import { PlanFitSection } from "./PlanFitSection";
+import { QuizQuestion } from "./QuizQuestion";
 
 /** The section's text for a `fit` param, parsed the way the page parses it. */
 function text(fit?: unknown): string {
@@ -21,9 +22,23 @@ function text(fit?: unknown): string {
 }
 
 describe("PlanFitSection", () => {
-	it("answers on first paint with the cheapest plan that fits", () => {
+	it("opens on the quiz's first question when no answers are in the URL", () => {
+		expect(text()).toContain("1 of 3 Which models do you use?");
+		expect(text()).not.toContain("fits with");
+	});
+
+	it("opens a finished quiz's link on its result, with the answers above it", () => {
 		// $250 a week of Opus against Pro's $342 weekly cap.
-		expect(text()).toContain("Claude Pro fits with 27% headroom.");
+		const result = text({});
+		expect(result).toContain(
+			"Opus 5.5 · $250 of API usage a week · no budget Change answers",
+		);
+		expect(result).toContain("Claude Pro fits with 27% headroom.");
+	});
+
+	it("refers visitors who finish to LiteQuiz", () => {
+		expect(text({})).toContain("Like this quiz? Build your own with LiteQuiz");
+		expect(text()).not.toContain("LiteQuiz");
 	});
 
 	it("says when paying per token is cheaper", () => {
@@ -56,11 +71,22 @@ describe("PlanFitSection", () => {
 	});
 
 	it("shows the split it counts when the shares don't add up to 100%", () => {
-		const shares = text({
-			models: ["claude-opus-5-5", "claude-fable-5-2"],
-			weights: { "claude-fable-5-2": 150 },
-		});
-		expect(shares).toContain("Counted as Opus 5.5 25%, Fable 5.2 75%.");
+		const html = renderToStaticMarkup(
+			<QuizQuestion
+				step="models"
+				index={0}
+				draft={{
+					models: ["claude-opus-5-5", "claude-fable-5-2"],
+					weights: { "claude-fable-5-2": 150 },
+				}}
+				benchmarkName="Intelligence Index"
+				backLabel={null}
+				onAnswer={() => {}}
+				onBack={() => {}}
+				onNext={() => {}}
+			/>,
+		);
+		expect(html).toContain("Counted as Opus 5.5 25%, Fable 5.2 75%.");
 	});
 
 	it("says how far short the closest plan falls", () => {

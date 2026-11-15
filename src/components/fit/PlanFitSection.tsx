@@ -1,15 +1,27 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { leaderboards } from "#/data";
 import type { BenchmarkId } from "#/domain/enums";
 import { recommendPlans } from "#/domain/recommend";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
 import { type FitSearch, fitInputs, fitWorkload, SIZED_PLANS } from "#/lib/fit";
-import { FitControls } from "./FitControls";
-import { FitResults } from "./FitResults";
+import {
+	advanced,
+	answered,
+	type QuizProgress,
+	type QuizScreen,
+	quizScreen,
+	restarted,
+	wentBack,
+} from "#/lib/fitQuiz";
+import { QuizQuestion } from "./QuizQuestion";
+import { QuizResult } from "./QuizResult";
+
+type Question = Extract<QuizScreen, { kind: "question" }>;
 
 /**
- * "Which plan fits": the visitor's week in, the cheapest plan that covers it
- * out, beside paying per token. `fit` is the URL's param, unset for defaults.
+ * "Which plan fits": a three-question quiz about the visitor's week, then the
+ * cheapest plan that covers it beside paying per token. `fit` is the URL's
+ * param: set once the quiz is finished, and on shared links.
  */
 export function PlanFitSection({
 	benchmark,
@@ -20,8 +32,66 @@ export function PlanFitSection({
 	fit: FitSearch | undefined;
 	onChange: (fit: FitSearch) => void;
 }) {
-	const inputs = useMemo(() => fitInputs(fit), [fit]);
+	const [progress, setProgress] = useState<QuizProgress | null>(null);
+	const screen = quizScreen(fit, progress);
 	const benchmarkName = BENCHMARK_VIEWS[benchmark].tabLabel;
+	const next = (question: Question) => {
+		const step = advanced(question);
+		if (step.kind === "question") return setProgress(step.progress);
+		onChange(step.fit);
+		setProgress(null);
+	};
+	return (
+		<section
+			id="plan-fit"
+			aria-labelledby="plan-fit-title"
+			className="flex scroll-mt-24 flex-col px-4 pt-5 pb-8 sm:scroll-mt-12 sm:px-7"
+		>
+			<h2
+				id="plan-fit-title"
+				tabIndex={-1}
+				className="mb-5 text-[17px] font-semibold outline-none"
+			>
+				Which plan fits
+			</h2>
+			{screen.kind === "question" ? (
+				<QuizQuestion
+					step={screen.step}
+					index={screen.index}
+					draft={screen.draft}
+					benchmarkName={benchmarkName}
+					backLabel={backLabel(screen, fit)}
+					onAnswer={(patch) => setProgress(answered(screen, patch))}
+					onBack={() => setProgress(wentBack(screen))}
+					onNext={() => next(screen)}
+				/>
+			) : (
+				<Answer
+					benchmark={benchmark}
+					fit={fit}
+					onChangeAnswers={() => setProgress(restarted(fit))}
+				/>
+			)}
+		</section>
+	);
+}
+
+/** Back on a first question leads to the result, if there is one. */
+function backLabel(screen: Question, fit: FitSearch | undefined) {
+	if (screen.index > 0) return "Back";
+	return fit ? "Back to my plan" : null;
+}
+
+function Answer({
+	benchmark,
+	fit,
+	onChangeAnswers,
+}: {
+	benchmark: BenchmarkId;
+	fit: FitSearch | undefined;
+	onChangeAnswers: () => void;
+}) {
+	const inputs = useMemo(() => fitInputs(fit), [fit]);
 	const result = useMemo(
 		() =>
 			recommendPlans({
@@ -32,28 +102,11 @@ export function PlanFitSection({
 		[benchmark, inputs],
 	);
 	return (
-		<section
-			id="plan-fit"
-			aria-labelledby="plan-fit-title"
-			className="flex scroll-mt-24 flex-col px-4 pt-5 pb-6 sm:scroll-mt-12 sm:px-7"
-		>
-			<h2
-				id="plan-fit-title"
-				tabIndex={-1}
-				className="mb-4 text-[17px] font-semibold outline-none"
-			>
-				Which plan fits
-			</h2>
-			<FitControls
-				inputs={inputs}
-				benchmarkName={benchmarkName}
-				onChange={(patch) => onChange({ ...fit, ...patch })}
-			/>
-			<FitResults
-				result={result}
-				inputs={inputs}
-				benchmarkName={benchmarkName}
-			/>
-		</section>
+		<QuizResult
+			result={result}
+			inputs={inputs}
+			benchmarkName={BENCHMARK_VIEWS[benchmark].tabLabel}
+			onChangeAnswers={onChangeAnswers}
+		/>
 	);
 }
