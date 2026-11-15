@@ -13,6 +13,7 @@ const LAB_COLORS: Record<string, string> = {
 	deepseek: "light-dark(#3047c8, #6d84ff)",
 	minimax: "light-dark(#b0306a, #f06aa5)",
 	alibaba: "light-dark(#6b3fb5, #b08cf5)",
+	mistral: "light-dark(#c2410c, #fb8a4c)",
 };
 const FALLBACK_COLOR = "light-dark(#666, #aaa)";
 

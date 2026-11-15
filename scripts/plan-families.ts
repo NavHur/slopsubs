@@ -27,10 +27,6 @@ export const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	"glm-5-2": [60, 180],
 	"glm-5-3-flash": [60, 180],
 	"longcat-2-0": [60, 240],
-	"mimo-v2-6-pro": [15, 60],
-	"mimo-v2-6-flash": [60, 120],
-	"mimo-v2-5-pro": [15, 60],
-	"mimo-v2-5-0424": [60, 120],
 	hy3: [60, 240],
 	// Go serves V4.1 Flash's 1017 build since 2026-10-19 (research/plans/opencode.json).
 	// At peak prices, which match the list; off-peak usage goes twice as far.
@@ -59,9 +55,46 @@ export type PlanEntry = {
 	tier?: Tier;
 };
 
+// The current benchmarked models each credit plan serves, from the vendors'
+// model pages (accessed 2026-11-15; research/plans/ cites them).
+/** Copilot's models on every plan; Pro+ and Max add the premium ones. */
+const COPILOT_PRO = [
+	"claude-sonnet-5-5",
+	"claude-haiku-5-5",
+	"gpt-6-1-terra",
+	"gpt-6-luna",
+	"gpt-5-6-luna",
+	"gemini-3-8-flash",
+	"grok-4-7",
+	"kimi-k3",
+];
+const COPILOT_PREMIUM = [
+	"claude-opus-5-5",
+	"claude-fable-5-2",
+	"gpt-6-astra",
+	"gpt-6-1-sol",
+	"gemini-4-argon",
+	"gemini-4-carbon",
+	...COPILOT_PRO,
+];
+const OLLAMA_CLOUD = [
+	"glm-5-3",
+	"glm-5-3-flash",
+	"glm-5-2",
+	"kimi-k3-1-pro",
+	"kimi-k3",
+	"kimi-k2-7-code",
+	"deepseek-v4-pro",
+	"minimax-m3",
+	"minimax-m3-1-flash",
+	"mistral-large-4",
+	"gpt-oss-120b",
+];
 const CLAUDE_CODE = { lab: "anthropic", vendor: "Claude Code" };
 const CODEX = { lab: "openai", vendor: "Codex", families: OPENAI };
 const GO = { lab: "opencode", vendor: "OpenCode Go", families: OPENCODE_GO };
+const COPILOT = { lab: "github", vendor: "Copilot" };
+const OLLAMA = { lab: "ollama", vendor: "Ollama", families: OLLAMA_CLOUD };
 const claudeTier = (times: number): Tier => ({ ladder: "claude", times });
 
 /** Each plan's families, and how it is grouped, labelled and scaled. */
@@ -93,4 +126,21 @@ export const PLAN_FAMILIES: Record<string, PlanEntry> = {
 	"chatgpt-pro-500": CODEX,
 	"opencode-go": { ...GO, shortLabel: "OpenCode Go" },
 	"opencode-go-plus": { ...GO, shortLabel: "OpenCode Go Plus" },
+	"copilot-pro": {
+		...COPILOT,
+		shortLabel: "Copilot Pro",
+		families: COPILOT_PRO,
+	},
+	"copilot-pro-plus": {
+		...COPILOT,
+		shortLabel: "Copilot Pro+",
+		families: COPILOT_PREMIUM,
+	},
+	"copilot-max": {
+		...COPILOT,
+		shortLabel: "Copilot Max",
+		families: COPILOT_PREMIUM,
+	},
+	"ollama-pro": { ...OLLAMA, shortLabel: "Ollama Pro" },
+	"ollama-max": { ...OLLAMA, shortLabel: "Ollama Max" },
 };

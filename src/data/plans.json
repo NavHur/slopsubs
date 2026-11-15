@@ -116,6 +116,309 @@
     "promotionByFamily": {}
   },
   {
+    "id": "copilot-pro",
+    "vendor": "Copilot",
+    "lab": "github",
+    "label": "Copilot Pro",
+    "monthlyPriceUsd": 10,
+    "harnesses": [
+      "Copilot in VS Code / Visual Studio / JetBrains / Eclipse / Xcode / Neovim / Zed",
+      "Copilot CLI",
+      "Copilot cloud agent (PRs)",
+      "Copilot code review",
+      "OpenCode"
+    ],
+    "families": [
+      "claude-sonnet-5-5",
+      "claude-haiku-5-5",
+      "gpt-6-1-terra",
+      "gpt-6-luna",
+      "gpt-5-6-luna",
+      "gemini-3-8-flash",
+      "grok-4-7",
+      "kimi-k3"
+    ],
+    "limits": "\"Every plan includes a monthly allowance: 1 AI credit = $0.01 USD.\" Pro: Base 1,000 + flex 500 = 1,500 credits/month ($15). \"Flex allotments may change over time.\" \"Code completions and next edit suggestions don't use credits.\"",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://github.com/features/copilot/plans",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "claude-sonnet-5-5": 15,
+        "claude-haiku-5-5": 15,
+        "gpt-6-1-terra": 15,
+        "gpt-6-luna": 15,
+        "gpt-5-6-luna": 15.000000000000002,
+        "gemini-3-8-flash": 15,
+        "grok-4-7": 15,
+        "kimi-k3": 15
+      },
+      "url": "https://docs.github.com/en/copilot/get-started/plans",
+      "basis": "$15 of usage at list price for $10: 1,000 base and 500 flex AI credits of $0.01, and GitHub says flex may change"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {
+      "gemini-4-argon": {
+        "summary": "Copilot bills Gemini 4 Argon at 50% off, doubling its usage",
+        "endsOn": "2026-11-30",
+        "url": "https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing"
+      },
+      "gemini-4-carbon": {
+        "summary": "Copilot bills Gemini 4 Carbon at 50% off, doubling its usage",
+        "endsOn": "2026-11-30",
+        "url": "https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing"
+      }
+    }
+  },
+  {
+    "id": "copilot-pro-plus",
+    "vendor": "Copilot",
+    "lab": "github",
+    "label": "Copilot Pro+",
+    "monthlyPriceUsd": 39,
+    "harnesses": [
+      "Copilot in IDEs",
+      "Copilot CLI",
+      "Copilot cloud agent (PRs)",
+      "Copilot code review",
+      "Third-party agents in Copilot: Claude, Codex (preview)",
+      "OpenCode"
+    ],
+    "families": [
+      "claude-opus-5-5",
+      "claude-fable-5-2",
+      "gpt-6-astra",
+      "gpt-6-1-sol",
+      "gemini-4-argon",
+      "gemini-4-carbon",
+      "claude-sonnet-5-5",
+      "claude-haiku-5-5",
+      "gpt-6-1-terra",
+      "gpt-6-luna",
+      "gpt-5-6-luna",
+      "gemini-3-8-flash",
+      "grok-4-7",
+      "kimi-k3"
+    ],
+    "limits": "Base 3,900 + flex 3,100 = 7,000 AI credits/month ($70). \"1 AI credit = $0.01 USD.\" \"Flex allotments may change over time.\"",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://github.com/features/copilot/plans",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "claude-opus-5-5": 70,
+        "claude-fable-5-2": 70,
+        "gpt-6-astra": 70,
+        "gpt-6-1-sol": 70,
+        "gemini-4-argon": 140,
+        "gemini-4-carbon": 140,
+        "claude-sonnet-5-5": 70,
+        "claude-haiku-5-5": 70,
+        "gpt-6-1-terra": 70,
+        "gpt-6-luna": 70,
+        "gpt-5-6-luna": 70,
+        "gemini-3-8-flash": 70,
+        "grok-4-7": 70,
+        "kimi-k3": 70
+      },
+      "url": "https://docs.github.com/en/copilot/get-started/plans",
+      "basis": "$70 of usage at list price for $39: 3,900 base and 3,100 flex AI credits of $0.01, and GitHub says flex may change"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {
+      "gemini-4-argon": {
+        "summary": "Copilot bills Gemini 4 Argon at 50% off, doubling its usage",
+        "endsOn": "2026-11-30",
+        "url": "https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing"
+      },
+      "gemini-4-carbon": {
+        "summary": "Copilot bills Gemini 4 Carbon at 50% off, doubling its usage",
+        "endsOn": "2026-11-30",
+        "url": "https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing"
+      }
+    }
+  },
+  {
+    "id": "copilot-max",
+    "vendor": "Copilot",
+    "lab": "github",
+    "label": "Copilot Max",
+    "monthlyPriceUsd": 100,
+    "harnesses": [
+      "Copilot in IDEs",
+      "Copilot CLI",
+      "Copilot cloud agent (PRs)",
+      "Copilot code review",
+      "Third-party agents in Copilot: Claude, Codex (preview)",
+      "OpenCode"
+    ],
+    "families": [
+      "claude-opus-5-5",
+      "claude-fable-5-2",
+      "gpt-6-astra",
+      "gpt-6-1-sol",
+      "gemini-4-argon",
+      "gemini-4-carbon",
+      "claude-sonnet-5-5",
+      "claude-haiku-5-5",
+      "gpt-6-1-terra",
+      "gpt-6-luna",
+      "gpt-5-6-luna",
+      "gemini-3-8-flash",
+      "grok-4-7",
+      "kimi-k3"
+    ],
+    "limits": "Base 10,000 + flex 10,000 = 20,000 AI credits/month ($200). \"built for heavy Copilot usage, including sustained agent-driven workflows\".",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://github.com/features/copilot/plans",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "claude-opus-5-5": 200,
+        "claude-fable-5-2": 200,
+        "gpt-6-astra": 200,
+        "gpt-6-1-sol": 200,
+        "gemini-4-argon": 400,
+        "gemini-4-carbon": 400,
+        "claude-sonnet-5-5": 200,
+        "claude-haiku-5-5": 200,
+        "gpt-6-1-terra": 200,
+        "gpt-6-luna": 200,
+        "gpt-5-6-luna": 200,
+        "gemini-3-8-flash": 200,
+        "grok-4-7": 200,
+        "kimi-k3": 200
+      },
+      "url": "https://docs.github.com/en/copilot/get-started/plans",
+      "basis": "$200 of usage at list price for $100: 10,000 base and 10,000 flex AI credits of $0.01, and GitHub says flex may change"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {
+      "gemini-4-argon": {
+        "summary": "Copilot bills Gemini 4 Argon at 50% off, doubling its usage",
+        "endsOn": "2026-11-30",
+        "url": "https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing"
+      },
+      "gemini-4-carbon": {
+        "summary": "Copilot bills Gemini 4 Carbon at 50% off, doubling its usage",
+        "endsOn": "2026-11-30",
+        "url": "https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing"
+      }
+    }
+  },
+  {
+    "id": "ollama-pro",
+    "vendor": "Ollama",
+    "lab": "ollama",
+    "label": "Ollama Pro",
+    "monthlyPriceUsd": 20,
+    "harnesses": [
+      "any harness via Ollama API (Claude Code, Codex, OpenCode, etc.)"
+    ],
+    "families": [
+      "glm-5-3",
+      "glm-5-3-flash",
+      "glm-5-2",
+      "kimi-k3-1-pro",
+      "kimi-k3",
+      "kimi-k2-7-code",
+      "deepseek-v4-pro",
+      "minimax-m3",
+      "minimax-m3-1-flash",
+      "mistral-large-4",
+      "gpt-oss-120b"
+    ],
+    "limits": "\"$60 of usage credits per month\"; \"Access to larger pro models\"; \"Run multiple models concurrently\"; resets monthly, no rollover; off-peak pricing outside 12:00-18:00 UTC on weekdays and all day on weekends.",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://ollama.com/pricing",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "glm-5-3": 60,
+        "glm-5-3-flash": 60,
+        "glm-5-2": 60,
+        "kimi-k3-1-pro": 60,
+        "kimi-k3": 60,
+        "kimi-k2-7-code": 60,
+        "deepseek-v4-pro": 60,
+        "minimax-m3": 30,
+        "minimax-m3-1-flash": 60,
+        "mistral-large-4": 60,
+        "gpt-oss-120b": 60
+      },
+      "url": "https://ollama.com/pricing",
+      "basis": "$60 of usage credits a month for $20, at Ollama's per-model rates: list price, except MiniMax M3 at twice it"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "ollama-max",
+    "vendor": "Ollama",
+    "lab": "ollama",
+    "label": "Ollama Max",
+    "monthlyPriceUsd": 100,
+    "harnesses": [
+      "any harness via Ollama API"
+    ],
+    "families": [
+      "glm-5-3",
+      "glm-5-3-flash",
+      "glm-5-2",
+      "kimi-k3-1-pro",
+      "kimi-k3",
+      "kimi-k2-7-code",
+      "deepseek-v4-pro",
+      "minimax-m3",
+      "minimax-m3-1-flash",
+      "mistral-large-4",
+      "gpt-oss-120b"
+    ],
+    "limits": "\"$300 of usage credits per month\"; \"10 concurrent requests\".",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://ollama.com/pricing",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "glm-5-3": 299.99999999999994,
+        "glm-5-3-flash": 300,
+        "glm-5-2": 299.99999999999994,
+        "kimi-k3-1-pro": 300,
+        "kimi-k3": 300,
+        "kimi-k2-7-code": 300,
+        "deepseek-v4-pro": 300,
+        "minimax-m3": 150,
+        "minimax-m3-1-flash": 300,
+        "mistral-large-4": 300,
+        "gpt-oss-120b": 300
+      },
+      "url": "https://ollama.com/pricing",
+      "basis": "$300 of usage credits a month for $100, at Ollama's per-model rates: list price, except MiniMax M3 at twice it"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
     "id": "chatgpt-plus",
     "vendor": "Codex",
     "lab": "openai",
@@ -348,10 +651,6 @@
       "glm-5-2",
       "glm-5-3-flash",
       "longcat-2-0",
-      "mimo-v2-6-pro",
-      "mimo-v2-6-flash",
-      "mimo-v2-5-pro",
-      "mimo-v2-5-0424",
       "hy3",
       "deepseek-v4-1-flash-1017",
       "deepseek-v4-pro",
@@ -384,10 +683,6 @@
         "glm-5-2": 60,
         "glm-5-3-flash": 60,
         "longcat-2-0": 148.5714285714286,
-        "mimo-v2-6-pro": 15,
-        "mimo-v2-6-flash": 60,
-        "mimo-v2-5-pro": 13.500000000000002,
-        "mimo-v2-5-0424": 48,
         "hy3": 57.78,
         "deepseek-v4-1-flash-1017": 100,
         "deepseek-v4-pro": 15,
@@ -438,10 +733,6 @@
       "glm-5-2",
       "glm-5-3-flash",
       "longcat-2-0",
-      "mimo-v2-6-pro",
-      "mimo-v2-6-flash",
-      "mimo-v2-5-pro",
-      "mimo-v2-5-0424",
       "hy3",
       "deepseek-v4-1-flash-1017",
       "deepseek-v4-pro",
@@ -474,10 +765,6 @@
         "glm-5-2": 180,
         "glm-5-3-flash": 180,
         "longcat-2-0": 594.2857142857144,
-        "mimo-v2-6-pro": 60,
-        "mimo-v2-6-flash": 120,
-        "mimo-v2-5-pro": 54.00000000000001,
-        "mimo-v2-5-0424": 96,
         "hy3": 231.12,
         "deepseek-v4-1-flash-1017": 200,
         "deepseek-v4-pro": 60,

@@ -19,6 +19,8 @@ import {
 	type ReportedCap,
 } from "../src/domain/model.ts";
 import { CLAUDE_ULTRA } from "./claude-caps.ts";
+import { creditAllowance, creditPromotions } from "./credit-plans.ts";
+import { CREDIT_PLANS } from "./credit-vendors.ts";
 import { listPriced, type TokenRates } from "./list-price.ts";
 import {
 	OPENCODE_GO_USD,
@@ -215,7 +217,15 @@ function listPricedUsd(family: string, goUsd: number): number {
 	return goPrice ? listPriced(goUsd, goPrice, listRates(family)) : goUsd;
 }
 
-function publishedAllowance(planId: string): PublishedAllowance | null {
+/** The vendor's own statement of each model's monthly usage: OpenCode Go's
+ * per-model dollars, or a credit plan's credit valued at list price. */
+function publishedAllowance(
+	planId: string,
+	priceUsd: number,
+	families: readonly string[],
+): PublishedAllowance | null {
+	const credit = CREDIT_PLANS[planId];
+	if (credit) return creditAllowance(credit, priceUsd, families, listRates);
 	const tier = PUBLISHED_ALLOWANCES[planId];
 	if (tier === undefined) return null;
 	return {
@@ -232,7 +242,9 @@ function publishedAllowance(planId: string): PublishedAllowance | null {
 }
 
 /** The limited-time discounts a plan's allowance counts, by family. */
-function promotions(lab: string): Record<string, Promotion> {
+function promotions(planId: string, lab: string): Record<string, Promotion> {
+	const credit = CREDIT_PLANS[planId];
+	if (credit) return creditPromotions(credit);
 	return lab === "opencode" ? OPENCODE_PROMOTIONS : {};
 }
 
@@ -252,7 +264,11 @@ const plans = Plans.parse(
 			if (unknown.length)
 				throw new Error(`${p.planId}: unbenchmarked ${unknown.join(", ")}`);
 			const label = entry.shortLabel ?? p.label;
-			const allowance = publishedAllowance(p.planId);
+			const allowance = publishedAllowance(
+				p.planId,
+				p.monthlyPriceUsd,
+				families,
+			);
 			if (p.allowanceKind === "credit" && !allowance)
 				throw new Error(`${p.planId}: a credit plan needs its sourced credit`);
 			return {
@@ -275,7 +291,7 @@ const plans = Plans.parse(
 				publishedAllowance: allowance,
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
-				promotionByFamily: promotions(lab),
+				promotionByFamily: promotions(p.planId, lab),
 			};
 		}),
 );
