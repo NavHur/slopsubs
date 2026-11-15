@@ -1,6 +1,9 @@
 // The benchmarked families each plan includes. import-benchmarks reads them
 // to decide which AA models to keep, and build-plans to build each plan.
 
+import { CLAUDE_TIMES_PRO } from "./claude-caps.ts";
+import type { Tier } from "./tier-ladder.ts";
+
 const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-1-terra", "gpt-6-luna"];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 // Monthly usage on Go and Go Plus (opencode.ai/docs/go, 2026-11-06), in dollars
@@ -40,35 +43,53 @@ const OPENCODE_GO = Object.keys(OPENCODE_GO_USD);
 /** "Fable included, up to half your weekly limit" (claude.com/pricing). */
 const FABLE_HALF = { "claude-fable-5-2": 0.5 };
 
+/** How a plan is shown and which of its models the site benchmarks. */
+export type PlanEntry = {
+	/** The lab whose models the plan sells, such as "anthropic". */
+	lab: string;
+	/** The harness people buy the plan for, which groups it in the list. */
+	vendor: string;
+	/** A chart label, where the researched label is too long for one. */
+	shortLabel?: string;
+	families: string[];
+	includedApiCreditUsd?: number;
+	weeklyShareByFamily?: Record<string, number>;
+	/** The vendor's published usage multiple against its base tier. */
+	tier?: Tier;
+};
+
+const CLAUDE_CODE = { lab: "anthropic", vendor: "Claude Code" };
+const CODEX = { lab: "openai", vendor: "Codex", families: OPENAI };
+const GO = { lab: "opencode", vendor: "OpenCode Go", families: OPENCODE_GO };
+const claudeTier = (times: number): Tier => ({ ladder: "claude", times });
+
 /** Benchmarked families each plan includes. */
-export const PLAN_FAMILIES: Record<
-	string,
-	{
-		lab: string;
-		families: string[];
-		includedApiCreditUsd?: number;
-		weeklyShareByFamily?: Record<string, number>;
-	}
-> = {
-	"claude-pro": { lab: "anthropic", families: CLAUDE },
+export const PLAN_FAMILIES: Record<string, PlanEntry> = {
+	"claude-pro": {
+		...CLAUDE_CODE,
+		families: CLAUDE,
+		tier: claudeTier(CLAUDE_TIMES_PRO.pro),
+	},
 	// Max and Ultra include Fable at half the weekly limit, plus API credit
 	// (claude.com/pricing, 2026-11-09). Fable 5.2 replaced the legacy 5.1.
 	"claude-max-5x": {
-		lab: "anthropic",
+		...CLAUDE_CODE,
 		families: [...CLAUDE, "claude-fable-5-2"],
 		includedApiCreditUsd: 100,
 		weeklyShareByFamily: FABLE_HALF,
+		tier: claudeTier(CLAUDE_TIMES_PRO.max),
 	},
 	"claude-max-20x": {
-		lab: "anthropic",
+		...CLAUDE_CODE,
 		families: [...CLAUDE, "claude-fable-5-2"],
 		includedApiCreditUsd: 200,
 		weeklyShareByFamily: FABLE_HALF,
+		tier: claudeTier(CLAUDE_TIMES_PRO.ultra),
 	},
-	"chatgpt-plus": { lab: "openai", families: OPENAI },
-	"chatgpt-pro-100": { lab: "openai", families: OPENAI },
-	"chatgpt-pro-200": { lab: "openai", families: OPENAI },
-	"chatgpt-pro-500": { lab: "openai", families: OPENAI },
-	"opencode-go": { lab: "opencode", families: OPENCODE_GO },
-	"opencode-go-plus": { lab: "opencode", families: OPENCODE_GO },
+	"chatgpt-plus": CODEX,
+	"chatgpt-pro-100": CODEX,
+	"chatgpt-pro-200": CODEX,
+	"chatgpt-pro-500": CODEX,
+	"opencode-go": { ...GO, shortLabel: "OpenCode Go" },
+	"opencode-go-plus": { ...GO, shortLabel: "OpenCode Go Plus" },
 };

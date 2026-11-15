@@ -17,8 +17,13 @@ import {
 	type PublishedAllowance,
 	type ReportedCap,
 } from "../src/domain/model.ts";
-import { claudeCap } from "./claude-caps.ts";
-import { OPENCODE_GO_USD, PLAN_FAMILIES } from "./plan-families.ts";
+import { CLAUDE_ULTRA } from "./claude-caps.ts";
+import {
+	OPENCODE_GO_USD,
+	PLAN_FAMILIES,
+	type PlanEntry,
+} from "./plan-families.ts";
+import { type KnownTier, scaledCap } from "./tier-ladder.ts";
 
 const ROOT = new URL("..", import.meta.url);
 
@@ -81,18 +86,21 @@ const PUBLISHED_ALLOWANCES: Record<string, 0 | 1> = {
 	"opencode-go-plus": 1,
 };
 
-/** Plans are grouped by the harness people buy them for. */
-const VENDORS: Record<string, string> = {
-	anthropic: "Claude Code",
-	openai: "Codex",
-	opencode: "OpenCode Go",
-};
+/** Each tier ladder's reported tier, which its other tiers scale from. A
+ * ladder without one ships its plans unmeasured. */
+const KNOWN_TIERS: Record<string, KnownTier> = { claude: CLAUDE_ULTRA };
 
-/** Vendor names too long for a chart label. */
-const SHORT_LABELS: Record<string, string> = {
-	"opencode-go": "OpenCode Go",
-	"opencode-go-plus": "OpenCode Go Plus",
-};
+/** The known tier's caps scaled to the plan's own multiple, if its ladder has
+ * a known tier. */
+function tierCap(
+	entry: PlanEntry,
+	label: string,
+	families: readonly string[],
+): ReportedCap | null {
+	const known = entry.tier && KNOWN_TIERS[entry.tier.ladder];
+	if (!entry.tier || !known) return null;
+	return scaledCap(known, { label, times: entry.tier.times }, families);
+}
 
 // Theo (t3.gg), "OpenAI is getting desperate", 2026-11-02, 5:08: "on the $500
 // plan, you now get around $10.5,000 of usage. And on the $200 plan... 4.3K".
@@ -225,20 +233,24 @@ const plans = Plans.parse(
 	research
 		.filter((p) => p.planId in PLAN_FAMILIES)
 		.map((p) => {
+			const entry = PLAN_FAMILIES[p.planId];
 			const {
 				lab,
+				vendor,
 				families,
 				includedApiCreditUsd = 0,
 				weeklyShareByFamily = {},
-			} = PLAN_FAMILIES[p.planId];
+			} = entry;
 			const unknown = families.filter((f) => !benchmarked.has(f));
 			if (unknown.length)
 				throw new Error(`${p.planId}: unbenchmarked ${unknown.join(", ")}`);
+			const label = entry.shortLabel ?? p.label;
+			const allowance = publishedAllowance(p.planId);
 			return {
 				id: p.planId,
-				vendor: VENDORS[lab] ?? p.vendor,
+				vendor,
 				lab,
-				label: SHORT_LABELS[p.planId] ?? p.label,
+				label,
 				monthlyPriceUsd: p.monthlyPriceUsd,
 				harnesses: p.harnesses,
 				families,
@@ -248,10 +260,9 @@ const plans = Plans.parse(
 				confidence: p.confidence,
 				sourceUrl: p.sources[0].url,
 				reportedCap:
-					lab === "anthropic"
-						? claudeCap(p.monthlyPriceUsd, families)
-						: codexCap(p.planId, p.monthlyPriceUsd, families),
-				publishedAllowance: publishedAllowance(p.planId),
+					codexCap(p.planId, p.monthlyPriceUsd, families) ??
+					tierCap(entry, label, families),
+				publishedAllowance: allowance,
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
 				promotionByFamily: lab === "opencode" ? OPENCODE_PROMOTIONS : {},
