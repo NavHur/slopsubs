@@ -23,7 +23,7 @@ export function TradeoffKey({
 	const worth = tradeoffFrontier(points).size;
 	return (
 		<p className={`text-[13px] text-muted ${className}`}>
-			{`${worth} of ${points.length} options worth weighing, drawn filled. Hollow ones are beaten on cost, time and score by another.`}
+			{`${worth} of ${points.length} options worth weighing, drawn filled. Hollow ones have another option no worse on cost, time and score, and better on one.`}
 		</p>
 	);
 }
@@ -38,7 +38,9 @@ function TradeoffExportKey({ points }: { points: readonly TimedPoint[] }) {
 		<div className="text-[13px] leading-5 text-muted">
 			<span className="block">{`${worth} of ${points.length} options worth weighing`}</span>
 			<span className="block">Filled: worth weighing</span>
-			<span className="block">Hollow: beaten on all three by another</span>
+			<span className="block">
+				Hollow: another is no worse on all, better on one
+			</span>
 		</div>
 	);
 }

@@ -4,9 +4,15 @@ import { VIEW_PRESETS } from "#/components/chart/projection";
 import { buildSeries, pricingStyles } from "#/components/chart/series";
 import { leaderboards, plans, samples } from "#/data";
 import type { BenchmarkId } from "#/domain/enums";
-import { tradeoffFrontier, timedPoints } from "#/domain/tradeoffs";
+import {
+	type TimedPoint,
+	tradeoffFrontier,
+	timedPoints,
+} from "#/domain/tradeoffs";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
+import { familyName } from "#/lib/families";
+import { formatUsd } from "#/lib/format";
 import { selectedFamilies, selectedPlans, ViewSearch } from "#/lib/view";
 import { tradeoffPng } from "./TradeoffKey";
 import { TradeoffSection } from "./TradeoffSection";
@@ -34,6 +40,84 @@ function markup(benchmark: BenchmarkId) {
 	);
 }
 
+const HTML_ENTITIES: Record<string, string> = {
+	"&amp;": "&",
+	"&lt;": "<",
+	"&gt;": ">",
+	"&quot;": '"',
+	"&#x27;": "'",
+};
+
+/** The accessible names of the chart's point buttons, in markup order. */
+function pointLabels(html: string): string[] {
+	return [
+		...html.matchAll(/<g role="button" tabindex="0" aria-label="([^"]*)"/g),
+	].map(([, label]) =>
+		label.replace(/&(?:amp|lt|gt|quot|#x27);/g, (e) => HTML_ENTITIES[e]),
+	);
+}
+
+function pricingName({ pricing }: TimedPoint): string {
+	return pricing.kind === "api" ? "API" : pricing.plan.label;
+}
+
+function sameEffort(a: TimedPoint, b: TimedPoint): boolean {
+	return (
+		a.benchmark.family === b.benchmark.family &&
+		a.benchmark.effortLabel === b.benchmark.effortLabel
+	);
+}
+
+/** How a point's accessible name starts: model, effort, pricing, cost. */
+function labelPrefix(point: TimedPoint): string {
+	const { family, effortLabel } = point.benchmark;
+	return `${familyName(family)}, ${effortLabel}, ${pricingName(point)}, ${formatUsd(point.costPerTaskUsd)} per task`;
+}
+
+/** The label whose text starts as the point's accessible name does. */
+function labelOf(labels: readonly string[], point: TimedPoint) {
+	return labels.find((l) => l.startsWith(labelPrefix(point)));
+}
+
+/** Two points of one model and effort, priced under different pricings. */
+function pricedTwoWays(timed: readonly TimedPoint[]): [TimedPoint, TimedPoint] {
+	for (const a of timed) {
+		const b = timed.find(
+			(p) => sameEffort(a, p) && pricingName(a) !== pricingName(p),
+		);
+		if (b) return [a, b];
+	}
+	throw new Error("no effort priced two ways");
+}
+
+/** A point of the default page that another option beats. */
+function beatenPoint(): TimedPoint {
+	const timed = timedPoints(pagePoints("intelligence"));
+	const worth = tradeoffFrontier(timed);
+	const beaten = timed.find((p) => !worth.has(p));
+	if (!beaten) throw new Error("no beaten point on the page");
+	return beaten;
+}
+
+/** The PNG key's text lines when every timed point of the page is exported. */
+function exportLegend() {
+	const all = timedPoints(pagePoints("intelligence"));
+	const [first, ...rest] = all;
+	if (!first) throw new Error("no points to export");
+	const pricings = pricingStyles(buildSeries(all));
+	const { legend } = tradeoffPng(
+		{ pricings, shown: [first, ...rest] },
+		VIEW_PRESETS.perspective,
+		BENCHMARK_VIEWS.intelligence,
+	);
+	// The exporter draws each text node as one unwrapped line.
+	const lines = renderToStaticMarkup(legend)
+		.split(/<[^>]*>/)
+		.map((text) => text.trim())
+		.filter(Boolean);
+	return { all, pricings, lines };
+}
+
 describe("TradeoffSection", () => {
 	it("plots each timed option under every pricing, names each model and counts those worth weighing", () => {
 		const timed = timedPoints(pagePoints("intelligence"));
@@ -56,29 +140,44 @@ describe("TradeoffSection", () => {
 		expect(markup("intelligence")).not.toContain('aria-label="Prices to plot"');
 	});
 
-	it("hands the PNG export a key of short one-line text nodes with the counts and meanings", () => {
-		const api = timedPoints(pagePoints("intelligence")).filter(
-			(p) => p.pricing.kind === "api",
-		);
-		const [first, ...rest] = api;
-		if (!first) throw new Error("no API points to export");
-		const pricings = pricingStyles(buildSeries(api));
-		const { legend } = tradeoffPng(
-			{ pricings, shown: [first, ...rest] },
-			VIEW_PRESETS.perspective,
-			BENCHMARK_VIEWS.intelligence,
-		);
-		// The exporter draws each text node as one unwrapped line.
-		const lines = renderToStaticMarkup(legend)
-			.split(/<[^>]*>/)
-			.map((text) => text.trim())
-			.filter(Boolean);
-		const worth = tradeoffFrontier(api).size;
+	it("hands the PNG export a key of short one-line text nodes with the counts, meanings and every plotted pricing", () => {
+		const { all, pricings, lines } = exportLegend();
+		const worth = tradeoffFrontier(all).size;
+		expect(pricings.size).toBeGreaterThan(1);
 		expect(lines.length).toBeGreaterThan(1);
-		for (const line of lines) expect(line.length).toBeLessThanOrEqual(60);
-		expect(lines).toContain(`${worth} of ${api.length} options worth weighing`);
+		expect(lines.filter((line) => line.length > 60)).toEqual([]);
+		expect(lines).toContain(`${worth} of ${all.length} options worth weighing`);
 		expect(lines.join(" ")).toMatch(/Filled/);
 		expect(lines.join(" ")).toMatch(/Hollow/);
+		const names = [...pricings.values()].map((p) => p.label);
+		expect(lines).toEqual(expect.arrayContaining(names));
+	});
+
+	it("names each point's pricing in its accessible name", () => {
+		const timed = timedPoints(pagePoints("intelligence"));
+		const labels = pointLabels(markup("intelligence"));
+		expect(labels).toHaveLength(timed.length);
+		expect(timed.filter((p) => labelOf(labels, p) === undefined)).toEqual([]);
+		const [twin, other] = pricedTwoWays(timed);
+		expect(labelOf(labels, twin)).not.toBe(labelOf(labels, other));
+		expect(labelOf(labels, twin)).toContain(`, ${pricingName(twin)}, `);
+		expect(labelOf(labels, other)).toContain(`, ${pricingName(other)}, `);
+	});
+
+	it("says a hollow point has another option no worse on every measure and better on one", () => {
+		const label = labelOf(pointLabels(markup("intelligence")), beatenPoint());
+		expect(label).toContain("beaten by another option");
+		expect(label).not.toContain("beaten on cost, time and score");
+		const stale = /all three|cost, time and score by another/;
+		const wording = "no worse on cost, time and score, and better on one";
+		const html = markup("intelligence");
+		expect(html).toContain(`Hollow ones have another option ${wording}.`);
+		expect(html).not.toMatch(stale);
+		const { lines } = exportLegend();
+		expect(lines).toContain(
+			"Hollow: another is no worse on all, better on one",
+		);
+		expect(lines.join(" ")).not.toMatch(stale);
 	});
 
 	it("explains an empty chart on a benchmark that never times its tasks", () => {

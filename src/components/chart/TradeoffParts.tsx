@@ -84,7 +84,7 @@ export function SceneFrame({
 	);
 }
 
-/** Opacity of an option another beats on cost, time and score. */
+/** Opacity of an option another matches or beats on every measure. */
 const BEATEN_OPACITY = 0.25;
 /** Opacity of a model's points and lines while another is highlighted. */
 const DIMMED_OPACITY = 0.12;
@@ -157,11 +157,15 @@ function EffortLine({
 /** Touch-sized target around each point's marker. */
 const HIT_RADIUS_PX = 12;
 
-function pointLabel({ point, worthWeighing }: ScenePoint, view: BenchmarkView) {
+function pointLabel(
+	{ point, worthWeighing }: ScenePoint,
+	pricing: PricingStyle,
+	view: BenchmarkView,
+) {
 	const { benchmark } = point;
 	const measures = `${formatUsd(point.costPerTaskUsd)} per task, ${formatDuration(point.secondsPerTask)} per task, ${view.scoreLabel} ${view.formatScore(point.score)}`;
-	const verdict = worthWeighing ? "" : ", beaten on cost, time and score";
-	return `${familyName(benchmark.family)}, ${benchmark.effortLabel}, ${measures}${verdict}`;
+	const verdict = worthWeighing ? "" : ", beaten by another option";
+	return `${familyName(benchmark.family)}, ${benchmark.effortLabel}, ${pricing.label}, ${measures}${verdict}`;
 }
 
 /** Marker radius of an option worth weighing, a beaten one, and the one
@@ -220,7 +224,7 @@ export function TradeoffPoint({
 				// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- SVG has no native button; the point needs focus to expose its tooltip
 				role="button"
 				tabIndex={0}
-				aria-label={pointLabel(scenePoint, view)}
+				aria-label={pointLabel(scenePoint, pricing, view)}
 				className="group cursor-pointer outline-none"
 				// A press on a point picks it rather than starting a turn.
 				onPointerDown={(event) => event.stopPropagation()}
