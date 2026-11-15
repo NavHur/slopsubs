@@ -27,7 +27,9 @@ export function QuizResult({
 	return (
 		<div className="flex flex-col">
 			<div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-[13px]">
-				<p className="text-muted">{answersSummary(inputs, benchmarkName)}</p>
+				<p className="text-pretty text-muted">
+					{answersSummary(inputs, benchmarkName)}
+				</p>
 				<button
 					type="button"
 					onClick={onChangeAnswers}
@@ -41,13 +43,13 @@ export function QuizResult({
 				inputs={inputs}
 				benchmarkName={benchmarkName}
 			/>
-			<p className="mt-6 text-[12px] text-subtle">
+			<p className="mt-6 text-[12px] text-subtle max-lg:mt-3">
 				Like this quiz?{" "}
 				<a
 					href={LITEQUIZ_URL}
 					target="_blank"
 					rel="noopener"
-					className="text-muted underline decoration-dotted underline-offset-2 hover:text-fg"
+					className="text-muted underline decoration-dotted underline-offset-2 hover:text-fg max-lg:inline-flex max-lg:min-h-11 max-lg:items-center"
 				>
 					Build your own with LiteQuiz
 				</a>

@@ -1,4 +1,10 @@
-import { type ReactNode, useEffect, useRef } from "react";
+import {
+	type KeyboardEvent,
+	type ReactNode,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { type FitSearch, fitInputs } from "#/lib/fit";
 import { QUIZ_STEPS, type QuizStep } from "#/lib/fitQuiz";
 import { BudgetField, ModelPicker, UsageField } from "./QuizFields";
@@ -9,7 +15,7 @@ type Patch = (patch: Partial<FitSearch>) => void;
 const QUESTIONS: Record<QuizStep, { title: string; hint: string }> = {
 	models: {
 		title: "Which models do you use?",
-		hint: "Pick one or more, or let each plan run its own flagship.",
+		hint: "Pick all that apply, or let each plan run its own flagship.",
 	},
 	usage: {
 		title: "How much do you use them in a week?",
@@ -45,27 +51,33 @@ export function QuizQuestion({
 	onBack: () => void;
 	onNext: () => void;
 }) {
-	const legendRef = useFocusOnStep(index);
+	const { fieldsetRef, legendRef, stepped } = useQuestionFocus(step, index);
 	const last = index === QUIZ_STEPS.length - 1;
 	const { title, hint } = QUESTIONS[step];
 	return (
+		// oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Enter from the focused question heading submits, as it does from the fields; the controls inside stay native
 		<form
+			onKeyDown={submitOnEnter}
 			onSubmit={(event) => {
 				event.preventDefault();
 				onNext();
 			}}
 		>
-			<fieldset className="flex flex-col gap-5">
+			<fieldset
+				key={index}
+				ref={fieldsetRef}
+				className={`flex flex-col ${QUESTION_HEIGHT} ${stepped ? STEP_IN : ""}`}
+			>
 				<legend
 					ref={legendRef}
 					tabIndex={-1}
-					className="flex flex-col gap-1 outline-none"
+					className="mb-5 flex flex-col outline-none"
 				>
-					<span className="text-[12px] text-subtle tabular-nums">
-						{index + 1} of {QUIZ_STEPS.length}
+					<QuizProgress index={index} />
+					<span className="mt-3 text-[20px] leading-7 font-medium text-balance sm:text-[22px]">
+						{title}
 					</span>
-					<span className="text-[20px] font-medium">{title}</span>
-					<span className="text-[13px] text-muted">{hint}</span>
+					<span className="mt-1 text-[13px] text-muted">{hint}</span>
 				</legend>
 				{questionBody(step, draft, benchmarkName, onAnswer)}
 			</fieldset>
@@ -75,6 +87,47 @@ export function QuizQuestion({
 				onBack={onBack}
 			/>
 		</form>
+	);
+}
+
+/**
+ * Room for the tallest question, the models with two share fields, so Next
+ * stays put and the charts below hold still from one question to the next.
+ * From lg the charts share the screen with the quiz; the models fill three
+ * rows of options there and two from xl.
+ */
+const QUESTION_HEIGHT = "lg:min-h-[338px] xl:min-h-[286px]";
+
+/** A question slides up into place after a step; still where motion is off. */
+const STEP_IN =
+	"transition-[opacity,translate] duration-200 ease-out starting:translate-y-1 starting:opacity-0 motion-reduce:transition-none";
+
+/**
+ * Enter moves on from anywhere in a question, a focused heading or number
+ * field included; on a button it presses the button.
+ */
+function submitOnEnter(event: KeyboardEvent<HTMLFormElement>) {
+	const pressesButton = event.target instanceof HTMLButtonElement;
+	if (event.key !== "Enter" || pressesButton || event.nativeEvent.isComposing)
+		return;
+	event.preventDefault();
+	event.currentTarget.requestSubmit();
+}
+
+/** "1 of 3" beside a slim bar of the questions, the reached ones filled. */
+function QuizProgress({ index }: { index: number }) {
+	return (
+		<span className="flex items-center gap-3 text-[12px] text-subtle tabular-nums">
+			{index + 1} of {QUIZ_STEPS.length}
+			<span aria-hidden="true" className="flex gap-1">
+				{QUIZ_STEPS.map((step, i) => (
+					<span
+						key={step}
+						className={`h-0.5 w-5 rounded-full transition-colors ${i <= index ? "bg-fg/70" : "bg-grid"}`}
+					/>
+				))}
+			</span>
+		</span>
 	);
 }
 
@@ -102,19 +155,31 @@ function questionBody(
 }
 
 /**
- * Moves focus to the question when the visitor moves to another one, so a
- * screen reader reads it out; not on the first render, which would pull the
- * page to the section on load.
+ * Moves focus into the question when the visitor moves to another one: the
+ * amount or budget field, selected so typing replaces it, or the heading, so a
+ * screen reader reads it out. Not on the first render, which would pull the
+ * page to the section on load; `stepped` says the visitor has moved, so only
+ * then does a question animate in.
  */
-function useFocusOnStep(index: number) {
-	const ref = useRef<HTMLLegendElement>(null);
+function useQuestionFocus(step: QuizStep, index: number) {
+	const fieldsetRef = useRef<HTMLFieldSetElement>(null);
+	const legendRef = useRef<HTMLLegendElement>(null);
 	const shown = useRef(index);
+	const [first] = useState(index);
+	const [stepped, setStepped] = useState(false);
+	// Known while rendering, so the next question mounts with its transition.
+	if (!stepped && index !== first) setStepped(true);
 	useEffect(() => {
 		if (shown.current === index) return;
 		shown.current = index;
-		ref.current?.focus({ preventScroll: true });
-	}, [index]);
-	return ref;
+		// The models' share fields are a follow-up, not the question.
+		const field =
+			step === "models" ? null : fieldsetRef.current?.querySelector("input");
+		const target = field ?? legendRef.current;
+		target?.focus({ preventScroll: true });
+		field?.select();
+	}, [step, index]);
+	return { fieldsetRef, legendRef, stepped };
 }
 
 function QuizNav({
@@ -127,10 +192,10 @@ function QuizNav({
 	onBack: () => void;
 }) {
 	return (
-		<div className="mt-6 flex items-center gap-6">
+		<div className="mt-7 flex items-center gap-5">
 			<button
 				type="submit"
-				className="min-h-11 rounded-sm bg-fg px-4 text-[14px] font-medium text-bg hover:opacity-90"
+				className="min-h-11 rounded-sm border border-fg/60 px-5 text-[14px] font-medium text-fg transition-colors hover:border-fg hover:bg-fg/5"
 			>
 				{nextLabel}
 			</button>
@@ -143,6 +208,12 @@ function QuizNav({
 					{backLabel}
 				</button>
 			)}
+			<span
+				aria-hidden="true"
+				className="text-[12px] text-subtle max-lg:hidden"
+			>
+				or press Enter
+			</span>
 		</div>
 	);
 }

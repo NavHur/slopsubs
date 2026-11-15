@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { leaderboards } from "#/data";
 import type { BenchmarkId } from "#/domain/enums";
 import { recommendPlans } from "#/domain/recommend";
@@ -35,11 +35,23 @@ export function PlanFitSection({
 	const [progress, setProgress] = useState<QuizProgress | null>(null);
 	const screen = quizScreen(fit, progress);
 	const benchmarkName = BENCHMARK_VIEWS[benchmark].tabLabel;
+	const titleRef = useRef<HTMLHeadingElement>(null);
+	// Between the quiz and its result the focused control goes away; the
+	// title stays, so focus waits there.
+	const show = (next: QuizProgress | null) => {
+		setProgress(next);
+		titleRef.current?.focus({ preventScroll: true });
+	};
 	const next = (question: Question) => {
 		const step = advanced(question);
 		if (step.kind === "question") return setProgress(step.progress);
 		onChange(step.fit);
-		setProgress(null);
+		show(null);
+	};
+	const back = (question: Question) => {
+		const previous = wentBack(question);
+		if (previous) return setProgress(previous);
+		show(null);
 	};
 	return (
 		<section
@@ -48,6 +60,7 @@ export function PlanFitSection({
 			className="flex scroll-mt-24 flex-col px-4 pt-5 pb-8 sm:scroll-mt-12 sm:px-7"
 		>
 			<h2
+				ref={titleRef}
 				id="plan-fit-title"
 				tabIndex={-1}
 				className="mb-5 text-[17px] font-semibold outline-none"
@@ -62,14 +75,14 @@ export function PlanFitSection({
 					benchmarkName={benchmarkName}
 					backLabel={backLabel(screen, fit)}
 					onAnswer={(patch) => setProgress(answered(screen, patch))}
-					onBack={() => setProgress(wentBack(screen))}
+					onBack={() => back(screen)}
 					onNext={() => next(screen)}
 				/>
 			) : (
 				<Answer
 					benchmark={benchmark}
 					fit={fit}
-					onChangeAnswers={() => setProgress(restarted(fit))}
+					onChangeAnswers={() => show(restarted(fit))}
 				/>
 			)}
 		</section>

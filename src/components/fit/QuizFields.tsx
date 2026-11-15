@@ -11,8 +11,9 @@ import {
 	modelWeight,
 	unitChange,
 } from "#/lib/fit";
-import { Chip, Segmented } from "../Segmented";
+import { Segmented } from "../Segmented";
 import { NumberField } from "./NumberField";
+import { QuizOption } from "./QuizOption";
 
 const UNIT_OPTIONS = [
 	{ value: "apiUsd", label: "API $ a week" },
@@ -40,21 +41,21 @@ export function ModelPicker({
 		if (patch) onChange(patch);
 	};
 	return (
-		<div className="flex flex-col gap-3">
-			<div className="flex flex-wrap gap-x-4 gap-y-1">
-				<Chip
-					label="Any flagship"
-					on={inputs.any}
-					onClick={() => onChange({ any: !inputs.any })}
-				/>
+		<div className="flex flex-col gap-4">
+			<div className="grid max-w-[56rem] grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
 				{FIT_FAMILIES.map((family) => (
-					<Chip
+					<QuizOption
 						key={family}
 						label={familyName(family)}
 						on={!inputs.any && inputs.models.includes(family)}
 						onClick={() => pick(family)}
 					/>
 				))}
+				<QuizOption
+					label="Any flagship"
+					on={inputs.any}
+					onClick={() => onChange({ any: !inputs.any })}
+				/>
 			</div>
 			{!inputs.any && inputs.models.length > 1 && (
 				<ShareFields inputs={inputs} onChange={onChange} />
@@ -85,9 +86,10 @@ function ShareFields({
 }) {
 	const counted = countedSplit(inputs);
 	return (
-		<div className="flex flex-wrap gap-x-4 gap-y-2 text-[13px]">
+		<div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px]">
+			<p className="w-full text-muted">Share of your week</p>
 			{inputs.models.map((family) => (
-				<label key={family} className="flex items-center gap-2 text-muted">
+				<label key={family} className="flex items-center gap-2 text-fg">
 					{familyName(family)}
 					<NumberField
 						value={Number(modelWeight(inputs, family).toFixed(1))}
@@ -96,9 +98,9 @@ function ShareFields({
 								onChange({ weights: { ...inputs.weights, [family]: weight } });
 							}
 						}}
-						className="w-16"
+						className="min-h-11 w-20"
 					/>
-					%
+					<span className="text-muted">%</span>
 				</label>
 			))}
 			{counted && <p className="w-full text-[12px] text-subtle">{counted}</p>}
@@ -131,7 +133,7 @@ export function UsageField({
 					onChange={(amount) => {
 						if (amount !== null) onChange({ amount });
 					}}
-					className="w-28 text-[15px]"
+					className="min-h-11 w-32 text-[16px]"
 				/>
 				<Segmented
 					label="Usage unit"
@@ -162,21 +164,23 @@ export function BudgetField({
 }) {
 	const id = useId();
 	return (
-		<div className="flex items-center gap-2 text-[13px]">
+		<div className="flex flex-col gap-2 text-[13px]">
 			<label htmlFor={id} className="text-muted">
 				Monthly budget<span className="sr-only"> in dollars</span>{" "}
 				<span className="text-subtle">(optional)</span>
 			</label>
-			<span aria-hidden="true" className="ml-1 text-muted">
-				$
-			</span>
-			<NumberField
-				id={id}
-				value={budget}
-				placeholder="No limit"
-				onChange={(next) => onChange({ budget: next ?? undefined })}
-				className="w-24"
-			/>
+			<div className="flex items-center gap-2">
+				<span aria-hidden="true" className="text-[16px] text-muted">
+					$
+				</span>
+				<NumberField
+					id={id}
+					value={budget}
+					placeholder="No limit"
+					onChange={(next) => onChange({ budget: next ?? undefined })}
+					className="min-h-11 w-32 text-[16px]"
+				/>
+			</div>
 		</div>
 	);
 }
