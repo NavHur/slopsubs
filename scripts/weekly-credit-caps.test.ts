@@ -35,6 +35,11 @@ describe("weeklyCreditCap", () => {
 		);
 	});
 
+	it("states the 3:1 uncached blend its figure assumes", () => {
+		const lite = WEEKLY_CREDIT_PLANS["zai-glm-coding-lite"];
+		expect(lite.basis).toMatch(/blended 3:1, no cache discount/);
+	});
+
 	it("scales Z.ai's tiers with their weekly credits", () => {
 		const lite = weeklyCreditCap(
 			WEEKLY_CREDIT_PLANS["zai-glm-coding-lite"],

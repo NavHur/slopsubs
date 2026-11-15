@@ -1,6 +1,5 @@
-// Rate-window plans that bill each model in the vendor's own credits against
-// a weekly credit quota. The quota at the model's credit rates, priced at
-// list, is the plan's estimated weekly cap.
+// Plans that bill each model in vendor credits against a weekly quota: the
+// quota at the model's credit rates, priced at list, is the estimated cap.
 
 import type { ReportedCap } from "../src/domain/model.ts";
 import { listPriced, type TokenRates } from "./list-price.ts";
@@ -40,7 +39,7 @@ export function weeklyCreditCap(
 const ZAI_DOCS = "https://docs.z.ai/devpack/overview";
 
 /**
- * Z.ai's usage multipliers, per 10,000 credits a token (docs, 2026-11-15):
+ * Z.ai's usage multipliers, in credits per 10,000 tokens (docs, 2026-11-15):
  * GLM-5.3 6.9 in and 24 out, GLM-5.3-Flash 2.3 and 8. Per million tokens
  * that is 100 times the multiplier.
  */
@@ -55,7 +54,7 @@ function zai(weeklyCredits: number): WeeklyCreditPlan {
 		rates: ZAI_RATES,
 		by: "Z.ai",
 		url: ZAI_DOCS,
-		basis: `${weeklyCredits.toLocaleString("en-US")} weekly credits at Z.ai's per-token credit rates, valued at list price, at peak hours. Off-peak usage costs half the credits, so up to twice this`,
+		basis: `${weeklyCredits.toLocaleString("en-US")} weekly credits at Z.ai's per-token credit rates, valued at list price (input and output blended 3:1, no cache discount), at peak hours. Off-peak usage costs half the credits, so up to twice this`,
 	};
 }
 
