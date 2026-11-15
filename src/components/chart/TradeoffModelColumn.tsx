@@ -35,7 +35,7 @@ export function TradeoffModelColumn({
 	viewport,
 	models,
 	lit,
-	pinnedModel,
+	pinnedModels,
 	onHighlight,
 }: {
 	scene: TradeoffScene;
@@ -43,7 +43,8 @@ export function TradeoffModelColumn({
 	models: readonly ModelGroup[];
 	/** The models that stay lit; the rest fade. */
 	lit: LitModels;
-	pinnedModel: FamilyId | null;
+	/** Models clicked to stay lit, in the order they were pinned. */
+	pinnedModels: readonly FamilyId[];
 	onHighlight: (event: HighlightEvent) => void;
 }) {
 	if (!hasModelColumn(viewport.width)) return null;
@@ -58,7 +59,7 @@ export function TradeoffModelColumn({
 					from={[end.x, end.y]}
 					at={[x, y]}
 					dimmed={isFaded(lit, id)}
-					pinned={pinnedModel === id}
+					pinned={pinnedModels.includes(id)}
 					onHighlight={onHighlight}
 				/>
 			)

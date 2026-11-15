@@ -8,7 +8,7 @@ import type { PreviewSource } from "./highlight";
 import { isFaded, type LitModels } from "./litModels";
 import type { AxisId } from "./plotSpace";
 import type { PointDetailsEvent } from "./pointDetails";
-import { API_DASH, type PricingStyle } from "./series";
+import { API_DASH, type PricingId, type PricingStyle, styleOf } from "./series";
 import type { EffortStep, ScenePoint, TradeoffScene } from "./tradeoffScene";
 
 /** How an axis's title stands off the axis's end (px). */
@@ -84,7 +84,8 @@ export function SceneFrame({
 	);
 }
 
-/** Opacity of an option another beats on cost, time and score. */
+/** Opacity of an option another is no worse than on every measure and better
+ * than on one. */
 const BEATEN_OPACITY = 0.25;
 /** Opacity of a model's points and lines while another is highlighted. */
 const DIMMED_OPACITY = 0.12;
@@ -102,52 +103,70 @@ function strongColor(family: FamilyId): string {
 }
 
 /**
- * Each model's efforts joined low to high, drawn as the cost and score chart
- * draws the pricing's lines.
+ * Each model's efforts joined low to high under each pricing, drawn as the
+ * cost and score chart draws that pricing's lines.
  */
 export function EffortLines({
 	steps,
-	pricing,
+	pricings,
 	lit,
 }: {
 	steps: readonly EffortStep[];
-	pricing: PricingStyle;
-	/** The models that stay lit: the highlighted one, or those whose points show. */
+	pricings: ReadonlyMap<PricingId, PricingStyle>;
+	/** The models that stay lit: the highlighted ones, or those whose points show. */
 	lit: LitModels;
 }) {
-	const { isApi, lineWidth } = pricing;
 	return (
 		<g aria-hidden="true" pointerEvents="none">
 			{steps.map((step) => (
-				<line
+				<EffortLine
 					key={step.key}
-					x1={step.x1}
-					y1={step.y1}
-					x2={step.x2}
-					y2={step.y2}
-					stroke={
-						step.worthWeighing
-							? strongColor(step.family)
-							: familyColor(step.family)
-					}
-					strokeWidth={step.worthWeighing ? lineWidth + 0.5 : lineWidth}
-					strokeDasharray={isApi ? API_DASH : undefined}
-					opacity={emphasis(step.family, step.worthWeighing, lit)}
-					className="transition-opacity"
+					step={step}
+					pricing={styleOf(pricings, step.pricing)}
+					lit={lit}
 				/>
 			))}
 		</g>
 	);
 }
 
+function EffortLine({
+	step,
+	pricing: { isApi, lineWidth },
+	lit,
+}: {
+	step: EffortStep;
+	pricing: PricingStyle;
+	lit: LitModels;
+}) {
+	const { family, worthWeighing } = step;
+	return (
+		<line
+			x1={step.x1}
+			y1={step.y1}
+			x2={step.x2}
+			y2={step.y2}
+			stroke={worthWeighing ? strongColor(family) : familyColor(family)}
+			strokeWidth={worthWeighing ? lineWidth + 0.5 : lineWidth}
+			strokeDasharray={isApi ? API_DASH : undefined}
+			opacity={emphasis(family, worthWeighing, lit)}
+			className="transition-opacity"
+		/>
+	);
+}
+
 /** Touch-sized target around each point's marker. */
 const HIT_RADIUS_PX = 12;
 
-function pointLabel({ point, worthWeighing }: ScenePoint, view: BenchmarkView) {
+function pointLabel(
+	{ point, worthWeighing }: ScenePoint,
+	pricing: PricingStyle,
+	view: BenchmarkView,
+) {
 	const { benchmark } = point;
 	const measures = `${formatUsd(point.costPerTaskUsd)} per task, ${formatDuration(point.secondsPerTask)} per task, ${view.scoreLabel} ${view.formatScore(point.score)}`;
-	const verdict = worthWeighing ? "" : ", beaten on cost, time and score";
-	return `${familyName(benchmark.family)}, ${benchmark.effortLabel}, ${measures}${verdict}`;
+	const verdict = worthWeighing ? "" : ", beaten by another option";
+	return `${familyName(benchmark.family)}, ${benchmark.effortLabel}, ${pricing.label}, ${measures}${verdict}`;
 }
 
 /** Marker radius of an option worth weighing, a beaten one, and the one
@@ -172,7 +191,7 @@ export function TradeoffPoint({
 	pricing: PricingStyle;
 	/** Its details show, so it draws larger. */
 	active: boolean;
-	/** The models that stay lit: the highlighted one, or those whose points show. */
+	/** The models that stay lit: the highlighted ones, or those whose points show. */
 	lit: LitModels;
 	onDetails: (event: PointDetailsEvent) => void;
 	/** Names and formats the score for screen readers. */
@@ -206,7 +225,7 @@ export function TradeoffPoint({
 				// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- SVG has no native button; the point needs focus to expose its tooltip
 				role="button"
 				tabIndex={0}
-				aria-label={pointLabel(scenePoint, view)}
+				aria-label={pointLabel(scenePoint, pricing, view)}
 				className="group cursor-pointer outline-none"
 				// A press on a point picks it rather than starting a turn.
 				onPointerDown={(event) => event.stopPropagation()}

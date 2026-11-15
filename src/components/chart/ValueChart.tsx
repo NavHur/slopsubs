@@ -24,7 +24,7 @@ import {
 	px,
 	xTicks,
 } from "./geometry";
-import { highlightedModel, useModelHighlight } from "./highlight";
+import { highlightedModels, useModelHighlight } from "./highlight";
 import { type LitModels, litModels } from "./litModels";
 import { usePointDetails } from "./pointDetails";
 import { PointTooltip } from "./PointTooltip";
@@ -79,19 +79,21 @@ const litIf = (lit: boolean): LineEmphasis => ({
 
 /**
  * A line draws whole if it holds a shown point (the hovered one and any it is
- * compared with); with none shown, if it belongs to the highlighted model.
+ * compared with); with none shown, if it belongs to a highlighted model.
  * With neither, a shown Pareto frontier keeps only its own points lit.
  */
 function emphasisOf(
 	series: Series,
 	shownPoints: readonly ValuePoint[],
-	highlighted: FamilyId | null,
+	highlighted: readonly FamilyId[],
 	frontier: Frontier,
 ): LineEmphasis {
 	if (shownPoints.length > 0) {
 		return litIf(shownPoints.some((p) => p.seriesId === series.id));
 	}
-	if (highlighted !== null) return litIf(highlighted === series.modelId);
+	if (highlighted.length > 0) {
+		return litIf(highlighted.includes(series.modelId));
+	}
 	if (frontier.vertices.length === 0) return { kind: "lit" };
 	return { kind: "points", lit: frontier.lit };
 }
@@ -142,7 +144,7 @@ export function ValueChart({
 			close: () => dispatchDetails({ type: "close" }),
 		},
 		{
-			open: shown.pinned !== null,
+			open: shown.pinned.length > 0,
 			close: () => dispatchHighlight({ type: "clear" }),
 		},
 	]);
@@ -163,7 +165,7 @@ export function ValueChart({
 
 	const { x, y, right } = makeScales(points, scale, width, layout);
 	const labels = endLabels(models, y, layout);
-	const highlighted = highlightedModel(shown);
+	const highlighted = highlightedModels(shown);
 	const lit = litModels(details, highlighted, frontier.models);
 	// Shown points are projected once; the guides, pills and tooltip share them.
 	const crosshairs = shownCrosshairs(
@@ -226,7 +228,7 @@ export function ValueChart({
 					x={x}
 					right={right}
 					lit={lit}
-					pinnedModel={shown.pinned}
+					pinnedModels={shown.pinned}
 					onHighlight={dispatchHighlight}
 				/>
 			</svg>
@@ -245,7 +247,7 @@ export function ValueChart({
 				<ModelLegend
 					models={models}
 					lit={lit}
-					pinnedModel={shown.pinned}
+					pinnedModels={shown.pinned}
 					onHighlight={dispatchHighlight}
 				/>
 			)}

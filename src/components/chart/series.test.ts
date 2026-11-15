@@ -93,9 +93,22 @@ describe("buildSeries", () => {
 		const key = [...pricingStyles(buildSeries(points)).values()];
 		expect(key.map((s) => [s.label, s.isApi, s.marker])).toEqual([
 			["API", true, "circle"],
-			["Max 20x", false, "circle"],
-			["OpenCode Go", false, "square"],
+			["Max 20x", false, "square"],
+			["OpenCode Go", false, "diamond"],
 		]);
+	});
+
+	it("keeps five plans and the API apart by marker", () => {
+		const five = ["a", "b", "c", "d", "e"].map((id) => plan(id, id));
+		const everyPricing = [api, ...five];
+		const all = everyPricing.flatMap((pricing, i) =>
+			line(i % 2 ? haiku : opus, pricing, [1, 2]),
+		);
+		const markers = [...pricingStyles(buildSeries(all)).values()].map(
+			(s) => s.marker,
+		);
+		expect(markers).toHaveLength(6);
+		expect(new Set(markers).size).toBe(6);
 	});
 
 	it("names model and plan on every line", () => {
@@ -109,7 +122,7 @@ describe("pricingStyles", () => {
 	it("finds each plan's line style by plan id, and the API's by api", () => {
 		const styles = pricingStyles(buildSeries(points));
 		expect(styles.get("api")?.isApi).toBe(true);
-		expect(styles.get("opencode-go" as PlanId)?.marker).toBe("square");
+		expect(styles.get("opencode-go" as PlanId)?.marker).toBe("diamond");
 	});
 
 	it("has no style for a plan without lines", () => {

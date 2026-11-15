@@ -306,7 +306,7 @@ function ValueView() {
 							className="mt-3 lg:hidden"
 						/>
 					</ChartSection>
-					<TradeoffSection points={points} view={benchmark} />
+					<TradeoffSection points={points} pricings={styles} view={benchmark} />
 					<ChartSection
 						id="tasks-per-week"
 						title="Tasks per week on each plan"

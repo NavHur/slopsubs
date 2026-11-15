@@ -1,17 +1,11 @@
 import { useMemo, useState } from "react";
+import { PricingKey } from "#/components/chart/PricingKey";
 import {
 	type Angles,
 	presetAt,
 	VIEW_PRESETS,
 	type ViewPreset,
 } from "#/components/chart/projection";
-import {
-	buildSeries,
-	type PricingId,
-	type PricingStyle,
-	pricingIdOf,
-	pricingStyles,
-} from "#/components/chart/series";
 import { TradeoffChart } from "#/components/chart/TradeoffChart";
 import { type TimedPoint, timedPoints } from "#/domain/tradeoffs";
 import type { ValuePoint } from "#/domain/value";
@@ -28,19 +22,6 @@ const PRESET_OPTIONS = [
 	{ value: "under", label: "Below" },
 ] as const satisfies readonly { value: ViewPreset; label: string }[];
 
-/** The pricing a visitor picked while it is still on the chart, else API
- * prices, which cover every model, else the first plan. */
-function shownPricing(
-	pricings: readonly PricingStyle[],
-	picked: PricingId | null,
-): PricingStyle | undefined {
-	return (
-		pricings.find((p) => p.id === picked) ??
-		pricings.find((p) => p.isApi) ??
-		pricings[0]
-	);
-}
-
 /** Why the chart has nothing to show. */
 function emptyMessage(points: readonly ValuePoint[], view: BenchmarkView) {
 	if (points.length === 0)
@@ -48,7 +29,7 @@ function emptyMessage(points: readonly ValuePoint[], view: BenchmarkView) {
 	return `No plotted model has a time per task on ${view.tabLabel}. Pick another benchmark to weigh time too.`;
 }
 
-/** The key, camera presets and turnable chart for the pricing on show. */
+/** The key, camera presets and turnable chart. */
 function TradeoffPlot({
 	plotted,
 	angles,
@@ -64,7 +45,6 @@ function TradeoffPlot({
 		<>
 			<TradeoffKey
 				points={plotted.shown}
-				pricing={plotted.pricing}
 				className="mb-3 max-w-[72ch] leading-5"
 			/>
 			<div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-1">
@@ -77,47 +57,33 @@ function TradeoffPlot({
 					}}
 				/>
 				<span className="text-[12px] text-subtle">
-					Drag, or focus the chart and use the arrow keys, to turn it
+					Drag, or focus the chart and use the arrow keys, to turn it. Click
+					model names to pick out several.
 				</span>
 			</div>
 			<TradeoffChart
 				points={plotted.shown}
-				pricing={plotted.pricing}
+				pricings={plotted.pricings}
 				angles={angles}
 				onAnglesChange={onAnglesChange}
 				view={view}
+			/>
+			{/* From lg the side panel shows each plan's marker; the PNG draws its own key. */}
+			<PricingKey
+				pricings={[...plotted.pricings.values()]}
+				className="mt-3 lg:hidden"
 			/>
 		</>
 	);
 }
 
-/** Switches the pricing when more than one covers the chart. */
-function PricingControl({
-	pricings,
-	value,
-	onChange,
-}: {
-	pricings: readonly PricingStyle[];
-	value: PricingId;
-	onChange: (id: PricingId) => void;
-}) {
-	if (pricings.length < 2) return null;
-	return (
-		<Segmented
-			label="Prices to plot"
-			options={pricings.map((p) => ({ value: p.id, label: p.label }))}
-			value={value}
-			onChange={onChange}
-		/>
-	);
-}
-
-/** The points of the pricing on show, or null when none can be drawn. */
+/** The points to draw and how each pricing draws, or null when none can be
+ * drawn. */
 function plottedFor(
-	pricing: PricingStyle | undefined,
+	pricings: Plotted["pricings"],
 	shown: readonly TimedPoint[],
 ): Plotted | null {
-	return pricing && isNonEmpty(shown) ? { pricing, shown } : null;
+	return isNonEmpty(shown) ? { pricings, shown } : null;
 }
 
 function isNonEmpty<T>(items: readonly T[]): items is readonly [T, ...T[]] {
@@ -125,30 +91,24 @@ function isNonEmpty<T>(items: readonly T[]): items is readonly [T, ...T[]] {
 }
 
 /**
- * The trade-off chart's section: each option's cost, time and score under
- * one pricing at a time, since plans cover different models and prices.
+ * The trade-off chart's section: each option's cost, time and score, under
+ * every pricing the side panel turns on, told apart by marker and line.
  */
 export function TradeoffSection({
 	points,
+	pricings,
 	view,
 }: {
 	points: readonly ValuePoint[];
+	/** The styles the side panel uses, built from every point, not only timed
+	 * ones. */
+	pricings: Plotted["pricings"];
 	/** The benchmark the points score on. */
 	view: BenchmarkView;
 }) {
 	const timed = useMemo(() => timedPoints(points), [points]);
-	const pricings = useMemo(
-		() => [...pricingStyles(buildSeries(timed)).values()],
-		[timed],
-	);
-	const [picked, setPicked] = useState<PricingId | null>(null);
-	const pricing = shownPricing(pricings, picked);
-	const shown = useMemo(
-		() => timed.filter((p) => pricingIdOf(p.pricing) === pricing?.id),
-		[timed, pricing?.id],
-	);
 	const [angles, setAngles] = useState<Angles>(VIEW_PRESETS.perspective);
-	const plotted = plottedFor(pricing, shown);
+	const plotted = plottedFor(pricings, timed);
 
 	const exportChart = async () => {
 		if (!plotted) return;
@@ -162,15 +122,6 @@ export function TradeoffSection({
 			title="Cost, time and score"
 			canExport={plotted !== null}
 			onExport={exportChart}
-			controls={
-				pricing && (
-					<PricingControl
-						pricings={pricings}
-						value={pricing.id}
-						onChange={setPicked}
-					/>
-				)
-			}
 		>
 			{plotted ? (
 				<TradeoffPlot
