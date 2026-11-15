@@ -2,6 +2,7 @@ import * as z from "zod/mini";
 import { frontier, plans } from "#/data";
 import { BENCHMARK_IDS } from "#/domain/enums";
 import type { Effort, FamilyId, Frontier, PlanId } from "#/domain/model";
+import { FitSearch } from "./fit";
 
 /** Reasoning efforts the Models panel can hide; "default" always shows. */
 export const REASONING_LEVELS = [
@@ -86,6 +87,8 @@ export const ViewSearch = z.object({
 	plans: knownSelection<string>(plans.map((p) => p.id)),
 	families: knownSelection<string>(COVERED_FAMILIES),
 	hideReasoning: knownSelection(REASONING_LEVELS),
+	/** The "Which plan fits" inputs; see fit.ts. */
+	fit: optionalValid(FitSearch),
 	/** The section in view; unset is the top of the page. */
 	chart: optionalValid(z.enum(CHART_SECTIONS)),
 });

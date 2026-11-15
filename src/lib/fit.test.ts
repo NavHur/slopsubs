@@ -1,0 +1,89 @@
+import { describe, expect, it } from "vite-plus/test";
+import type { FamilyId } from "#/domain/model";
+import { fitInputs, fitWorkload, modelToggle, unitChange } from "./fit";
+import { ViewSearch } from "./view";
+
+const opus = "claude-opus-5-5" as FamilyId;
+const fable = "claude-fable-5-2" as FamilyId;
+const parseFit = (fit: unknown) => fitInputs(ViewSearch.parse({ fit }).fit);
+
+describe("the fit param", () => {
+	it("loads defaults for a link from before the section existed", () => {
+		expect(
+			fitInputs(ViewSearch.parse({ benchmark: "omniscience" }).fit),
+		).toEqual({
+			any: false,
+			models: [opus],
+			weights: {},
+			unit: "apiUsd",
+			amount: 250,
+			effort: "high",
+			budget: null,
+		});
+	});
+
+	it("keeps the valid fields of a hand-edited link and drops the rest", () => {
+		const inputs = parseFit({
+			models: ["retired-model", fable],
+			unit: "tokens",
+			amount: -5,
+			effort: "high",
+			budget: 150,
+		});
+		expect(inputs).toMatchObject({
+			models: [fable],
+			unit: "apiUsd",
+			amount: 250,
+			budget: 150,
+		});
+	});
+
+	it("reads a fit param that isn't an object as unset", () => {
+		expect(parseFit("max")).toEqual(parseFit(undefined));
+	});
+
+	it("turns tasks at an effort into a tasks workload", () => {
+		const inputs = parseFit({ unit: "tasks", amount: 40, effort: "low" });
+		expect(fitWorkload(inputs).usage).toEqual({
+			unit: "tasks",
+			tasksPerWeek: 40,
+			effort: "low",
+		});
+	});
+
+	it("weighs each chosen model, 1 when unset", () => {
+		const inputs = parseFit({ models: [opus, fable], weights: { [fable]: 3 } });
+		expect(fitWorkload(inputs).models).toEqual({
+			kind: "chosen",
+			weights: [
+				{ family: opus, weight: 1 },
+				{ family: fable, weight: 3 },
+			],
+		});
+	});
+});
+
+describe("modelToggle", () => {
+	it("adds and removes models but keeps the last one", () => {
+		expect(modelToggle({ any: false, models: [opus] }, fable)).toEqual({
+			models: [opus, fable],
+		});
+		expect(modelToggle({ any: false, models: [opus, fable] }, opus)).toEqual({
+			models: [fable],
+		});
+		expect(modelToggle({ any: false, models: [opus] }, opus)).toBeNull();
+	});
+
+	it("leaves Any flagship for the picked model alone", () => {
+		expect(modelToggle({ any: true, models: [opus] }, fable)).toEqual({
+			any: false,
+			models: [fable],
+		});
+	});
+});
+
+describe("unitChange", () => {
+	it("starts a new unit at its own default amount", () => {
+		expect(unitChange("tasks")).toEqual({ unit: "tasks", amount: 50 });
+	});
+});
