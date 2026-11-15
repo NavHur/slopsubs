@@ -15,8 +15,9 @@ export const REASONING_LEVELS = [
 ] as const satisfies readonly Effort[];
 export type ReasoningLevel = (typeof REASONING_LEVELS)[number];
 
-/** The page's chart sections, top to bottom. */
+/** The page's sections, top to bottom. */
 export const CHART_SECTIONS = [
+	"plan-fit",
 	"cost-vs-score",
 	"tradeoffs",
 	"tasks-per-week",
@@ -101,6 +102,14 @@ export const SCROLL_ONLY_PARAMS = [
 
 /** The view without the scroll-only params. */
 export type DrawnView = Omit<ViewSearch, (typeof SCROLL_ONLY_PARAMS)[number]>;
+
+/** Params only the "Which plan fits" section draws from. */
+export const FIT_ONLY_PARAMS = [
+	"fit",
+] as const satisfies readonly (keyof ViewSearch)[];
+
+/** What the charts draw from: the view without the section's inputs. */
+export type ChartView = Omit<DrawnView, (typeof FIT_ONLY_PARAMS)[number]>;
 
 /** The view of a link with no query string: the one the page is prerendered with. */
 export const DEFAULT_VIEW: ViewSearch = ViewSearch.parse({});

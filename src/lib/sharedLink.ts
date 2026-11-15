@@ -1,11 +1,6 @@
 import { useHydrated } from "@tanstack/react-router";
 import { useEffect } from "react";
-import {
-	DEFAULT_VIEW,
-	type DrawnView,
-	SCROLL_ONLY_PARAMS,
-	ViewSearch,
-} from "#/lib/view";
+import { SCROLL_ONLY_PARAMS, ViewSearch } from "#/lib/view";
 
 /**
  * The params that change what the page draws. The scroll-only ones are left
@@ -40,12 +35,12 @@ function useShowLinkedView(rendered: boolean) {
 }
 
 /**
- * The view to render. The page is prerendered once, with the default view, so
- * hydration must render that view too; the link's own view follows straight
- * after, and the page shows once it has.
+ * The part of the view to render. The page is prerendered once, with the
+ * default view, so hydration must render `prerendered`, that part of it, too;
+ * the link's own view follows straight after, and the page shows once it has.
  */
-export function useRenderedView(linked: DrawnView): DrawnView {
+export function useRenderedView<T>(linked: T, prerendered: T): T {
 	const hydrated = useHydrated();
 	useShowLinkedView(hydrated);
-	return hydrated ? linked : DEFAULT_VIEW;
+	return hydrated ? linked : prerendered;
 }
