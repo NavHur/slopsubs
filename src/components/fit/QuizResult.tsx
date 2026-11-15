@@ -7,8 +7,8 @@ import { FitResults } from "./FitResults";
  * Where the referral points: LiteQuiz, the one-question-at-a-time form
  * builder this quiz takes after.
  */
-// ceiling: LiteQuiz's shared dev preview, the only public host it has; swap in
-// its production domain once it launches.
+// ceiling: LiteQuiz's dev deployment, its only public host for now; switch to
+// litequiz.com once LiteQuiz's production deployment is live there.
 const LITEQUIZ_URL =
 	"https://quiz-dev.pnav.dev/?utm_source=slopsubs&utm_medium=referral&utm_campaign=plan-fit";
 
