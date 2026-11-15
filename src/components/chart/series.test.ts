@@ -93,8 +93,8 @@ describe("buildSeries", () => {
 		const key = [...pricingStyles(buildSeries(points)).values()];
 		expect(key.map((s) => [s.label, s.isApi, s.marker])).toEqual([
 			["API", true, "circle"],
-			["Max 20x", false, "circle"],
-			["OpenCode Go", false, "square"],
+			["Max 20x", false, "square"],
+			["OpenCode Go", false, "diamond"],
 		]);
 	});
 
@@ -109,7 +109,7 @@ describe("pricingStyles", () => {
 	it("finds each plan's line style by plan id, and the API's by api", () => {
 		const styles = pricingStyles(buildSeries(points));
 		expect(styles.get("api")?.isApi).toBe(true);
-		expect(styles.get("opencode-go" as PlanId)?.marker).toBe("square");
+		expect(styles.get("opencode-go" as PlanId)?.marker).toBe("diamond");
 	});
 
 	it("has no style for a plan without lines", () => {

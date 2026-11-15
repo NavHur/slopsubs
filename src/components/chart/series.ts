@@ -4,18 +4,17 @@ import { familyColor, familyName } from "#/lib/families";
 
 /**
  * Point shapes for subscription plans, handed out in the order plans first
- * appear. API points keep hollow circles on a dashed line.
- * ceiling: plans past the fifth reuse shapes; add more if people often
+ * appear. The circle is API's alone, on a dashed line, so no plan shares it.
+ * ceiling: plans past the fourth reuse shapes; add more if people often
  * compare that many at once.
  */
 const PLAN_MARKERS = [
-	"circle",
 	"square",
 	"diamond",
 	"triangle",
 	"triangle-down",
 ] as const;
-export type PointMarker = (typeof PLAN_MARKERS)[number];
+export type PointMarker = "circle" | (typeof PLAN_MARKERS)[number];
 
 /** A pricing's identity: "api", or the subscription plan's id. */
 export type PricingId = PlanId | "api";
