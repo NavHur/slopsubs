@@ -51,7 +51,7 @@ function PlanPricing({
 	const { allowance, plan } = pricing;
 	const { share, fillsFaster } = allowance;
 	const cap = formatCapShare(share);
-	const credit =
+	const creditSource =
 		plan.allowanceKind === "credit" && allowance.basis === "published"
 			? allowance.source
 			: null;
@@ -65,7 +65,9 @@ function PlanPricing({
 					({formatUsd(apiCostPerTaskUsd)})
 				</span>
 			</p>
-			{credit && <p className="text-muted">{`Credit plan: ${credit}`}</p>}
+			{creditSource && (
+				<p className="text-muted">{`Credit plan: ${creditSource}`}</p>
+			)}
 			{cap && <p className="text-muted">{`Up to ${cap}`}</p>}
 			{fillsFaster && (
 				<p className="text-muted">

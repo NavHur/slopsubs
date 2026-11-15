@@ -10,7 +10,7 @@ const COPILOT_RATES =
 
 /** Copilot's per-token prices match list price, except promotions. */
 const COPILOT_GEMINI_PROMO = (model: string) => ({
-	rates: [2, 10] as TokenRates,
+	rates: [2, 10] satisfies TokenRates,
 	promotion: {
 		summary: `Copilot bills ${model} at 50% off, doubling its usage`,
 		endsOn: "2026-11-30",

@@ -248,6 +248,19 @@ function promotions(planId: string, lab: string): Record<string, Promotion> {
 	return lab === "opencode" ? OPENCODE_PROMOTIONS : {};
 }
 
+/** A credit plan ships only with a credit whose page its research row cites. */
+function requireSourcedCredit(
+	p: z.infer<typeof ResearchPlan>,
+	allowance: PublishedAllowance | null,
+): void {
+	if (!allowance)
+		throw new Error(`${p.planId}: a credit plan needs its sourced credit`);
+	if (!p.sources.some((source) => source.url === allowance.url))
+		throw new Error(
+			`${p.planId}: its credit cites ${allowance.url}, which its research row does not list`,
+		);
+}
+
 const plans = Plans.parse(
 	research
 		.filter((p) => p.planId in PLAN_FAMILIES)
@@ -269,8 +282,7 @@ const plans = Plans.parse(
 				p.monthlyPriceUsd,
 				families,
 			);
-			if (p.allowanceKind === "credit" && !allowance)
-				throw new Error(`${p.planId}: a credit plan needs its sourced credit`);
+			if (p.allowanceKind === "credit") requireSourcedCredit(p, allowance);
 			return {
 				id: p.planId,
 				vendor,
