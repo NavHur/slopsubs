@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import type { FamilyId } from "../src/domain/model.ts";
-import { type KnownTier, scaledCap } from "./tier-ladder.ts";
+import { type KnownTier, ladderCap, scaledCap } from "./tier-ladder.ts";
 
 const grok = "grok-4-7" as FamilyId;
 
@@ -38,5 +38,26 @@ describe("scaledCap", () => {
 		expect(() =>
 			scaledCap(known, { label: "Plus", times: 1 }, ["grok-4-6"]),
 		).toThrow(/Plus: no Ultra figure for grok-4-6/);
+	});
+});
+
+describe("ladderCap", () => {
+	const ladders = { "x-subscription": known };
+
+	it("scales from the ladder's known tier", () => {
+		const premium = { ladder: "x-subscription", times: 4 };
+		expect(
+			ladderCap(ladders, premium, "Premium", ["grok-4-7"])
+				?.weeklyCapApiUsdByFamily[grok],
+		).toBe(80);
+	});
+
+	it("has no cap for a ladder with no known tier, so the plan is unmeasured", () => {
+		const pro = { ladder: "google-ai", times: 1 };
+		expect(ladderCap(ladders, pro, "Pro", ["gemini-4-argon"])).toBeNull();
+	});
+
+	it("has no cap for a plan on no ladder", () => {
+		expect(ladderCap(ladders, undefined, "Solo", ["grok-4-7"])).toBeNull();
 	});
 });

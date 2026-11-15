@@ -52,6 +52,21 @@ export function scaledCap(
 	};
 }
 
+/**
+ * The plan's cap scaled from its ladder's known tier, or null when the plan is
+ * on no ladder or its ladder has no known tier, which ships it unmeasured.
+ */
+export function ladderCap<L extends string>(
+	knownTiers: Readonly<Partial<Record<L, KnownTier>>>,
+	tier: { ladder: L; times: number } | undefined,
+	label: string,
+	families: readonly string[],
+): ReportedCap | null {
+	const known = tier && knownTiers[tier.ladder];
+	if (!tier || !known) return null;
+	return scaledCap(known, { label, times: tier.times }, families);
+}
+
 /** "Max's 5x Pro", or just "Pro" for the base tier itself. */
 function usage(tier: { label: string; times: number }, base: string): string {
 	return tier.times === 1
