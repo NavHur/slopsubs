@@ -281,7 +281,12 @@ function UnmeasuredRow({ plan }: { plan: Plan }) {
 					{plan.families.map(familyName).join(", ")}
 				</span>
 				<details className="text-[11px] leading-4 text-subtle">
-					<summary className="cursor-pointer max-lg:py-2">Limits</summary>
+					<summary
+						aria-label={`Limits for ${plan.label}`}
+						className="cursor-pointer max-lg:py-2"
+					>
+						Limits
+					</summary>
 					<p>{plan.limits}</p>
 				</details>
 			</span>

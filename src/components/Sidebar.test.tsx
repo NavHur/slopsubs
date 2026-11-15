@@ -151,5 +151,6 @@ describe("PlanList", () => {
 		expect(html).toMatch(
 			/<details[^>]*><summary[^>]*>Limits<\/summary><p>5x higher usage limits<\/p><\/details>/,
 		);
+		expect(html).toContain('aria-label="Limits for Unmeasured"');
 	});
 });
