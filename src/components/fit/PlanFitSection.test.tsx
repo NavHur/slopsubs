@@ -54,4 +54,18 @@ describe("PlanFitSection", () => {
 		expect(capped).toContain("Over your budget:");
 		expect(capped).not.toContain("Claude Max fits");
 	});
+
+	it("shows the split it counts when the shares don't add up to 100%", () => {
+		const shares = text({
+			models: ["claude-opus-5-5", "claude-fable-5-2"],
+			weights: { "claude-fable-5-2": 150 },
+		});
+		expect(shares).toContain("Counted as Opus 5.5 25%, Fable 5.2 75%.");
+	});
+
+	it("says how far short the closest plan falls", () => {
+		expect(text({ amount: 5000 })).toMatch(
+			/comes closest, at \d+% of it and \$[\d,]+ a month short\./,
+		);
+	});
 });

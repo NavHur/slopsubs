@@ -126,7 +126,7 @@ function ChartNav({ view }: { view: ChartView }) {
 
 /**
  * What the charts draw: the view without the scroll-only params, which only
- * ChartNav follows, or the "Which plan fits" inputs, which only that section
+ * ChartNav follows, and the "Which plan fits" inputs, which only that section
  * draws, so editing them re-renders the section alone.
  */
 function toChartView(search: ViewSearch): ChartView {
@@ -149,7 +149,7 @@ function useRenderedFit() {
 }
 
 /** The "Which plan fits" section, bound to the URL's `fit` param. */
-function PlanFit({ benchmark }: { benchmark: BenchmarkId }) {
+function LinkedPlanFit({ benchmark }: { benchmark: BenchmarkId }) {
 	const fit = useRenderedFit();
 	const update = useViewUpdate();
 	return (
@@ -306,7 +306,7 @@ function ValueView() {
 							</ScrollRow>
 						</div>
 					</div>
-					<PlanFit benchmark={view.benchmark} />
+					<LinkedPlanFit benchmark={view.benchmark} />
 					<ChartSection
 						id="cost-vs-score"
 						title={benchmark.chartTitle}

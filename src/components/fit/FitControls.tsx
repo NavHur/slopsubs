@@ -8,6 +8,7 @@ import {
 	type FitSearch,
 	type FitUnit,
 	modelToggle,
+	modelWeight,
 	unitChange,
 } from "#/lib/fit";
 import { Chip, Segmented } from "../Segmented";
@@ -85,6 +86,18 @@ function ModelPicker({
 	);
 }
 
+/** "Counted as Opus 5.5 40%, Fable 5.2 60%" when the fields don't add up
+ * to 100%, so the split the result uses is never hidden. */
+function countedSplit(inputs: FitInputs): string | null {
+	const weights = inputs.models.map((f) => modelWeight(inputs, f));
+	const total = weights.reduce((sum, w) => sum + w, 0);
+	if (Math.abs(total - 100) < 0.5) return null;
+	const parts = inputs.models.map(
+		(f, i) => `${familyName(f)} ${Math.round((weights[i] / total) * 100)}%`,
+	);
+	return `Counted as ${parts.join(", ")}.`;
+}
+
 /** Each model's part of the week, as weights scaled to add up to 100%. */
 function ShareFields({
 	inputs,
@@ -93,14 +106,14 @@ function ShareFields({
 	inputs: FitInputs;
 	onChange: Patch;
 }) {
-	const equal = Math.round(100 / inputs.models.length);
+	const counted = countedSplit(inputs);
 	return (
 		<div className="flex flex-wrap gap-x-4 gap-y-2 text-[13px]">
 			{inputs.models.map((family) => (
 				<label key={family} className="flex items-center gap-2 text-muted">
 					{familyName(family)}
 					<NumberField
-						value={inputs.weights[family] ?? equal}
+						value={Number(modelWeight(inputs, family).toFixed(1))}
 						onChange={(weight) => {
 							if (weight !== null) {
 								onChange({ weights: { ...inputs.weights, [family]: weight } });
@@ -111,6 +124,7 @@ function ShareFields({
 					%
 				</label>
 			))}
+			{counted && <p className="w-full text-[12px] text-subtle">{counted}</p>}
 		</div>
 	);
 }

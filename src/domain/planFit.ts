@@ -58,10 +58,12 @@ export function planFit(
 }
 
 function gaugeUse(needs: readonly FamilyNeed[]): number {
-	return needs.reduce(
-		(sum, n) => sum + n.apiUsdPerWeek / n.allowance.capApiUsd,
-		0,
-	);
+	return needs.reduce((sum, n) => sum + familyGauge(n), 0);
+}
+
+/** The part of the shared gauge the family's week fills. */
+function familyGauge(need: FamilyNeed): number {
+	return need.apiUsdPerWeek / need.allowance.capApiUsd;
 }
 
 /** The family's use of its own allowance: its share of the cap. */
@@ -98,9 +100,6 @@ function weeklyOverflow(needs: readonly FamilyNeed[]): number {
 function bindingFamily(needs: readonly FamilyNeed[]): FamilyId {
 	const pastShare = needs.filter((n) => shareUse(n) > 1);
 	const candidates = pastShare.length > 0 ? pastShare : needs;
-	const measure =
-		pastShare.length > 0
-			? shareUse
-			: (n: FamilyNeed) => n.apiUsdPerWeek / n.allowance.capApiUsd;
+	const measure = pastShare.length > 0 ? shareUse : familyGauge;
 	return candidates.reduce((a, b) => (measure(b) > measure(a) ? b : a)).family;
 }

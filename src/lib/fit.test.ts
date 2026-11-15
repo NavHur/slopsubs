@@ -51,33 +51,50 @@ describe("the fit param", () => {
 		});
 	});
 
-	it("weighs each chosen model, 1 when unset", () => {
-		const inputs = parseFit({ models: [opus, fable], weights: { [fable]: 3 } });
+	it("gives each chosen model its percent, an equal part when unset", () => {
+		const inputs = parseFit({
+			models: [opus, fable],
+			weights: { [fable]: 75 },
+		});
 		expect(fitWorkload(inputs).models).toEqual({
 			kind: "chosen",
 			weights: [
-				{ family: opus, weight: 1 },
-				{ family: fable, weight: 3 },
+				{ family: opus, weight: 50 },
+				{ family: fable, weight: 75 },
 			],
 		});
 	});
 });
 
 describe("modelToggle", () => {
+	const chosen = (models: FamilyId[], weights = {}) => ({
+		any: false,
+		models,
+		weights,
+	});
+
 	it("adds and removes models but keeps the last one", () => {
-		expect(modelToggle({ any: false, models: [opus] }, fable)).toEqual({
+		expect(modelToggle(chosen([opus]), fable)).toEqual({
 			models: [opus, fable],
 		});
-		expect(modelToggle({ any: false, models: [opus, fable] }, opus)).toEqual({
+		expect(modelToggle(chosen([opus, fable]), opus)).toEqual({
 			models: [fable],
+			weights: {},
 		});
-		expect(modelToggle({ any: false, models: [opus] }, opus)).toBeNull();
+		expect(modelToggle(chosen([opus]), opus)).toBeNull();
+	});
+
+	it("drops a removed model's share", () => {
+		expect(
+			modelToggle(chosen([opus, fable], { [opus]: 80, [fable]: 20 }), fable),
+		).toEqual({ models: [opus], weights: { [opus]: 80 } });
 	});
 
 	it("leaves Any flagship for the picked model alone", () => {
-		expect(modelToggle({ any: true, models: [opus] }, fable)).toEqual({
+		expect(modelToggle({ ...chosen([opus]), any: true }, fable)).toEqual({
 			any: false,
 			models: [fable],
+			weights: undefined,
 		});
 	});
 });

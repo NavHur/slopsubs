@@ -11,9 +11,11 @@ import { planCapacity } from "#/domain/value";
  */
 // ceiling: frontier families only, to keep the picker to a few chips; add
 // notable families behind a search if visitors ask for them.
-export const FIT_FAMILIES: readonly FamilyId[] = (
-	Object.keys(frontier) as FamilyId[]
-).filter((f) => plans.some((p) => p.families.includes(f)));
+export const FIT_FAMILIES: readonly FamilyId[] =
+	// SAFETY: frontier keys are family ids from the same dataset.
+	(Object.keys(frontier) as FamilyId[]).filter((f) =>
+		plans.some((p) => p.families.includes(f)),
+	);
 
 /** "Any flagship": each plan's largest frontier model. */
 export const ANY_FAMILIES: readonly FamilyId[] = FIT_FAMILIES.filter(
@@ -37,12 +39,15 @@ export const DEFAULT_AMOUNT: Record<FitUnit, number> = {
 	apiUsd: 250,
 	tasks: 50,
 };
-const DEFAULT_FAMILY = "claude-opus-5-5";
+const DEFAULT_FAMILY = "claude-opus-5-5" as FamilyId;
+if (!FIT_FAMILIES.includes(DEFAULT_FAMILY)) {
+	throw new Error(`Default plan-fit model ${DEFAULT_FAMILY} is not on a plan`);
+}
 
 const knownFamily = (item: unknown): item is string =>
 	FIT_FAMILIES.some((f) => f === item);
 
-const Positive = z.number().check(z.positive(), z.lt(1e7));
+const Positive = z.number().check(z.positive());
 
 function optionalValid<T extends z.ZodMiniType>(schema: T) {
 	return z.catch(z.optional(schema), undefined);
@@ -64,7 +69,7 @@ export const FitSearch = z.object({
 			}),
 		),
 	),
-	/** Relative weight per model; unset models weigh 1. */
+	/** Each model's percent of the week; unset models get an equal part. */
 	weights: optionalValid(z.record(z.string(), Positive)),
 	unit: optionalValid(z.enum(FIT_UNITS)),
 	amount: optionalValid(Positive),
@@ -89,7 +94,7 @@ export function fitInputs(fit: FitSearch | undefined): FitInputs {
 	return {
 		any: fit?.any ?? false,
 		// SAFETY: the schema keeps only ids from FIT_FAMILIES.
-		models: (fit?.models ?? [DEFAULT_FAMILY]) as FamilyId[],
+		models: (fit?.models as FamilyId[] | undefined) ?? [DEFAULT_FAMILY],
 		weights: fit?.weights ?? {},
 		unit,
 		amount: fit?.amount ?? DEFAULT_AMOUNT[unit],
@@ -106,7 +111,7 @@ export function fitWorkload(inputs: FitInputs): Workload {
 					kind: "chosen",
 					weights: inputs.models.map((family) => ({
 						family,
-						weight: inputs.weights[family] ?? 1,
+						weight: modelWeight(inputs, family),
 					})),
 				},
 		usage:
@@ -127,14 +132,25 @@ export function fitWorkload(inputs: FitInputs): Workload {
  * empty week has no answer.
  */
 export function modelToggle(
-	inputs: Pick<FitInputs, "any" | "models">,
+	inputs: Pick<FitInputs, "any" | "models" | "weights">,
 	family: FamilyId,
 ): Partial<FitSearch> | null {
-	if (inputs.any) return { any: false, models: [family] };
-	const models = inputs.models.includes(family)
-		? inputs.models.filter((f) => f !== family)
-		: [...inputs.models, family];
-	return models.length > 0 ? { models } : null;
+	if (inputs.any) return { any: false, models: [family], weights: undefined };
+	if (!inputs.models.includes(family)) {
+		return { models: [...inputs.models, family] };
+	}
+	const models = inputs.models.filter((f) => f !== family);
+	// A removed model's share leaves with it, so re-picking it starts equal.
+	const { [family]: _removed, ...weights } = inputs.weights;
+	return models.length > 0 ? { models, weights } : null;
+}
+
+/** A model's percent of the week: as set, or an equal part when unset. */
+export function modelWeight(
+	inputs: Pick<FitInputs, "models" | "weights">,
+	family: FamilyId,
+): number {
+	return inputs.weights[family] ?? 100 / inputs.models.length;
 }
 
 /** The URL patch for a new unit: its own default amount comes with it. */

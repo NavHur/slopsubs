@@ -32,7 +32,7 @@ export function verdictHeadline(result: Ranked): string {
 	if (!cheapest) {
 		const [closest] = result.short;
 		return closest
-			? `No single plan covers this week. ${closest.plan.label} comes closest, at ${formatShare(closest.coverage)} of it.`
+			? `No single plan covers this week. ${closest.plan.label} comes closest, at ${formatShare(closest.coverage)} of it and ${formatUsd(closest.shortUsdPerMonth)} a month short.`
 			: "No plan we can size covers these models.";
 	}
 	if (result.apiCheaper) {
@@ -97,6 +97,7 @@ export function shortDetail(short: PlanShort, any: boolean): string {
 	return [
 		...anyModelPart(short.families, any),
 		`${familyName(short.binding)} runs out first`,
+		`${formatUsd(short.shortUsdPerMonth)} a month short`,
 	].join(", ");
 }
 

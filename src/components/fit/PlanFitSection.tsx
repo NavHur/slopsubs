@@ -20,16 +20,16 @@ export function PlanFitSection({
 	fit: FitSearch | undefined;
 	onChange: (fit: FitSearch) => void;
 }) {
-	const inputs = fitInputs(fit);
+	const inputs = useMemo(() => fitInputs(fit), [fit]);
 	const benchmarkName = BENCHMARK_VIEWS[benchmark].tabLabel;
 	const result = useMemo(
 		() =>
 			recommendPlans({
 				plans: SIZED_PLANS,
 				points: leaderboards[benchmark].models,
-				workload: fitWorkload(fitInputs(fit)),
+				workload: fitWorkload(inputs),
 			}),
-		[benchmark, fit],
+		[benchmark, inputs],
 	);
 	return (
 		<section
