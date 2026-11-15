@@ -9,7 +9,7 @@
       "JetBrains IDEs (AI Assistant, Junie)"
     ],
     "models": [
-      "JetBrains-hosted cloud models (multi-vendor)"
+      "AI Assistant cloud models (2026-11-15) include Claude Opus 5.5, Sonnet 5.5, Fable 5.1, GPT-6.1 Sol, GPT-6 Luna, GPT-5.6 Luna/Sol/Terra, Gemini 3.8 Flash and 3.1 Pro, and older OpenAI, Anthropic and Google models; no xAI models"
     ],
     "limits": "\"10 AI credits per 30-days\"; \"Each AI credit equals $1 USD\".",
     "allowanceKind": "credit",
@@ -19,10 +19,14 @@
       {
         "url": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
         "accessed": "2026-10-31"
+      },
+      {
+        "url": "https://www.jetbrains.com/help/ai-assistant/supported-llms.html",
+        "accessed": "2026-11-15"
       }
     ],
     "confidence": "primary",
-    "notes": "Credit plan priced at par ($1 = 1 credit), so no subsidy relative to API. Annual $100/yr is from secondary sources. ACP agents and BYOK don't need a subscription."
+    "notes": "Credit plan priced at par ($1 = 1 credit), so no subsidy relative to API. Annual $100/yr is from secondary sources. ACP agents and BYOK don't need a subscription. JetBrains publishes no per-model credit rates (licensing page, 2026-11-15), so the site assumes list price."
   },
   {
     "vendor": "JetBrains",
@@ -34,7 +38,7 @@
       "JetBrains IDEs (AI Assistant, Junie)"
     ],
     "models": [
-      "JetBrains-hosted cloud models"
+      "AI Assistant cloud models (2026-11-15) include Claude Opus 5.5, Sonnet 5.5, Fable 5.1, GPT-6.1 Sol, GPT-6 Luna, GPT-5.6 Luna/Sol/Terra, Gemini 3.8 Flash and 3.1 Pro, and older OpenAI, Anthropic and Google models; no xAI models"
     ],
     "limits": "\"35 AI credits per 30-days\" (includes \"a small bonus\").",
     "allowanceKind": "credit",
@@ -44,9 +48,13 @@
       {
         "url": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
         "accessed": "2026-10-31"
+      },
+      {
+        "url": "https://www.jetbrains.com/help/ai-assistant/supported-llms.html",
+        "accessed": "2026-11-15"
       }
     ],
     "confidence": "primary",
-    "notes": "Annual $300/yr is from secondary sources."
+    "notes": "Annual $300/yr is from secondary sources. JetBrains publishes no per-model credit rates (licensing page, 2026-11-15), so the site assumes list price."
   }
 ]

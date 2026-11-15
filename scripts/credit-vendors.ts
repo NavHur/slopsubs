@@ -51,11 +51,62 @@ function ollama(creditUsd: number): CreditPlan {
 	};
 }
 
+/** "Each AI credit equals $1 USD"; JetBrains publishes no per-model rates. */
+function jetbrains(credits: number): CreditPlan {
+	return {
+		monthlyCredit: credits,
+		unit: "usd",
+		rates: {},
+		promos: {},
+		url: "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
+		basis: (priceUsd) =>
+			`${credits} AI credits of $1 a month for $${priceUsd}. JetBrains doesn't publish its per-model rates, so this assumes list price`,
+	};
+}
+
+/** "$20 of agent usage included each month at API rates". */
+function warp(usd: number): CreditPlan {
+	return {
+		monthlyCredit: usd,
+		unit: "usd",
+		rates: {},
+		promos: {},
+		url: "https://www.warp.dev/pricing",
+		basis: (priceUsd) =>
+			`$${usd} of agent usage a month at API rates, for $${priceUsd}`,
+	};
+}
+
+/** MiMo's credits per token: V2.6 Pro 300 in and 600 out, Flash 100 and 200. */
+const MIMO_RATES: Record<string, TokenRates> = {
+	"mimo-v2-6-pro": [300e6, 600e6],
+	"mimo-v2-6-flash": [100e6, 200e6],
+};
+function mimo(billions: number): CreditPlan {
+	return {
+		monthlyCredit: billions * 1e9,
+		unit: "credits",
+		rates: MIMO_RATES,
+		promos: {},
+		url: "https://mimo.mi.com/static/docs/price/token-plan.md",
+		basis: (priceUsd) =>
+			`${billions} billion credits a month for $${priceUsd}, at MiMo's per-token credit rates, valued at list price`,
+	};
+}
+
 /** Every shipped credit plan, by plan id. */
 export const CREDIT_PLANS: Record<string, CreditPlan> = {
 	"copilot-pro": copilot(1000, 500),
 	"copilot-pro-plus": copilot(3900, 3100),
 	"copilot-max": copilot(10000, 10000),
+	"jetbrains-ai-pro": jetbrains(10),
+	"jetbrains-ai-ultimate": jetbrains(35),
 	"ollama-pro": ollama(60),
 	"ollama-max": ollama(300),
+	"warp-build": warp(20),
+	"warp-max": warp(200),
+	"mimo-token-lite": mimo(4.1),
+	"mimo-token-standard": mimo(11),
+	"mimo-token-pro": mimo(38),
+	"mimo-token-max": mimo(82),
 };

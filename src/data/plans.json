@@ -319,6 +319,86 @@
     }
   },
   {
+    "id": "jetbrains-ai-pro",
+    "vendor": "JetBrains AI",
+    "lab": "jetbrains",
+    "label": "JetBrains AI Pro",
+    "monthlyPriceUsd": 10,
+    "harnesses": [
+      "JetBrains IDEs (AI Assistant, Junie)"
+    ],
+    "families": [
+      "claude-opus-5-5",
+      "claude-sonnet-5-5",
+      "gpt-6-1-sol",
+      "gpt-6-luna",
+      "gpt-5-6-luna",
+      "gemini-3-8-flash"
+    ],
+    "limits": "\"10 AI credits per 30-days\"; \"Each AI credit equals $1 USD\".",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": false,
+    "confidence": "primary",
+    "sourceUrl": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "claude-opus-5-5": 10,
+        "claude-sonnet-5-5": 10,
+        "gpt-6-1-sol": 10,
+        "gpt-6-luna": 10,
+        "gpt-5-6-luna": 10,
+        "gemini-3-8-flash": 10
+      },
+      "url": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
+      "basis": "10 AI credits of $1 a month for $10. JetBrains doesn't publish its per-model rates, so this assumes list price"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "jetbrains-ai-ultimate",
+    "vendor": "JetBrains AI",
+    "lab": "jetbrains",
+    "label": "JetBrains AI Ultimate",
+    "monthlyPriceUsd": 30,
+    "harnesses": [
+      "JetBrains IDEs (AI Assistant, Junie)"
+    ],
+    "families": [
+      "claude-opus-5-5",
+      "claude-sonnet-5-5",
+      "gpt-6-1-sol",
+      "gpt-6-luna",
+      "gpt-5-6-luna",
+      "gemini-3-8-flash"
+    ],
+    "limits": "\"35 AI credits per 30-days\" (includes \"a small bonus\").",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": false,
+    "confidence": "primary",
+    "sourceUrl": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "claude-opus-5-5": 35,
+        "claude-sonnet-5-5": 35,
+        "gpt-6-1-sol": 35,
+        "gpt-6-luna": 35,
+        "gpt-5-6-luna": 35,
+        "gemini-3-8-flash": 35
+      },
+      "url": "https://www.jetbrains.com/help/ai-assistant/licensing-and-subscriptions.html",
+      "basis": "35 AI credits of $1 a month for $30. JetBrains doesn't publish its per-model rates, so this assumes list price"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
     "id": "ollama-pro",
     "vendor": "Ollama",
     "lab": "ollama",
@@ -337,6 +417,8 @@
       "deepseek-v4-pro",
       "minimax-m3",
       "minimax-m3-1-flash",
+      "mimo-v2-6-pro",
+      "mimo-v2-6-flash",
       "mistral-large-4",
       "gpt-oss-120b"
     ],
@@ -358,6 +440,8 @@
         "deepseek-v4-pro": 60,
         "minimax-m3": 30,
         "minimax-m3-1-flash": 60,
+        "mimo-v2-6-pro": 60,
+        "mimo-v2-6-flash": 60,
         "mistral-large-4": 60,
         "gpt-oss-120b": 60
       },
@@ -387,6 +471,8 @@
       "deepseek-v4-pro",
       "minimax-m3",
       "minimax-m3-1-flash",
+      "mimo-v2-6-pro",
+      "mimo-v2-6-flash",
       "mistral-large-4",
       "gpt-oss-120b"
     ],
@@ -408,6 +494,8 @@
         "deepseek-v4-pro": 300,
         "minimax-m3": 150,
         "minimax-m3-1-flash": 300,
+        "mimo-v2-6-pro": 300,
+        "mimo-v2-6-flash": 300,
         "mistral-large-4": 300,
         "gpt-oss-120b": 300
       },
@@ -651,6 +739,10 @@
       "glm-5-2",
       "glm-5-3-flash",
       "longcat-2-0",
+      "mimo-v2-6-pro",
+      "mimo-v2-6-flash",
+      "mimo-v2-5-pro",
+      "mimo-v2-5-0424",
       "hy3",
       "deepseek-v4-1-flash-1017",
       "deepseek-v4-pro",
@@ -683,6 +775,10 @@
         "glm-5-2": 60,
         "glm-5-3-flash": 60,
         "longcat-2-0": 148.5714285714286,
+        "mimo-v2-6-pro": 15,
+        "mimo-v2-6-flash": 60,
+        "mimo-v2-5-pro": 13.500000000000002,
+        "mimo-v2-5-0424": 48,
         "hy3": 57.78,
         "deepseek-v4-1-flash-1017": 100,
         "deepseek-v4-pro": 15,
@@ -733,6 +829,10 @@
       "glm-5-2",
       "glm-5-3-flash",
       "longcat-2-0",
+      "mimo-v2-6-pro",
+      "mimo-v2-6-flash",
+      "mimo-v2-5-pro",
+      "mimo-v2-5-0424",
       "hy3",
       "deepseek-v4-1-flash-1017",
       "deepseek-v4-pro",
@@ -765,6 +865,10 @@
         "glm-5-2": 180,
         "glm-5-3-flash": 180,
         "longcat-2-0": 594.2857142857144,
+        "mimo-v2-6-pro": 60,
+        "mimo-v2-6-flash": 120,
+        "mimo-v2-5-pro": 54.00000000000001,
+        "mimo-v2-5-0424": 96,
         "hy3": 231.12,
         "deepseek-v4-1-flash-1017": 200,
         "deepseek-v4-pro": 60,
@@ -785,5 +889,289 @@
         "url": "https://opencode.ai/docs/go#usage-limits"
       }
     }
+  },
+  {
+    "id": "warp-build",
+    "vendor": "Warp",
+    "lab": "warp",
+    "label": "Warp Build",
+    "monthlyPriceUsd": 20,
+    "harnesses": [
+      "Warp Terminal agent",
+      "Warp Agent CLI",
+      "Warp cloud agents"
+    ],
+    "families": [
+      "gpt-6-astra",
+      "gpt-6-1-sol",
+      "gpt-6-1-terra",
+      "gpt-6-luna",
+      "gpt-5-6-luna",
+      "claude-opus-5-5",
+      "claude-sonnet-5-5",
+      "claude-haiku-5-5",
+      "claude-fable-5-2",
+      "gemini-4-argon",
+      "gemini-3-8-flash",
+      "grok-4-7",
+      "glm-5-3",
+      "glm-5-3-flash",
+      "kimi-k3",
+      "minimax-m3",
+      "qwen3-8-max"
+    ],
+    "limits": "\"$20 of agent usage included each month at API rates\".",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": false,
+    "confidence": "primary",
+    "sourceUrl": "https://www.warp.dev/pricing",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "gpt-6-astra": 20,
+        "gpt-6-1-sol": 20,
+        "gpt-6-1-terra": 20,
+        "gpt-6-luna": 20,
+        "gpt-5-6-luna": 20,
+        "claude-opus-5-5": 20,
+        "claude-sonnet-5-5": 20,
+        "claude-haiku-5-5": 20,
+        "claude-fable-5-2": 20,
+        "gemini-4-argon": 20,
+        "gemini-3-8-flash": 20,
+        "grok-4-7": 20,
+        "glm-5-3": 20,
+        "glm-5-3-flash": 20,
+        "kimi-k3": 20,
+        "minimax-m3": 20,
+        "qwen3-8-max": 20
+      },
+      "url": "https://www.warp.dev/pricing",
+      "basis": "$20 of agent usage a month at API rates, for $20"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "warp-max",
+    "vendor": "Warp",
+    "lab": "warp",
+    "label": "Warp Max",
+    "monthlyPriceUsd": 200,
+    "harnesses": [
+      "Warp Terminal agent",
+      "Warp Agent CLI",
+      "Warp cloud agents"
+    ],
+    "families": [
+      "gpt-6-astra",
+      "gpt-6-1-sol",
+      "gpt-6-1-terra",
+      "gpt-6-luna",
+      "gpt-5-6-luna",
+      "claude-opus-5-5",
+      "claude-sonnet-5-5",
+      "claude-haiku-5-5",
+      "claude-fable-5-2",
+      "gemini-4-argon",
+      "gemini-3-8-flash",
+      "grok-4-7",
+      "glm-5-3",
+      "glm-5-3-flash",
+      "kimi-k3",
+      "minimax-m3",
+      "qwen3-8-max"
+    ],
+    "limits": "\"$200 of agent usage included each month (10× Build)\".",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": false,
+    "confidence": "primary",
+    "sourceUrl": "https://www.warp.dev/pricing",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "gpt-6-astra": 200,
+        "gpt-6-1-sol": 200,
+        "gpt-6-1-terra": 200,
+        "gpt-6-luna": 200,
+        "gpt-5-6-luna": 200,
+        "claude-opus-5-5": 200,
+        "claude-sonnet-5-5": 200,
+        "claude-haiku-5-5": 200,
+        "claude-fable-5-2": 200,
+        "gemini-4-argon": 200,
+        "gemini-3-8-flash": 200,
+        "grok-4-7": 200,
+        "glm-5-3": 200,
+        "glm-5-3-flash": 200,
+        "kimi-k3": 200,
+        "minimax-m3": 200,
+        "qwen3-8-max": 200
+      },
+      "url": "https://www.warp.dev/pricing",
+      "basis": "$200 of agent usage a month at API rates, for $200"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "mimo-token-lite",
+    "vendor": "MiMo",
+    "lab": "xiaomi",
+    "label": "MiMo Lite",
+    "monthlyPriceUsd": 6,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code"
+    ],
+    "families": [
+      "mimo-v2-6-pro",
+      "mimo-v2-6-flash"
+    ],
+    "limits": "Fixed Monthly Quota: 4.1 billion Credits. 'Using mimo-v2.6-flash as the baseline, it can execute approximately 200 rounds of medium-to-complex tasks.' v2.6-pro: 300 credits/input token (cache miss), 2.5 cached, 600 output. 'When the monthly total quota of your plan is used up, the system will suspend the service.' Off-peak (00:00–08:00 Beijing) 0.8x.",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://mimo.mi.com/static/docs/price/token-plan.md",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "mimo-v2-6-pro": 5.9449999999999985,
+        "mimo-v2-6-flash": 5.74
+      },
+      "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+      "basis": "4.1 billion credits a month for $6, at MiMo's per-token credit rates, valued at list price"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "mimo-token-standard",
+    "vendor": "MiMo",
+    "lab": "xiaomi",
+    "label": "MiMo Standard",
+    "monthlyPriceUsd": 16,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code"
+    ],
+    "families": [
+      "mimo-v2-6-pro",
+      "mimo-v2-6-flash"
+    ],
+    "limits": "Fixed Monthly Quota: 11 billion Credits (~1,600 rounds of medium-to-complex tasks on v2.6-flash).",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://mimo.mi.com/static/docs/price/token-plan.md",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "mimo-v2-6-pro": 15.949999999999998,
+        "mimo-v2-6-flash": 15.400000000000002
+      },
+      "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+      "basis": "11 billion credits a month for $16, at MiMo's per-token credit rates, valued at list price"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "mimo-token-pro",
+    "vendor": "MiMo",
+    "lab": "xiaomi",
+    "label": "MiMo Pro",
+    "monthlyPriceUsd": 50,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code"
+    ],
+    "families": [
+      "mimo-v2-6-pro",
+      "mimo-v2-6-flash"
+    ],
+    "limits": "Fixed Monthly Quota: 38 billion Credits (~5,600 rounds on v2.6-flash).",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://mimo.mi.com/static/docs/price/token-plan.md",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "mimo-v2-6-pro": 55.099999999999994,
+        "mimo-v2-6-flash": 53.2
+      },
+      "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+      "basis": "38 billion credits a month for $50, at MiMo's per-token credit rates, valued at list price"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "mimo-token-max",
+    "vendor": "MiMo",
+    "lab": "xiaomi",
+    "label": "MiMo Max",
+    "monthlyPriceUsd": 100,
+    "harnesses": [
+      "MiMo Code",
+      "MiMo Desktop",
+      "OpenCode",
+      "Claude Code",
+      "Codex",
+      "OpenClaw",
+      "Hermes Agent",
+      "Kilo Code"
+    ],
+    "families": [
+      "mimo-v2-6-pro",
+      "mimo-v2-6-flash"
+    ],
+    "limits": "Fixed Monthly Quota: 82 billion Credits (~12,800 rounds on v2.6-flash).",
+    "allowanceKind": "credit",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": true,
+    "confidence": "primary",
+    "sourceUrl": "https://mimo.mi.com/static/docs/price/token-plan.md",
+    "reportedCap": null,
+    "publishedAllowance": {
+      "apiUsdPerMonthByFamily": {
+        "mimo-v2-6-pro": 118.89999999999999,
+        "mimo-v2-6-flash": 114.80000000000001
+      },
+      "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
+      "basis": "82 billion credits a month for $100, at MiMo's per-token credit rates, valued at list price"
+    },
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
   }
 ]

@@ -27,6 +27,10 @@ export const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	"glm-5-2": [60, 180],
 	"glm-5-3-flash": [60, 180],
 	"longcat-2-0": [60, 240],
+	"mimo-v2-6-pro": [15, 60],
+	"mimo-v2-6-flash": [60, 120],
+	"mimo-v2-5-pro": [15, 60],
+	"mimo-v2-5-0424": [60, 120],
 	hy3: [60, 240],
 	// Go serves V4.1 Flash's 1017 build since 2026-10-19 (research/plans/opencode.json).
 	// At peak prices, which match the list; off-peak usage goes twice as far.
@@ -87,14 +91,53 @@ const OLLAMA_CLOUD = [
 	"deepseek-v4-pro",
 	"minimax-m3",
 	"minimax-m3-1-flash",
+	"mimo-v2-6-pro",
+	"mimo-v2-6-flash",
 	"mistral-large-4",
 	"gpt-oss-120b",
 ];
+const JETBRAINS_AI = [
+	"claude-opus-5-5",
+	"claude-sonnet-5-5",
+	"gpt-6-1-sol",
+	"gpt-6-luna",
+	"gpt-5-6-luna",
+	"gemini-3-8-flash",
+];
+const WARP_MODELS = [
+	"gpt-6-astra",
+	"gpt-6-1-sol",
+	"gpt-6-1-terra",
+	"gpt-6-luna",
+	"gpt-5-6-luna",
+	...CLAUDE,
+	"claude-fable-5-2",
+	"gemini-4-argon",
+	"gemini-3-8-flash",
+	"grok-4-7",
+	"glm-5-3",
+	"glm-5-3-flash",
+	"kimi-k3",
+	"minimax-m3",
+	"qwen3-8-max",
+];
+
 const CLAUDE_CODE = { lab: "anthropic", vendor: "Claude Code" };
 const CODEX = { lab: "openai", vendor: "Codex", families: OPENAI };
 const GO = { lab: "opencode", vendor: "OpenCode Go", families: OPENCODE_GO };
 const COPILOT = { lab: "github", vendor: "Copilot" };
 const OLLAMA = { lab: "ollama", vendor: "Ollama", families: OLLAMA_CLOUD };
+const JETBRAINS = {
+	lab: "jetbrains",
+	vendor: "JetBrains AI",
+	families: JETBRAINS_AI,
+};
+const WARP = { lab: "warp", vendor: "Warp", families: WARP_MODELS };
+const MIMO = {
+	lab: "xiaomi",
+	vendor: "MiMo",
+	families: ["mimo-v2-6-pro", "mimo-v2-6-flash"],
+};
 const claudeTier = (times: number): Tier => ({ ladder: "claude", times });
 
 /** Each plan's families, and how it is grouped, labelled and scaled. */
@@ -143,4 +186,12 @@ export const PLAN_FAMILIES: Record<string, PlanEntry> = {
 	},
 	"ollama-pro": { ...OLLAMA, shortLabel: "Ollama Pro" },
 	"ollama-max": { ...OLLAMA, shortLabel: "Ollama Max" },
+	"jetbrains-ai-pro": JETBRAINS,
+	"jetbrains-ai-ultimate": JETBRAINS,
+	"warp-build": WARP,
+	"warp-max": WARP,
+	"mimo-token-lite": { ...MIMO, shortLabel: "MiMo Lite" },
+	"mimo-token-standard": { ...MIMO, shortLabel: "MiMo Standard" },
+	"mimo-token-pro": { ...MIMO, shortLabel: "MiMo Pro" },
+	"mimo-token-max": { ...MIMO, shortLabel: "MiMo Max" },
 };

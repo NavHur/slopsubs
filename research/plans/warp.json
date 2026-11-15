@@ -11,7 +11,7 @@
       "Warp cloud agents"
     ],
     "models": [
-      "frontier and open models from OpenAI, Anthropic, z.ai, and more"
+      "GPT-6 Astra, GPT-6.1 Sol/Terra, GPT-6 Sol/Luna, GPT-5.6 Sol/Terra/Luna, Claude Opus 5.5, Fable 5.2, Sonnet 5.5, Haiku 5.5 and older Claude models, Gemini 4 Argon, 3.1 Pro and 3.8 Flash, Grok 4.7, and via Fireworks GLM 5.3, GLM 5.3 Flash, Kimi K3, MiniMax M3, Qwen 3.8 Max, DeepSeek V4.1 Flash (2026-11-15)"
     ],
     "limits": "\"$20 of agent usage included each month at API rates\".",
     "allowanceKind": "credit",
@@ -21,6 +21,10 @@
       {
         "url": "https://www.warp.dev/pricing",
         "accessed": "2026-10-31"
+      },
+      {
+        "url": "https://docs.warp.dev/agent-platform/capabilities/model-choice",
+        "accessed": "2026-11-15"
       }
     ],
     "confidence": "primary",
@@ -38,7 +42,7 @@
       "Warp cloud agents"
     ],
     "models": [
-      "as Build"
+      "GPT-6 Astra, GPT-6.1 Sol/Terra, GPT-6 Sol/Luna, GPT-5.6 Sol/Terra/Luna, Claude Opus 5.5, Fable 5.2, Sonnet 5.5, Haiku 5.5 and older Claude models, Gemini 4 Argon, 3.1 Pro and 3.8 Flash, Grok 4.7, and via Fireworks GLM 5.3, GLM 5.3 Flash, Kimi K3, MiniMax M3, Qwen 3.8 Max, DeepSeek V4.1 Flash (2026-11-15)"
     ],
     "limits": "\"$200 of agent usage included each month (10× Build)\".",
     "allowanceKind": "credit",
@@ -48,6 +52,10 @@
       {
         "url": "https://www.warp.dev/pricing",
         "accessed": "2026-10-31"
+      },
+      {
+        "url": "https://docs.warp.dev/agent-platform/capabilities/model-choice",
+        "accessed": "2026-11-15"
       }
     ],
     "confidence": "primary",
