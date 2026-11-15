@@ -23,7 +23,8 @@ function FooterLink({
 	);
 }
 
-/** Where the benchmark scores and plan caps come from, and how fresh. */
+/** Where the benchmark scores and plan caps come from, and when the data last
+ * changed (a refresh that changes nothing keeps the old date). */
 export function PageFooter({
 	benchmark,
 	fetchedAt,
@@ -63,10 +64,10 @@ export function PageFooter({
 			</span>
 			<time
 				dateTime={fetchedAt}
-				title="When the benchmarks were fetched"
+				title="When the benchmark data last changed"
 				className="text-subtle"
 			>
-				Updated {formatDay(fetchedAt)}
+				Data as of {formatDay(fetchedAt)}
 			</time>
 		</footer>
 	);
