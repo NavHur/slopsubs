@@ -48,8 +48,13 @@ function PlanPricing({
 	pricing: Extract<Pricing, { kind: "plan" }>;
 	apiCostPerTaskUsd: number;
 }) {
-	const { share, fillsFaster } = pricing.allowance;
+	const { allowance, plan } = pricing;
+	const { share, fillsFaster } = allowance;
 	const cap = formatCapShare(share);
+	const credit =
+		plan.allowanceKind === "credit" && allowance.basis === "published"
+			? allowance.source
+			: null;
 	return (
 		<>
 			<p className="mt-2 border-t border-line pt-2">
@@ -60,6 +65,7 @@ function PlanPricing({
 					({formatUsd(apiCostPerTaskUsd)})
 				</span>
 			</p>
+			{credit && <p className="text-muted">{`Credit plan: ${credit}`}</p>}
 			{cap && <p className="text-muted">{`Up to ${cap}`}</p>}
 			{fillsFaster && (
 				<p className="text-muted">
