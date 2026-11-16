@@ -61,10 +61,12 @@ A scheduled agent runs it twice a day (every 12 hours), in this order:
    close any open refresh PR and stop.
 4. Otherwise run `vp check` and `vp test run`.
 5. Skip the push only when `origin/data-refresh/main` is based on the current
-   `origin/main` and `bun scripts/data-changes.ts origin/data-refresh/main`
-   ends "No data changed." (the branch already holds this data). Otherwise
-   force-push (with lease) to `data-refresh/main`. That output only decides
-   push or skip; it is never a PR body, and no step compares PR-body text.
+   `origin/main` and the last line of
+   `bun scripts/data-changes.ts origin/data-refresh/main` starts "No data
+   changed." (the branch already holds this data; an "Only refetched" ending
+   still counts). Otherwise commit the regenerated files on `data-refresh/main`
+   and force-push (with lease). That output only decides push or skip; it is
+   never a PR body, and no step compares PR-body text.
 6. Make sure one open draft PR exists for `data-refresh/main`. Create it with
    the step 1 summary as its body if none is open, and after a push set its
    body to that summary. If the push was skipped and a PR is open, leave its
