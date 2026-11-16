@@ -35,7 +35,8 @@ function parseArgs(argv: string[]): Args {
 	return args;
 }
 
-/** Both AA imports and FrontierCode read benchmarks.json; build-plans reads all three outputs, so it runs last. */
+/** import-benchmarks writes the catalog that import-aa-evals and import-frontiercode read;
+ * build-plans reads all three outputs, so it runs last. */
 function steps(importFlags: string[]): [script: string, args: string[]][] {
 	return [
 		["import-benchmarks", importFlags],

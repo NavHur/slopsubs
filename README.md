@@ -53,15 +53,17 @@ A scheduled agent runs it twice a day (every 12 hours). It fetches, resets
 `data-refresh/main` to `origin/main` (`--base` defaults to `HEAD`, so a stale
 checkout would compare against the wrong tree), and runs
 `bun run refresh-data --summary <file>`. A failed run opens or updates the
-"Data refresh failing" issue with the step and its output. A clean tree means
-nothing changed, so the agent closes any open refresh PR and that issue. When
-the data changed, it runs `vp check` and `vp test run`. Then it runs
+"Data refresh failing" issue with the step and its output; any successful run
+closes that issue. A clean tree means nothing changed, so the agent also closes
+any open refresh PR. When the data changed, it runs `vp check` and
+`vp test run`. Then it runs
 `bun scripts/data-changes.ts origin/data-refresh/main`, which prints the same
-summary against any ref; when its last line starts with "No data changed.", the
+summary against any ref. When its last line starts with "No data changed.", the
 standing branch already holds this data and only fetch dates differ, so the
-agent pushes nothing. Otherwise it force-pushes (with lease) to
-`data-refresh/main` and creates or updates the one draft PR with the summary as
-its body; a maintainer reviews and merges it.
+agent pushes nothing, but it still makes sure a draft PR is open for the
+branch. Otherwise it force-pushes (with lease) to `data-refresh/main`. Either
+way it creates the one draft PR with the summary as its body if none is open,
+and updates the body if one is; a maintainer reviews and merges it.
 
 [Artificial Analysis](https://artificialanalysis.ai) is the source of the
 model list, Intelligence Index scores, list prices and release dates, and the
