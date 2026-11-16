@@ -36,27 +36,70 @@ function signed(before: number, after: number): string {
 	return `${tenths > 0 ? "+" : "−"}${(Math.abs(tenths) / 10).toFixed(1)}`;
 }
 
-function scoreLine(s: ScoreChange): string {
-	const view = BENCHMARK_VIEWS[s.benchmark];
-	return `- ${view.tabLabel}: ${s.name} (${s.effortLabel}) ${view.formatScore(s.before)} → ${view.formatScore(s.after)} (${signed(s.before, s.after)})`;
+function scoreMove(s: ScoreChange, format: (score: number) => string): string {
+	const { before, after } = s;
+	if (before !== null && after !== null) {
+		return `${format(before)} → ${format(after)} (${signed(before, after)})`;
+	}
+	if (after !== null) return `new, ${format(after)}`;
+	if (before !== null) return `${format(before)}, no longer scored`;
+	throw new Error(`Score change without a score: ${s.family}@${s.effortLabel}`);
 }
 
-function usdOrNone(value: number | null): string {
-	return value === null ? "none" : formatUsd(value);
+function scoreLine(s: ScoreChange): string {
+	const view = BENCHMARK_VIEWS[s.benchmark];
+	return `- ${view.tabLabel}: ${s.name} (${s.effortLabel}) ${scoreMove(s, view.formatScore)}`;
+}
+
+type Formatter = (value: number) => string;
+
+/** Coarsest first: a pair that reads the same at one is shown at the next. */
+const USD_FORMATS: readonly [Formatter, ...Formatter[]] = [
+	formatUsd,
+	(value) => `$${Number(value.toPrecision(4))}`,
+	(value) => `$${Number(value.toPrecision(8))}`,
+];
+const MULTIPLE_FORMATS: readonly [Formatter, ...Formatter[]] = [
+	formatMultiple,
+	(value) => `${value.toFixed(2)}×`,
+	(value) => `${value.toFixed(4)}×`,
+];
+
+/** Both sides as text, finer than usual when the usual would match. */
+function formatPair(
+	was: number | null,
+	now: number | null,
+	formats: readonly [Formatter, ...Formatter[]],
+	missing: string,
+): [string, string] {
+	if (was === null || now === null) {
+		const show = (value: number | null) =>
+			value === null ? missing : formats[0](value);
+		return [show(was), show(now)];
+	}
+	const format = formats.find((f) => f(was) !== f(now)) ?? formats[0];
+	return [format(was), format(now)];
 }
 
 function priceLine(p: PriceChange): string {
-	const was = `${usdOrNone(p.before.input)} / ${usdOrNone(p.before.output)}`;
-	const now = `${usdOrNone(p.after.input)} / ${usdOrNone(p.after.output)}`;
-	return `- ${p.name}: ${was} → ${now} per MTok (input / output)`;
-}
-
-function multipleOrNoCap(value: number | null): string {
-	return value === null ? "no known cap" : formatMultiple(value);
+	const input = formatPair(p.before.input, p.after.input, USD_FORMATS, "none");
+	const output = formatPair(
+		p.before.output,
+		p.after.output,
+		USD_FORMATS,
+		"none",
+	);
+	return `- ${p.name}: ${input[0]} / ${output[0]} → ${input[1]} / ${output[1]} per MTok (input / output)`;
 }
 
 function valueLine(v: ValueChange): string {
-	return `- ${v.label}, ${v.family}: ${multipleOrNoCap(v.before)} → ${multipleOrNoCap(v.after)} API value per dollar`;
+	const [was, now] = formatPair(
+		v.before,
+		v.after,
+		MULTIPLE_FORMATS,
+		"no known cap",
+	);
+	return `- ${v.label}, ${v.name} (\`${v.family}\`): ${was} → ${now} API value per dollar`;
 }
 
 function familyLine({ name, family }: FamilyChange): string {
@@ -73,8 +116,14 @@ export function renderDataChanges(changes: DataChanges): string {
 		...section("Plan value multiples", changes.planValues.map(valueLine)),
 		...section("List prices", changes.prices.map(priceLine)),
 		...section("Scores", changes.scores.map(scoreLine)),
-		...section("Models AA added", changes.familiesAdded.map(familyLine)),
-		...section("Models AA dropped", changes.familiesRemoved.map(familyLine)),
+		...section(
+			"Models added to the catalog",
+			changes.familiesAdded.map(familyLine),
+		),
+		...section(
+			"Models dropped from the catalog",
+			changes.familiesRemoved.map(familyLine),
+		),
 	];
 	const changed = changes.changedFiles.length
 		? `Files with new data: ${fileList(changes.changedFiles)}.`

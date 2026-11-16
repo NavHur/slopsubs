@@ -52,13 +52,21 @@ async function readTexts(read: Reader): Promise<Texts> {
 
 function parse(texts: Texts): DataSnapshot {
 	const json = (file: FileName): unknown => JSON.parse(texts[file]);
+	const raw = {
+		benchmarks: json("benchmarks.json"),
+		aaEvals: json("aa-evals.json"),
+		frontierCode: json("frontiercode.json"),
+		chart: json("chart-benchmarks.json"),
+		plans: json("plans.json"),
+	};
 	return {
-		benchmarks: BenchmarkDataset.parse(json("benchmarks.json")),
-		aaEvals: AaEvalsDataset.parse(json("aa-evals.json")),
-		frontierCode: FrontierCodeDataset.parse(json("frontiercode.json")),
-		chart: ChartData.parse(json("chart-benchmarks.json")),
-		plans: Plans.parse(json("plans.json")),
+		benchmarks: BenchmarkDataset.parse(raw.benchmarks),
+		aaEvals: AaEvalsDataset.parse(raw.aaEvals),
+		frontierCode: FrontierCodeDataset.parse(raw.frontierCode),
+		chart: ChartData.parse(raw.chart),
+		plans: Plans.parse(raw.plans),
 		samples: LimitSamples.parse(json("samples.json")),
+		raw,
 	};
 }
 

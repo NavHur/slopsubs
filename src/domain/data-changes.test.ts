@@ -65,6 +65,8 @@ type SnapshotInput = {
 	catalog?: BenchmarkPoint[];
 	shipped?: BenchmarkPoint[];
 	weeklyCapApiUsd?: number;
+	/** Fields the importer writes to each catalog model that the schema drops. */
+	unparsedModelFields?: Record<string, unknown>;
 };
 
 function snapshot({
@@ -72,30 +74,46 @@ function snapshot({
 	catalog = [point(astra), point(argon)],
 	shipped = [point(astra)],
 	weeklyCapApiUsd = 1000,
+	unparsedModelFields = {},
 }: SnapshotInput = {}): DataSnapshot {
 	const board = { fetchedAt, models: shipped };
-	return {
-		benchmarks: { fetchedAt, source: "AA", frontier: {}, models: catalog },
-		aaEvals: { fetchedAt, source: "AA", evals: [], rows: [] },
-		frontierCode: { fetchedAt, source: "Cognition", rows: [] },
-		chart: {
-			frontier: {},
-			leaderboards: {
-				intelligence: board,
-				frontiercode: { fetchedAt, models: [] },
-				"aa-briefcase": board,
-				"automationbench-aa": board,
-				"terminalbench-4-0": board,
-				"frontiercode-2-0": board,
-				omniscience: board,
-				"gdp-pdf": board,
-				"hle-diamond": board,
-				"critpt-v2-hard": board,
-				"terminal-bench-science": board,
-			},
+	const benchmarks = { fetchedAt, source: "AA", frontier: {}, models: catalog };
+	const aaEvals = { fetchedAt, source: "AA", evals: [], rows: [] };
+	const frontierCode = { fetchedAt, source: "Cognition", rows: [] };
+	const plans = [plan(weeklyCapApiUsd)];
+	const chart = {
+		frontier: {},
+		leaderboards: {
+			intelligence: board,
+			frontiercode: { fetchedAt, models: [] },
+			"aa-briefcase": board,
+			"automationbench-aa": board,
+			"terminalbench-4-0": board,
+			"frontiercode-2-0": board,
+			omniscience: board,
+			"gdp-pdf": board,
+			"hle-diamond": board,
+			"critpt-v2-hard": board,
+			"terminal-bench-science": board,
 		},
-		plans: [plan(weeklyCapApiUsd)],
+	};
+	return {
+		benchmarks,
+		aaEvals,
+		frontierCode,
+		chart,
+		plans,
 		samples: [],
+		raw: {
+			benchmarks: {
+				...benchmarks,
+				models: catalog.map((m) => ({ ...m, ...unparsedModelFields })),
+			},
+			aaEvals,
+			frontierCode,
+			chart,
+			plans,
+		},
 	};
 }
 
@@ -164,6 +182,125 @@ describe("summarizeDataChanges", () => {
 		expect(hasDataChanges(changes)).toBe(true);
 	});
 
+	it.each([
+		[70, 70.1],
+		[70.1, 70],
+		[45.6, 45.7],
+	])("reports a %d to %d score move of a tenth", (was, now) => {
+		const changes = summarizeDataChanges(
+			snapshot({ shipped: [point(astra, { score: was })] }),
+			snapshot({ shipped: [point(astra, { score: now })] }),
+		);
+		expect(changes.scores).toContainEqual(
+			expect.objectContaining({ before: was, after: now }),
+		);
+	});
+
+	it("leaves out a score move just under a tenth", () => {
+		const changes = summarizeDataChanges(
+			snapshot(),
+			snapshot({ shipped: [point(astra, { score: 70.09 })] }),
+		);
+		expect(changes.scores).toEqual([]);
+	});
+
+	it("reports a new effort point of a family already on the board", () => {
+		const low = point(astra, {
+			id: "astra-low",
+			effort: "low",
+			effortLabel: "Low",
+		});
+		const changes = summarizeDataChanges(
+			snapshot(),
+			snapshot({ shipped: [point(astra), low] }),
+		);
+		expect(changes.scores).toContainEqual(
+			expect.objectContaining({
+				benchmark: "intelligence",
+				effortLabel: "Low",
+				before: null,
+				after: 70,
+			}),
+		);
+	});
+
+	it("reports a point that lost its score", () => {
+		const changes = summarizeDataChanges(
+			snapshot(),
+			snapshot({ shipped: [point(astra, { score: null })] }),
+		);
+		expect(changes.scores).toContainEqual(
+			expect.objectContaining({ before: 70, after: null }),
+		);
+	});
+
+	it("leaves a wholly new family to the families sections", () => {
+		const changes = summarizeDataChanges(
+			snapshot({ shipped: [point(astra)] }),
+			snapshot({ shipped: [point(astra), point(argon)] }),
+		);
+		expect(changes.scores).toEqual([]);
+	});
+
+	it("reports an output-only price change while input is unpriced", () => {
+		const unpriced = { inputPricePerMTokUsd: null };
+		const changes = summarizeDataChanges(
+			snapshot({ shipped: [point(astra, unpriced)] }),
+			snapshot({
+				shipped: [point(astra, { ...unpriced, outputPricePerMTokUsd: 12 })],
+			}),
+		);
+		expect(changes.prices.map((p) => [p.before, p.after])).toEqual([
+			[
+				{ input: null, output: 10 },
+				{ input: null, output: 12 },
+			],
+		]);
+	});
+
+	it("reports a price that appears or disappears", () => {
+		const unpriced = point(astra, {
+			inputPricePerMTokUsd: null,
+			outputPricePerMTokUsd: null,
+		});
+		const priced = point(astra);
+		const appears = summarizeDataChanges(
+			snapshot({ shipped: [unpriced] }),
+			snapshot({ shipped: [priced] }),
+		);
+		const disappears = summarizeDataChanges(
+			snapshot({ shipped: [priced] }),
+			snapshot({ shipped: [unpriced] }),
+		);
+		expect(appears.prices.map((p) => p.before)).toEqual([
+			{ input: null, output: null },
+		]);
+		expect(disappears.prices.map((p) => p.after)).toEqual([
+			{ input: null, output: null },
+		]);
+	});
+
+	it("reports nothing for prices that stay unpriced", () => {
+		const unpriced = point(astra, {
+			inputPricePerMTokUsd: null,
+			outputPricePerMTokUsd: null,
+		});
+		const changes = summarizeDataChanges(
+			snapshot({ shipped: [unpriced] }),
+			snapshot({ shipped: [unpriced] }),
+		);
+		expect(changes.prices).toEqual([]);
+	});
+
+	it("reports a file whose only change is a field the schema drops", () => {
+		const changes = summarizeDataChanges(
+			snapshot({ unparsedModelFields: { released: "2026-05-01" } }),
+			snapshot({ unparsedModelFields: { released: "2026-05-02" } }),
+		);
+		expect(changes.changedFiles).toEqual(["benchmarks.json"]);
+		expect(hasDataChanges(changes)).toBe(true);
+	});
+
 	it("reports a list-price change once per family", () => {
 		const changes = summarizeDataChanges(
 			snapshot(),
@@ -213,7 +350,11 @@ describe("summarizeDataChanges", () => {
 		);
 		expect(changes.planValues).toHaveLength(1);
 		const [value] = changes.planValues;
-		expect(value).toMatchObject({ planId: "chatgpt-pro-200", family: astra });
+		expect(value).toMatchObject({
+			planId: "chatgpt-pro-200",
+			family: astra,
+			name: "GPT-6 Astra",
+		});
 		expect(value.after! / value.before!).toBeCloseTo(1.2);
 		expect(changes.changedFiles).toEqual(["plans.json"]);
 	});

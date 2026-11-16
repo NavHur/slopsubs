@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vite-plus/test";
-import type { DataChanges } from "../src/domain/data-changes.ts";
+import type {
+	DataChanges,
+	ScoreChange,
+	ValueChange,
+} from "../src/domain/data-changes.ts";
 import type { FamilyId, PlanId } from "../src/domain/model.ts";
 import { renderDataChanges } from "./data-changes-markdown.ts";
 
@@ -15,6 +19,35 @@ const none: DataChanges = {
 	refetchedFiles: [],
 };
 
+const scoreChange: ScoreChange = {
+	benchmark: "intelligence",
+	family: astra,
+	name: "GPT-6 Astra",
+	effortLabel: "High",
+	before: 70,
+	after: 72.5,
+};
+
+const valueChange: ValueChange = {
+	planId: "chatgpt-pro-200" as PlanId,
+	label: "Pro",
+	family: astra,
+	name: "GPT-6 Astra",
+	before: 21,
+	after: 25,
+};
+
+const VALUE_NUMBERS = /: (\S+) → (\S+) API value per dollar/;
+const INPUT_PRICES = /: (\S+) \/ \S+ → (\S+) \/ \S+ per MTok/;
+const OUTPUT_PRICES = /: \S+ \/ (\S+) → \S+ \/ (\S+) per MTok/;
+
+/** The printed before and after numbers a pattern captures from the body. */
+function movesOf(body: string, pattern: RegExp): [string, string] {
+	const match = pattern.exec(body);
+	if (!match) throw new Error(`No line matches ${pattern} in:\n${body}`);
+	return [match[1], match[2]];
+}
+
 describe("renderDataChanges", () => {
 	it("shows every kind of change", () => {
 		const body = renderDataChanges({
@@ -22,16 +55,7 @@ describe("renderDataChanges", () => {
 				{ family: "muse-spark-1-4" as FamilyId, name: "Muse Spark 1.4" },
 			],
 			familiesRemoved: [{ family: "old-model" as FamilyId, name: "Old Model" }],
-			scores: [
-				{
-					benchmark: "intelligence",
-					family: astra,
-					name: "GPT-6 Astra",
-					effortLabel: "High",
-					before: 70,
-					after: 72.5,
-				},
-			],
+			scores: [scoreChange],
 			prices: [
 				{
 					family: astra,
@@ -40,15 +64,7 @@ describe("renderDataChanges", () => {
 					after: { input: 1.5, output: 10 },
 				},
 			],
-			planValues: [
-				{
-					planId: "chatgpt-pro-200" as PlanId,
-					label: "Pro",
-					family: astra,
-					before: 21,
-					after: 25,
-				},
-			],
+			planValues: [valueChange],
 			changedFiles: ["benchmarks.json", "plans.json"],
 			refetchedFiles: ["frontiercode.json"],
 		});
@@ -58,36 +74,54 @@ describe("renderDataChanges", () => {
 			"70.0 → 72.5",
 			"$2 / $10 → $1.5 / $10",
 			"21× → 25×",
+			"GPT-6 Astra (`gpt-6-astra`)",
 			"`plans.json`",
 			"`frontiercode.json`",
 		])
 			expect(body).toContain(text);
 	});
 
-	it("puts plan values before benchmark changes", () => {
+	it("tells a plan value that rounds the same apart", () => {
+		const body = renderDataChanges({
+			...none,
+			planValues: [{ ...valueChange, before: 21, after: 21.4 }],
+		});
+		const [was, now] = movesOf(body, VALUE_NUMBERS);
+		expect(was).not.toBe(now);
+	});
+
+	it.each([
+		["input", INPUT_PRICES, 0.141, 0.144],
+		["input", INPUT_PRICES, 2, 2.004],
+		["output", OUTPUT_PRICES, 100.1, 100.4],
+	])(
+		"tells a list price %s that rounds the same apart",
+		(side, pattern, was, now) => {
+			const body = renderDataChanges({
+				...none,
+				prices: [
+					{
+						family: astra,
+						name: "GPT-6 Astra",
+						before: { input: 5, output: 5, [side]: was },
+						after: { input: 5, output: 5, [side]: now },
+					},
+				],
+			});
+			const [before, after] = movesOf(body, pattern);
+			expect(before).not.toBe(after);
+		},
+	);
+
+	it("shows a score point that appeared or lost its score", () => {
 		const body = renderDataChanges({
 			...none,
 			scores: [
-				{
-					benchmark: "gdp-pdf",
-					family: astra,
-					name: "GPT-6 Astra",
-					effortLabel: "High",
-					before: 40,
-					after: 45,
-				},
-			],
-			planValues: [
-				{
-					planId: "chatgpt-plus" as PlanId,
-					label: "Plus",
-					family: astra,
-					before: 10.5,
-					after: null,
-				},
+				{ ...scoreChange, effortLabel: "Low", before: null },
+				{ ...scoreChange, effortLabel: "Max", after: null },
 			],
 		});
-		expect(body.indexOf("Plan value")).toBeLessThan(body.indexOf("Scores"));
-		expect(body).toContain("no known cap");
+		expect(body).toContain("(Low) new");
+		expect(body).toContain("(Max) 70.0, no longer scored");
 	});
 });
