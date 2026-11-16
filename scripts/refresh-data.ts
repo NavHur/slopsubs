@@ -1,10 +1,5 @@
-// Runs the four data imports in order, stopping at the first failure with its
-// exit code, then reports what changed since --base (default HEAD). When only
-// fetch timestamps moved, it puts the base files back, so the footer date
-// means "the data last changed" and a quiet day leaves no diff.
-//
-//   bun run refresh-data [--allow-score-drift] [--allow-missing-cost]
-//                        [--base <ref>] [--summary <file.md>]
+// Runs the four data imports, then reports what changed since --base.
+// Flags and behavior: README.md, "Benchmark Data".
 
 import { spawnSync } from "node:child_process";
 import { writeFile } from "node:fs/promises";
@@ -40,7 +35,7 @@ function parseArgs(argv: string[]): Args {
 	return args;
 }
 
-/** The imports, each reading what the one before it wrote. */
+/** Both AA imports and FrontierCode read benchmarks.json; build-plans reads all three outputs, so it runs last. */
 function steps(importFlags: string[]): [script: string, args: string[]][] {
 	return [
 		["import-benchmarks", importFlags],

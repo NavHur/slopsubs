@@ -49,13 +49,19 @@ puts the files back, so the footer's "Data as of" date is when the data last
 changed. `--allow-score-drift` and `--allow-missing-cost` pass through to
 `import-benchmarks`, and `--summary <file.md>` saves the summary.
 
-A scheduled agent runs it twice a day. When the data changed, it checks the
-result with `vp check` and `vp test run`, force-pushes it to
-`data-refresh/main`, and opens or updates one draft PR whose body lists the
-changes; a maintainer reviews and merges it. `bun scripts/data-changes.ts
-<ref>` prints the same summary against any ref, so a rerun whose numbers match
-the open PR pushes nothing. A failed run opens or updates the "Data refresh
-failing" issue with the step and its output, and the next good run closes it.
+A scheduled agent runs it twice a day (every 12 hours). It fetches, resets
+`data-refresh/main` to `origin/main` (`--base` defaults to `HEAD`, so a stale
+checkout would compare against the wrong tree), and runs
+`bun run refresh-data --summary <file>`. A failed run opens or updates the
+"Data refresh failing" issue with the step and its output. A clean tree means
+nothing changed, so the agent closes any open refresh PR and that issue. When
+the data changed, it runs `vp check` and `vp test run`. Then it runs
+`bun scripts/data-changes.ts origin/data-refresh/main`, which prints the same
+summary against any ref; when its last line starts with "No data changed.", the
+standing branch already holds this data and only fetch dates differ, so the
+agent pushes nothing. Otherwise it force-pushes (with lease) to
+`data-refresh/main` and creates or updates the one draft PR with the summary as
+its body; a maintainer reviews and merges it.
 
 [Artificial Analysis](https://artificialanalysis.ai) is the source of the
 model list, Intelligence Index scores, list prices and release dates, and the

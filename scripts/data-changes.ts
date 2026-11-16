@@ -1,8 +1,5 @@
 // Prints what the working tree's generated data changed since a git ref.
-// Its last line starts "No data changed." when nothing beyond fetch dates did,
-// which lets a refresh skip numbers its standing PR already has.
-//
-//   bun scripts/data-changes.ts <ref> [--summary <file.md>]
+// Usage and the "No data changed." last line: README.md, "Benchmark Data".
 
 import { writeFile } from "node:fs/promises";
 import { renderDataChanges } from "./data-changes-markdown.ts";
