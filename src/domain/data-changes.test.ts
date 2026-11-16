@@ -67,6 +67,8 @@ type SnapshotInput = {
 	weeklyCapApiUsd?: number;
 	/** Fields the importer writes to each catalog model that the schema drops. */
 	unparsedModelFields?: Record<string, unknown>;
+	/** The gdp-pdf board's points, when they differ from `shipped`. */
+	gdpPdf?: BenchmarkPoint[];
 };
 
 function snapshot({
@@ -75,6 +77,7 @@ function snapshot({
 	shipped = [point(astra)],
 	weeklyCapApiUsd = 1000,
 	unparsedModelFields = {},
+	gdpPdf = shipped,
 }: SnapshotInput = {}): DataSnapshot {
 	const board = { fetchedAt, models: shipped };
 	const benchmarks = { fetchedAt, source: "AA", frontier: {}, models: catalog };
@@ -91,7 +94,7 @@ function snapshot({
 			"terminalbench-4-0": board,
 			"frontiercode-2-0": board,
 			omniscience: board,
-			"gdp-pdf": board,
+			"gdp-pdf": { fetchedAt, models: gdpPdf },
 			"hle-diamond": board,
 			"critpt-v2-hard": board,
 			"terminal-bench-science": board,
@@ -234,12 +237,75 @@ describe("summarizeDataChanges", () => {
 		);
 	});
 
-	it("leaves a wholly new family to the families sections", () => {
+	it("leaves a family new to the catalog to the families sections", () => {
+		const muse = point("muse-spark-1-4" as FamilyId, { name: "Muse Spark" });
 		const changes = summarizeDataChanges(
-			snapshot({ shipped: [point(astra)] }),
-			snapshot({ shipped: [point(astra), point(argon)] }),
+			snapshot(),
+			snapshot({
+				catalog: [point(astra), point(argon), muse],
+				shipped: [point(astra), muse],
+			}),
+		);
+		expect(changes.familiesAdded).toHaveLength(1);
+		expect(changes.scores).toEqual([]);
+	});
+
+	it("reports a catalog family gaining its first row on a board", () => {
+		const changes = summarizeDataChanges(
+			snapshot({ gdpPdf: [point(astra)] }),
+			snapshot({ gdpPdf: [point(astra), point(argon)] }),
+		);
+		expect(changes.scores).toEqual([
+			expect.objectContaining({
+				benchmark: "gdp-pdf",
+				family: argon,
+				before: null,
+				after: 70,
+			}),
+		]);
+	});
+
+	it("reports a catalog family losing its only row on a board", () => {
+		const changes = summarizeDataChanges(
+			snapshot({ gdpPdf: [point(astra), point(argon)] }),
+			snapshot({ gdpPdf: [point(astra)] }),
+		);
+		expect(changes.scores).toEqual([
+			expect.objectContaining({
+				benchmark: "gdp-pdf",
+				family: argon,
+				before: 70,
+				after: null,
+			}),
+		]);
+	});
+
+	it("leaves out a score move of 0.096 as rounding", () => {
+		const changes = summarizeDataChanges(
+			snapshot(),
+			snapshot({ shipped: [point(astra, { score: 70.096 })] }),
 		);
 		expect(changes.scores).toEqual([]);
+	});
+
+	it("lists a family's list price from the first input and first output it has", () => {
+		const outputOnly = point(astra, {
+			id: "astra-low",
+			effort: "low",
+			inputPricePerMTokUsd: null,
+		});
+		const changes = summarizeDataChanges(
+			snapshot({ shipped: [outputOnly, point(astra)] }),
+			snapshot({
+				shipped: [outputOnly, point(astra, { inputPricePerMTokUsd: 1.5 })],
+			}),
+		);
+		expect(changes.prices.map((p) => [p.before, p.after])).toEqual([
+			[
+				{ input: 2, output: 10 },
+				{ input: 1.5, output: 10 },
+			],
+		]);
 	});
 
 	it("reports an output-only price change while input is unpriced", () => {

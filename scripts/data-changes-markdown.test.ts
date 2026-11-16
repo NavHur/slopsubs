@@ -81,10 +81,13 @@ describe("renderDataChanges", () => {
 			expect(body).toContain(text);
 	});
 
-	it("tells a plan value that rounds the same apart", () => {
+	it.each([
+		[21, 21.4],
+		[0.01, 0.01002],
+	])("tells a plan value of %d and %d apart", (before, after) => {
 		const body = renderDataChanges({
 			...none,
-			planValues: [{ ...valueChange, before: 21, after: 21.4 }],
+			planValues: [{ ...valueChange, before, after }],
 		});
 		const [was, now] = movesOf(body, VALUE_NUMBERS);
 		expect(was).not.toBe(now);
@@ -93,6 +96,7 @@ describe("renderDataChanges", () => {
 	it.each([
 		["input", INPUT_PRICES, 0.141, 0.144],
 		["input", INPUT_PRICES, 2, 2.004],
+		["input", INPUT_PRICES, 1.23456781, 1.23456782],
 		["output", OUTPUT_PRICES, 100.1, 100.4],
 	])(
 		"tells a list price %s that rounds the same apart",

@@ -17,8 +17,8 @@ import { planCapacity, valueMultiple, weeklyAllowance } from "./value";
 
 /** Score moves smaller than this many points are rounding, not news. */
 const MIN_SCORE_DELTA = 0.1;
-/** Scores carry up to this many decimals; deltas are compared at that precision. */
-const SCORE_DECIMALS = 2;
+/** Binary float error: 70.1 - 70 is 0.0999999..., not 0.1. */
+const FLOAT_TOLERANCE = 1e-9;
 /** Value multiples within this fraction of each other count as unchanged. */
 const MIN_VALUE_RATIO_DELTA = 0.001;
 
@@ -85,7 +85,8 @@ export type DataChanges = {
 	 * models on a plan. */
 	familiesAdded: FamilyChange[];
 	familiesRemoved: FamilyChange[];
-	/** Shipped scores that moved by at least MIN_SCORE_DELTA. */
+	/** Shipped scores that moved by at least MIN_SCORE_DELTA, and points that
+	 * appeared or lost their score. */
 	scores: ScoreChange[];
 	/** List prices of the families the site ships. */
 	prices: PriceChange[];
@@ -106,10 +107,15 @@ export function summarizeDataChanges(
 	after: DataSnapshot,
 ): DataChanges {
 	const families = familyChanges(before.benchmarks, after.benchmarks);
+	const catalogChanged = new Set(
+		[...families.familiesAdded, ...families.familiesRemoved].map(
+			(f) => f.family,
+		),
+	);
 	return {
 		...families,
 		scores: BENCHMARK_IDS.flatMap((id) =>
-			scoreChanges(id, before.chart, after.chart),
+			scoreChanges(id, before.chart, after.chart, catalogChanged),
 		),
 		prices: priceChanges(before.chart, after.chart),
 		planValues: valueChanges(before, after),
@@ -143,62 +149,50 @@ function byPoint(points: readonly BenchmarkPoint[]) {
 	return new Map(points.map((p) => [`${p.family}@${p.effort}`, p]));
 }
 
-function sharedFamilies(
-	a: readonly BenchmarkPoint[],
-	b: readonly BenchmarkPoint[],
-): Set<FamilyId> {
-	const inA = new Set(a.map((p) => p.family));
-	return new Set(b.map((p) => p.family).filter((family) => inA.has(family)));
-}
-
 /** Whether a score moved enough to list; a point gained or lost always does. */
 function isScoreMove(was: number | null, now: number | null): boolean {
 	if (was === null || now === null) return was !== now;
-	const delta = Number((now - was).toFixed(SCORE_DECIMALS));
-	return Math.abs(delta) >= MIN_SCORE_DELTA;
+	return Math.abs(now - was) >= MIN_SCORE_DELTA - FLOAT_TOLERANCE;
 }
 
-/** Families wholly added or removed on a leaderboard have their own section. */
+/** Points of a family new to or gone from the catalog are listed under it. */
 function scoreChanges(
 	benchmark: BenchmarkId,
 	before: ChartData,
 	after: ChartData,
+	catalogChanged: ReadonlySet<FamilyId>,
 ): ScoreChange[] {
-	const oldPoints = before.leaderboards[benchmark].models;
-	const freshPoints = after.leaderboards[benchmark].models;
-	const old = byPoint(oldPoints);
-	const fresh = byPoint(freshPoints);
-	const kept = sharedFamilies(oldPoints, freshPoints);
+	const old = byPoint(before.leaderboards[benchmark].models);
+	const fresh = byPoint(after.leaderboards[benchmark].models);
 	return [...new Map([...old, ...fresh])].flatMap(([key, point]) => {
 		const was = old.get(key)?.score ?? null;
 		const now = fresh.get(key)?.score ?? null;
-		if (!kept.has(point.family) || !isScoreMove(was, now)) return [];
+		if (catalogChanged.has(point.family) || !isScoreMove(was, now)) return [];
 		const { family, name, effortLabel } = point;
 		return [{ benchmark, family, name, effortLabel, before: was, after: now }];
 	});
 }
 
-function isPriced(price: ListPrice): boolean {
-	return price.input !== null || price.output !== null;
-}
-
-/** Each shipped family's list price, from its first priced point. */
+/** Each family's list price: the first input and the first output it has. */
 function listPrices(chart: ChartData) {
 	const prices = new Map<FamilyId, { name: string; price: ListPrice }>();
 	for (const p of chart.leaderboards.intelligence.models) {
-		const price = {
-			input: p.inputPricePerMTokUsd,
-			output: p.outputPricePerMTokUsd,
+		const seen = prices.get(p.family) ?? {
+			name: p.name,
+			price: { input: null, output: null },
 		};
-		const seen = prices.get(p.family);
-		if (!seen || (!isPriced(seen.price) && isPriced(price))) {
-			prices.set(p.family, { name: p.name, price });
-		}
+		prices.set(p.family, {
+			name: seen.name,
+			price: {
+				input: seen.price.input ?? p.inputPricePerMTokUsd,
+				output: seen.price.output ?? p.outputPricePerMTokUsd,
+			},
+		});
 	}
 	return prices;
 }
 
-/** Families on only one side have their own section, so they are skipped. */
+/** A family on one side of the intelligence board only is newly shipped or dropped. */
 function priceChanges(before: ChartData, after: ChartData): PriceChange[] {
 	const old = listPrices(before);
 	return [...listPrices(after)].flatMap(([family, { name, price }]) => {

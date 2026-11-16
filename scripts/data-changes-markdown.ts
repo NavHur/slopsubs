@@ -58,11 +58,13 @@ const USD_FORMATS: readonly [Formatter, ...Formatter[]] = [
 	formatUsd,
 	(value) => `$${Number(value.toPrecision(4))}`,
 	(value) => `$${Number(value.toPrecision(8))}`,
+	(value) => `$${value}`,
 ];
 const MULTIPLE_FORMATS: readonly [Formatter, ...Formatter[]] = [
 	formatMultiple,
 	(value) => `${value.toFixed(2)}×`,
 	(value) => `${value.toFixed(4)}×`,
+	(value) => `${value}×`,
 ];
 
 /** Both sides as text, finer than usual when the usual would match. */
