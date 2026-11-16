@@ -23,6 +23,8 @@
       "Auto mode"
     ],
     "limits": "About 1,200 requests per 5 hours, about 9,000 per week, about 18,000 per subscription month (Volcengine articles). 5-hour window counted from first request; weekly resets Monday 00:00; monthly from purchase date.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": "unclear",
     "sources": [
       {
@@ -65,6 +67,8 @@
       "Auto mode"
     ],
     "limits": "'5 倍于 Lite 套餐的用量' (official page); about 6,000 per 5 hours, 45,000 per week, 90,000 per month, derived from Lite (the articles say only 5x Lite).",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": "unclear",
     "sources": [
       {

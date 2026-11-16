@@ -12,6 +12,8 @@
       "cloud open models: GLM-5.3, Kimi K3, Kimi K2.7 Code, DeepSeek V4/4.1, MiniMax M3, gpt-oss, Qwen, Mistral Large 4, etc."
     ],
     "limits": "\"$60 of usage credits per month\"; \"Access to larger pro models\"; \"Run multiple models concurrently\"; resets monthly, no rollover; off-peak pricing outside 12:00-18:00 UTC on weekdays and all day on weekends.",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -35,6 +37,8 @@
       "as Pro, plus early access to newest models"
     ],
     "limits": "\"$300 of usage credits per month\"; \"10 concurrent requests\".",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {

@@ -8,6 +8,7 @@ import type { AaEvalId } from "../src/domain/eval-units.ts";
 import { evalPoints, frontierCodePoints } from "../src/domain/leaderboards.ts";
 import {
 	AaEvalsDataset,
+	AllowanceKind,
 	BenchmarkDataset,
 	type BenchmarkPoint,
 	ChartData,
@@ -17,8 +18,13 @@ import {
 	type PublishedAllowance,
 	type ReportedCap,
 } from "../src/domain/model.ts";
-import { claudeCap } from "./claude-caps.ts";
-import { OPENCODE_GO_USD, PLAN_FAMILIES } from "./plan-families.ts";
+import { CLAUDE_ULTRA } from "./claude-caps.ts";
+import {
+	OPENCODE_GO_USD,
+	PLAN_FAMILIES,
+	type PlanEntry,
+} from "./plan-families.ts";
+import { type KnownTier, type Ladder, scaledCap } from "./tier-ladder.ts";
 
 const ROOT = new URL("..", import.meta.url);
 
@@ -81,18 +87,23 @@ const PUBLISHED_ALLOWANCES: Record<string, 0 | 1> = {
 	"opencode-go-plus": 1,
 };
 
-/** Plans are grouped by the harness people buy them for. */
-const VENDORS: Record<string, string> = {
-	anthropic: "Claude Code",
-	openai: "Codex",
-	opencode: "OpenCode Go",
+/** Each tier ladder's reported tier, which its other tiers scale from. A
+ * ladder without one ships its plans unmeasured. */
+const KNOWN_TIERS: Partial<Record<Ladder, KnownTier>> = {
+	claude: CLAUDE_ULTRA,
 };
 
-/** Vendor names too long for a chart label. */
-const SHORT_LABELS: Record<string, string> = {
-	"opencode-go": "OpenCode Go",
-	"opencode-go-plus": "OpenCode Go Plus",
-};
+/** The known tier's caps scaled to the plan's own multiple, if its ladder has
+ * a known tier. */
+function tierCap(
+	entry: PlanEntry,
+	label: string,
+	families: readonly string[],
+): ReportedCap | null {
+	const known = entry.tier && KNOWN_TIERS[entry.tier.ladder];
+	if (!entry.tier || !known) return null;
+	return scaledCap(known, { label, times: entry.tier.times }, families);
+}
 
 // Theo (t3.gg), "OpenAI is getting desperate", 2026-11-02, 5:08: "on the $500
 // plan, you now get around $10.5,000 of usage. And on the $200 plan... 4.3K".
@@ -142,6 +153,9 @@ const ResearchPlan = z.object({
 	monthlyPriceUsd: z.number(),
 	harnesses: z.array(z.string()),
 	limits: z.string(),
+	allowanceKind: AllowanceKind,
+	/** Only plans on sale ship; the others stay in research with the reason. */
+	availability: z.enum(["on-sale", "closed", "discontinued"]),
 	thirdPartyHarnessAllowed: z.union([z.boolean(), z.literal("unclear")]),
 	sources: z.array(z.object({ url: z.url(), accessed: z.string() })).min(1),
 	confidence: z.enum(["primary", "secondary", "unverified"]),
@@ -188,6 +202,13 @@ const missing = Object.keys(PLAN_FAMILIES).filter(
 );
 if (missing.length)
 	throw new Error(`Plans not in research: ${missing.join(", ")}`);
+const offSale = research.filter(
+	(p) => p.planId in PLAN_FAMILIES && p.availability !== "on-sale",
+);
+if (offSale.length)
+	throw new Error(
+		`Plans no longer on sale can't ship: ${offSale.map((p) => `${p.planId} (${p.availability})`).join(", ")}`,
+	);
 
 /** Converts a Go-priced dollar allowance into list-priced (API) dollars. */
 function listPricedUsd(family: string, goUsd: number): number {
@@ -225,33 +246,39 @@ const plans = Plans.parse(
 	research
 		.filter((p) => p.planId in PLAN_FAMILIES)
 		.map((p) => {
+			const entry = PLAN_FAMILIES[p.planId];
 			const {
 				lab,
+				vendor,
 				families,
 				includedApiCreditUsd = 0,
 				weeklyShareByFamily = {},
-			} = PLAN_FAMILIES[p.planId];
+			} = entry;
 			const unknown = families.filter((f) => !benchmarked.has(f));
 			if (unknown.length)
 				throw new Error(`${p.planId}: unbenchmarked ${unknown.join(", ")}`);
+			const label = entry.shortLabel ?? p.label;
+			const allowance = publishedAllowance(p.planId);
+			if (p.allowanceKind === "credit" && !allowance)
+				throw new Error(`${p.planId}: a credit plan needs its sourced credit`);
 			return {
 				id: p.planId,
-				vendor: VENDORS[lab] ?? p.vendor,
+				vendor,
 				lab,
-				label: SHORT_LABELS[p.planId] ?? p.label,
+				label,
 				monthlyPriceUsd: p.monthlyPriceUsd,
 				harnesses: p.harnesses,
 				families,
 				limits: p.limits,
+				allowanceKind: p.allowanceKind,
 				includedApiCreditUsd,
 				thirdPartyHarnessAllowed: p.thirdPartyHarnessAllowed,
 				confidence: p.confidence,
 				sourceUrl: p.sources[0].url,
 				reportedCap:
-					lab === "anthropic"
-						? claudeCap(p.monthlyPriceUsd, families)
-						: codexCap(p.planId, p.monthlyPriceUsd, families),
-				publishedAllowance: publishedAllowance(p.planId),
+					codexCap(p.planId, p.monthlyPriceUsd, families) ??
+					tierCap(entry, label, families),
+				publishedAllowance: allowance,
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
 				promotionByFamily: lab === "opencode" ? OPENCODE_PROMOTIONS : {},

@@ -143,6 +143,13 @@ const Promotion = z.object({
 });
 export type Promotion = z.infer<typeof Promotion>;
 
+/**
+ * How a plan's allowance works: a credit plan grants a fixed amount of usage a
+ * month at the vendor's rates, in dollars or its own credits; a rate-window
+ * plan caps usage per 5-hour window or week.
+ */
+export const AllowanceKind = z.enum(["credit", "rate-window"]);
+
 /** A flat-rate subscription usable for agentic coding. */
 const Plan = z.object({
 	id: PlanId,
@@ -153,6 +160,7 @@ const Plan = z.object({
 	harnesses: z.array(z.string()).min(1),
 	families: z.array(FamilyId).min(1),
 	limits: z.string(),
+	allowanceKind: AllowanceKind,
 	/** Pay-per-token credit bundled with the plan, usable from any harness. */
 	includedApiCreditUsd: Usd,
 	thirdPartyHarnessAllowed: z.union([z.boolean(), z.literal("unclear")]),

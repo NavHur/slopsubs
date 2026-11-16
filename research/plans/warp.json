@@ -14,6 +14,8 @@
       "frontier and open models from OpenAI, Anthropic, z.ai, and more"
     ],
     "limits": "\"$20 of agent usage included each month at API rates\".",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
@@ -39,6 +41,8 @@
       "as Build"
     ],
     "limits": "\"$200 of agent usage included each month (10× Build)\".",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {

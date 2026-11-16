@@ -16,6 +16,8 @@
       "Droid Core open-weight pool"
     ],
     "limits": "\"three rolling windows, 5-hour, 7-day, and 30-day. Each runs independently.\"; \"Droid Core: free open-weight model pool with separate Rate Limits after Standard Usage runs out.\"; \"BYOK is free up to an allowance on all Individual plans.\"",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
@@ -46,6 +48,8 @@
       "as Pro"
     ],
     "limits": "\"Expanded rolling rate limits\"; \"~5x the usage of Pro\".",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
@@ -72,6 +76,8 @@
       "as Pro"
     ],
     "limits": "\"Expanded rolling rate limits\"; \"~10x the usage of Pro\".",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {

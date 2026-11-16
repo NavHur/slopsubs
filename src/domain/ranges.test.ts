@@ -16,6 +16,7 @@ const ultra: Plan = {
 	families: [opus, fable],
 	limits: "weekly cap",
 	includedApiCreditUsd: 200,
+	allowanceKind: "rate-window",
 	thirdPartyHarnessAllowed: false,
 	confidence: "primary",
 	sourceUrl: "https://example.com/pricing",

@@ -31,6 +31,8 @@
       "MiniMax-M2.5"
     ],
     "limits": "Up to 6,000 requests per 5 hours; Up to 45,000 requests per week; Up to 90,000 requests per month. 'Each query consumes quota based on the number of model calls. Simple tasks typically use 5–10 calls, while complex tasks may use 10–30 or more.' 5-hour quota rolls; weekly resets Monday 00:00 UTC+8; monthly on renewal date.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {

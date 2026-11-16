@@ -22,6 +22,8 @@
       "mimo-v2.5-tts"
     ],
     "limits": "Fixed Monthly Quota: 4.1 billion Credits. 'Using mimo-v2.6-flash as the baseline, it can execute approximately 200 rounds of medium-to-complex tasks.' v2.6-pro: 300 credits/input token (cache miss), 2.5 cached, 600 output. 'When the monthly total quota of your plan is used up, the system will suspend the service.' Off-peak (00:00–08:00 Beijing) 0.8x.",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -63,6 +65,8 @@
       "mimo-v2.5-tts"
     ],
     "limits": "Fixed Monthly Quota: 11 billion Credits (~1,600 rounds of medium-to-complex tasks on v2.6-flash).",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -96,6 +100,8 @@
       "mimo-v2.5-tts"
     ],
     "limits": "Fixed Monthly Quota: 38 billion Credits (~5,600 rounds on v2.6-flash).",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
@@ -129,6 +135,8 @@
       "mimo-v2.5-tts"
     ],
     "limits": "Fixed Monthly Quota: 82 billion Credits (~12,800 rounds on v2.6-flash).",
+    "allowanceKind": "credit",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {

@@ -16,6 +16,8 @@
       "open models (e.g. Kimi K2.5)"
     ],
     "limits": "\"Increased quotas\"; \"Each paid plan comes with a usage allowance that refreshes automatically on a daily and weekly basis\"; \"Purchase extra usage at API pricing\"; concurrent sessions \"Up to 10\".",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
@@ -41,6 +43,8 @@
       "same as Pro"
     ],
     "limits": "\"Significantly higher quotas\"; concurrent sessions \"Unlimited\".",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
     "thirdPartyHarnessAllowed": false,
     "sources": [
       {
