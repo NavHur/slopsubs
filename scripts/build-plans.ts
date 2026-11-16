@@ -28,6 +28,7 @@ import {
 	type PlanEntry,
 } from "./plan-families.ts";
 import { type KnownTier, type Ladder, scaledCap } from "./tier-ladder.ts";
+import { WEEKLY_CREDIT_PLANS, weeklyCreditCap } from "./weekly-credit-caps.ts";
 
 const ROOT = new URL("..", import.meta.url);
 
@@ -241,6 +242,17 @@ function publishedAllowance(
 	};
 }
 
+/** A weekly credit quota's estimated cap, for plans billed in credits. */
+function creditCap(
+	p: z.infer<typeof ResearchPlan>,
+	families: readonly string[],
+): ReportedCap | null {
+	const plan = WEEKLY_CREDIT_PLANS[p.planId];
+	if (!plan) return null;
+	requireCited(p, plan.url, "weekly credits");
+	return weeklyCreditCap(plan, families, listRates);
+}
+
 /** The limited-time discounts a plan's allowance counts, by family. */
 function promotions(
 	planId: string,
@@ -265,9 +277,18 @@ function requireSourcedCredit(
 	if (p.allowanceKind !== "credit") return;
 	if (!allowance)
 		throw new Error(`${p.planId}: a credit plan needs its sourced credit`);
-	if (!p.sources.some((source) => source.url === allowance.url))
+	requireCited(p, allowance.url, "credit");
+}
+
+/** Refuses a figure whose page the plan's research row does not list. */
+function requireCited(
+	p: z.infer<typeof ResearchPlan>,
+	url: string,
+	figure: string,
+): void {
+	if (!p.sources.some((source) => source.url === url))
 		throw new Error(
-			`${p.planId}: its credit cites ${allowance.url}, which its research row does not list`,
+			`${p.planId}: its ${figure} figure cites ${url}, which its research row does not list`,
 		);
 }
 
@@ -309,6 +330,7 @@ const plans = Plans.parse(
 				sourceUrl: p.sources[0].url,
 				reportedCap:
 					codexCap(p.planId, p.monthlyPriceUsd, families) ??
+					creditCap(p, families) ??
 					tierCap(entry, label, families),
 				publishedAllowance: allowance,
 				weeklyShareByFamily,

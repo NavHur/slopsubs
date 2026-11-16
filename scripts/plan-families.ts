@@ -141,6 +141,11 @@ const MIMO = {
 	vendor: "MiMo",
 	families: ["mimo-v2-6-pro", "mimo-v2-6-flash"],
 };
+const ZAI = {
+	lab: "zai",
+	vendor: "GLM Coding Plan",
+	families: ["glm-5-3", "glm-5-3-flash"],
+};
 const claudeTier = (times: number): Tier => ({ ladder: "claude", times });
 
 /** Each plan's families, and how it is grouped, labelled and scaled. */
@@ -197,4 +202,7 @@ export const PLAN_FAMILIES: Record<string, PlanEntry> = {
 	"mimo-token-standard": { ...MIMO, shortLabel: "MiMo Standard" },
 	"mimo-token-pro": { ...MIMO, shortLabel: "MiMo Pro" },
 	"mimo-token-max": { ...MIMO, shortLabel: "MiMo Max" },
+	"zai-glm-coding-lite": { ...ZAI, shortLabel: "GLM Coding Lite" },
+	"zai-glm-coding-pro": { ...ZAI, shortLabel: "GLM Coding Pro" },
+	"zai-glm-coding-max": { ...ZAI, shortLabel: "GLM Coding Max" },
 };

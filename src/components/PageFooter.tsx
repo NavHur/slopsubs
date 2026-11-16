@@ -52,6 +52,13 @@ export function PageFooter({
 					title="Weekly caps from Theo's numbers until we measure them"
 				>
 					Theo
+				</FooterLink>{" "}
+				and{" "}
+				<FooterLink
+					href="https://docs.z.ai/devpack/overview"
+					title="Z.ai's weekly credits and per-token credit rates, valued at list price"
+				>
+					Z.ai's credit rates
 				</FooterLink>
 			</span>
 			<time
