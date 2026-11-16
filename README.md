@@ -49,21 +49,28 @@ puts the files back, so the footer's "Data as of" date is when the data last
 changed. `--allow-score-drift` and `--allow-missing-cost` pass through to
 `import-benchmarks`, and `--summary <file.md>` saves the summary.
 
-A scheduled agent runs it twice a day (every 12 hours). It fetches, resets
-`data-refresh/main` to `origin/main` (`--base` defaults to `HEAD`, so a stale
-checkout would compare against the wrong tree), and runs
-`bun run refresh-data --summary <file>`. A failed run opens or updates the
-"Data refresh failing" issue with the step and its output; any successful run
-closes that issue. A clean tree means nothing changed, so the agent also closes
-any open refresh PR. When the data changed, it runs `vp check` and
-`vp test run`. Then it runs
-`bun scripts/data-changes.ts origin/data-refresh/main`, which prints the same
-summary against any ref. When its last line starts with "No data changed.", the
-standing branch already holds this data and only fetch dates differ, so the
-agent pushes nothing, but it still makes sure a draft PR is open for the
-branch. Otherwise it force-pushes (with lease) to `data-refresh/main`. Either
-way it creates the one draft PR with the summary as its body if none is open,
-and updates the body if one is; a maintainer reviews and merges it.
+A scheduled agent runs it twice a day (every 12 hours), in this order:
+
+1. Fetch and reset `data-refresh/main` to `origin/main`, then run
+   `bun run refresh-data --summary <file>`. The reset matters because `--base`
+   defaults to `HEAD`: the summary compares the refreshed tree with
+   `origin/main`, and its file is the PR body.
+2. If the run failed, open or update the "Data refresh failing" issue with the
+   step and its output, and stop.
+3. Any successful run closes that issue. A clean tree means nothing changed:
+   close any open refresh PR and stop.
+4. Otherwise run `vp check` and `vp test run`.
+5. Skip the push only when `origin/data-refresh/main` is based on the current
+   `origin/main` and `bun scripts/data-changes.ts origin/data-refresh/main`
+   ends "No data changed." (the branch already holds this data). Otherwise
+   force-push (with lease) to `data-refresh/main`. That output only decides
+   push or skip; it is never a PR body, and no step compares PR-body text.
+6. Make sure one open draft PR exists for `data-refresh/main`. Create it with
+   the step 1 summary as its body if none is open, and after a push set its
+   body to that summary. If the push was skipped and a PR is open, leave its
+   body alone.
+
+A maintainer reviews and merges the PR.
 
 [Artificial Analysis](https://artificialanalysis.ai) is the source of the
 model list, Intelligence Index scores, list prices and release dates, and the
