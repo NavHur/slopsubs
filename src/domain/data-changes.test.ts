@@ -43,6 +43,7 @@ function plan(apiUsdPerWeek: number): Plan {
 		harnesses: ["Codex"],
 		families: [astra],
 		limits: "weekly cap",
+		allowanceKind: "rate-window",
 		includedApiCreditUsd: 0,
 		thirdPartyHarnessAllowed: false,
 		confidence: "primary",
