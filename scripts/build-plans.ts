@@ -252,11 +252,17 @@ function promotions(
 	return lab === "opencode" ? OPENCODE_PROMOTIONS : {};
 }
 
-/** A credit plan ships only with a credit whose page its research row cites. */
+/** A plan has a credit exactly when its research row says credit, and the
+ * credit cites a page that row lists. */
 function requireSourcedCredit(
 	p: z.infer<typeof ResearchPlan>,
 	allowance: PublishedAllowance | null,
 ): void {
+	if (p.planId in CREDIT_PLANS && p.allowanceKind !== "credit")
+		throw new Error(
+			`${p.planId}: it has a credit, but its research row says ${p.allowanceKind}`,
+		);
+	if (p.allowanceKind !== "credit") return;
 	if (!allowance)
 		throw new Error(`${p.planId}: a credit plan needs its sourced credit`);
 	if (!p.sources.some((source) => source.url === allowance.url))
@@ -286,7 +292,7 @@ const plans = Plans.parse(
 				p.monthlyPriceUsd,
 				families,
 			);
-			if (p.allowanceKind === "credit") requireSourcedCredit(p, allowance);
+			requireSourcedCredit(p, allowance);
 			return {
 				id: p.planId,
 				vendor,
