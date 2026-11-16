@@ -75,4 +75,27 @@ describe("PlanList", () => {
 		expect(row).toContain(">—</a>");
 		expect(html).not.toContain("Infinity");
 	});
+
+	it("labels credit plans, and only them", () => {
+		const credit: Plan = {
+			...uncoveredPlan,
+			id: "credit-plan" as PlanId,
+			label: "Credits",
+			allowanceKind: "credit",
+		};
+		const html = renderToStaticMarkup(
+			<PlanList
+				plans={[uncoveredPlan, credit]}
+				selected={[]}
+				styles={new Map()}
+				showApi={false}
+				onToggle={() => {}}
+				onToggleApi={() => {}}
+			/>,
+		);
+		const rowOf = (label: string) =>
+			html.split("<li>").find((r) => r.includes(`>${label}<`));
+		expect(rowOf("Credits")).toContain(">credit</span>");
+		expect(rowOf("Uncovered")).not.toContain(">credit</span>");
+	});
 });

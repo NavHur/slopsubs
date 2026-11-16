@@ -139,6 +139,32 @@ describe("point tooltip", () => {
 		);
 	});
 
+	it("says what a credit plan's credit buys", () => {
+		const allowance: WeeklyAllowance = {
+			apiUsd: 3.46,
+			capApiUsd: 3.46,
+			basis: "published",
+			source: "$15 of usage at list price for $10",
+			share: 1,
+			fillsFaster: null,
+		};
+		const onCopilot: ValuePoint = {
+			...point,
+			pricing: {
+				kind: "plan",
+				plan: { ...plan, allowanceKind: "credit" },
+				allowance,
+				valueMultiple: 1.5,
+			},
+		};
+		expect(tooltipText(BENCHMARK_VIEWS.intelligence, onCopilot)).toContain(
+			"Credit plan: $15 of usage at list price for $10",
+		);
+		expect(tooltipText(BENCHMARK_VIEWS.intelligence, onUltra(1))).not.toContain(
+			"Credit plan",
+		);
+	});
+
 	it("uses the brand colour only for the model's dot, never its name", () => {
 		const html = tooltipHtml(BENCHMARK_VIEWS.intelligence);
 		const brand = familyColor(opus);

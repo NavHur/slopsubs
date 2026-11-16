@@ -9,7 +9,7 @@
       "any harness via Ollama API (Claude Code, Codex, OpenCode, etc.)"
     ],
     "models": [
-      "cloud open models: GLM-5.3, Kimi K3, Kimi K2.7 Code, DeepSeek V4/4.1, MiniMax M3, gpt-oss, Qwen, Mistral Large 4, etc."
+      "Rate table (2026-11-15): beam, clef, deepseek-v4.1-flash, deepseek-v4-pro, gemma4, glm-5.3, glm-5.3-flash, glm-5.2, gpt-oss:120b, gpt-oss:20b, inkling-2-small, kimi-k3.1-pro, kimi-k3, kimi-k2.7-code, kimi-k2.6, mimo-v2.6-flash, mimo-v2.6-pro, minimax-m3.1-flash, minimax-m3, mistral-large-4, muse-spark-open, nemotron-3-super, nemotron-3-ultra"
     ],
     "limits": "\"$60 of usage credits per month\"; \"Access to larger pro models\"; \"Run multiple models concurrently\"; resets monthly, no rollover; off-peak pricing outside 12:00-18:00 UTC on weekdays and all day on weekends.",
     "allowanceKind": "credit",
@@ -18,11 +18,11 @@
     "sources": [
       {
         "url": "https://ollama.com/pricing",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-15"
       }
     ],
     "confidence": "primary",
-    "notes": "Annual $200/yr. This is a credit plan ($3 of credit per $1), not a rate-window plan. thirdPartyHarnessAllowed=true because it's API-based; Ollama's harness launcher integrations are known from secondary sources, not this page."
+    "notes": "Annual $200/yr. This is a credit plan ($3 of credit per $1), not a rate-window plan. thirdPartyHarnessAllowed=true because it's API-based; Ollama's harness launcher integrations are known from secondary sources, not this page. The pricing page's per-model rates (2026-11-15) match list prices, except MiniMax M3 at $0.60/$2.40 per MTok, twice its list price."
   },
   {
     "vendor": "Ollama",
@@ -34,7 +34,7 @@
       "any harness via Ollama API"
     ],
     "models": [
-      "as Pro, plus early access to newest models"
+      "Rate table (2026-11-15): beam, clef, deepseek-v4.1-flash, deepseek-v4-pro, gemma4, glm-5.3, glm-5.3-flash, glm-5.2, gpt-oss:120b, gpt-oss:20b, inkling-2-small, kimi-k3.1-pro, kimi-k3, kimi-k2.7-code, kimi-k2.6, mimo-v2.6-flash, mimo-v2.6-pro, minimax-m3.1-flash, minimax-m3, mistral-large-4, muse-spark-open, nemotron-3-super, nemotron-3-ultra"
     ],
     "limits": "\"$300 of usage credits per month\"; \"10 concurrent requests\".",
     "allowanceKind": "credit",
@@ -43,10 +43,10 @@
     "sources": [
       {
         "url": "https://ollama.com/pricing",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-15"
       }
     ],
     "confidence": "primary",
-    "notes": "No annual price shown for Max."
+    "notes": "No annual price shown for Max. The pricing page's per-model rates (2026-11-15) match list prices, except MiniMax M3 at $0.60/$2.40 per MTok, twice its list price."
   }
 ]

@@ -97,12 +97,19 @@ function PlanValue({ plan, capacity }: ValuedPlan) {
 function PlanPrice({ plan }: { plan: Plan }) {
 	const estimate = plan.confidence === "primary" ? "" : "*";
 	return (
-		<span
-			className="text-[11px] text-subtle"
-			title={estimate && `Price from ${plan.confidence} sources`}
-		>
-			${plan.monthlyPriceUsd}
-			{estimate}
+		<span className="text-[11px] text-subtle">
+			<span title={estimate && `Price from ${plan.confidence} sources`}>
+				${plan.monthlyPriceUsd}
+				{estimate}
+			</span>
+			{plan.allowanceKind === "credit" && (
+				<span
+					className="ml-1.5"
+					title="A fixed amount of usage a month at the vendor's rates, not a rate window"
+				>
+					credit
+				</span>
+			)}
 		</span>
 	);
 }

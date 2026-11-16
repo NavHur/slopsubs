@@ -21,14 +21,14 @@
       "mimo-v2.5-asr",
       "mimo-v2.5-tts"
     ],
-    "limits": "Fixed Monthly Quota: 4.1 billion Credits. 'Using mimo-v2.6-flash as the baseline, it can execute approximately 200 rounds of medium-to-complex tasks.' v2.6-pro: 300 credits/input token (cache miss), 2.5 cached, 600 output. 'When the monthly total quota of your plan is used up, the system will suspend the service.' Off-peak (00:00–08:00 Beijing) 0.8x.",
+    "limits": "Fixed Monthly Quota: 4.1 billion Credits. 'Using mimo-v2.6-flash as the baseline, it can execute approximately 200 rounds of medium-to-complex tasks.' v2.6-pro: 300 credits/input token (cache miss), 2.5 cached, 600 output. v2.6-flash: 100 credits/input token (cache miss), 2 cached, 200 output. 'When the monthly total quota of your plan is used up, the system will suspend the service.' Off-peak (00:00–08:00 Beijing) 0.8x.",
     "allowanceKind": "credit",
     "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
         "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-15"
       },
       {
         "url": "https://mimo.mi.com/static/docs/tokenplan/Token%20Plan/subscription.md",
@@ -71,7 +71,7 @@
     "sources": [
       {
         "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-15"
       }
     ],
     "confidence": "primary",
@@ -106,7 +106,7 @@
     "sources": [
       {
         "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-15"
       }
     ],
     "confidence": "primary",
@@ -141,7 +141,7 @@
     "sources": [
       {
         "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-15"
       }
     ],
     "confidence": "primary",

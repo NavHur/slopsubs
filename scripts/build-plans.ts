@@ -19,6 +19,9 @@ import {
 	type ReportedCap,
 } from "../src/domain/model.ts";
 import { CLAUDE_ULTRA } from "./claude-caps.ts";
+import { creditAllowance, creditPromotions } from "./credit-plans.ts";
+import { CREDIT_PLANS } from "./credit-vendors.ts";
+import { listPriced, type TokenRates } from "./list-price.ts";
 import {
 	OPENCODE_GO_USD,
 	PLAN_FAMILIES,
@@ -63,18 +66,6 @@ const GO_PROMOS: Record<
 const OPENCODE_PROMOTIONS = Object.fromEntries(
 	Object.entries(GO_PROMOS).map(([family, p]) => [family, p.promotion]),
 );
-const today = new Date().toISOString().slice(0, 10);
-for (const [family, { promotion }] of Object.entries(GO_PROMOS)) {
-	if (promotion.endsOn < today)
-		throw new Error(
-			`GO_PROMOS["${family}"] ended on ${promotion.endsOn}; delete it and rebuild the plans.`,
-		);
-}
-
-/** Artificial Analysis's blend: three input tokens per output token. */
-function blendedPrice(input: number, output: number): number {
-	return (3 * input + output) / 4;
-}
 
 /** Max effort on Muse Spark is only served by Meta's own API. */
 const OPENCODE_MAX_EFFORT = {
@@ -210,23 +201,31 @@ if (offSale.length)
 		`Plans no longer on sale can't ship: ${offSale.map((p) => `${p.planId} (${p.availability})`).join(", ")}`,
 	);
 
-/** Converts a Go-priced dollar allowance into list-priced (API) dollars. */
-function listPricedUsd(family: string, goUsd: number): number {
-	const goPrice = GO_PROMOS[family]?.prices ?? GO_OFF_LIST_PRICES[family];
-	if (!goPrice) return goUsd;
+/** The family's list [input, output] $/MTok, from the benchmark catalog. */
+function listRates(family: string): TokenRates {
 	const list = models.find(
 		(m) => m.family === family && m.inputPricePerMTokUsd !== null,
 	);
 	if (!list?.inputPricePerMTokUsd || !list.outputPricePerMTokUsd)
-		throw new Error(`${family}: no list price to convert Go's allowance`);
-	return (
-		goUsd *
-		(blendedPrice(list.inputPricePerMTokUsd, list.outputPricePerMTokUsd) /
-			blendedPrice(...goPrice))
-	);
+		throw new Error(`${family}: no list price to value its allowance at`);
+	return [list.inputPricePerMTokUsd, list.outputPricePerMTokUsd];
 }
 
-function publishedAllowance(planId: string): PublishedAllowance | null {
+/** Converts a Go-priced dollar allowance into list-priced (API) dollars. */
+function listPricedUsd(family: string, goUsd: number): number {
+	const goPrice = GO_PROMOS[family]?.prices ?? GO_OFF_LIST_PRICES[family];
+	return goPrice ? listPriced(goUsd, goPrice, listRates(family)) : goUsd;
+}
+
+/** The vendor's own statement of each model's monthly usage: OpenCode Go's
+ * per-model dollars, or a credit plan's credit valued at list price. */
+function publishedAllowance(
+	planId: string,
+	priceUsd: number,
+	families: readonly string[],
+): PublishedAllowance | null {
+	const credit = CREDIT_PLANS[planId];
+	if (credit) return creditAllowance(credit, priceUsd, families, listRates);
 	const tier = PUBLISHED_ALLOWANCES[planId];
 	if (tier === undefined) return null;
 	return {
@@ -240,6 +239,36 @@ function publishedAllowance(planId: string): PublishedAllowance | null {
 		basis:
 			"OpenCode's published monthly usage for each model, at list prices, with current promos",
 	};
+}
+
+/** The limited-time discounts a plan's allowance counts, by family. */
+function promotions(
+	planId: string,
+	lab: string,
+	families: readonly string[],
+): Record<string, Promotion> {
+	const credit = CREDIT_PLANS[planId];
+	if (credit) return creditPromotions(credit, families);
+	return lab === "opencode" ? OPENCODE_PROMOTIONS : {};
+}
+
+/** A plan has a credit exactly when its research row says credit, and the
+ * credit cites a page that row lists. */
+function requireSourcedCredit(
+	p: z.infer<typeof ResearchPlan>,
+	allowance: PublishedAllowance | null,
+): void {
+	if (p.planId in CREDIT_PLANS && p.allowanceKind !== "credit")
+		throw new Error(
+			`${p.planId}: it has a credit, but its research row says ${p.allowanceKind}`,
+		);
+	if (p.allowanceKind !== "credit") return;
+	if (!allowance)
+		throw new Error(`${p.planId}: a credit plan needs its sourced credit`);
+	if (!p.sources.some((source) => source.url === allowance.url))
+		throw new Error(
+			`${p.planId}: its credit cites ${allowance.url}, which its research row does not list`,
+		);
 }
 
 const plans = Plans.parse(
@@ -258,9 +287,12 @@ const plans = Plans.parse(
 			if (unknown.length)
 				throw new Error(`${p.planId}: unbenchmarked ${unknown.join(", ")}`);
 			const label = entry.shortLabel ?? p.label;
-			const allowance = publishedAllowance(p.planId);
-			if (p.allowanceKind === "credit" && !allowance)
-				throw new Error(`${p.planId}: a credit plan needs its sourced credit`);
+			const allowance = publishedAllowance(
+				p.planId,
+				p.monthlyPriceUsd,
+				families,
+			);
+			requireSourcedCredit(p, allowance);
 			return {
 				id: p.planId,
 				vendor,
@@ -281,10 +313,19 @@ const plans = Plans.parse(
 				publishedAllowance: allowance,
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
-				promotionByFamily: lab === "opencode" ? OPENCODE_PROMOTIONS : {},
+				promotionByFamily: promotions(p.planId, lab, families),
 			};
 		}),
 );
+
+// A plan's value counts its promotions only while they run.
+const today = new Date().toISOString().slice(0, 10);
+for (const plan of plans)
+	for (const [family, promotion] of Object.entries(plan.promotionByFamily))
+		if (promotion.endsOn < today)
+			throw new Error(
+				`${plan.id}: the ${family} promotion ended on ${promotion.endsOn}; delete it and rebuild the plans.`,
+			);
 
 await writeFile(
 	new URL("src/data/plans.json", ROOT),
