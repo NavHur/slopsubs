@@ -155,7 +155,8 @@ function isScoreMove(was: number | null, now: number | null): boolean {
 	return Math.abs(now - was) >= MIN_SCORE_DELTA - FLOAT_TOLERANCE;
 }
 
-/** Points of a family new to or gone from the catalog are listed under it. */
+/** A family added to or dropped from the catalog is listed itself under
+ * "Models added/dropped", so its points are skipped here. */
 function scoreChanges(
 	benchmark: BenchmarkId,
 	before: ChartData,
@@ -173,21 +174,23 @@ function scoreChanges(
 	});
 }
 
-/** Each family's list price: the first input and the first output it has. */
+/** 2 for a price with both sides, 1 for one side, 0 for neither. */
+function priceRank(price: ListPrice): number {
+	return Number(price.input !== null) + Number(price.output !== null);
+}
+
+/** Each family's list price: one point's, the first with both prices, else one. */
 function listPrices(chart: ChartData) {
 	const prices = new Map<FamilyId, { name: string; price: ListPrice }>();
 	for (const p of chart.leaderboards.intelligence.models) {
-		const seen = prices.get(p.family) ?? {
-			name: p.name,
-			price: { input: null, output: null },
+		const price = {
+			input: p.inputPricePerMTokUsd,
+			output: p.outputPricePerMTokUsd,
 		};
-		prices.set(p.family, {
-			name: seen.name,
-			price: {
-				input: seen.price.input ?? p.inputPricePerMTokUsd,
-				output: seen.price.output ?? p.outputPricePerMTokUsd,
-			},
-		});
+		const seen = prices.get(p.family);
+		if (!seen || priceRank(price) > priceRank(seen.price)) {
+			prices.set(p.family, { name: p.name, price });
+		}
 	}
 	return prices;
 }

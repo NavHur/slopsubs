@@ -288,7 +288,28 @@ describe("summarizeDataChanges", () => {
 		expect(changes.scores).toEqual([]);
 	});
 
-	it("lists a family's list price from the first input and first output it has", () => {
+	it("reports a complete effort's output change behind an output-only one", () => {
+		const outputOnly = point(astra, {
+			id: "astra-low",
+			effort: "low",
+			inputPricePerMTokUsd: null,
+			outputPricePerMTokUsd: 10,
+		});
+		const complete = (output: number) =>
+			point(astra, { inputPricePerMTokUsd: 2, outputPricePerMTokUsd: output });
+		const changes = summarizeDataChanges(
+			snapshot({ shipped: [outputOnly, complete(12)] }),
+			snapshot({ shipped: [outputOnly, complete(11)] }),
+		);
+		expect(changes.prices.map((p) => [p.before, p.after])).toEqual([
+			[
+				{ input: 2, output: 12 },
+				{ input: 2, output: 11 },
+			],
+		]);
+	});
+
+	it("reports a complete effort's input change behind an output-only one", () => {
 		const outputOnly = point(astra, {
 			id: "astra-low",
 			effort: "low",
