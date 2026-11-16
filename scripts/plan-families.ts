@@ -1,5 +1,5 @@
-// The benchmarked families each plan includes. import-benchmarks reads them
-// to decide which AA models to keep, and build-plans to build each plan.
+// Each plan's benchmarked families, sidebar group, chart label and tier
+// multiple. import-benchmarks keeps the AA models these name; build-plans builds from them.
 
 import { CLAUDE_TIMES_PRO } from "./claude-caps.ts";
 import type { Tier } from "./tier-ladder.ts";
@@ -64,7 +64,7 @@ const CODEX = { lab: "openai", vendor: "Codex", families: OPENAI };
 const GO = { lab: "opencode", vendor: "OpenCode Go", families: OPENCODE_GO };
 const claudeTier = (times: number): Tier => ({ ladder: "claude", times });
 
-/** Benchmarked families each plan includes. */
+/** Each plan's families, and how it is grouped, labelled and scaled. */
 export const PLAN_FAMILIES: Record<string, PlanEntry> = {
 	"claude-pro": {
 		...CLAUDE_CODE,
