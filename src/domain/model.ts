@@ -70,6 +70,7 @@ export const FrontierCodeDataset = z.object({
 	source: z.string(),
 	rows: z.array(FrontierCodeRow),
 });
+export type FrontierCodeDataset = z.infer<typeof FrontierCodeDataset>;
 
 /** One Artificial Analysis Intelligence Index eval result, by release slug. */
 export const AaEvalRow = z.object({

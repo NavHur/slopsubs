@@ -26,7 +26,14 @@ assets, configured in `wrangler.jsonc`) from CI on every push to `main`.
 
 ## Benchmark Data
 
-The charts ship generated data, refreshed by four scripts in this order:
+The charts ship generated data. One command refreshes all of it:
+
+```bash
+bun run refresh-data
+```
+
+It runs four scripts in this order and stops at the first that fails, with
+that script's exit code:
 
 ```bash
 bun run import-benchmarks    # src/data/benchmarks.json
@@ -34,6 +41,48 @@ bun run import-aa-evals      # src/data/aa-evals.json
 bun run import-frontiercode  # src/data/frontiercode.json
 bun run build-plans          # plans.json and chart-benchmarks.json
 ```
+
+Then it prints what changed since `HEAD` (`--base <ref>` picks another
+commit): plan value multiples, list prices, scores that moved by 0.1 points or
+more, and models AA added or dropped. When nothing but fetch dates moved, it
+puts the files back, so the footer's "Data as of" date is when the data last
+changed. `--allow-score-drift` and `--allow-missing-cost` pass through to
+`import-benchmarks`, and `--summary <file.md>` saves the summary.
+
+A scheduled agent runs it twice a day (every 12 hours), in this order:
+
+1. Fetch and reset `data-refresh/main` to `origin/main`, then run
+   `bun run refresh-data --summary <file>`, followed by any escape-hatch flags
+   a maintainer named. The reset matters because `--base` defaults to `HEAD`:
+   the summary compares the refreshed tree with `origin/main`, and its file is
+   the PR body.
+2. If the run failed, open or update the "Data refresh failing" issue with the
+   failing step, the tail of its output, the run's UTC time and the
+   `origin/main` commit it ran on, and stop. A failure in any later step
+   (4 to 6) counts the same: name that step and stop.
+3. A clean tree means nothing changed: close any open refresh PR, close the
+   failure issue (comment "No data changed" and the run's UTC time, then close
+   it), and stop.
+4. Otherwise run `vp check` and `vp test run`. If either fails, the run failed
+   at that check: stop before pushing.
+5. Skip the push only when `origin/data-refresh/main` is based on the current
+   `origin/main` and the last line of
+   `bun scripts/data-changes.ts origin/data-refresh/main` starts "No data
+   changed." (the branch already holds this data; an "Only refetched" ending
+   still counts). Otherwise commit the regenerated files on `data-refresh/main`
+   and force-push (with lease). That output only decides push or skip; it is
+   never a PR body, and no step compares PR-body text.
+6. Make sure one open draft PR exists for `data-refresh/main`. Create it with
+   the step 1 summary as its body if none is open, and after a push set its
+   body to that summary. If the push was skipped and a PR is open, leave its
+   body alone.
+7. Only now, with the checks passed and the PR in place, close the failure
+   issue if one is open: comment the run's UTC time and the last line of the
+   step 1 summary, then close it.
+
+A maintainer can start a run by asking the agent in its thread to run now, and
+names `--allow-score-drift` or `--allow-missing-cost` when it needs one. A
+maintainer reviews and merges the PR.
 
 [Artificial Analysis](https://artificialanalysis.ai) is the source of the
 model list, Intelligence Index scores, list prices and release dates, and the
