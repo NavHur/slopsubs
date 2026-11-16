@@ -155,8 +155,8 @@ function isScoreMove(was: number | null, now: number | null): boolean {
 	return Math.abs(now - was) >= MIN_SCORE_DELTA - FLOAT_TOLERANCE;
 }
 
-/** A family added to or dropped from the catalog is listed itself under
- * "Models added/dropped", so its points are skipped here. */
+/** A family added to or dropped from the catalog has its own catalog entry,
+ * so its points are skipped here. */
 function scoreChanges(
 	benchmark: BenchmarkId,
 	before: ChartData,

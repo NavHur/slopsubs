@@ -128,4 +128,24 @@ describe("renderDataChanges", () => {
 		expect(body).toContain("(Low) new");
 		expect(body).toContain("(Max) 70.0, no longer scored");
 	});
+
+	it("ends a refetch-only body with a line starting 'No data changed.'", () => {
+		const body = renderDataChanges({
+			...none,
+			refetchedFiles: ["benchmarks.json", "chart-benchmarks.json"],
+		});
+		const lastLine = body.split("\n").at(-1) ?? "";
+		expect(lastLine.startsWith("No data changed.")).toBe(true);
+	});
+
+	it("does not start the last line 'No data changed.' when files changed", () => {
+		const body = renderDataChanges({
+			...none,
+			scores: [scoreChange],
+			changedFiles: ["chart-benchmarks.json"],
+			refetchedFiles: ["benchmarks.json"],
+		});
+		const lastLine = body.split("\n").at(-1) ?? "";
+		expect(lastLine.startsWith("No data changed.")).toBe(false);
+	});
 });
