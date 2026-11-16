@@ -59,8 +59,8 @@ export type PlanEntry = {
 	tier?: Tier;
 };
 
-// The current benchmarked models each credit plan serves, from the vendors'
-// model pages (accessed 2026-11-15; research/plans/ cites them).
+// The benchmarked models each credit plan serves, from the vendors' model
+// pages (accessed 2026-11-15). A deprecated family stays while its vendor still names it.
 /** Copilot's models on every plan; Pro+ and Max add the premium ones. */
 const COPILOT_PRO = [
 	"claude-sonnet-5-5",
@@ -96,6 +96,8 @@ const OLLAMA_CLOUD = [
 	"mistral-large-4",
 	"muse-spark-open",
 	"gpt-oss-120b",
+	"gpt-oss-20b",
+	"nemotron-3-ultra-550b-a55b",
 ];
 const JETBRAINS_AI = [
 	"claude-opus-5-5",
@@ -120,7 +122,7 @@ const WARP_MODELS = [
 	"glm-5-3-flash",
 	"kimi-k3",
 	"minimax-m3",
-	"qwen3-8-max",
+	"qwen3-8-max-0902",
 ];
 
 const CLAUDE_CODE = { lab: "anthropic", vendor: "Claude Code" };

@@ -47,7 +47,7 @@ function ollama(creditUsd: number): CreditPlan {
 		promos: {},
 		url: "https://ollama.com/pricing",
 		basis: (priceUsd) =>
-			`$${creditUsd} of usage credits a month for $${priceUsd}, at Ollama's per-model rates: list price, except MiniMax M3 at twice it`,
+			`$${creditUsd} of usage credits a month for $${priceUsd}, at Ollama's per-model rates: list price, except MiniMax M3 at twice it. Ollama prices off-peak usage separately, which isn't counted`,
 	};
 }
 
@@ -90,7 +90,7 @@ function mimo(billions: number): CreditPlan {
 		promos: {},
 		url: "https://mimo.mi.com/static/docs/price/token-plan.md",
 		basis: (priceUsd) =>
-			`${billions} billion credits a month for $${priceUsd}, at MiMo's per-token credit rates, valued at list price`,
+			`${billions} billion credits a month for $${priceUsd}, at MiMo's per-token credit rates, valued at list price (input and output blended 3:1, no cache discount, at peak hours)`,
 	};
 }
 

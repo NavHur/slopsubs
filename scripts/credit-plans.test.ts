@@ -11,6 +11,7 @@ import {
 	creditAllowance,
 	creditPromotions,
 } from "./credit-plans.ts";
+import { CREDIT_PLANS } from "./credit-vendors.ts";
 import type { TokenRates } from "./list-price.ts";
 
 const WEEKS_PER_MONTH = 52 / 12;
@@ -143,7 +144,33 @@ describe("a credit plan in the vendor's own credits", () => {
 	});
 });
 
+describe("the shipped credit plans", () => {
+	it("are all credit rows in the research data", () => {
+		for (const id of Object.keys(CREDIT_PLANS))
+			expect(plansJson.find((p) => p.id === id)?.allowanceKind).toBe("credit");
+	});
+
+	it("states the 3:1 uncached blend MiMo's credit conversion assumes", () => {
+		const plan = plansJson.find((p) => p.id === "mimo-token-pro");
+		expect(plan?.publishedAllowance?.basis).toMatch(
+			/blended 3:1, no cache discount/,
+		);
+	});
+});
+
 describe("the shipped Ollama plans", () => {
+	it.each(["ollama-pro", "ollama-max"])(
+		"%s credits the current models its rate table lists",
+		(id) => {
+			const credits = plansJson.find((p) => p.id === id)?.publishedAllowance
+				?.apiUsdPerMonthByFamily;
+			expect(credits).toMatchObject({
+				"gpt-oss-20b": expect.any(Number),
+				"nemotron-3-ultra-550b-a55b": expect.any(Number),
+			});
+		},
+	);
+
 	it.each(["ollama-pro", "ollama-max"])(
 		"%s credits Muse Spark Open, which its rate table lists",
 		(id) => {

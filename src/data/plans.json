@@ -410,7 +410,9 @@
       "mimo-v2-6-flash",
       "mistral-large-4",
       "muse-spark-open",
-      "gpt-oss-120b"
+      "gpt-oss-120b",
+      "gpt-oss-20b",
+      "nemotron-3-ultra-550b-a55b"
     ],
     "limits": "\"$60 of usage credits per month\"; \"Access to larger pro models\"; \"Run multiple models concurrently\"; resets monthly, no rollover; off-peak pricing outside 12:00-18:00 UTC on weekdays and all day on weekends.",
     "allowanceKind": "credit",
@@ -434,10 +436,12 @@
         "mimo-v2-6-flash": 60,
         "mistral-large-4": 60,
         "muse-spark-open": 60,
-        "gpt-oss-120b": 60
+        "gpt-oss-120b": 60,
+        "gpt-oss-20b": 60,
+        "nemotron-3-ultra-550b-a55b": 60
       },
       "url": "https://ollama.com/pricing",
-      "basis": "$60 of usage credits a month for $20, at Ollama's per-model rates: list price, except MiniMax M3 at twice it"
+      "basis": "$60 of usage credits a month for $20, at Ollama's per-model rates: list price, except MiniMax M3 at twice it. Ollama prices off-peak usage separately, which isn't counted"
     },
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
@@ -466,7 +470,9 @@
       "mimo-v2-6-flash",
       "mistral-large-4",
       "muse-spark-open",
-      "gpt-oss-120b"
+      "gpt-oss-120b",
+      "gpt-oss-20b",
+      "nemotron-3-ultra-550b-a55b"
     ],
     "limits": "\"$300 of usage credits per month\"; \"10 concurrent requests\".",
     "allowanceKind": "credit",
@@ -490,10 +496,12 @@
         "mimo-v2-6-flash": 300,
         "mistral-large-4": 300,
         "muse-spark-open": 300,
-        "gpt-oss-120b": 300
+        "gpt-oss-120b": 300,
+        "gpt-oss-20b": 300,
+        "nemotron-3-ultra-550b-a55b": 300
       },
       "url": "https://ollama.com/pricing",
-      "basis": "$300 of usage credits a month for $100, at Ollama's per-model rates: list price, except MiniMax M3 at twice it"
+      "basis": "$300 of usage credits a month for $100, at Ollama's per-model rates: list price, except MiniMax M3 at twice it. Ollama prices off-peak usage separately, which isn't counted"
     },
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
@@ -911,7 +919,7 @@
       "glm-5-3-flash",
       "kimi-k3",
       "minimax-m3",
-      "qwen3-8-max"
+      "qwen3-8-max-0902"
     ],
     "limits": "\"$20 of agent usage included each month at API rates\".",
     "allowanceKind": "credit",
@@ -938,7 +946,7 @@
         "glm-5-3-flash": 20,
         "kimi-k3": 20,
         "minimax-m3": 20,
-        "qwen3-8-max": 20
+        "qwen3-8-max-0902": 20
       },
       "url": "https://www.warp.dev/pricing",
       "basis": "$20 of agent usage a month at API rates, for $20"
@@ -975,7 +983,7 @@
       "glm-5-3-flash",
       "kimi-k3",
       "minimax-m3",
-      "qwen3-8-max"
+      "qwen3-8-max-0902"
     ],
     "limits": "\"$200 of agent usage included each month (10× Build)\".",
     "allowanceKind": "credit",
@@ -1002,7 +1010,7 @@
         "glm-5-3-flash": 200,
         "kimi-k3": 200,
         "minimax-m3": 200,
-        "qwen3-8-max": 200
+        "qwen3-8-max-0902": 200
       },
       "url": "https://www.warp.dev/pricing",
       "basis": "$200 of agent usage a month at API rates, for $200"
@@ -1044,7 +1052,7 @@
         "mimo-v2-6-flash": 5.74
       },
       "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-      "basis": "4.1 billion credits a month for $6, at MiMo's per-token credit rates, valued at list price"
+      "basis": "4.1 billion credits a month for $6, at MiMo's per-token credit rates, valued at list price (input and output blended 3:1, no cache discount, at peak hours)"
     },
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
@@ -1083,7 +1091,7 @@
         "mimo-v2-6-flash": 15.400000000000002
       },
       "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-      "basis": "11 billion credits a month for $16, at MiMo's per-token credit rates, valued at list price"
+      "basis": "11 billion credits a month for $16, at MiMo's per-token credit rates, valued at list price (input and output blended 3:1, no cache discount, at peak hours)"
     },
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
@@ -1122,7 +1130,7 @@
         "mimo-v2-6-flash": 53.2
       },
       "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-      "basis": "38 billion credits a month for $50, at MiMo's per-token credit rates, valued at list price"
+      "basis": "38 billion credits a month for $50, at MiMo's per-token credit rates, valued at list price (input and output blended 3:1, no cache discount, at peak hours)"
     },
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
@@ -1161,7 +1169,7 @@
         "mimo-v2-6-flash": 114.80000000000001
       },
       "url": "https://mimo.mi.com/static/docs/price/token-plan.md",
-      "basis": "82 billion credits a month for $100, at MiMo's per-token credit rates, valued at list price"
+      "basis": "82 billion credits a month for $100, at MiMo's per-token credit rates, valued at list price (input and output blended 3:1, no cache discount, at peak hours)"
     },
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
