@@ -26,8 +26,8 @@ export type PlanCapacity =
 
 /**
  * Extrapolates the weekly cap from every sample recorded for the plan. Without
- * samples, falls back to the vendor's published allowance, then to a figure
- * someone else reported.
+ * samples, falls back to the vendor's published allowance, then to a reported
+ * figure, published by someone else or read off our own gauge by hand.
  */
 export function planCapacity(
 	plan: Plan,
