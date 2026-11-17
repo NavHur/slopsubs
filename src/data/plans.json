@@ -206,8 +206,8 @@
         "claude-fable-5-2": 70,
         "gpt-6-astra": 70,
         "gpt-6-1-sol": 70,
-        "gemini-4-argon": 140,
-        "gemini-4-carbon": 140,
+        "gemini-4-argon": 70,
+        "gemini-4-carbon": 70,
         "claude-sonnet-5-5": 70,
         "claude-haiku-5-5": 70,
         "gpt-6-1-terra": 70,
@@ -278,8 +278,8 @@
         "claude-fable-5-2": 200,
         "gpt-6-astra": 200,
         "gpt-6-1-sol": 200,
-        "gemini-4-argon": 400,
-        "gemini-4-carbon": 400,
+        "gemini-4-argon": 200,
+        "gemini-4-carbon": 200,
         "claude-sonnet-5-5": 200,
         "claude-haiku-5-5": 200,
         "gpt-6-1-terra": 200,
@@ -984,12 +984,14 @@
       "Conductor"
     ],
     "families": [
+      "gpt-6-2-astra",
+      "gpt-6-2-sol",
       "gpt-6-astra",
       "gpt-6-1-sol",
       "gpt-6-1-terra",
       "gpt-6-luna"
     ],
-    "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6.1 Terra 35-285, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
+    "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6.2 Astra 6-50, GPT-6.2 Sol 17-180, GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6.1 Terra 35-285, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
     "allowanceKind": "rate-window",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": true,
@@ -997,6 +999,8 @@
     "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
     "reportedCap": {
       "weeklyCapApiUsdByFamily": {
+        "gpt-6-2-astra": 48.46153846153847,
+        "gpt-6-2-sol": 48.46153846153847,
         "gpt-6-astra": 48.46153846153847,
         "gpt-6-1-sol": 48.46153846153847,
         "gpt-6-1-terra": 48.46153846153847,
@@ -1035,6 +1039,8 @@
       "Conductor"
     ],
     "families": [
+      "gpt-6-2-astra",
+      "gpt-6-2-sol",
       "gpt-6-astra",
       "gpt-6-1-sol",
       "gpt-6-1-terra",
@@ -1048,6 +1054,8 @@
     "sourceUrl": "https://learn.chatgpt.com/docs/pricing",
     "reportedCap": {
       "weeklyCapApiUsdByFamily": {
+        "gpt-6-2-astra": 484.61538461538464,
+        "gpt-6-2-sol": 484.61538461538464,
         "gpt-6-astra": 484.61538461538464,
         "gpt-6-1-sol": 484.61538461538464,
         "gpt-6-1-terra": 484.61538461538464,
@@ -1086,6 +1094,8 @@
       "Conductor"
     ],
     "families": [
+      "gpt-6-2-astra",
+      "gpt-6-2-sol",
       "gpt-6-astra",
       "gpt-6-1-sol",
       "gpt-6-1-terra",
@@ -1099,6 +1109,8 @@
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
     "reportedCap": {
       "weeklyCapApiUsdByFamily": {
+        "gpt-6-2-astra": 969.2307692307693,
+        "gpt-6-2-sol": 969.2307692307693,
         "gpt-6-astra": 969.2307692307693,
         "gpt-6-1-sol": 969.2307692307693,
         "gpt-6-1-terra": 969.2307692307693,
@@ -1137,6 +1149,8 @@
       "Conductor"
     ],
     "families": [
+      "gpt-6-2-astra",
+      "gpt-6-2-sol",
       "gpt-6-astra",
       "gpt-6-1-sol",
       "gpt-6-1-terra",
@@ -1150,6 +1164,8 @@
     "sourceUrl": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
     "reportedCap": {
       "weeklyCapApiUsdByFamily": {
+        "gpt-6-2-astra": 2423.0769230769233,
+        "gpt-6-2-sol": 2423.0769230769233,
         "gpt-6-astra": 2423.0769230769233,
         "gpt-6-1-sol": 2423.0769230769233,
         "gpt-6-1-terra": 2423.0769230769233,
@@ -1214,7 +1230,7 @@
         "kimi-k3-1-pro": 15,
         "kimi-k3": 15,
         "kimi-k2-7-code": 60,
-        "gemini-4-argon": 60,
+        "gemini-4-argon": 30,
         "step-5-preview": 15,
         "minimax-m3-1-flash": 20,
         "minimax-m3": 60,
@@ -1231,7 +1247,7 @@
         "longcat-2-0": 148.5714285714286,
         "mimo-v2-6-pro": 15,
         "mimo-v2-6-flash": 60,
-        "mimo-v2-5-pro": 13.500000000000002,
+        "mimo-v2-5-pro": 12,
         "mimo-v2-5-0424": 48,
         "hy3": 57.78,
         "deepseek-v4-1-flash-1017": 100,
@@ -1304,7 +1320,7 @@
         "kimi-k3-1-pro": 60,
         "kimi-k3": 60,
         "kimi-k2-7-code": 180,
-        "gemini-4-argon": 240,
+        "gemini-4-argon": 120,
         "step-5-preview": 60,
         "minimax-m3-1-flash": 80,
         "minimax-m3": 180,
@@ -1321,7 +1337,7 @@
         "longcat-2-0": 594.2857142857144,
         "mimo-v2-6-pro": 60,
         "mimo-v2-6-flash": 120,
-        "mimo-v2-5-pro": 54.00000000000001,
+        "mimo-v2-5-pro": 48,
         "mimo-v2-5-0424": 96,
         "hy3": 231.12,
         "deepseek-v4-1-flash-1017": 200,
