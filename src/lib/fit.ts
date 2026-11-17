@@ -34,7 +34,7 @@ export const FIT_EFFORTS = [
 	"max",
 ] as const satisfies readonly Effort[];
 
-/** A week that shows a useful answer before the visitor touches anything. */
+/** The quiz's starting amount for a week, in each unit. */
 export const DEFAULT_AMOUNT: Record<FitUnit, number> = {
 	apiUsd: 250,
 	tasks: 50,
@@ -64,7 +64,7 @@ export const FitSearch = z.object({
 		z.pipe(
 			z.array(z.unknown()),
 			z.transform((items) => {
-				const kept = items.filter(knownFamily);
+				const kept = [...new Set(items.filter(knownFamily))];
 				return kept.length > 0 ? kept : undefined;
 			}),
 		),

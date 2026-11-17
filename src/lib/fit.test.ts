@@ -38,6 +38,18 @@ describe("the fit param", () => {
 		});
 	});
 
+	it("counts a model repeated in a shared link once, in order", () => {
+		const inputs = parseFit({ models: [fable, opus, fable] });
+		expect(inputs.models).toEqual([fable, opus]);
+		expect(fitWorkload(inputs).models).toEqual({
+			kind: "chosen",
+			weights: [
+				{ family: fable, weight: 50 },
+				{ family: opus, weight: 50 },
+			],
+		});
+	});
+
 	it("reads a fit param that isn't an object as unset", () => {
 		expect(parseFit("max")).toEqual(parseFit(undefined));
 	});

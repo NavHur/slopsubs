@@ -55,12 +55,17 @@ export type Recommendation =
 			/** Whether paying per token costs less than the cheapest plan that fits. */
 			apiCheaper: boolean;
 			/**
-			 * The multiple of this week's usage below which paying per token is
-			 * cheaper than every plan; null when no plan would fit there.
+			 * The multiple of this week's usage at which paying per token last stops
+			 * being cheaper than the plans that cover it; null when no plan fits.
 			 */
 			breakEvenScale: number | null;
 			/** Cheapest first. */
 			fits: PlanFit[];
+			/**
+			 * The cheapest plan above the budget that still fits, with the budget it
+			 * breaks; null with no budget or when none fits.
+			 */
+			cheapestOverBudget: { budgetUsd: number; fit: PlanFit } | null;
 			/** Closest to covering the week first. */
 			short: PlanShort[];
 			/** Plans with no known cap for a chosen family. */
@@ -96,10 +101,12 @@ export function recommendPlans({
 	const effort = workload.usage.unit === "tasks" ? workload.usage.effort : null;
 	const budget = workload.monthlyBudgetUsd ?? Infinity;
 	const inBudget = plans.filter((p) => p.plan.monthlyPriceUsd <= budget);
-	const verdicts = inBudget.map((p) => bestVerdict(p, options, effort, 1));
-	const fits = verdicts
-		.filter((v) => v.kind === "fits")
-		.sort((a, b) => a.plan.monthlyPriceUsd - b.plan.monthlyPriceUsd);
+	const overBudget = plans.filter((p) => p.plan.monthlyPriceUsd > budget);
+	const verdictsOf = (sized: readonly SizedPlan[]) =>
+		sized.map((p) => bestVerdict(p, options, effort, 1));
+	const verdicts = verdictsOf(inBudget);
+	const fits = cheapestFirst(verdicts);
+	const [overBudgetFit] = cheapestFirst(verdictsOf(overBudget));
 	const apiUsdPerMonth =
 		Math.min(...options.map(weeklyTotal)) * WEEKS_PER_MONTH;
 	return {
@@ -109,6 +116,9 @@ export function recommendPlans({
 			fits.length > 0 && apiUsdPerMonth < fits[0].plan.monthlyPriceUsd,
 		breakEvenScale: breakEvenScale(inBudget, options, effort, apiUsdPerMonth),
 		fits,
+		cheapestOverBudget: overBudgetFit
+			? { budgetUsd: budget, fit: overBudgetFit }
+			: null,
 		short: verdicts
 			.filter((v) => v.kind === "short")
 			.sort((a, b) => b.coverage - a.coverage),
@@ -116,10 +126,14 @@ export function recommendPlans({
 		gaps: verdicts
 			.filter((v) => v.kind === "gap")
 			.map(({ plan, family, gap }) => ({ plan, family, gap })),
-		overBudget: plans
-			.filter((p) => p.plan.monthlyPriceUsd > budget)
-			.map((p) => p.plan),
+		overBudget: overBudget.map((p) => p.plan),
 	};
+}
+
+function cheapestFirst(verdicts: readonly Verdict[]): PlanFit[] {
+	return verdicts
+		.filter((v) => v.kind === "fits")
+		.sort((a, b) => a.plan.monthlyPriceUsd - b.plan.monthlyPriceUsd);
 }
 
 function weeklyTotal(demand: Demand): number {
@@ -165,13 +179,16 @@ function chosenDemands(
 	weekly: WeeklyNeed,
 ): Priced {
 	const total = weights.reduce((sum, w) => sum + w.weight, 0);
-	const needs = weights.map((w) => ({
-		family: w.family,
-		need: weekly(w.family, w.weight / total),
-	}));
-	const unpriced = needs.filter((n) => n.need === null).map((n) => n.family);
-	if (unpriced.length > 0) return { kind: "unpriced", families: unpriced };
-	return { kind: "priced", options: [needs.flatMap((n) => n.need ?? [])] };
+	const demand: Demand = [];
+	const unpriced: FamilyId[] = [];
+	for (const { family, weight } of weights) {
+		const need = weekly(family, weight / total);
+		if (need) demand.push(need);
+		else unpriced.push(family);
+	}
+	return unpriced.length > 0
+		? { kind: "unpriced", families: unpriced }
+		: { kind: "priced", options: [demand] };
 }
 
 function amount(usage: Usage): number {
@@ -239,15 +256,20 @@ function verdictFor(
 		if (allowance === null) return { kind: "unsized", plan };
 		needs.push({ family, apiUsdPerWeek: apiUsdPerWeek * scale, allowance });
 	}
-	const basis = BASIS_CERTAINTY.find((b) =>
-		needs.some((n) => n.allowance.basis === b),
-	);
 	return {
 		plan,
 		families: demand.map((d) => d.family),
-		basis: basis ?? "measured",
+		basis: leastCertainBasis(plan, needs),
 		...planFit(plan, needs),
 	};
+}
+
+function leastCertainBasis(plan: Plan, needs: readonly FamilyNeed[]): CapBasis {
+	const basis = BASIS_CERTAINTY.find((b) =>
+		needs.some((n) => n.allowance.basis === b),
+	);
+	if (!basis) throw new Error(`${plan.id}: no cap basis for an empty week`);
+	return basis;
 }
 
 function gapIn(
@@ -265,8 +287,9 @@ function gapIn(
 }
 
 /**
- * The usage multiple at which the cheapest plan that would still fit costs
- * what paying per token does. Below it, the API wins.
+ * The last usage multiple at which a plan starts to beat paying per token: a
+ * plan's price over the API's, where that plan is the cheapest to still fit.
+ * Below it the API wins until a plan fits and costs less.
  */
 function breakEvenScale(
 	plans: readonly SizedPlan[],
@@ -274,10 +297,16 @@ function breakEvenScale(
 	effort: Effort | null,
 	apiUsdPerMonth: number,
 ): number | null {
-	const scales = plans.flatMap((sized) => {
-		const scale = sized.plan.monthlyPriceUsd / apiUsdPerMonth;
-		const fits = bestVerdict(sized, options, effort, scale).kind === "fits";
-		return fits ? [scale] : [];
-	});
-	return scales.length > 0 ? Math.min(...scales) : null;
+	const cheapestFitUsd = (scale: number) =>
+		Math.min(
+			...plans
+				.filter((p) => bestVerdict(p, options, effort, scale).kind === "fits")
+				.map((p) => p.plan.monthlyPriceUsd),
+		);
+	const crossings = plans
+		.map((p) => ({ scale: p.plan.monthlyPriceUsd / apiUsdPerMonth, p }))
+		.filter(({ scale, p }) => cheapestFitUsd(scale) === p.plan.monthlyPriceUsd);
+	return crossings.length > 0
+		? Math.max(...crossings.map((c) => c.scale))
+		: null;
 }

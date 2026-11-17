@@ -49,15 +49,23 @@ export function answersSummary(
 	].join(" · ");
 }
 
+/** The headline when no plan within the budget covers the week. */
+function nothingFitsHeadline(result: Ranked): string {
+	const { cheapestOverBudget } = result;
+	if (cheapestOverBudget) {
+		const { budgetUsd, fit } = cheapestOverBudget;
+		return `No plan within your ${formatUsd(budgetUsd)} budget covers this week. ${fit.plan.label} does, at ${formatUsd(fit.plan.monthlyPriceUsd)} a month.`;
+	}
+	const [closest] = result.short;
+	return closest
+		? `No single plan covers this week. ${closest.plan.label} comes closest, at ${formatShare(closest.coverage)} of it and ${formatUsd(closest.shortUsdPerMonth)} a month short.`
+		: "No plan we can size covers these models.";
+}
+
 /** The section's one-line answer. */
 export function verdictHeadline(result: Ranked): string {
 	const [cheapest] = result.fits;
-	if (!cheapest) {
-		const [closest] = result.short;
-		return closest
-			? `No single plan covers this week. ${closest.plan.label} comes closest, at ${formatShare(closest.coverage)} of it and ${formatUsd(closest.shortUsdPerMonth)} a month short.`
-			: "No plan we can size covers these models.";
-	}
+	if (!cheapest) return nothingFitsHeadline(result);
 	if (result.apiCheaper) {
 		return `Paying per token is cheaper: about ${formatUsd(result.apiUsdPerMonth)} a month, against ${formatUsd(cheapest.plan.monthlyPriceUsd)} for ${cheapest.plan.label}.`;
 	}
@@ -93,9 +101,16 @@ export function baselineLine(
 		: `${perMonth}.`;
 }
 
-/** The model an "Any flagship" week runs on, or nothing for chosen models. */
-function anyModelPart(families: PlanFit["families"], any: boolean): string[] {
-	return any && families.length === 1
+/**
+ * The model an "Any flagship" week runs on, or nothing for chosen models or a
+ * model the line already names as `named`.
+ */
+function anyModelPart(
+	families: PlanFit["families"],
+	any: boolean,
+	named?: PlanFit["families"][number],
+): string[] {
+	return any && families.length === 1 && families[0] !== named
 		? [`runs ${familyName(families[0])}`]
 		: [];
 }
@@ -118,7 +133,7 @@ export function fitDetail(fit: PlanFit, any: boolean): string {
 /** "Fable 5.2 runs out first", for a plan too small for the week. */
 export function shortDetail(short: PlanShort, any: boolean): string {
 	return [
-		...anyModelPart(short.families, any),
+		...anyModelPart(short.families, any, short.binding),
 		`${familyName(short.binding)} runs out first`,
 		`${formatUsd(short.shortUsdPerMonth)} a month short`,
 	].join(", ");

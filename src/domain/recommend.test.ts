@@ -147,6 +147,18 @@ describe("recommendPlans", () => {
 		expect((result.breakEvenScale ?? 0) * 3).toBeCloseTo(4.615, 2);
 	});
 
+	it("quotes the last usage at which paying per token still wins", () => {
+		// $5 a month covers only $2 a week, so Pro is the plan for $3 a week.
+		const small = plan("small", {
+			monthlyPriceUsd: 5,
+			reportedCap: reported({ [opus]: 2 }),
+		});
+		const result = ranked(recommend([small, pro], apiUsd(3, [opus])));
+		// $13 a month of API beats Pro's $20, and still does up to Pro's $4.62.
+		expect(result.apiCheaper).toBe(true);
+		expect((result.breakEvenScale ?? 0) * 3).toBeCloseTo(4.615, 2);
+	});
+
 	it("holds Fable to half of Max's weekly limit while Opus fits", () => {
 		const heavyFable = ranked(recommend([max], apiUsd(500, [fable])));
 		expect(heavyFable.fits).toEqual([]);
@@ -235,6 +247,23 @@ describe("recommendPlans", () => {
 		);
 		expect(result.fits.map((f) => f.plan.id)).toEqual(["pro"]);
 		expect(result.overBudget.map((p) => p.id)).toEqual(["max"]);
+	});
+
+	it("offers the cheapest over-budget plan that still fits", () => {
+		const result = ranked(
+			recommend([pro, max], { ...apiUsd(500, [opus]), monthlyBudgetUsd: 10 }),
+		);
+		expect(result.fits).toEqual([]);
+		expect(result.cheapestOverBudget).toMatchObject({
+			budgetUsd: 10,
+			fit: { plan: { id: "max" } },
+		});
+	});
+
+	it("offers no over-budget plan without a budget", () => {
+		expect(
+			ranked(recommend([pro], apiUsd(5000, [opus]))).cheapestOverBudget,
+		).toBeNull();
 	});
 
 	it("runs an any-model week on whichever model each plan serves best", () => {
