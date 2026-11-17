@@ -153,14 +153,22 @@ describe("number fields in the quiz", () => {
 		expect(advanced(fixed).kind).toBe("question");
 	});
 
-	it("blocks a model share that is emptied or zero, until it is a number", () => {
+	it("returns an emptied share to its equal part", () => {
 		const field = shareField("claude-opus-5-5");
-		const blank = question(
-			quizScreen(undefined, entered(usage({}), field, parseEntry(""))),
+		const set = question(
+			quizScreen(undefined, entered(usage({}), field, parseEntry("60"))),
 		);
-		expect(canAdvance(blank)).toBe(false);
+		const blank = question(
+			quizScreen(undefined, entered(set, field, parseEntry(""))),
+		);
+		expect(canAdvance(blank)).toBe(true);
+		expect(blank.draft.weights?.["claude-opus-5-5"]).toBeUndefined();
+	});
+
+	it("blocks a zero model share, until it is a number", () => {
+		const field = shareField("claude-opus-5-5");
 		const zero = question(
-			quizScreen(undefined, entered(blank, field, parseEntry("0"))),
+			quizScreen(undefined, entered(usage({}), field, parseEntry("0"))),
 		);
 		expect(canAdvance(zero)).toBe(false);
 		const fixed = entered(zero, field, parseEntry("60"));
@@ -194,12 +202,12 @@ describe("number fields in the quiz", () => {
 	it("drops a blocked share when its model leaves the question", () => {
 		const field = shareField("claude-opus-5-5");
 		const draft = { models: ["claude-opus-5-5", "claude-fable-5-2"] };
-		const blank = question(
-			quizScreen(undefined, entered(usage(draft), field, parseEntry(""))),
+		const zero = question(
+			quizScreen(undefined, entered(usage(draft), field, parseEntry("0"))),
 		);
-		expect(answered(blank, { any: true }).invalid).toEqual([]);
+		expect(answered(zero, { any: true }).invalid).toEqual([]);
 		expect(
-			answered(blank, { weights: { "claude-fable-5-2": 30 } }).invalid,
+			answered(zero, { weights: { "claude-fable-5-2": 30 } }).invalid,
 		).toEqual([field]);
 	});
 });

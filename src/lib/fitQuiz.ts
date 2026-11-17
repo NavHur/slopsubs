@@ -103,24 +103,34 @@ export function answered(
 	};
 }
 
-/** The draft's change for a number typed into `field`; none when it isn't an answer. */
+/** The draft's change for an entry in `field`; none when it isn't an answer. */
 function entryPatch(
 	draft: FitSearch,
 	field: QuizField,
 	entry: FieldEntry,
 ): Partial<FitSearch> {
 	const value = entry.kind === "number" ? entry.value : undefined;
-	if (field === "budget")
-		return entry.kind === "invalid" ? {} : { budget: value };
-	if (value === undefined) return {};
-	if (field === "amount") return { amount: value };
-	const family = field.slice(SHARE_PREFIX.length);
-	return { weights: { ...draft.weights, [family]: value } };
+	if (entry.kind === "invalid") return {};
+	if (field === "budget") return { budget: value };
+	if (field === "amount") return value === undefined ? {} : { amount: value };
+	return {
+		weights: sharePatch(draft, field.slice(SHARE_PREFIX.length), value),
+	};
+}
+
+/** The weights with one model's share set, or cleared back to its equal part. */
+function sharePatch(
+	draft: FitSearch,
+	family: string,
+	value: number | undefined,
+): Record<string, number> {
+	const { [family]: _cleared, ...others } = draft.weights ?? {};
+	return value === undefined ? others : { ...others, [family]: value };
 }
 
 /**
- * A number is the answer, stored as entered; a blank budget clears it. Any other
- * entry leaves the draft as it was and marks the field invalid, blocking Next.
+ * A number is the answer, stored as entered; a blank budget or share clears it
+ * (a share back to its equal part). Anything else marks the field invalid.
  */
 export function entered(
 	screen: QuestionScreen,
@@ -128,8 +138,8 @@ export function entered(
 	entry: FieldEntry,
 ): QuizProgress {
 	const others = screen.invalid.filter((f) => f !== field);
-	const blankBudget = entry.kind === "blank" && field === "budget";
-	const rejected = entry.kind !== "number" && !blankBudget;
+	const clears = entry.kind === "blank" && field !== "amount";
+	const rejected = entry.kind !== "number" && !clears;
 	return {
 		step: screen.index,
 		draft: { ...screen.draft, ...entryPatch(screen.draft, field, entry) },

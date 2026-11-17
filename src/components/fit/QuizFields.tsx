@@ -12,6 +12,7 @@ import {
 	modelWeight,
 	unitChange,
 } from "#/lib/fit";
+import { formatShare } from "#/lib/fitCopy";
 import { type FieldEntry, type QuizField, shareField } from "#/lib/fitQuiz";
 import { Segmented } from "../Segmented";
 import { FieldError, NumberField } from "./NumberField";
@@ -77,7 +78,7 @@ function countedSplit(inputs: FitInputs): string | null {
 	const total = weights.reduce((sum, w) => sum + w, 0);
 	if (Math.abs(total - 100) < 0.5) return null;
 	const parts = inputs.models.map(
-		(f, i) => `${familyName(f)} ${Math.round((weights[i] / total) * 100)}%`,
+		(f, i) => `${familyName(f)} ${formatShare(weights[i] / total)}`,
 	);
 	return `Counted as ${parts.join(", ")}.`;
 }

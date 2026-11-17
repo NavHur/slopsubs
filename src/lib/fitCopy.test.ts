@@ -91,7 +91,7 @@ describe("the verdict and the baseline", () => {
 /** A quiz week with its amount set, so it can be scaled to probe others. */
 type Week = FitSearch & { amount: number };
 
-/** Whether the cheapest plan that fits costs less than paying per token. */
+/** Whether the cheapest plan that fits costs no more than paying per token. */
 function planWinsAt(fit: Week, scale: number) {
 	const { result } = answer({ ...fit, amount: fit.amount * scale });
 	return result.fits.length > 0 && !result.apiCheaper;

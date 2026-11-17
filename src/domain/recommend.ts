@@ -325,7 +325,7 @@ const BISECTIONS = 60;
 
 /**
  * The most the week can grow and still fit: a plan fits up to some multiple of
- * it. Infinity when it still fits at `limit`, -Infinity when it never fits.
+ * it. Infinity once a probe that fits reaches `limit`; -Infinity if it never fits.
  */
 function largestFittingScale(
 	fitsAt: (scale: number) => boolean,

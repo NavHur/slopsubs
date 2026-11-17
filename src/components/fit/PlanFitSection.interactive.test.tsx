@@ -138,6 +138,7 @@ describe("PlanFitSection, answered by a visitor", () => {
 
 			expect(fable).toHaveProperty("value", "0.04");
 			expect(fable.getAttribute("aria-invalid")).toBeNull();
+			expect(document.body.textContent).toContain("Fable 5.2 <1%");
 			await user.click(press("Next"));
 			await user.click(press("Next"));
 			await user.click(press("See my plan"));
