@@ -6,14 +6,13 @@ import { formatCount, formatUsd } from "./format";
 
 type Ranked = Extract<Recommendation, { kind: "ranked" }>;
 
-/** Shares that round to 0% or 100% without being either. */
-const SLIVER = 0.005;
-
-/** "40%", rounded the way a gauge reads; "<1%" and ">99%" at the ends. */
+/** "40%", rounded the way a gauge reads; "<1%" and ">99%" for a share that
+ * would round to 0% or 100% without being either. */
 export function formatShare(share: number): string {
-	if (share > 0 && share < SLIVER) return "<1%";
-	if (share < 1 && share > 1 - SLIVER) return ">99%";
-	return `${Math.round(share * 100)}%`;
+	const percent = Math.round(share * 100);
+	if (share > 0 && percent === 0) return "<1%";
+	if (share < 1 && percent === 100) return ">99%";
+	return `${percent}%`;
 }
 
 /** "$250 of API usage" or "50 Intelligence Index tasks", for a week. */

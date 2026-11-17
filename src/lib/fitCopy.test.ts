@@ -6,6 +6,7 @@ import { type FitSearch, fitInputs, fitWorkload, SIZED_PLANS } from "./fit";
 import {
 	answersSummary,
 	baselineLine,
+	formatShare,
 	shortDetail,
 	unpricedLine,
 	verdictHeadline,
@@ -251,5 +252,16 @@ describe("a week with reasoning off", () => {
 		expect(unpricedLine(result, inputs, BENCHMARK)).toMatch(
 			/^Intelligence Index has no non-reasoning cost for Opus 5\.5,/,
 		);
+	});
+});
+
+describe("formatShare", () => {
+	it("never calls a partial share 0% or 100%", () => {
+		expect(formatShare(49.75 / 50)).toBe(">99%");
+		expect(formatShare(0.25 / 50)).toBe("1%");
+		expect(formatShare(0.0008)).toBe("<1%");
+		expect(formatShare(1)).toBe("100%");
+		expect(formatShare(0)).toBe("0%");
+		expect(formatShare(0.4)).toBe("40%");
 	});
 });
