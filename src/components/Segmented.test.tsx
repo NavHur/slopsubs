@@ -22,6 +22,7 @@ function fieldset(wrap?: boolean): string {
 
 describe("Segmented", () => {
 	it("keeps its options in one row, as a scroll row needs", () => {
+		expect(fieldset()).toContain("<fieldset");
 		expect(fieldset()).not.toContain("flex-wrap");
 	});
 

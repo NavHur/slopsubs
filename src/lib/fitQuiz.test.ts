@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import type { FitSearch } from "./fit";
-import { unitChange } from "./fit";
+import { fitInputs, modelWeight, unitChange } from "./fit";
 import {
 	advanced,
 	answered,
@@ -23,7 +23,7 @@ function question(screen: QuizScreen): Question {
 }
 
 describe("the plan-fit quiz", () => {
-	it("stores a share as it shows it, and won't take one that shows as 0%", () => {
+	it("stores a share exactly as entered, however small", () => {
 		const draft = { models: ["claude-opus-5-5", "claude-fable-5-2"] };
 		const at = (value: number) =>
 			entered(
@@ -31,10 +31,21 @@ describe("the plan-fit quiz", () => {
 				shareField("claude-fable-5-2"),
 				{ kind: "number", value },
 			);
-		expect(at(33.33).draft.weights).toEqual({ "claude-fable-5-2": 33.3 });
+		expect(at(33.33).draft.weights).toEqual({ "claude-fable-5-2": 33.33 });
 		const tiny = at(0.04);
-		expect(tiny.draft.weights).toBeUndefined();
-		expect(tiny.invalid).toEqual([shareField("claude-fable-5-2")]);
+		expect(tiny.draft.weights).toEqual({ "claude-fable-5-2": 0.04 });
+		expect(tiny.invalid).toEqual([]);
+	});
+
+	it("reads a shared link's small weight back as it was set", () => {
+		const inputs = fitInputs({
+			models: ["claude-opus-5-5", "claude-fable-5-2"],
+			weights: { "claude-opus-5-5": 0.04, "claude-fable-5-2": 0.04 },
+		});
+		expect(inputs.models.map((f) => modelWeight(inputs, f))).toEqual([
+			0.04, 0.04,
+		]);
+		expect(parseEntry("0.04")).toEqual({ kind: "number", value: 0.04 });
 	});
 
 	it("starts at the first question with no answers in the URL", () => {

@@ -12,12 +12,7 @@ import {
 	modelWeight,
 	unitChange,
 } from "#/lib/fit";
-import {
-	type FieldEntry,
-	type QuizField,
-	roundShare,
-	shareField,
-} from "#/lib/fitQuiz";
+import { type FieldEntry, type QuizField, shareField } from "#/lib/fitQuiz";
 import { Segmented } from "../Segmented";
 import { FieldError, NumberField } from "./NumberField";
 import { QuizOption } from "./QuizOption";
@@ -108,7 +103,8 @@ function ShareFields({
 				<label key={family} className="flex items-center gap-2 text-fg">
 					{familyName(family)}
 					<NumberField
-						value={roundShare(modelWeight(inputs, family))}
+						value={inputs.weights[family] ?? null}
+						placeholder={String(Math.round(modelWeight(inputs, family)))}
 						invalid={invalid.includes(shareField(family))}
 						errorId={errorId(family)}
 						onChange={(entry) => onEntry(shareField(family), entry)}

@@ -118,4 +118,44 @@ describe("PlanFitSection, answered by a visitor", () => {
 			),
 		).toBeTruthy();
 	});
+
+	describe("a model share", () => {
+		const shareField = (name: RegExp) =>
+			screen.getByRole("spinbutton", { name });
+
+		/** The models question with Opus and Fable both picked. */
+		async function openShares() {
+			const section = mountSection();
+			await section.user.click(press("Fable 5.2"));
+			return section;
+		}
+
+		it("takes a tiny share as typed and finishes with that weight", async () => {
+			const { lastWritten, user } = await openShares();
+			const fable = shareField(/Fable 5.2/);
+			await user.clear(fable);
+			await user.type(fable, "0.04");
+
+			expect(fable).toHaveProperty("value", "0.04");
+			expect(fable.getAttribute("aria-invalid")).toBeNull();
+			await user.click(press("Next"));
+			await user.click(press("Next"));
+			await user.click(press("See my plan"));
+			expect(lastWritten().weights).toEqual({ "claude-fable-5-2": 0.04 });
+		});
+
+		it("keeps a typed 0 in sight, with the error, and blocks finishing", async () => {
+			const { onChange, user } = await openShares();
+			const fable = shareField(/Fable 5.2/);
+			await user.clear(fable);
+			await user.type(fable, "0");
+
+			expect(fable).toHaveProperty("value", "0");
+			expect(fable.getAttribute("aria-invalid")).toBe("true");
+			expect(screen.getByRole("alert").textContent).toContain("above 0%");
+			await user.click(press("Next"));
+			expect(screen.getByText("1 of 3")).toBeTruthy();
+			expect(onChange).not.toHaveBeenCalled();
+		});
+	});
 });
