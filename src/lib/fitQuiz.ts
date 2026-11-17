@@ -118,16 +118,28 @@ function entryPatch(
 	return { weights: { ...draft.weights, [family]: value } };
 }
 
+/** A share as the field shows it, to one decimal place. */
+export function roundShare(percent: number): number {
+	return Math.round(percent * 10) / 10;
+}
+
+/** A share entry as stored: rounded as shown, and invalid if that leaves 0%. */
+function shareEntry(field: QuizField, entry: FieldEntry): FieldEntry {
+	if (!field.startsWith(SHARE_PREFIX) || entry.kind !== "number") return entry;
+	const value = roundShare(entry.value);
+	return value > 0 ? { kind: "number", value } : { kind: "invalid" };
+}
+
 /**
- * The progress after a number typed into `field`. A number is the answer; a
- * blank budget means no budget; anything else leaves the draft as it was and
- * marks the field, so what the draft holds is never a value the visitor can't see.
+ * A number is the answer; a blank budget means none. Other text keeps the last
+ * valid value and marks the field invalid, which blocks submitting.
  */
 export function entered(
 	screen: QuestionScreen,
 	field: QuizField,
-	entry: FieldEntry,
+	typed: FieldEntry,
 ): QuizProgress {
+	const entry = shareEntry(field, typed);
 	const others = screen.invalid.filter((f) => f !== field);
 	const blankBudget = entry.kind === "blank" && field === "budget";
 	const rejected = entry.kind !== "number" && !blankBudget;

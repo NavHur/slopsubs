@@ -23,6 +23,20 @@ function question(screen: QuizScreen): Question {
 }
 
 describe("the plan-fit quiz", () => {
+	it("stores a share as it shows it, and won't take one that shows as 0%", () => {
+		const draft = { models: ["claude-opus-5-5", "claude-fable-5-2"] };
+		const at = (value: number) =>
+			entered(
+				question(quizScreen(undefined, { step: 0, draft, invalid: [] })),
+				shareField("claude-fable-5-2"),
+				{ kind: "number", value },
+			);
+		expect(at(33.33).draft.weights).toEqual({ "claude-fable-5-2": 33.3 });
+		const tiny = at(0.04);
+		expect(tiny.draft.weights).toBeUndefined();
+		expect(tiny.invalid).toEqual([shareField("claude-fable-5-2")]);
+	});
+
 	it("starts at the first question with no answers in the URL", () => {
 		expect(quizScreen(undefined, null)).toEqual({
 			kind: "question",

@@ -35,7 +35,7 @@ export const FIT_EFFORTS = [
 	"max",
 ] as const satisfies readonly Effort[];
 
-/** An effort as the quiz and the benchmarks' effort labels name it. */
+/** The quiz's own effort labels: reasoning off reads "Non-reasoning". */
 export function effortLabel(effort: Effort): string {
 	if (effort === "none") return "Non-reasoning";
 	return effort === "xhigh"

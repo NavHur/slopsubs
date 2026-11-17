@@ -127,6 +127,14 @@ describe("PlanFitSection", () => {
 		expect(questionHtml(screen(2, {}))).not.toContain('aria-invalid="true"');
 	});
 
+	it("wraps the effort choices at phone width, and no other control", () => {
+		const usage = questionHtml(screen(1, { unit: "tasks" }));
+		const fieldset = (name: string) =>
+			usage.match(new RegExp(`<fieldset aria-label="${name}"[^>]*>`))?.[0];
+		expect(fieldset("Reasoning effort")).toContain("flex-wrap");
+		expect(fieldset("Usage unit")).not.toContain("flex-wrap");
+	});
+
 	it("says how far short the closest plan falls", () => {
 		expect(text({ amount: 5000 })).toMatch(
 			/comes closest, at \d+% of it and \$[\d,]+ a month short\./,
