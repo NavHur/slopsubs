@@ -1,3 +1,4 @@
+import type { Plan } from "#/domain/model";
 import type {
 	PlanFit,
 	PlanGap,
@@ -150,17 +151,28 @@ function gapText(gaps: readonly PlanGap[]): string[] {
 	const byReason = Map.groupBy(gaps, (g) => `${g.gap}:${g.family}`);
 	return [...byReason.values()].map((group) => {
 		const { family, gap } = group[0];
-		const plans = group.map((g) => g.plan.label).join(", ");
+		const plans = planList(group.map((g) => g.plan));
 		return gap === "model"
 			? `Doesn't include ${familyName(family)}: ${plans}.`
 			: `Doesn't serve ${familyName(family)} at this effort: ${plans}.`;
 	});
 }
 
-function labelled(prefix: string, plans: Ranked["unsized"]): string[] {
-	return plans.length > 0
-		? [`${prefix}: ${plans.map((p) => p.label).join(", ")}.`]
-		: [];
+/**
+ * Plans named briefly: a vendor's several plans as "Codex (4 plans)", a lone
+ * one by its own label, so a list across every vendor stays readable.
+ */
+function planList(plans: readonly Plan[]): string {
+	const byVendor = Map.groupBy(plans, (plan) => plan.vendor);
+	return [...byVendor]
+		.map(([vendor, group]) =>
+			group.length > 1 ? `${vendor} (${group.length} plans)` : group[0].label,
+		)
+		.join(", ");
+}
+
+function labelled(prefix: string, plans: readonly Plan[]): string[] {
+	return plans.length > 0 ? [`${prefix}: ${planList(plans)}.`] : [];
 }
 
 /** Plans the ranking leaves out, and why. */

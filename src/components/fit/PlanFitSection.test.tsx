@@ -49,7 +49,13 @@ describe("PlanFitSection", () => {
 		const fable = text({ models: ["claude-fable-5-2"], amount: 500 });
 		expect(fable).toContain("Claude Ultra fits with");
 		expect(fable).toMatch(/Too small for this week Claude Max .* covered/);
-		expect(fable).toContain("Doesn't include Fable 5.2: Claude Pro");
+		expect(fable).toContain("Doesn't include Fable 5.2: Claude Pro,");
+	});
+
+	it("sets aside a vendor's several plans under the vendor's name", () => {
+		const opus = text({ amount: 250 });
+		expect(opus).toContain("Codex (4 plans)");
+		expect(opus).not.toContain("ChatGPT Pro 200");
 	});
 
 	it("says when no single plan covers the week", () => {
