@@ -10,7 +10,6 @@ import {
 	AaEvalsDataset,
 	AllowanceKind,
 	BenchmarkDataset,
-	type BenchmarkPoint,
 	ChartData,
 	FrontierCodeDataset,
 	Plans,
@@ -340,9 +339,11 @@ await writeFile(
 	`${JSON.stringify(plans, null, 2)}\n`,
 );
 
-// The site ships only the benchmark points some plan covers.
+// The site ships only the benchmark points some plan covers. Leaderboard rows
+// are filtered before they are resolved, since the catalog need not know an
+// uncovered family or its effort.
 const covered = new Set<string>(plans.flatMap((p) => p.families));
-const onPlans = (points: BenchmarkPoint[]) =>
+const onPlans = <T extends { family: string }>(points: readonly T[]) =>
 	points.filter((m) => covered.has(m.family));
 const frontierCode = FrontierCodeDataset.parse(
 	await readJson("src/data/frontiercode.json"),
@@ -350,7 +351,7 @@ const frontierCode = FrontierCodeDataset.parse(
 const aaEvals = AaEvalsDataset.parse(await readJson("src/data/aa-evals.json"));
 const evalBoard = (evalSlug: AaEvalId) => ({
 	fetchedAt: aaEvals.fetchedAt,
-	models: onPlans(evalPoints(aaEvals.rows, models, evalSlug)),
+	models: evalPoints(onPlans(aaEvals.rows), models, evalSlug),
 });
 const evalBoards = Object.fromEntries(
 	AA_EVAL_IDS.map((id) => [id, evalBoard(id)]),
@@ -361,7 +362,7 @@ const chart = ChartData.parse({
 		intelligence: { fetchedAt: dataset.fetchedAt, models: onPlans(models) },
 		frontiercode: {
 			fetchedAt: frontierCode.fetchedAt,
-			models: onPlans(frontierCodePoints(frontierCode.rows, models)),
+			models: frontierCodePoints(onPlans(frontierCode.rows), models),
 		},
 		...evalBoards,
 	},
