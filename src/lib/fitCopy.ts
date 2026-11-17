@@ -64,11 +64,20 @@ function noPlanSubject(budgetUsd: number | null): string {
 		: `No plan within your ${formatUsd(budgetUsd)} budget`;
 }
 
+/**
+ * The over-budget plan the headline names when nothing within the budget fits,
+ * with the budget it breaks; null when the headline names no such plan.
+ */
+export function namedOverBudget(result: Ranked): Ranked["cheapestOverBudget"] {
+	return result.fits.length === 0 ? result.cheapestOverBudget : null;
+}
+
 /** The headline when no plan within the budget covers the week. */
 function nothingFitsHeadline(result: Ranked): string {
-	const { cheapestOverBudget, monthlyBudgetUsd } = result;
-	if (cheapestOverBudget) {
-		const { budgetUsd, fit } = cheapestOverBudget;
+	const { monthlyBudgetUsd } = result;
+	const named = namedOverBudget(result);
+	if (named) {
+		const { budgetUsd, fit } = named;
 		return `${noPlanSubject(budgetUsd)} covers this week. ${fit.plan.label} does, at ${formatUsd(fit.plan.monthlyPriceUsd)} a month.`;
 	}
 	const [closest] = result.short;
@@ -91,10 +100,10 @@ export function verdictHeadline(result: Ranked): string {
 }
 
 /**
- * The per-token baseline under the verdict, with where the cheaper side
- * changes: "Paying per token would cost about $1,083 a month, and is cheaper
- * below about $4.62 of API usage a week." When the verdict already says paying
- * per token wins, it gives the usage above which a plan starts to pay off.
+ * The per-token baseline under the verdict, with where the cheaper side next
+ * changes: "Paying per token would cost about $1,083 a month; it would win if
+ * your usage fell to about $4.62 of API usage a week." When the verdict already
+ * says paying per token wins, it gives the usage above which a plan pays off.
  */
 export function baselineLine(
 	result: Ranked,
@@ -115,7 +124,7 @@ export function baselineLine(
 	}
 	const perMonth = `Paying per token would cost about ${formatUsd(result.apiUsdPerMonth)} a month`;
 	return amount
-		? `${perMonth}, and is cheaper below about ${amount} a week.`
+		? `${perMonth}; it would win if your usage fell to about ${amount} a week.`
 		: `${perMonth}.`;
 }
 

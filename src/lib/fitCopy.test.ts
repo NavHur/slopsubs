@@ -75,7 +75,7 @@ describe("the verdict and the baseline", () => {
 				result.apiCheaper ? "Paying per token is cheaper" : "fits with",
 			);
 			expect(baselineLine(result, inputs, BENCHMARK)).toContain(
-				result.apiCheaper ? "pay off above" : "cheaper below",
+				result.apiCheaper ? "pay off above" : "it would win if your usage fell",
 			);
 		},
 	);
@@ -88,9 +88,10 @@ describe("the verdict and the baseline", () => {
 	});
 });
 
-/** Whether the cheapest plan that fits costs less than paying per token. */
+/** A quiz week with its amount set, so it can be scaled to probe others. */
 type Week = FitSearch & { amount: number };
 
+/** Whether the cheapest plan that fits costs less than paying per token. */
 function planWinsAt(fit: Week, scale: number) {
 	const { result } = answer({ ...fit, amount: fit.amount * scale });
 	return result.fits.length > 0 && !result.apiCheaper;
@@ -156,8 +157,32 @@ describe("the quoted crossing", () => {
 		const line = baselineLine(result, inputs, BENCHMARK);
 		expect(result.apiCheaper).toBe(false);
 		expect(line).toMatch(
-			/cheaper below about \d\.?\d* Intelligence Index tasks/,
+			/it would win if your usage fell to about \d\.?\d* Intelligence Index tasks a week\.$/,
 		);
+	});
+
+	it("doesn't call the API cheaper at every lower week when bands are disjoint", () => {
+		const terraAt = (amount: number): Week => ({
+			models: [terra],
+			unit: "tasks",
+			amount,
+			effort: "high",
+		});
+		// Plans win at 10 and at 20 tasks, the API in between.
+		expect([10, 14, 20].map((n) => planWinsAt(terraAt(n), 1))).toEqual([
+			true,
+			false,
+			true,
+		]);
+		const { inputs, result } = answer(terraAt(20));
+		const line = baselineLine(result, inputs, BENCHMARK);
+		expect(line).toMatch(
+			/^Paying per token would cost about \$\d+(\.\d+)? a month; /,
+		);
+		expect(line).toMatch(
+			/it would win if your usage fell to about 1[5-9](\.\d)? Intelligence Index tasks a week\.$/,
+		);
+		expect(line).not.toContain("cheaper below");
 	});
 
 	it("tells a light non-reasoning Terra week a plan pays off near 11 tasks", () => {

@@ -221,6 +221,24 @@ describe("recommendPlans", () => {
 			expect(result.apiCheaper).toBe(true);
 			expect(result.breakEvenScale).toBeNull();
 		});
+
+		it("quotes nothing for a tiny week whose plan's cap runs out before its price pays off", () => {
+			// The cap ends at 1e13 times this week, past 2^40 but short of the
+			// 2.3e13 where $10 a month pays off.
+			const thin = plan("thin", {
+				monthlyPriceUsd: 10,
+				reportedCap: reported({ [opus]: 1 }),
+			});
+			const result = ranked(recommend([thin], apiUsd(1e-13, [opus])));
+			expect(result.apiCheaper).toBe(true);
+			expect(result.breakEvenScale).toBeNull();
+		});
+
+		it("still quotes a tiny week's crossing when the cap outlasts it", () => {
+			const result = ranked(recommend([pro], apiUsd(1e-13, [opus])));
+			// $20 a month is $4.62 a week of API usage, 4.6e13 times this week.
+			expect(result.breakEvenScale).toBeCloseTo(4.615e13, -11);
+		});
 	});
 
 	it("holds Fable to half of Max's weekly limit while Opus fits", () => {

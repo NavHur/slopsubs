@@ -95,4 +95,12 @@ describe("FitResults promotions", () => {
 		expect(withPromo).toContain("https://example.com/model-pricing");
 		expect(html(overBudget([opus]), search)).not.toContain("Promo");
 	});
+
+	it("leaves out an over-budget plan's promotion when a plan in budget fits", () => {
+		const result = ranked({
+			fits: [fit([opus])],
+			cheapestOverBudget: { budgetUsd: 10, fit: fit([argon]) },
+		});
+		expect(html(result, { budget: 10 })).not.toContain("Promo");
+	});
 });

@@ -11,6 +11,7 @@ import {
 	baselineLine,
 	fitDetail,
 	formatShare,
+	namedOverBudget,
 	shortDetail,
 	unpricedLine,
 	verdictHeadline,
@@ -59,7 +60,7 @@ function RankedResults({
 	benchmarkName: string;
 }) {
 	const baseline = baselineLine(result, inputs, benchmarkName);
-	const { fits, cheapestOverBudget } = result;
+	const overBudget = namedOverBudget(result);
 	return (
 		<>
 			<div className="max-w-[72ch]">
@@ -69,17 +70,21 @@ function RankedResults({
 				{baseline && (
 					<p className="mt-1 text-[13px] leading-5 text-muted">{baseline}</p>
 				)}
-				{fits.length === 0 && cheapestOverBudget && (
+				{overBudget && (
 					<div className="mt-1 grid">
 						<PlanPromotions
-							plan={cheapestOverBudget.fit.plan}
-							families={cheapestOverBudget.fit.families}
+							plan={overBudget.fit.plan}
+							families={overBudget.fit.families}
 						/>
 					</div>
 				)}
 			</div>
-			{fits.length > 0 && (
-				<FitList fits={fits} any={inputs.any} apiCheaper={result.apiCheaper} />
+			{result.fits.length > 0 && (
+				<FitList
+					fits={result.fits}
+					any={inputs.any}
+					apiCheaper={result.apiCheaper}
+				/>
 			)}
 			{result.short.length > 0 && (
 				<ShortList short={result.short} any={inputs.any} />

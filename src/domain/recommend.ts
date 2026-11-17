@@ -309,14 +309,15 @@ function payOffRanges(
 	fitsAt: (plan: SizedPlan, scale: number) => boolean,
 	apiUsdPerMonth: number,
 ): PayOffRange[] {
-	return plans
-		.map((p) => ({
-			from: p.plan.monthlyPriceUsd / apiUsdPerMonth,
-			to: largestFittingScale((scale) => fitsAt(p, scale)),
-		}))
-		.filter(
-			({ from, to }) => Number.isFinite(from) && to > from * (1 + TIE_MARGIN),
+	return plans.flatMap((p) => {
+		const from = p.plan.monthlyPriceUsd / apiUsdPerMonth;
+		if (!Number.isFinite(from)) return [];
+		const to = largestFittingScale(
+			(scale) => fitsAt(p, scale),
+			Math.max(MAX_SCALE, 2 * from),
 		);
+		return to > from * (1 + TIE_MARGIN) ? [{ from, to }] : [];
+	});
 }
 
 const MAX_SCALE = 2 ** 40;
@@ -324,14 +325,17 @@ const BISECTIONS = 60;
 
 /**
  * The most the week can grow and still fit: a plan fits up to some multiple of
- * it. Infinity when it never runs out, -Infinity when it never fits.
+ * it. Infinity when it still fits at `limit`, -Infinity when it never fits.
  */
-function largestFittingScale(fitsAt: (scale: number) => boolean): number {
+function largestFittingScale(
+	fitsAt: (scale: number) => boolean,
+	limit: number,
+): number {
 	if (!fitsAt(0)) return -Infinity;
 	let lo = 0;
 	let hi = 1;
 	while (fitsAt(hi)) {
-		if (hi >= MAX_SCALE) return Infinity;
+		if (hi >= limit) return Infinity;
 		lo = hi;
 		hi *= 2;
 	}
