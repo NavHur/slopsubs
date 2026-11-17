@@ -4,7 +4,12 @@
 import type { ReportedCap } from "../src/domain/model.ts";
 
 /** A vendor's family of tiers priced as multiples of one base tier. */
-export type Ladder = "claude" | "google-ai" | "minimax-m" | "x-subscription";
+export type Ladder =
+	| "claude"
+	| "google-ai"
+	| "minimax-m"
+	| "muse-code"
+	| "x-subscription";
 
 /** A plan's usage as a multiple of its ladder's base tier, per the vendor. */
 export type Tier = { ladder: Ladder; times: number };

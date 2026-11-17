@@ -22,6 +22,7 @@ import { CLAUDE_ULTRA } from "./claude-caps.ts";
 import { creditAllowance, creditPromotions } from "./credit-plans.ts";
 import { CREDIT_PLANS } from "./credit-vendors.ts";
 import { listPriced, type TokenRates } from "./list-price.ts";
+import { MUSE_EVERYDAY } from "./muse-caps.ts";
 import { OPENCODE_GO_USD, PLAN_FAMILIES } from "./plan-families.ts";
 import { type KnownTier, type Ladder, ladderCap } from "./tier-ladder.ts";
 import { WEEKLY_CREDIT_PLANS, weeklyCreditCap } from "./weekly-credit-caps.ts";
@@ -79,6 +80,7 @@ const PUBLISHED_ALLOWANCES: Record<string, 0 | 1> = {
  * ladder without one ships its plans unmeasured. */
 const KNOWN_TIERS: Partial<Record<Ladder, KnownTier>> = {
 	claude: CLAUDE_ULTRA,
+	"muse-code": MUSE_EVERYDAY,
 };
 
 // Theo (t3.gg), "OpenAI is getting desperate", 2026-11-02, 5:08: "on the $500
