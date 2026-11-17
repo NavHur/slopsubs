@@ -58,8 +58,12 @@ A scheduled agent runs it twice a day (every 12 hours), in this order:
    the PR body.
 2. If the run failed, open or update the "Data refresh failing" issue with the
    failing step, the tail of its output, the run's UTC time and the
-   `origin/main` commit it ran on, and stop. A failure in any later step
-   (4 to 6) counts the same: name that step and stop.
+   `origin/main` commit it ran on. Then hand-patch the data from the live
+   sources as [`docs/agents/data-refresh.md`](docs/agents/data-refresh.md)
+   describes, keeping the last good rows the scripts could not refresh and
+   listing them as stale in the PR body, and continue from step 4. Stop only
+   where that runbook says to. A failure in any later step (4 to 6) is
+   reported the same way: name that step.
 3. A clean tree means nothing changed: close any open refresh PR, close the
    failure issue (comment "No data changed" and the run's UTC time, then close
    it), and stop.
@@ -87,25 +91,32 @@ maintainer reviews and merges the PR.
 [Artificial Analysis](https://artificialanalysis.ai) is the source of the
 model list, Intelligence Index scores, list prices and release dates, and the
 cost, tokens and time per task for the models it has run. `import-benchmarks`
-reads all of them from an AA model page's flight payload; no API key is
-needed. Slopalytics supplies the catalog and fills any point the website
-doesn't cover. A score they disagree on stops the import; a price they disagree
+reads all of them from AA model pages' flight payloads; no API key is needed.
+A model page embeds full records only for its own release's variants and a few
+dozen others, so the import fetches one page per plan-covered family and joins
+them; two pages that read one model differently stop the import. Slopalytics
+supplies the catalog and fills any point the website doesn't cover. A covered
+catalog point AA does not list stops the import; an uncovered one is left out
+and logged. A score they disagree on stops the import; a price they disagree
 on only warns, since a promo can explain the gap, and AA's list price wins.
 When AA says it regraded a benchmark, `--allow-score-drift` turns a gap of up
 to 1.5 points into a warning so the refresh can proceed before slopalytics
 catches up. AA's time per task is decode time, excluding TTFT and overhead.
 
 The nine Intelligence Index evals (Terminal-Bench 4.0, FrontierCode 2.0 and
-seven others) come from the same AA page. `import-aa-evals` fetches a
-model page, reconstructs its Next.js flight payload, and extracts each model's
-per-eval score, cost, tokens and time into `src/data/aa-evals.json`, resolved
-against the catalog (unknown families/efforts are skipped with a log; ambiguous
-ones stop the import). A family the catalog has only as `default` takes the
-website's row when the site lists it at one effort, and the log names it.
+seven others) come from the same AA pages. `import-aa-evals` reads each
+model's per-eval scores from its record's named fields, resolved against the
+catalog (unknown families/efforts are skipped with a log; ambiguous ones stop
+the import). A family the catalog has only as `default` takes the website's
+row when the site lists it at one effort, and the log names it. AA's model
+pages no longer carry per-eval cost, tokens or time, so the import writes the
+fresh scores to `$TMPDIR/slopsubs-aa-eval-scores.json` and stops without
+touching `src/data/aa-evals.json`; the refresh runbook merges them into the
+committed rows.
 
 Each script takes cached input for offline runs: `import-benchmarks` accepts
-`--bundle <bundle.js>` and `--html <page.html>`, and
-`import-aa-evals` accepts `--html <page.html>`. `import-frontiercode` has no flags.
+`--bundle <bundle.js>`, and both AA importers accept `--html <page.html>`,
+once per cached model page. `import-frontiercode` has no flags.
 
 AA's cost, tokens and time per task, from the same model page `import-aa-evals`
 reads, win over slopalytics' whenever AA has them; slopalytics supplies the
@@ -119,6 +130,11 @@ catalog model that neither source costed ships a null cost without a warning.
 FrontierCode 2.0 comes from Cognition's own `data.json`, not a reseller.
 `build-plans` then keeps only the points some plan covers and writes the
 chart's copy.
+
+When a script breaks on a source's new layout, the scheduled agent reads the
+source in the browser and hand-patches the data instead:
+[`docs/agents/data-refresh.md`](docs/agents/data-refresh.md) maps each source
+to the fields it feeds and lists the known failure modes.
 
 The site imports three files without parsing them: `plans.json` and
 `chart-benchmarks.json` (parsed by `build-plans` before it writes them) and
