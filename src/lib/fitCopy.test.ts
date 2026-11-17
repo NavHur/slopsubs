@@ -42,6 +42,21 @@ describe("verdictHeadline", () => {
 		);
 	});
 
+	it("says a $1 budget leaves no plan, not that none can be sized", () => {
+		const { result } = answer({ models: [fable], amount: 500, budget: 1 });
+		expect(verdictHeadline(result)).toBe(
+			"No plan within your $1 budget covers this week. Claude Ultra does, at $200 a month.",
+		);
+	});
+
+	it("qualifies the closest plan as within the budget", () => {
+		const { result } = answer({ models: [fable], amount: 50_000, budget: 20 });
+		expect(result.cheapestOverBudget).toBeNull();
+		expect(verdictHeadline(result)).toMatch(
+			/^No plan within your \$20 budget covers this week\. .+ comes closest, at (?:<1|\d+)% of it and \$[\d,]+ a month short\.$/,
+		);
+	});
+
 	it("keeps saying no plan covers a week that is too big with no budget", () => {
 		const { result } = answer({ models: [fable], amount: 50_000 });
 		expect(verdictHeadline(result)).toMatch(/^No single plan covers this week/);
@@ -60,7 +75,7 @@ describe("the verdict and the baseline", () => {
 				result.apiCheaper ? "Paying per token is cheaper" : "fits with",
 			);
 			expect(baselineLine(result, inputs, BENCHMARK)).toContain(
-				result.apiCheaper ? "pay off above" : "cheaper only below",
+				result.apiCheaper ? "pay off above" : "cheaper below",
 			);
 		},
 	);
@@ -69,6 +84,87 @@ describe("the verdict and the baseline", () => {
 		const { inputs, result } = answer({ unit: "tasks", amount: 1 });
 		expect(baselineLine(result, inputs, BENCHMARK)).toBe(
 			"A plan starts to pay off above about 1.3 Intelligence Index tasks a week.",
+		);
+	});
+});
+
+/** Whether the cheapest plan that fits costs less than paying per token. */
+type Week = FitSearch & { amount: number };
+
+function planWinsAt(fit: Week, scale: number) {
+	const { result } = answer({ ...fit, amount: fit.amount * scale });
+	return result.fits.length > 0 && !result.apiCheaper;
+}
+
+/** Scales strictly between 1 and the quote, whichever is higher. */
+function between(scale: number): number[] {
+	return [0.1, 0.5, 0.9].map((part) => 1 + (scale - 1) * part);
+}
+
+/** Past the quote the other side wins; between it and the week, this side. */
+function expectSideChangesAt(fit: Week, scale: number) {
+	const now = planWinsAt(fit, 1);
+	const justPast = scale * (now ? 0.999 : 1.001);
+	expect(planWinsAt(fit, justPast)).toBe(!now);
+	for (const s of between(scale)) expect(planWinsAt(fit, s)).toBe(now);
+}
+
+describe("the quoted crossing", () => {
+	const week = (fit: Week) => fit;
+	const cases = [
+		[
+			"Terra at high effort, a plan already wins",
+			week({ models: [terra], unit: "tasks", amount: 10, effort: "high" }),
+		],
+		[
+			"Terra at high effort, paying per token wins",
+			week({ models: [terra], unit: "tasks", amount: 14, effort: "high" }),
+		],
+		[
+			"Terra with reasoning off, per token wins",
+			week({ models: [terra], unit: "tasks", amount: 10, effort: "none" }),
+		],
+		[
+			"Terra with reasoning off, a plan wins",
+			week({ models: [terra], unit: "tasks", amount: 13, effort: "none" }),
+		],
+		[
+			"a light Fable week",
+			week({ models: [fable], unit: "apiUsd", amount: 1 }),
+		],
+		[
+			"a Fable week a plan covers",
+			week({ models: [fable], unit: "apiUsd", amount: 9.3 }),
+		],
+		["the default Opus week", week({ amount: 250 })],
+		["a light Opus week", week({ unit: "apiUsd", amount: 3 })],
+	] as const;
+
+	it.each(cases)("sits on the far side of the visitor's week: %s", (_, fit) => {
+		const { result } = answer(fit);
+		const scale = result.breakEvenScale ?? (result.apiCheaper ? 2 : 0.5);
+		expect(result.apiCheaper ? scale > 1 : scale <= 1).toBe(true);
+	});
+
+	it.each(cases)("is where the cheaper side changes: %s", (_, fit) => {
+		const scale = answer(fit).result.breakEvenScale;
+		if (scale !== null) expectSideChangesAt(fit, scale);
+	});
+
+	it("puts Terra's light week on the plan side of the quote", () => {
+		const { inputs, result } = answer(cases[0][1]);
+		const line = baselineLine(result, inputs, BENCHMARK);
+		expect(result.apiCheaper).toBe(false);
+		expect(line).toMatch(
+			/cheaper below about \d\.?\d* Intelligence Index tasks/,
+		);
+	});
+
+	it("tells a light non-reasoning Terra week a plan pays off near 11 tasks", () => {
+		const { inputs, result } = answer(cases[2][1]);
+		expect(result.apiCheaper).toBe(true);
+		expect(baselineLine(result, inputs, BENCHMARK)).toMatch(
+			/^A plan starts to pay off above about 1[01](\.\d)? Intelligence Index tasks a week\.$/,
 		);
 	});
 });

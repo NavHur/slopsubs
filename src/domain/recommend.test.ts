@@ -58,6 +58,18 @@ const max = plan("max", {
 	weeklyShareByFamily: { [fable]: 0.5 },
 });
 
+/** $10 a month, but only $6 a week of Opus: it runs out before Pro does. */
+const small = plan("small", {
+	monthlyPriceUsd: 10,
+	reportedCap: reported({ [opus]: 6 }),
+});
+
+/** $40 a month, $300 a week of Opus: a dearer plan that outlasts the small one. */
+const big = plan("big", {
+	monthlyPriceUsd: 40,
+	reportedCap: reported({ [opus]: 300 }),
+});
+
 function point(family: FamilyId, costPerTaskUsd: number): BenchmarkPoint {
 	return {
 		id: `${family}-high`,
@@ -149,14 +161,66 @@ describe("recommendPlans", () => {
 
 	it("quotes the last usage at which paying per token still wins", () => {
 		// $5 a month covers only $2 a week, so Pro is the plan for $3 a week.
-		const small = plan("small", {
+		const tiny = plan("tiny", {
 			monthlyPriceUsd: 5,
 			reportedCap: reported({ [opus]: 2 }),
 		});
-		const result = ranked(recommend([small, pro], apiUsd(3, [opus])));
+		const result = ranked(recommend([tiny, pro], apiUsd(3, [opus])));
 		// $13 a month of API beats Pro's $20, and still does up to Pro's $4.62.
 		expect(result.apiCheaper).toBe(true);
 		expect((result.breakEvenScale ?? 0) * 3).toBeCloseTo(4.615, 2);
+	});
+
+	describe("where a plan starts to pay off", () => {
+		// Opus costs $2 a task; $10 a month is $2.31 of API usage a week, $40 is $9.23.
+		const quote = (week: number) => {
+			const result = ranked(recommend([small, big], apiUsd(week, [opus])));
+			return { result, at: (result.breakEvenScale ?? 0) * week };
+		};
+
+		it("quotes the next plan that pays off, not the last", () => {
+			const { result, at } = quote(1);
+			expect(result.apiCheaper).toBe(true);
+			expect(at).toBeCloseTo(2.31, 2);
+		});
+
+		it("quotes the dear plan once the cheap one has run out", () => {
+			const { result, at } = quote(7);
+			expect(result.fits.map((f) => f.plan.id)).toEqual(["big"]);
+			expect(result.apiCheaper).toBe(true);
+			expect(at).toBeCloseTo(9.23, 2);
+		});
+
+		it("quotes where the cheap plan's lead begins, not the dear plan's", () => {
+			const { result, at } = quote(4);
+			expect(result.fits[0].plan.id).toBe("small");
+			expect(result.apiCheaper).toBe(false);
+			expect(at).toBeCloseTo(2.31, 2);
+		});
+
+		it("follows a run of plans that hand over to each other", () => {
+			// Pro's $4.62 a week starts inside the small plan's $2.31 to $6 run.
+			const result = ranked(recommend([small, pro, big], apiUsd(10, [opus])));
+			expect(result.apiCheaper).toBe(false);
+			expect((result.breakEvenScale ?? 0) * 10).toBeCloseTo(2.31, 2);
+		});
+
+		it("quotes nothing when no plan fits the week", () => {
+			const result = ranked(recommend([small, big], apiUsd(5000, [opus])));
+			expect(result.fits).toEqual([]);
+			expect(result.breakEvenScale).toBeNull();
+		});
+
+		it("quotes nothing when no plan ever pays off", () => {
+			// $10 a month for $1 a week: its cap runs out before its price pays off.
+			const thin = plan("thin", {
+				monthlyPriceUsd: 10,
+				reportedCap: reported({ [opus]: 1 }),
+			});
+			const result = ranked(recommend([thin], apiUsd(0.5, [opus])));
+			expect(result.apiCheaper).toBe(true);
+			expect(result.breakEvenScale).toBeNull();
+		});
 	});
 
 	it("holds Fable to half of Max's weekly limit while Opus fits", () => {
@@ -258,6 +322,21 @@ describe("recommendPlans", () => {
 			budgetUsd: 10,
 			fit: { plan: { id: "max" } },
 		});
+	});
+
+	it("keeps the budget when no plan above it fits either", () => {
+		const result = ranked(
+			recommend([pro, max], { ...apiUsd(5000, [opus]), monthlyBudgetUsd: 50 }),
+		);
+		expect(result.cheapestOverBudget).toBeNull();
+		expect(result.monthlyBudgetUsd).toBe(50);
+		expect(result.short).toMatchObject([{ plan: { id: "pro" } }]);
+	});
+
+	it("has no budget to keep without one", () => {
+		expect(
+			ranked(recommend([pro], apiUsd(5, [opus]))).monthlyBudgetUsd,
+		).toBeNull();
 	});
 
 	it("offers no over-budget plan without a budget", () => {

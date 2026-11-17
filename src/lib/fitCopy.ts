@@ -57,17 +57,27 @@ export function answersSummary(
 	].join(" · ");
 }
 
+/** "No single plan", or "No plan within your $50 budget" when one is set. */
+function noPlanSubject(budgetUsd: number | null): string {
+	return budgetUsd === null
+		? "No single plan"
+		: `No plan within your ${formatUsd(budgetUsd)} budget`;
+}
+
 /** The headline when no plan within the budget covers the week. */
 function nothingFitsHeadline(result: Ranked): string {
-	const { cheapestOverBudget } = result;
+	const { cheapestOverBudget, monthlyBudgetUsd } = result;
 	if (cheapestOverBudget) {
 		const { budgetUsd, fit } = cheapestOverBudget;
-		return `No plan within your ${formatUsd(budgetUsd)} budget covers this week. ${fit.plan.label} does, at ${formatUsd(fit.plan.monthlyPriceUsd)} a month.`;
+		return `${noPlanSubject(budgetUsd)} covers this week. ${fit.plan.label} does, at ${formatUsd(fit.plan.monthlyPriceUsd)} a month.`;
 	}
 	const [closest] = result.short;
-	return closest
-		? `No single plan covers this week. ${closest.plan.label} comes closest, at ${formatShare(closest.coverage)} of it and ${formatUsd(closest.shortUsdPerMonth)} a month short.`
-		: "No plan we can size covers these models.";
+	if (closest) {
+		return `${noPlanSubject(monthlyBudgetUsd)} covers this week. ${closest.plan.label} comes closest, at ${formatShare(closest.coverage)} of it and ${formatUsd(closest.shortUsdPerMonth)} a month short.`;
+	}
+	return monthlyBudgetUsd === null
+		? "No plan we can size covers these models."
+		: `${noPlanSubject(monthlyBudgetUsd)} covers these models.`;
 }
 
 /** The section's one-line answer. */
@@ -81,10 +91,10 @@ export function verdictHeadline(result: Ranked): string {
 }
 
 /**
- * The per-token baseline under the verdict, with where it and the plans
- * cross: "Paying per token would cost about $1,083 a month, and is cheaper
- * only below about $4.62 of API usage a week." When the verdict already says
- * paying per token wins, it gives the usage a plan starts to pay off at.
+ * The per-token baseline under the verdict, with where the cheaper side
+ * changes: "Paying per token would cost about $1,083 a month, and is cheaper
+ * below about $4.62 of API usage a week." When the verdict already says paying
+ * per token wins, it gives the usage above which a plan starts to pay off.
  */
 export function baselineLine(
 	result: Ranked,
@@ -105,7 +115,7 @@ export function baselineLine(
 	}
 	const perMonth = `Paying per token would cost about ${formatUsd(result.apiUsdPerMonth)} a month`;
 	return amount
-		? `${perMonth}, and is cheaper only below about ${amount} a week.`
+		? `${perMonth}, and is cheaper below about ${amount} a week.`
 		: `${perMonth}.`;
 }
 

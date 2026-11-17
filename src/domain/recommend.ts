@@ -55,12 +55,15 @@ export type Recommendation =
 			/** Whether paying per token costs less than the cheapest plan that fits. */
 			apiCheaper: boolean;
 			/**
-			 * The multiple of this week's usage at which paying per token last stops
-			 * being cheaper than the plans that cover it; null when no plan fits.
+			 * The multiple of this week's usage where the side now cheaper changes:
+			 * the next above 1 where a plan starts to pay off, or the one below where
+			 * paying per token wins. Null when no plan fits or no such multiple exists.
 			 */
 			breakEvenScale: number | null;
 			/** Cheapest first. */
 			fits: PlanFit[];
+			/** The budget plans were held to, or null for none. */
+			monthlyBudgetUsd: number | null;
 			/**
 			 * The cheapest plan above the budget that still fits, with the budget it
 			 * breaks; null with no budget or when none fits.
@@ -109,13 +112,21 @@ export function recommendPlans({
 	const [overBudgetFit] = cheapestFirst(verdictsOf(overBudget));
 	const apiUsdPerMonth =
 		Math.min(...options.map(weeklyTotal)) * WEEKS_PER_MONTH;
+	const apiCheaper =
+		fits.length > 0 && apiUsdPerMonth < fits[0].plan.monthlyPriceUsd;
+	const fitsAt = (p: SizedPlan, scale: number) =>
+		bestVerdict(p, options, effort, scale).kind === "fits";
 	return {
 		kind: "ranked",
 		apiUsdPerMonth,
-		apiCheaper:
-			fits.length > 0 && apiUsdPerMonth < fits[0].plan.monthlyPriceUsd,
-		breakEvenScale: breakEvenScale(inBudget, options, effort, apiUsdPerMonth),
+		apiCheaper,
+		breakEvenScale: breakEvenScale({
+			ranges:
+				fits.length > 0 ? payOffRanges(inBudget, fitsAt, apiUsdPerMonth) : [],
+			apiCheaper,
+		}),
 		fits,
+		monthlyBudgetUsd: workload.monthlyBudgetUsd,
 		cheapestOverBudget: overBudgetFit
 			? { budgetUsd: budget, fit: overBudgetFit }
 			: null,
@@ -286,27 +297,96 @@ function gapIn(
 	return aboveMax ? { plan, family, gap: "effort" } : null;
 }
 
-/**
- * The last usage multiple at which a plan starts to beat paying per token: a
- * plan's price over the API's, where that plan is the cheapest to still fit.
- * Below it the API wins until a plan fits and costs less.
- */
-function breakEvenScale(
+/** The usage multiples at which a plan costs no more than paying per token. */
+type PayOffRange = { from: number; to: number };
+
+/** A plan whose cap ends at its price's worth of usage ties; it never saves. */
+const TIE_MARGIN = 1e-9;
+
+/** Each plan's range: from its price's worth of API usage to where its cap runs out. */
+function payOffRanges(
 	plans: readonly SizedPlan[],
-	options: readonly Demand[],
-	effort: Effort | null,
+	fitsAt: (plan: SizedPlan, scale: number) => boolean,
 	apiUsdPerMonth: number,
-): number | null {
-	const cheapestFitUsd = (scale: number) =>
-		Math.min(
-			...plans
-				.filter((p) => bestVerdict(p, options, effort, scale).kind === "fits")
-				.map((p) => p.plan.monthlyPriceUsd),
+): PayOffRange[] {
+	return plans
+		.map((p) => ({
+			from: p.plan.monthlyPriceUsd / apiUsdPerMonth,
+			to: largestFittingScale((scale) => fitsAt(p, scale)),
+		}))
+		.filter(
+			({ from, to }) => Number.isFinite(from) && to > from * (1 + TIE_MARGIN),
 		);
-	const crossings = plans
-		.map((p) => ({ scale: p.plan.monthlyPriceUsd / apiUsdPerMonth, p }))
-		.filter(({ scale, p }) => cheapestFitUsd(scale) === p.plan.monthlyPriceUsd);
-	return crossings.length > 0
-		? Math.max(...crossings.map((c) => c.scale))
-		: null;
+}
+
+const MAX_SCALE = 2 ** 40;
+const BISECTIONS = 60;
+
+/**
+ * The most the week can grow and still fit: a plan fits up to some multiple of
+ * it. Infinity when it never runs out, -Infinity when it never fits.
+ */
+function largestFittingScale(fitsAt: (scale: number) => boolean): number {
+	if (!fitsAt(0)) return -Infinity;
+	let lo = 0;
+	let hi = 1;
+	while (fitsAt(hi)) {
+		if (hi >= MAX_SCALE) return Infinity;
+		lo = hi;
+		hi *= 2;
+	}
+	return bisectFit(fitsAt, lo, hi);
+}
+
+/** The edge between a scale that fits and one that doesn't, from above. */
+function bisectFit(
+	fitsAt: (scale: number) => boolean,
+	fits: number,
+	short: number,
+): number {
+	const [, edge] = Array.from({ length: BISECTIONS }).reduce<
+		readonly [number, number]
+	>(
+		([lo, hi]) => {
+			const mid = (lo + hi) / 2;
+			return fitsAt(mid) ? [mid, hi] : [lo, mid];
+		},
+		[fits, short],
+	);
+	return edge;
+}
+
+/**
+ * The edge of the run of usage around this week's (scale 1) that the cheaper
+ * side holds: the next scale where a plan starts to pay off if paying per
+ * token is cheaper now, else the scale below which paying per token wins.
+ */
+function breakEvenScale({
+	ranges,
+	apiCheaper,
+}: {
+	ranges: readonly PayOffRange[];
+	apiCheaper: boolean;
+}): number | null {
+	if (ranges.length === 0) return null;
+	return apiCheaper ? nextPayOff(ranges) : payOffStart(ranges);
+}
+
+function nextPayOff(ranges: readonly PayOffRange[]): number | null {
+	const starts = ranges.map((r) => r.from).filter((from) => from > 1);
+	return starts.length > 0 ? Math.min(...starts) : null;
+}
+
+/** Where the unbroken run of plans paying off that holds scale 1 begins. */
+function payOffStart(ranges: readonly PayOffRange[]): number | null {
+	let start = 1;
+	for (let next = lowestReaching(ranges, 1); next < start;) {
+		start = next;
+		next = lowestReaching(ranges, start);
+	}
+	return start > 0 ? start : null;
+}
+
+function lowestReaching(ranges: readonly PayOffRange[], at: number): number {
+	return Math.min(at, ...ranges.filter((r) => r.to >= at).map((r) => r.from));
 }
