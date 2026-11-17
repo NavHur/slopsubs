@@ -32,7 +32,8 @@ export function PlanFitSection({
 	onChange: (fit: FitSearch) => void;
 }) {
 	const [progress, setProgress] = useState<QuizProgress | null>(null);
-	const screen = quizScreen(fit, progress);
+	const [current, setFinished] = useFinishedFit(fit);
+	const screen = quizScreen(current, progress);
 	const benchmarkName = BENCHMARK_VIEWS[benchmark].tabLabel;
 	const titleRef = useRef<HTMLHeadingElement>(null);
 	// Between the quiz and its result the focused control goes away; the
@@ -44,6 +45,7 @@ export function PlanFitSection({
 	const next = (question: QuestionScreen) => {
 		const step = advanced(question);
 		if (step.kind === "finished") {
+			setFinished(step.fit);
 			onChange(step.fit);
 			show(null);
 		} else if (step.kind === "question") setProgress(step.progress);
@@ -71,7 +73,7 @@ export function PlanFitSection({
 				<QuizQuestion
 					screen={screen}
 					benchmarkName={benchmarkName}
-					backLabel={backLabel(screen, fit)}
+					backLabel={backLabel(screen, current)}
 					onAnswer={(patch) => setProgress(answered(screen, patch))}
 					onEntry={(field, entry) => setProgress(entered(screen, field, entry))}
 					onBack={() => back(screen)}
@@ -80,12 +82,27 @@ export function PlanFitSection({
 			) : (
 				<Answer
 					benchmark={benchmark}
-					fit={fit}
-					onChangeAnswers={() => show(restarted(fit))}
+					fit={current}
+					onChangeAnswers={() => show(restarted(current))}
 				/>
 			)}
 		</section>
 	);
+}
+
+/**
+ * The answers the section shows: those just finished until the URL's `fit`
+ * changes to carry them, then the URL's. The router writes the URL after the
+ * click, so without them the quiz would fall back to its first question.
+ */
+function useFinishedFit(fit: FitSearch | undefined) {
+	const [finished, setFinished] = useState<FitSearch | null>(null);
+	const [seen, setSeen] = useState(fit);
+	if (fit !== seen) {
+		setSeen(fit);
+		setFinished(null);
+	}
+	return [finished ?? fit, setFinished] as const;
 }
 
 /** Back on a first question leads to the result, if there is one. */

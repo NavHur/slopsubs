@@ -71,8 +71,15 @@ describe("PlanFitSection, answered by a visitor", () => {
 			budget: null,
 		});
 
-		// The URL write is what puts the result on screen.
+		// The router commits the write later: until then the quiz neither falls
+		// back to its first question nor lets focus drop to the page.
+		const title = screen.getByRole("heading", { name: "Which plan fits" });
+		expect(screen.queryByText("1 of 3")).toBeNull();
+		expect(screen.getByText(/Claude Ultra fits with/)).toBeTruthy();
+		expect(document.activeElement).toBe(title);
+
 		applyWrite();
+		expect(document.activeElement).toBe(title);
 		expect(screen.getByText(/Claude Ultra fits with/)).toBeTruthy();
 		expect(
 			screen.getByText("Fable 5.2 · $500 of API usage a week · no budget"),
