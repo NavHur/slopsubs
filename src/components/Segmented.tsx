@@ -3,14 +3,20 @@ export function Segmented<T extends string>({
 	options,
 	value,
 	onChange,
+	wrap = false,
 }: {
 	label: string;
 	options: readonly { value: T; label: string }[];
 	value: T;
 	onChange: (value: T) => void;
+	/** Lets the options fall onto more rows; off, they stay in one row for a ScrollRow. */
+	wrap?: boolean;
 }) {
 	return (
-		<fieldset aria-label={label} className="flex items-center gap-4">
+		<fieldset
+			aria-label={label}
+			className={`flex items-center gap-x-4 ${wrap ? "flex-wrap" : ""}`}
+		>
 			{options.map((option) => (
 				<button
 					key={option.value}

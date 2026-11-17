@@ -7,6 +7,7 @@ import { buildSeries, pricingStyles } from "#/components/chart/series";
 import { CapBasisKey, TasksChart } from "#/components/chart/TasksChart";
 import { ValueChart } from "#/components/chart/ValueChart";
 import { ChartSection } from "#/components/ChartSection";
+import { PlanFitSection } from "#/components/fit/PlanFitSection";
 import { ChartSettingsMenu, ThemeToggle } from "#/components/HeaderActions";
 import { ReasoningFilter } from "#/components/ModelFilters";
 import { PageFooter } from "#/components/PageFooter";
@@ -26,8 +27,10 @@ import { SCROLL_END_ID, useSectionNav } from "#/lib/useSectionNav";
 import {
 	CHART_SECTIONS,
 	type ChartSectionId,
+	type ChartView,
 	DEFAULT_MODELS_VIEW,
-	type DrawnView,
+	DEFAULT_VIEW,
+	FIT_ONLY_PARAMS,
 	hiddenReasoning,
 	isDefaultModelsView,
 	planToggled,
@@ -48,6 +51,7 @@ const BENCHMARK_OPTIONS = BENCHMARK_IDS.map((id) => ({
 }));
 
 const SECTION_LABELS: Record<ChartSectionId, string> = {
+	"plan-fit": "Which plan fits",
 	"cost-vs-score": "Cost vs score",
 	tradeoffs: "Cost, time, score",
 	"tasks-per-week": "Tasks per week",
@@ -92,9 +96,10 @@ function useViewUpdate() {
  * The chart links. They own the section in view and the URL's `chart`, so
  * scrolling into another section re-renders the links, not the charts.
  */
-function ChartNav({ view }: { view: DrawnView }) {
+function ChartNav({ view }: { view: ChartView }) {
 	// The URL's section, not the rendered one: the jump to it is set up on mount.
 	const linkedChart = Route.useSearch({ select: (search) => search.chart });
+	const fit = useRenderedFit();
 	const update = useViewUpdate();
 	const router = useRouter();
 	const nav = useSectionNav(CHART_SECTIONS, linkedChart, (chart) =>
@@ -103,7 +108,11 @@ function ChartNav({ view }: { view: DrawnView }) {
 	const sectionHref = (id: ChartSectionId) =>
 		router.buildLocation({
 			to: "/",
-			search: { ...view, chart: id === CHART_SECTIONS[0] ? undefined : id },
+			search: {
+				...view,
+				fit,
+				chart: id === CHART_SECTIONS[0] ? undefined : id,
+			},
 		}).href;
 	return (
 		<SectionNav
@@ -115,11 +124,40 @@ function ChartNav({ view }: { view: DrawnView }) {
 	);
 }
 
-/** The view without the scroll-only params, which only ChartNav follows. */
-function toDrawnView(search: ViewSearch): DrawnView {
+/**
+ * What the charts draw: no scroll-only or fit params, so changing them skips
+ * the charts and sidebar. ChartNav follows both, to keep fit in its links.
+ */
+function toChartView(search: ViewSearch): ChartView {
 	const view = { ...search };
-	for (const key of SCROLL_ONLY_PARAMS) delete view[key];
+	for (const key of [...SCROLL_ONLY_PARAMS, ...FIT_ONLY_PARAMS]) {
+		delete view[key];
+	}
 	return view;
+}
+
+/** The "Which plan fits" inputs to render; see useRenderedView. */
+function useRenderedFit() {
+	return useRenderedView(
+		Route.useSearch({
+			select: (search) => search.fit,
+			structuralSharing: true,
+		}),
+		DEFAULT_VIEW.fit,
+	);
+}
+
+/** The "Which plan fits" section, bound to the URL's `fit` param. */
+function LinkedPlanFit({ benchmark }: { benchmark: BenchmarkId }) {
+	const fit = useRenderedFit();
+	const update = useViewUpdate();
+	return (
+		<PlanFitSection
+			benchmark={benchmark}
+			fit={fit}
+			onChange={(next) => update({ fit: next })}
+		/>
+	);
 }
 
 /** Loaded on demand so visitors who never export skip the code. */
@@ -128,10 +166,11 @@ async function exporter() {
 }
 
 function ValueView() {
-	// Structural sharing keeps the selection's identity while only `chart`
-	// changes, so the charts and sidebar skip those renders.
+	// Structural sharing keeps the selection's identity while only `chart` or
+	// `fit` changes, so the charts and sidebar skip those renders.
 	const view = useRenderedView(
-		Route.useSearch({ select: toDrawnView, structuralSharing: true }),
+		Route.useSearch({ select: toChartView, structuralSharing: true }),
+		DEFAULT_VIEW,
 	);
 	const update = useViewUpdate();
 	const [panelOpen, setPanelOpen] = useState(false);
@@ -266,6 +305,7 @@ function ValueView() {
 							</ScrollRow>
 						</div>
 					</div>
+					<LinkedPlanFit benchmark={view.benchmark} />
 					<ChartSection
 						id="cost-vs-score"
 						title={benchmark.chartTitle}

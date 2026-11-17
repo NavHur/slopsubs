@@ -9,7 +9,7 @@ import type {
 	ReportedCap,
 } from "./model";
 
-const WEEKS_PER_MONTH = 52 / 12;
+export const WEEKS_PER_MONTH = 52 / 12;
 const FULL_GAUGE_PERCENT = 100;
 
 export type PlanCapacity =

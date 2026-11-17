@@ -2,6 +2,7 @@ import * as z from "zod/mini";
 import { frontier, plans } from "#/data";
 import { BENCHMARK_IDS } from "#/domain/enums";
 import type { Effort, FamilyId, Frontier, PlanId } from "#/domain/model";
+import { FitSearch } from "./fit";
 
 /** Reasoning efforts the Models panel can hide; "default" always shows. */
 export const REASONING_LEVELS = [
@@ -14,8 +15,9 @@ export const REASONING_LEVELS = [
 ] as const satisfies readonly Effort[];
 export type ReasoningLevel = (typeof REASONING_LEVELS)[number];
 
-/** The page's chart sections, top to bottom. */
+/** The page's sections, top to bottom. */
 export const CHART_SECTIONS = [
+	"plan-fit",
 	"cost-vs-score",
 	"tradeoffs",
 	"tasks-per-week",
@@ -86,6 +88,8 @@ export const ViewSearch = z.object({
 	plans: knownSelection<string>(plans.map((p) => p.id)),
 	families: knownSelection<string>(COVERED_FAMILIES),
 	hideReasoning: knownSelection(REASONING_LEVELS),
+	/** The "Which plan fits" inputs; see fit.ts. */
+	fit: optionalValid(FitSearch),
 	/** The section in view; unset is the top of the page. */
 	chart: optionalValid(z.enum(CHART_SECTIONS)),
 });
@@ -98,6 +102,14 @@ export const SCROLL_ONLY_PARAMS = [
 
 /** The view without the scroll-only params. */
 export type DrawnView = Omit<ViewSearch, (typeof SCROLL_ONLY_PARAMS)[number]>;
+
+/** Params only the "Which plan fits" section draws from. */
+export const FIT_ONLY_PARAMS = [
+	"fit",
+] as const satisfies readonly (keyof ViewSearch)[];
+
+/** What the charts draw from: the view without the section's inputs. */
+export type ChartView = Omit<DrawnView, (typeof FIT_ONLY_PARAMS)[number]>;
 
 /** The view of a link with no query string: the one the page is prerendered with. */
 export const DEFAULT_VIEW: ViewSearch = ViewSearch.parse({});

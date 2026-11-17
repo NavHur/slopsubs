@@ -16,6 +16,14 @@ const LINKS: { search: string; benchmark: string }[] = [
 		benchmark: "Intelligence Index",
 	},
 	{ search: "?benchmark=retired&scale=nope", benchmark: "Intelligence Index" },
+	{
+		search: '?fit={"models":["claude-fable-5-2"],"unit":"tasks","amount":40}',
+		benchmark: "Intelligence Index",
+	},
+	{
+		search: '?fit={"amount":"lots"}&chart=plan-fit',
+		benchmark: "Intelligence Index",
+	},
 ];
 
 const VIEWPORTS = [
