@@ -125,9 +125,8 @@ function ChartNav({ view }: { view: ChartView }) {
 }
 
 /**
- * What the charts draw: the view without the scroll-only params, which only
- * ChartNav follows, and the "Which plan fits" inputs, which only that section
- * draws, so editing them re-renders the section alone.
+ * What the charts draw: no scroll-only or fit params, so changing them skips
+ * the charts and sidebar. ChartNav follows both, to keep fit in its links.
  */
 function toChartView(search: ViewSearch): ChartView {
 	const view = { ...search };

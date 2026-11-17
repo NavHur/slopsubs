@@ -7,16 +7,15 @@ import { type FitSearch, fitInputs, fitWorkload, SIZED_PLANS } from "#/lib/fit";
 import {
 	advanced,
 	answered,
+	entered,
+	type QuestionScreen,
 	type QuizProgress,
-	type QuizScreen,
 	quizScreen,
 	restarted,
 	wentBack,
 } from "#/lib/fitQuiz";
 import { QuizQuestion } from "./QuizQuestion";
 import { QuizResult } from "./QuizResult";
-
-type Question = Extract<QuizScreen, { kind: "question" }>;
 
 /**
  * "Which plan fits": a three-question quiz about the visitor's week, then the
@@ -42,13 +41,14 @@ export function PlanFitSection({
 		setProgress(next);
 		titleRef.current?.focus({ preventScroll: true });
 	};
-	const next = (question: Question) => {
+	const next = (question: QuestionScreen) => {
 		const step = advanced(question);
-		if (step.kind === "question") return setProgress(step.progress);
-		onChange(step.fit);
-		show(null);
+		if (step.kind === "finished") {
+			onChange(step.fit);
+			show(null);
+		} else if (step.kind === "question") setProgress(step.progress);
 	};
-	const back = (question: Question) => {
+	const back = (question: QuestionScreen) => {
 		const previous = wentBack(question);
 		if (previous) return setProgress(previous);
 		show(null);
@@ -69,12 +69,11 @@ export function PlanFitSection({
 			</h2>
 			{screen.kind === "question" ? (
 				<QuizQuestion
-					step={screen.step}
-					index={screen.index}
-					draft={screen.draft}
+					screen={screen}
 					benchmarkName={benchmarkName}
 					backLabel={backLabel(screen, fit)}
 					onAnswer={(patch) => setProgress(answered(screen, patch))}
+					onEntry={(field, entry) => setProgress(entered(screen, field, entry))}
 					onBack={() => back(screen)}
 					onNext={() => next(screen)}
 				/>
@@ -90,7 +89,7 @@ export function PlanFitSection({
 }
 
 /** Back on a first question leads to the result, if there is one. */
-function backLabel(screen: Question, fit: FitSearch | undefined) {
+function backLabel(screen: QuestionScreen, fit: FitSearch | undefined) {
 	if (screen.index > 0) return "Back";
 	return fit ? "Back to my plan" : null;
 }

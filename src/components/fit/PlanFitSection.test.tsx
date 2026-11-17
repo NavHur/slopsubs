@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
 import type { FitSearch } from "#/lib/fit";
+import type { QuestionScreen } from "#/lib/fitQuiz";
 import { ViewSearch } from "#/lib/view";
 import { PlanFitSection } from "./PlanFitSection";
 import { QuizQuestion } from "./QuizQuestion";
@@ -19,6 +20,29 @@ function text(fit?: unknown): string {
 		.replace(/<[^>]+>/g, " ")
 		.replaceAll("&#x27;", "'")
 		.replace(/\s+/g, " ");
+}
+
+/** A question on screen, as the section would hand it to QuizQuestion. */
+function screen(
+	index: number,
+	draft: FitSearch,
+	invalid: QuestionScreen["invalid"] = [],
+): QuestionScreen {
+	return { kind: "question", index, draft, invalid };
+}
+
+function questionHtml(question: QuestionScreen): string {
+	return renderToStaticMarkup(
+		<QuizQuestion
+			screen={question}
+			benchmarkName="Intelligence Index"
+			backLabel="Back"
+			onAnswer={() => {}}
+			onEntry={() => {}}
+			onBack={() => {}}
+			onNext={() => {}}
+		/>,
+	);
 }
 
 describe("PlanFitSection", () => {
@@ -79,20 +103,28 @@ describe("PlanFitSection", () => {
 	it("shows the split it counts when the shares don't add up to 100%", () => {
 		const html = renderToStaticMarkup(
 			<QuizQuestion
-				step="models"
-				index={0}
-				draft={{
+				screen={screen(0, {
 					models: ["claude-opus-5-5", "claude-fable-5-2"],
 					weights: { "claude-fable-5-2": 150 },
-				}}
+				})}
 				benchmarkName="Intelligence Index"
 				backLabel={null}
 				onAnswer={() => {}}
+				onEntry={() => {}}
 				onBack={() => {}}
 				onNext={() => {}}
 			/>,
 		);
 		expect(html).toContain("Counted as Opus 5.5 25%, Fable 5.2 75%.");
+	});
+
+	it("tells a visitor why a field with no answer won't move on", () => {
+		const usage = questionHtml(screen(1, {}, ["amount"]));
+		expect(usage).toContain('aria-invalid="true"');
+		expect(usage).toContain("Enter an amount above 0.");
+		const budget = questionHtml(screen(2, {}, ["budget"]));
+		expect(budget).toContain("A budget must be above $0.");
+		expect(questionHtml(screen(2, {}))).not.toContain('aria-invalid="true"');
 	});
 
 	it("says how far short the closest plan falls", () => {

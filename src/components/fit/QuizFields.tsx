@@ -11,8 +11,9 @@ import {
 	modelWeight,
 	unitChange,
 } from "#/lib/fit";
+import { type FieldEntry, type QuizField, shareField } from "#/lib/fitQuiz";
 import { Segmented } from "../Segmented";
-import { NumberField } from "./NumberField";
+import { FieldError, NumberField } from "./NumberField";
 import { QuizOption } from "./QuizOption";
 
 const UNIT_OPTIONS = [
@@ -27,14 +28,19 @@ const EFFORT_OPTIONS = FIT_EFFORTS.map((effort) => ({
 }));
 
 type Patch = (patch: Partial<FitSearch>) => void;
+type Entered = (field: QuizField, entry: FieldEntry) => void;
 
 /** The first question's answer: the models, or Any flagship, and their shares. */
 export function ModelPicker({
 	inputs,
+	invalid,
 	onChange,
+	onEntry,
 }: {
 	inputs: FitInputs;
+	invalid: readonly QuizField[];
 	onChange: Patch;
+	onEntry: Entered;
 }) {
 	const pick = (family: FamilyId) => {
 		const patch = modelToggle(inputs, family);
@@ -58,7 +64,7 @@ export function ModelPicker({
 				/>
 			</div>
 			{!inputs.any && inputs.models.length > 1 && (
-				<ShareFields inputs={inputs} onChange={onChange} />
+				<ShareFields inputs={inputs} invalid={invalid} onEntry={onEntry} />
 			)}
 		</div>
 	);
@@ -79,11 +85,16 @@ function countedSplit(inputs: FitInputs): string | null {
 /** Each model's part of the week, as weights scaled to add up to 100%. */
 function ShareFields({
 	inputs,
-	onChange,
+	invalid,
+	onEntry,
 }: {
 	inputs: FitInputs;
-	onChange: Patch;
+	invalid: readonly QuizField[];
+	onEntry: Entered;
 }) {
+	const base = useId();
+	const errorId = (family: FamilyId) => `${base}-${family}`;
+	const rejected = inputs.models.filter((f) => invalid.includes(shareField(f)));
 	const counted = countedSplit(inputs);
 	return (
 		<div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px]">
@@ -93,15 +104,18 @@ function ShareFields({
 					{familyName(family)}
 					<NumberField
 						value={Number(modelWeight(inputs, family).toFixed(1))}
-						onChange={(weight) => {
-							if (weight !== null) {
-								onChange({ weights: { ...inputs.weights, [family]: weight } });
-							}
-						}}
+						invalid={invalid.includes(shareField(family))}
+						errorId={errorId(family)}
+						onChange={(entry) => onEntry(shareField(family), entry)}
 						className="min-h-11 w-20"
 					/>
 					<span className="text-muted">%</span>
 				</label>
+			))}
+			{rejected.map((family) => (
+				<FieldError key={family} id={errorId(family)}>
+					Enter a share above 0% for {familyName(family)}.
+				</FieldError>
 			))}
 			{counted && <p className="w-full text-[12px] text-subtle">{counted}</p>}
 		</div>
@@ -111,14 +125,19 @@ function ShareFields({
 /** The second question's answer: an amount a week, in a unit, at an effort. */
 export function UsageField({
 	inputs,
+	invalid,
 	benchmarkName,
 	onChange,
+	onEntry,
 }: {
 	inputs: FitInputs;
+	invalid: readonly QuizField[];
 	benchmarkName: string;
 	onChange: Patch;
+	onEntry: Entered;
 }) {
 	const id = useId();
+	const errorId = `${id}-error`;
 	return (
 		<div className="flex flex-col gap-2">
 			<label htmlFor={id} className="text-[13px] text-muted">
@@ -130,9 +149,9 @@ export function UsageField({
 				<NumberField
 					id={id}
 					value={inputs.amount}
-					onChange={(amount) => {
-						if (amount !== null) onChange({ amount });
-					}}
+					invalid={invalid.includes("amount")}
+					errorId={errorId}
+					onChange={(entry) => onEntry("amount", entry)}
 					className="min-h-11 w-32 text-[16px]"
 				/>
 				<Segmented
@@ -150,6 +169,9 @@ export function UsageField({
 					/>
 				)}
 			</div>
+			{invalid.includes("amount") && (
+				<FieldError id={errorId}>Enter an amount above 0.</FieldError>
+			)}
 		</div>
 	);
 }
@@ -157,12 +179,15 @@ export function UsageField({
 /** The last question's answer: an optional monthly budget. */
 export function BudgetField({
 	budget,
-	onChange,
+	invalid,
+	onEntry,
 }: {
 	budget: number | null;
-	onChange: Patch;
+	invalid: readonly QuizField[];
+	onEntry: Entered;
 }) {
 	const id = useId();
+	const errorId = `${id}-error`;
 	return (
 		<div className="flex flex-col gap-2 text-[13px]">
 			<label htmlFor={id} className="text-muted">
@@ -176,11 +201,18 @@ export function BudgetField({
 				<NumberField
 					id={id}
 					value={budget}
+					invalid={invalid.includes("budget")}
+					errorId={errorId}
 					placeholder="No limit"
-					onChange={(next) => onChange({ budget: next ?? undefined })}
+					onChange={(entry) => onEntry("budget", entry)}
 					className="min-h-11 w-32 text-[16px]"
 				/>
 			</div>
+			{invalid.includes("budget") && (
+				<FieldError id={errorId}>
+					A budget must be above $0. Clear the field for no limit.
+				</FieldError>
+			)}
 		</div>
 	);
 }

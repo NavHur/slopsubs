@@ -1,15 +1,14 @@
-import {
-	type KeyboardEvent,
-	type ReactNode,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { type FitSearch, fitInputs } from "#/lib/fit";
-import { QUIZ_STEPS, type QuizStep } from "#/lib/fitQuiz";
+import {
+	canAdvance,
+	type FieldEntry,
+	QUIZ_STEPS,
+	type QuestionScreen,
+	type QuizField,
+	type QuizStep,
+} from "#/lib/fitQuiz";
 import { BudgetField, ModelPicker, UsageField } from "./QuizFields";
-
-type Patch = (patch: Partial<FitSearch>) => void;
 
 /** Each question's wording, and the hint under it. */
 const QUESTIONS: Record<QuizStep, { title: string; hint: string }> = {
@@ -28,29 +27,30 @@ const QUESTIONS: Record<QuizStep, { title: string; hint: string }> = {
 };
 
 /**
- * One question of the plan-fit quiz. Enter or Next moves on; Back returns to
- * the previous question, or to the result when there is one to return to.
+ * One question of the plan-fit quiz. Enter or Next moves on, unless a field
+ * holds no answer, which it points the visitor to; Back returns to the
+ * previous question, or to the result when there is one to return to.
  */
 export function QuizQuestion({
-	step,
-	index,
-	draft,
+	screen,
 	benchmarkName,
 	backLabel,
 	onAnswer,
+	onEntry,
 	onBack,
 	onNext,
 }: {
-	step: QuizStep;
-	index: number;
-	draft: FitSearch;
+	screen: QuestionScreen;
 	benchmarkName: string;
 	/** Null hides Back, on a first question with nothing to go back to. */
 	backLabel: string | null;
-	onAnswer: Patch;
+	onAnswer: (patch: Partial<FitSearch>) => void;
+	onEntry: (field: QuizField, entry: FieldEntry) => void;
 	onBack: () => void;
 	onNext: () => void;
 }) {
+	const { index } = screen;
+	const step = QUIZ_STEPS[index];
 	const { fieldsetRef, legendRef, stepped } = useQuestionFocus(step, index);
 	const last = index === QUIZ_STEPS.length - 1;
 	const { title, hint } = QUESTIONS[step];
@@ -60,7 +60,11 @@ export function QuizQuestion({
 			onKeyDown={submitOnEnter}
 			onSubmit={(event) => {
 				event.preventDefault();
-				onNext();
+				if (canAdvance(screen)) return onNext();
+				// A field with no answer takes the visitor to it.
+				fieldsetRef.current
+					?.querySelector<HTMLInputElement>("[aria-invalid]")
+					?.focus();
 			}}
 		>
 			<fieldset
@@ -79,7 +83,12 @@ export function QuizQuestion({
 					</span>
 					<span className="mt-1 text-[13px] text-muted">{hint}</span>
 				</legend>
-				{questionBody(step, draft, benchmarkName, onAnswer)}
+				<QuestionBody
+					screen={screen}
+					benchmarkName={benchmarkName}
+					onAnswer={onAnswer}
+					onEntry={onEntry}
+				/>
 			</fieldset>
 			<QuizNav
 				backLabel={backLabel}
@@ -131,26 +140,47 @@ function QuizProgress({ index }: { index: number }) {
 	);
 }
 
-function questionBody(
-	step: QuizStep,
-	draft: FitSearch,
-	benchmarkName: string,
-	onAnswer: Patch,
-): ReactNode {
-	const inputs = fitInputs(draft);
-	switch (step) {
+function QuestionBody({
+	screen,
+	benchmarkName,
+	onAnswer,
+	onEntry,
+}: {
+	screen: QuestionScreen;
+	benchmarkName: string;
+	onAnswer: (patch: Partial<FitSearch>) => void;
+	onEntry: (field: QuizField, entry: FieldEntry) => void;
+}) {
+	const inputs = fitInputs(screen.draft);
+	const { invalid } = screen;
+	switch (QUIZ_STEPS[screen.index]) {
 		case "models":
-			return <ModelPicker inputs={inputs} onChange={onAnswer} />;
+			return (
+				<ModelPicker
+					inputs={inputs}
+					invalid={invalid}
+					onChange={onAnswer}
+					onEntry={onEntry}
+				/>
+			);
 		case "usage":
 			return (
 				<UsageField
 					inputs={inputs}
+					invalid={invalid}
 					benchmarkName={benchmarkName}
 					onChange={onAnswer}
+					onEntry={onEntry}
 				/>
 			);
 		case "budget":
-			return <BudgetField budget={inputs.budget} onChange={onAnswer} />;
+			return (
+				<BudgetField
+					budget={inputs.budget}
+					invalid={invalid}
+					onEntry={onEntry}
+				/>
+			);
 	}
 }
 
