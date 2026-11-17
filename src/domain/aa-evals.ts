@@ -1,11 +1,10 @@
-// Reads per-model Intelligence Index evals out of an AA model page's Next.js
-// flight payload and files them under the catalog's families and efforts.
+// Reads per-model Intelligence Index eval scores out of AA model pages' Next.js
+// flight payloads and files them under the catalog's families and efforts.
 
-import { AA_EVAL_IDS } from "./enums";
+import { z } from "zod";
 import type { AaEvalId } from "./eval-units";
-import { MODEL_START_PATTERN, stringLiteralEnd } from "./flight";
+import { firstReading, flightRecords, stringLiteralEnd } from "./flight";
 import type { BenchmarkPoint, Effort } from "./model";
-import { roundedOrNull } from "./rounding";
 
 /** Website release slugs the catalog files under another family. */
 const FAMILY_ALIASES: Record<string, string> = {
@@ -13,18 +12,48 @@ const FAMILY_ALIASES: Record<string, string> = {
 };
 
 const CHUNK_MARKER = "__next_f.push([1,";
-const EVALS_KEY = '"intelligenceIndexEvaluations":';
-const RELEASE_PATTERN = /"release":\{"slug":"([^"]+)"/g;
-const EFFORT_PATTERN = /"effort":\{"slug":"([^"]+)"/g;
-const REASONING_PATTERN = /"isReasoning":(true|false)/g;
-/** How far before an evals array its model's record starts. */
-const LOOKBACK = 8000;
-/** The longest evals array the scan will follow. */
-const MAX_ARRAY_LENGTH = 20000;
-const BRACKET_DELTA: Record<string, number> = { "[": 1, "]": -1 };
+
+const Score = z.number().nullish();
+
+/** The fields read from one model record: who it is, and its eval scores. */
+const EvalRecord = z.object({
+	slug: z.string().min(1),
+	release: z.object({ slug: z.string().min(1) }),
+	effort: z.object({ slug: z.string().min(1) }).nullish(),
+	isReasoning: z.boolean(),
+	briefcaseBreakdown: z
+		.object({ overall: z.object({ elo: z.number() }) })
+		.nullish(),
+	automationBenchPartialScore: Score,
+	terminalBench40: Score,
+	frontierCode20: Score,
+	omniscience: Score,
+	gdpPdfAllPass: Score,
+	hleDiamond: Score,
+	critptAgenticHard: Score,
+	terminalBenchScience: Score,
+});
+type EvalRecord = z.infer<typeof EvalRecord>;
+
+/** Where each eval's score sits in a model record. */
+const SCORE_OF: Record<
+	AaEvalId,
+	(record: EvalRecord) => number | null | undefined
+> = {
+	"aa-briefcase": (r) => r.briefcaseBreakdown?.overall.elo,
+	"automationbench-aa": (r) => r.automationBenchPartialScore,
+	"terminalbench-4-0": (r) => r.terminalBench40,
+	"frontiercode-2-0": (r) => r.frontierCode20,
+	omniscience: (r) => r.omniscience,
+	"gdp-pdf": (r) => r.gdpPdfAllPass,
+	"hle-diamond": (r) => r.hleDiamond,
+	"critpt-v2-hard": (r) => r.critptAgenticHard,
+	"terminal-bench-science": (r) => r.terminalBenchScience,
+};
 
 /** A website row. `effort` is the website's slug, `none` for an effortless model
- * that does not reason, and null for one that does. */
+ * that does not reason, and null for one that does. The model pages no longer
+ * carry per-eval cost, tokens or time, so those stay null. */
 type EvalRow = {
 	family: string;
 	effort: string | null;
@@ -37,17 +66,6 @@ type EvalRow = {
 
 /** A website row filed under the catalog's family and effort. */
 export type ResolvedRow = EvalRow & { effort: Effort };
-
-type RawEval = {
-	slug: string;
-	score: number;
-	outputTokensPerTask?: number;
-	costPerTask?: number;
-	timePerTask?: number;
-};
-
-const isAaEvalId = (slug: string): slug is AaEvalId =>
-	(AA_EVAL_IDS as readonly string[]).includes(slug);
 
 /** The string literal of the push chunk starting at `marker`, decoded. */
 function decodeChunk(
@@ -80,93 +98,45 @@ export function flightFromHtml(html: string): string {
 	return chunks.join("");
 }
 
-/** End of the bracketed array starting at `start`, or -1 if it never closes. */
-function arrayEnd(text: string, start: number): number {
-	const limit = Math.min(text.length, start + MAX_ARRAY_LENGTH);
-	let depth = 0;
-	for (let i = start; i < limit; i++) {
-		if (text[i] === '"') i = stringLiteralEnd(text, i);
-		depth += BRACKET_DELTA[text[i]] ?? 0;
-		if (depth === 0) return i + 1;
-	}
-	return -1;
-}
-
-function lastMatch(text: string, pattern: RegExp): RegExpExecArray | null {
-	return [...text.matchAll(pattern)].at(-1) ?? null;
-}
-
 /** A record's own effort slug: `none` for an effortless model that does not
  * reason; null for one that does, filed under its default or only reasoning variant. */
-function recordEffort(record: string, family: string): string | null {
-	const effort = lastMatch(record, EFFORT_PATTERN)?.[1];
-	if (effort) return effort;
-	const reasons = lastMatch(record, REASONING_PATTERN)?.[1];
-	if (!reasons) throw new Error(`No effort or isReasoning for ${family}`);
-	return reasons === "true" ? null : "none";
+function recordEffort(record: EvalRecord): string | null {
+	if (record.effort) return record.effort.slug;
+	return record.isReasoning ? null : "none";
 }
 
-/** Family and own effort of the model whose evals sit at `keyIndex`, read only
- * from its record (`{"id":…` to `"release"`), since an effortless one has none. */
-function modelBefore(
-	flight: string,
-	keyIndex: number,
-): { family: string; effort: string | null } | null {
-	const before = flight.slice(Math.max(0, keyIndex - LOOKBACK), keyIndex);
-	const release = lastMatch(before, RELEASE_PATTERN);
-	if (!release) return null;
-	const family = release[1];
-	const start = lastMatch(before.slice(0, release.index), MODEL_START_PATTERN);
-	if (!start)
-		throw new Error(`No model record starts before the evals of ${family}`);
-	const record = before.slice(start.index, release.index);
-	return { family, effort: recordEffort(record, family) };
+/** One row per eval the record has a score for. */
+function recordRows(record: EvalRecord): EvalRow[] {
+	const family = record.release.slug;
+	const effort = recordEffort(record);
+	return (Object.keys(SCORE_OF) as AaEvalId[]).flatMap((id) => {
+		const score = SCORE_OF[id](record);
+		if (score === null || score === undefined) return [];
+		return [
+			{
+				family,
+				effort,
+				eval: id,
+				score,
+				costPerTaskUsd: null,
+				tokensPerTask: null,
+				secondsPerTask: null,
+			},
+		];
+	});
 }
 
-function toRow(
-	family: string,
-	effort: string | null,
-	e: RawEval & { slug: AaEvalId },
-): EvalRow {
-	return {
-		family,
-		effort,
-		eval: e.slug,
-		score: e.score,
-		costPerTaskUsd: roundedOrNull(e.costPerTask, 5),
-		tokensPerTask: roundedOrNull(e.outputTokensPerTask, 0),
-		secondsPerTask: roundedOrNull(e.timePerTask, 1),
-	};
-}
-
-function parseEvals(raw: string, family: string): RawEval[] {
-	try {
-		return JSON.parse(raw);
-	} catch (cause) {
-		throw new Error(`Evals array for ${family} is not valid JSON`, { cause });
-	}
-}
-
-/** The chart-eval rows of the evals array whose key sits at `keyIndex`. */
-function rowsAt(flight: string, keyIndex: number): EvalRow[] {
-	const model = modelBefore(flight, keyIndex);
-	if (!model) return [];
-	const start = keyIndex + EVALS_KEY.length;
-	const end = arrayEnd(flight, start);
-	if (end < 0)
-		throw new Error(
-			`Evals array for ${model.family} at offset ${start} does not close within ${MAX_ARRAY_LENGTH} characters`,
-		);
-	return parseEvals(flight.slice(start, end), model.family)
-		.filter((e): e is RawEval & { slug: AaEvalId } => isAaEvalId(e.slug))
-		.map((e) => toRow(model.family, model.effort, e));
-}
-
-/** Extracts per-model eval rows from the flight payload. */
-export function extractEvals(flight: string): EvalRow[] {
-	return [...flight.matchAll(new RegExp(`${EVALS_KEY}\\[`, "g"))].flatMap(
-		(found) => rowsAt(flight, found.index),
-	);
+/**
+ * Eval rows for every model the flight payloads embed, each model once. A
+ * model several pages embed must score the same on all of them.
+ */
+export function extractEvals(flights: readonly string[]): EvalRow[] {
+	const seen = new Map<string, string>();
+	return flights.flatMap(flightRecords).flatMap((record) => {
+		const parsed = EvalRecord.parse(record);
+		const rows = recordRows(parsed);
+		return firstReading(seen, parsed.slug, JSON.stringify(rows)) ? rows : [];
+	});
 }
 
 /** The catalog model a website effort names; null when the catalog lacks it.

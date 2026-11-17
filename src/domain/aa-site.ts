@@ -2,7 +2,7 @@
 // release date, and the cost, tokens and time per task of those AA has run.
 
 import { z } from "zod";
-import { flightRecords } from "./flight";
+import { firstReading, flightRecords } from "./flight";
 import { roundedOrNull } from "./rounding";
 
 /** What one Intelligence Index task costs a model, at AA's prices. */
@@ -109,4 +109,27 @@ export function readAaSite(flight: string): AaSite {
 		if (cost) costs.set(model.slug, cost);
 	}
 	return { models: records.map(aaModel), costs };
+}
+
+/** One site's model and cost, compared across pages. */
+const recordKey = (site: AaSite, model: AaModel) =>
+	JSON.stringify([model, site.costs.get(model.slug) ?? null]);
+
+/**
+ * Every model on any of the pages, each once. A model several pages embed must
+ * read the same on all of them; a mismatch stops the import.
+ */
+export function joinAaSites(sites: readonly AaSite[]): AaSite {
+	const seen = new Map<string, string>();
+	const joined: AaSite = { models: [], costs: new Map() };
+	const listed = sites.flatMap((site) =>
+		site.models.map((model) => ({ site, model })),
+	);
+	for (const { site, model } of listed) {
+		if (!firstReading(seen, model.slug, recordKey(site, model))) continue;
+		joined.models.push(model);
+		const cost = site.costs.get(model.slug);
+		if (cost) joined.costs.set(model.slug, cost);
+	}
+	return joined;
 }

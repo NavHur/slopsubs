@@ -16,6 +16,22 @@ export function stringLiteralEnd(text: string, open: number): number {
 	return i;
 }
 
+/** Whether `slug` is new to `seen`, which then records `reading` for it.
+ * Throws when an earlier page read the same model differently. */
+export function firstReading(
+	seen: Map<string, string>,
+	slug: string,
+	reading: string,
+): boolean {
+	const earlier = seen.get(slug);
+	if (earlier === undefined) {
+		seen.set(slug, reading);
+		return true;
+	}
+	if (earlier !== reading) throw new Error(`AA's pages disagree on ${slug}`);
+	return false;
+}
+
 /** End of the object starting at `start`, skipping braces inside strings. */
 function objectEnd(text: string, start: number): number {
 	let depth = 0;
