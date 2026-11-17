@@ -52,7 +52,10 @@ export type Recommendation =
 			kind: "ranked";
 			/** The week at API prices, over a month: the per-token baseline. */
 			apiUsdPerMonth: number;
-			/** Whether paying per token costs less than the cheapest plan that fits. */
+			/**
+			 * Whether paying per token costs less than the cheapest plan that fits,
+			 * over the budget or not.
+			 */
 			apiCheaper: boolean;
 			/**
 			 * The multiple of this week's usage where the side now cheaper changes:
@@ -65,10 +68,10 @@ export type Recommendation =
 			/** The budget plans were held to, or null for none. */
 			monthlyBudgetUsd: number | null;
 			/**
-			 * The cheapest plan above the budget that still fits, with the budget it
-			 * breaks; null with no budget or when none fits.
+			 * The cheapest plan above `monthlyBudgetUsd` that still fits; null with
+			 * no budget or when none fits.
 			 */
-			cheapestOverBudget: { budgetUsd: number; fit: PlanFit } | null;
+			cheapestOverBudget: PlanFit | null;
 			/** Closest to covering the week first. */
 			short: PlanShort[];
 			/** Plans with no known cap for a chosen family. */
@@ -76,6 +79,8 @@ export type Recommendation =
 			gaps: PlanGap[];
 			overBudget: Plan[];
 	  };
+
+export type RankedRecommendation = Extract<Recommendation, { kind: "ranked" }>;
 
 /** One way to run the week: an API-priced need per family. */
 type Demand = { family: FamilyId; apiUsdPerWeek: number }[];
@@ -109,11 +114,15 @@ export function recommendPlans({
 		sized.map((p) => bestVerdict(p, options, effort, 1));
 	const verdicts = verdictsOf(inBudget);
 	const fits = cheapestFirst(verdicts);
-	const [overBudgetFit] = cheapestFirst(verdictsOf(overBudget));
+	const overBudgetFits = cheapestFirst(verdictsOf(overBudget));
 	const apiUsdPerMonth =
 		Math.min(...options.map(weeklyTotal)) * WEEKS_PER_MONTH;
+	// Plans above the budget are dearer than any within it, so this is the
+	// cheapest plan that fits at all.
+	const cheapestFit = fits.at(0) ?? overBudgetFits.at(0);
 	const apiCheaper =
-		fits.length > 0 && apiUsdPerMonth < fits[0].plan.monthlyPriceUsd;
+		cheapestFit !== undefined &&
+		apiUsdPerMonth < cheapestFit.plan.monthlyPriceUsd;
 	const fitsAt = (p: SizedPlan, scale: number) =>
 		bestVerdict(p, options, effort, scale).kind === "fits";
 	return {
@@ -127,9 +136,7 @@ export function recommendPlans({
 		}),
 		fits,
 		monthlyBudgetUsd: workload.monthlyBudgetUsd,
-		cheapestOverBudget: overBudgetFit
-			? { budgetUsd: budget, fit: overBudgetFit }
-			: null,
+		cheapestOverBudget: overBudgetFits.at(0) ?? null,
 		short: verdicts
 			.filter((v) => v.kind === "short")
 			.sort((a, b) => b.coverage - a.coverage),

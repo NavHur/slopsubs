@@ -336,10 +336,22 @@ describe("recommendPlans", () => {
 			recommend([pro, max], { ...apiUsd(500, [opus]), monthlyBudgetUsd: 10 }),
 		);
 		expect(result.fits).toEqual([]);
-		expect(result.cheapestOverBudget).toMatchObject({
-			budgetUsd: 10,
-			fit: { plan: { id: "max" } },
-		});
+		expect(result.monthlyBudgetUsd).toBe(10);
+		expect(result.cheapestOverBudget).toMatchObject({ plan: { id: "max" } });
+	});
+
+	it("compares paying per token with the over-budget plan when none is in budget", () => {
+		// $1 a week of Opus is $4.33 a month: under Pro's $20, over a $4 budget.
+		const light = ranked(
+			recommend([pro], { ...apiUsd(1, [opus]), monthlyBudgetUsd: 4 }),
+		);
+		expect(light.fits).toEqual([]);
+		expect(light.cheapestOverBudget).toMatchObject({ plan: { id: "pro" } });
+		expect(light.apiCheaper).toBe(true);
+		const heavy = ranked(
+			recommend([pro], { ...apiUsd(100, [opus]), monthlyBudgetUsd: 4 }),
+		);
+		expect(heavy.apiCheaper).toBe(false);
 	});
 
 	it("keeps the budget when no plan above it fits either", () => {

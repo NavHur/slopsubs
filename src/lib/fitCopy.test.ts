@@ -43,6 +43,21 @@ describe("verdictHeadline", () => {
 		);
 	});
 
+	it("says paying per token is cheaper when it beats the over-budget plan and fits the budget", () => {
+		const { result } = answer({ unit: "apiUsd", amount: 1, budget: 5 });
+		expect(result.fits).toEqual([]);
+		expect(verdictHeadline(result)).toBe(
+			"Paying per token is cheaper: about $4.33 a month, within your $5 budget.",
+		);
+	});
+
+	it("says so when paying per token beats the plans but still tops the budget", () => {
+		const { result } = answer({ unit: "apiUsd", amount: 1.5, budget: 5 });
+		expect(verdictHeadline(result)).toBe(
+			"Paying per token is cheaper: about $6.5 a month, though that is over your $5 budget.",
+		);
+	});
+
 	it("says a $1 budget leaves no plan, not that none can be sized", () => {
 		const { result } = answer({ models: [fable], amount: 500, budget: 1 });
 		expect(verdictHeadline(result)).toBe(

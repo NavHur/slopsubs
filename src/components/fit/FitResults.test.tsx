@@ -1,11 +1,13 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
 import type { FamilyId, Plan } from "#/domain/model";
-import type { PlanFit, PlanShort, Recommendation } from "#/domain/recommend";
+import type {
+	PlanFit,
+	PlanShort,
+	RankedRecommendation as Ranked,
+} from "#/domain/recommend";
 import { fitInputs } from "#/lib/fit";
 import { FitResults } from "./FitResults";
-
-type Ranked = Extract<Recommendation, { kind: "ranked" }>;
 
 const argon = "gemini-4-argon" as FamilyId;
 const opus = "claude-opus-5-5" as FamilyId;
@@ -87,7 +89,7 @@ describe("FitResults promotions", () => {
 
 	it("shows the promotion behind the over-budget plan the headline names", () => {
 		const overBudget = (families: FamilyId[]) =>
-			ranked({ cheapestOverBudget: { budgetUsd: 10, fit: fit(families) } });
+			ranked({ cheapestOverBudget: fit(families), monthlyBudgetUsd: 10 });
 		const search = { budget: 10 };
 		const withPromo = html(overBudget([argon]), search);
 		expect(withPromo).toContain("Test Plan does, at $20 a month.");
@@ -99,7 +101,8 @@ describe("FitResults promotions", () => {
 	it("leaves out an over-budget plan's promotion when a plan in budget fits", () => {
 		const result = ranked({
 			fits: [fit([opus])],
-			cheapestOverBudget: { budgetUsd: 10, fit: fit([argon]) },
+			cheapestOverBudget: fit([argon]),
+			monthlyBudgetUsd: 10,
 		});
 		expect(html(result, { budget: 10 })).not.toContain("Promo");
 	});

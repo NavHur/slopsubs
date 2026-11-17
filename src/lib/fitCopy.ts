@@ -1,10 +1,13 @@
 import type { Effort } from "#/domain/model";
-import type { PlanFit, PlanShort, Recommendation } from "#/domain/recommend";
+import type {
+	PlanFit,
+	PlanShort,
+	RankedRecommendation as Ranked,
+	Recommendation,
+} from "#/domain/recommend";
 import { familyName } from "./families";
 import type { FitInputs } from "./fit";
 import { formatCount, formatUsd } from "./format";
-
-type Ranked = Extract<Recommendation, { kind: "ranked" }>;
 
 /** "40%", rounded the way a gauge reads; "<1%" and ">99%" for a share that
  * would round to 0% or 100% without being either. */
@@ -64,11 +67,13 @@ function noPlanSubject(budgetUsd: number | null): string {
 }
 
 /**
- * The over-budget plan the headline names when nothing within the budget fits,
- * with the budget it breaks; null when the headline names no such plan.
+ * The over-budget plan the headline names: when nothing within the budget fits
+ * and paying per token doesn't beat it; null when the headline names none.
  */
-export function namedOverBudget(result: Ranked): Ranked["cheapestOverBudget"] {
-	return result.fits.length === 0 ? result.cheapestOverBudget : null;
+export function namedOverBudget(result: Ranked): PlanFit | null {
+	return result.fits.length === 0 && !result.apiCheaper
+		? result.cheapestOverBudget
+		: null;
 }
 
 /** The headline when no plan within the budget covers the week. */
@@ -76,8 +81,7 @@ function nothingFitsHeadline(result: Ranked): string {
 	const { monthlyBudgetUsd } = result;
 	const named = namedOverBudget(result);
 	if (named) {
-		const { budgetUsd, fit } = named;
-		return `${noPlanSubject(budgetUsd)} covers this week. ${fit.plan.label} does, at ${formatUsd(fit.plan.monthlyPriceUsd)} a month.`;
+		return `${noPlanSubject(monthlyBudgetUsd)} covers this week. ${named.plan.label} does, at ${formatUsd(named.plan.monthlyPriceUsd)} a month.`;
 	}
 	const [closest] = result.short;
 	if (closest) {
@@ -88,13 +92,28 @@ function nothingFitsHeadline(result: Ranked): string {
 		: `${noPlanSubject(monthlyBudgetUsd)} covers these models.`;
 }
 
+/** Where per-token spend stands against the budget, when plans are all above it. */
+function perTokenBudgetClause({ apiUsdPerMonth, monthlyBudgetUsd }: Ranked) {
+	if (monthlyBudgetUsd === null) return "";
+	const budget = formatUsd(monthlyBudgetUsd);
+	return apiUsdPerMonth <= monthlyBudgetUsd
+		? `, within your ${budget} budget`
+		: `, though that is over your ${budget} budget`;
+}
+
+/** The headline when paying per token costs less than every plan that fits. */
+function apiCheaperHeadline(result: Ranked): string {
+	const perToken = `Paying per token is cheaper: about ${formatUsd(result.apiUsdPerMonth)} a month`;
+	const [cheapest] = result.fits;
+	if (!cheapest) return `${perToken}${perTokenBudgetClause(result)}.`;
+	return `${perToken}, against ${formatUsd(cheapest.plan.monthlyPriceUsd)} for ${cheapest.plan.label}.`;
+}
+
 /** The section's one-line answer. */
 export function verdictHeadline(result: Ranked): string {
+	if (result.apiCheaper) return apiCheaperHeadline(result);
 	const [cheapest] = result.fits;
 	if (!cheapest) return nothingFitsHeadline(result);
-	if (result.apiCheaper) {
-		return `Paying per token is cheaper: about ${formatUsd(result.apiUsdPerMonth)} a month, against ${formatUsd(cheapest.plan.monthlyPriceUsd)} for ${cheapest.plan.label}.`;
-	}
 	return `${cheapest.plan.label} fits with ${formatShare(1 - cheapest.capUse)} headroom.`;
 }
 

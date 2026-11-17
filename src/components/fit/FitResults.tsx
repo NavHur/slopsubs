@@ -3,6 +3,7 @@ import type {
 	PlanFit,
 	PlanGap,
 	PlanShort,
+	RankedRecommendation as Ranked,
 	Recommendation,
 } from "#/domain/recommend";
 import { familyName } from "#/lib/families";
@@ -17,8 +18,6 @@ import {
 	verdictHeadline,
 } from "#/lib/fitCopy";
 import { PlanPromotions, PlanRow } from "./PlanRow";
-
-type Ranked = Extract<Recommendation, { kind: "ranked" }>;
 
 /** The answer: a verdict, the plans that fit, and why the others don't. */
 export function FitResults({
@@ -73,8 +72,8 @@ function RankedResults({
 				{overBudget && (
 					<div className="mt-1 grid">
 						<PlanPromotions
-							plan={overBudget.fit.plan}
-							families={overBudget.fit.families}
+							plan={overBudget.plan}
+							families={overBudget.families}
 						/>
 					</div>
 				)}
