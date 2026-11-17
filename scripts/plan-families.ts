@@ -5,7 +5,16 @@ import { CLAUDE_TIMES_PRO } from "./claude-caps.ts";
 import { MUSE_TIMES_EVERYDAY } from "./muse-caps.ts";
 import type { Tier } from "./tier-ladder.ts";
 
-const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-1-terra", "gpt-6-luna"];
+// Codex serves GPT-6.2 Astra and Sol on Plus and every Pro tier alongside the
+// models they succeed (learn.chatgpt.com/docs/pricing, 2026-11-17).
+const OPENAI = [
+	"gpt-6-2-astra",
+	"gpt-6-2-sol",
+	"gpt-6-astra",
+	"gpt-6-1-sol",
+	"gpt-6-1-terra",
+	"gpt-6-luna",
+];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 // Monthly usage on Go and Go Plus (opencode.ai/docs/go, 2026-11-06), in dollars
 // at Go's token prices; build-plans converts the off-list ones.
