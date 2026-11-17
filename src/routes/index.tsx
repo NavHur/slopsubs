@@ -30,10 +30,10 @@ import {
 	type DrawnView,
 	hiddenReasoning,
 	isDefaultModelsView,
+	planToggled,
 	SCROLL_ONLY_PARAMS,
 	selectedFamilies,
 	selectedPlans,
-	toggled,
 	ViewSearch,
 } from "#/lib/view";
 
@@ -374,7 +374,7 @@ function ValueView() {
 						selected={planIds}
 						styles={styles}
 						showApi={view.api}
-						onToggle={(id) => update({ plans: toggled(planIds, id) })}
+						onToggle={(id) => update(planToggled(view, id))}
 						onToggleApi={() => update({ api: !view.api })}
 					/>
 					<FamilyList
