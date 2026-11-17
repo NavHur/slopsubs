@@ -3,10 +3,17 @@ import { leaderboards } from "#/data";
 import type { FamilyId } from "#/domain/model";
 import { type PlanShort, recommendPlans } from "#/domain/recommend";
 import { type FitSearch, fitInputs, fitWorkload, SIZED_PLANS } from "./fit";
-import { baselineLine, shortDetail, verdictHeadline } from "./fitCopy";
+import {
+	answersSummary,
+	baselineLine,
+	shortDetail,
+	unpricedLine,
+	verdictHeadline,
+} from "./fitCopy";
 
 const opus = "claude-opus-5-5" as FamilyId;
 const fable = "claude-fable-5-2" as FamilyId;
+const terra = "gpt-6-1-terra" as FamilyId;
 const BENCHMARK = "Intelligence Index";
 
 function answer(fit: FitSearch | undefined) {
@@ -86,6 +93,42 @@ describe("shortDetail", () => {
 	it("still names the model an any-flagship week runs when another binds", () => {
 		expect(shortDetail(short([opus], fable), true)).toBe(
 			"runs Opus 5.5, Fable 5.2 runs out first, $40 a month short",
+		);
+	});
+});
+
+describe("a week with reasoning off", () => {
+	const week: FitSearch = {
+		models: [terra],
+		unit: "tasks",
+		amount: 10,
+		effort: "none",
+	};
+
+	it("prices Terra's tasks at its non-reasoning cost", () => {
+		const { inputs, result } = answer(week);
+		// 10 tasks a week at $0.2259, over 52/12 weeks a month.
+		expect(result.apiUsdPerMonth).toBeCloseTo(9.79, 2);
+		expect(answersSummary(inputs, BENCHMARK)).toBe(
+			"GPT-6.1 Terra · 10 Intelligence Index tasks a week with reasoning off · no budget",
+		);
+	});
+
+	it("beats a $10 plan on API cost", () => {
+		const { result } = answer(week);
+		expect(result.apiCheaper).toBe(true);
+	});
+
+	it("won't price a model with no non-reasoning point", () => {
+		const inputs = fitInputs({ ...week, models: [opus] });
+		const result = recommendPlans({
+			plans: SIZED_PLANS,
+			points: leaderboards.intelligence.models,
+			workload: fitWorkload(inputs),
+		});
+		if (result.kind !== "unpriced") throw new Error(result.kind);
+		expect(unpricedLine(result, inputs, BENCHMARK)).toMatch(
+			/^Intelligence Index has no non-reasoning cost for Opus 5\.5,/,
 		);
 	});
 });

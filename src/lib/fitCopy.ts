@@ -1,3 +1,4 @@
+import type { Effort } from "#/domain/model";
 import type { PlanFit, PlanShort, Recommendation } from "#/domain/recommend";
 import { familyName } from "./families";
 import type { FitInputs } from "./fit";
@@ -26,6 +27,12 @@ export function formatAmount(
 		: `${formatCount(amount)} ${benchmarkName} tasks`;
 }
 
+const effortClause = (effort: Effort) =>
+	effort === "none" ? "with reasoning off" : `at ${effort} effort`;
+
+const effortAdjective = (effort: Effort) =>
+	effort === "none" ? "non-reasoning" : `${effort}-effort`;
+
 /**
  * The quiz's answers in one line, above its result: "Opus 5.5 · $250 of API
  * usage a week · no budget".
@@ -37,7 +44,8 @@ export function answersSummary(
 	const models = inputs.any
 		? "Any flagship"
 		: inputs.models.map(familyName).join(" and ");
-	const effort = inputs.unit === "tasks" ? ` at ${inputs.effort} effort` : "";
+	const effort =
+		inputs.unit === "tasks" ? ` ${effortClause(inputs.effort)}` : "";
 	const budget =
 		inputs.budget === null
 			? "no budget"
@@ -146,5 +154,5 @@ export function unpricedLine(
 	benchmarkName: string,
 ): string {
 	const names = result.families.map(familyName).join(", ");
-	return `${benchmarkName} has no ${inputs.effort}-effort cost for ${names}, so a week of its tasks can't be priced. Try another effort or benchmark, or enter API dollars.`;
+	return `${benchmarkName} has no ${effortAdjective(inputs.effort)} cost for ${names}, so a week of its tasks can't be priced. Try another effort or benchmark, or enter API dollars.`;
 }

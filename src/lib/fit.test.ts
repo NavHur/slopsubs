@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vite-plus/test";
 import type { FamilyId } from "#/domain/model";
-import { fitInputs, fitWorkload, modelToggle, unitChange } from "./fit";
+import {
+	effortLabel,
+	fitInputs,
+	fitWorkload,
+	modelToggle,
+	unitChange,
+} from "./fit";
 import { ViewSearch } from "./view";
 
 const opus = "claude-opus-5-5" as FamilyId;
@@ -61,6 +67,17 @@ describe("the fit param", () => {
 			tasksPerWeek: 40,
 			effort: "low",
 		});
+	});
+
+	it("reads effort none as reasoning off, and still drops an unknown effort", () => {
+		expect(parseFit({ unit: "tasks", effort: "none" }).effort).toBe("none");
+		expect(parseFit({ unit: "tasks", effort: "minimal" }).effort).toBe("high");
+	});
+
+	it("labels reasoning off as the benchmarks do", () => {
+		expect(effortLabel("none")).toBe("Non-reasoning");
+		expect(effortLabel("xhigh")).toBe("X-high");
+		expect(effortLabel("low")).toBe("Low");
 	});
 
 	it("gives each chosen model its percent, an equal part when unset", () => {

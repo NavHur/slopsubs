@@ -2,6 +2,7 @@ import { useId } from "react";
 import type { FamilyId } from "#/domain/model";
 import { familyName } from "#/lib/families";
 import {
+	effortLabel,
 	FIT_EFFORTS,
 	FIT_FAMILIES,
 	type FitInputs,
@@ -23,8 +24,7 @@ const UNIT_OPTIONS = [
 
 const EFFORT_OPTIONS = FIT_EFFORTS.map((effort) => ({
 	value: effort,
-	label:
-		effort === "xhigh" ? "X-high" : effort[0].toUpperCase() + effort.slice(1),
+	label: effortLabel(effort),
 }));
 
 type Patch = (patch: Partial<FitSearch>) => void;

@@ -27,12 +27,21 @@ export type FitUnit = (typeof FIT_UNITS)[number];
 
 /** The efforts a week can be costed at, as the benchmarks name them. */
 export const FIT_EFFORTS = [
+	"none",
 	"low",
 	"medium",
 	"high",
 	"xhigh",
 	"max",
 ] as const satisfies readonly Effort[];
+
+/** An effort as the quiz and the benchmarks' effort labels name it. */
+export function effortLabel(effort: Effort): string {
+	if (effort === "none") return "Non-reasoning";
+	return effort === "xhigh"
+		? "X-high"
+		: effort[0].toUpperCase() + effort.slice(1);
+}
 
 /** The quiz's starting amount for a week, in each unit. */
 export const DEFAULT_AMOUNT: Record<FitUnit, number> = {
