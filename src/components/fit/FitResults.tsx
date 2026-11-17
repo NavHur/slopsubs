@@ -1,4 +1,4 @@
-import type { Plan } from "#/domain/model";
+import type { FamilyId, Plan } from "#/domain/model";
 import type {
 	PlanFit,
 	PlanGap,
@@ -6,7 +6,7 @@ import type {
 	Recommendation,
 } from "#/domain/recommend";
 import { familyName } from "#/lib/families";
-import type { FitInputs } from "#/lib/fit";
+import { ANY_FAMILIES, type FitInputs } from "#/lib/fit";
 import {
 	baselineLine,
 	fitDetail,
@@ -59,6 +59,7 @@ function RankedResults({
 	benchmarkName: string;
 }) {
 	const baseline = baselineLine(result, inputs, benchmarkName);
+	const families = inputs.any ? ANY_FAMILIES : inputs.models;
 	return (
 		<>
 			<div className="max-w-[72ch]">
@@ -73,11 +74,12 @@ function RankedResults({
 				<FitList
 					fits={result.fits}
 					any={inputs.any}
+					families={families}
 					apiCheaper={result.apiCheaper}
 				/>
 			)}
 			{result.short.length > 0 && (
-				<ShortList short={result.short} any={inputs.any} />
+				<ShortList short={result.short} any={inputs.any} families={families} />
 			)}
 			<SetAside result={result} />
 		</>
@@ -91,10 +93,12 @@ const CAPTION = "mb-1 text-[13px] text-muted";
 function FitList({
 	fits,
 	any,
+	families,
 	apiCheaper,
 }: {
 	fits: readonly PlanFit[];
 	any: boolean;
+	families: readonly FamilyId[];
 	apiCheaper: boolean;
 }) {
 	return (
@@ -113,6 +117,7 @@ function FitList({
 						share={fit.capUse}
 						shareLabel={`${formatShare(fit.capUse)} used`}
 						detail={fitDetail(fit, any)}
+						families={families}
 						lead={rank === 0 && !apiCheaper}
 					/>
 				))}
@@ -124,9 +129,11 @@ function FitList({
 function ShortList({
 	short,
 	any,
+	families,
 }: {
 	short: readonly PlanShort[];
 	any: boolean;
+	families: readonly FamilyId[];
 }) {
 	return (
 		<div>
@@ -140,6 +147,7 @@ function ShortList({
 						share={s.coverage}
 						shareLabel={`${formatShare(s.coverage)} covered`}
 						detail={shortDetail(s, any)}
+						families={families}
 					/>
 				))}
 			</ul>

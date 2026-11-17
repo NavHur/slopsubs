@@ -1,6 +1,6 @@
-import type { Plan } from "#/domain/model";
+import type { FamilyId, Plan, Promotion } from "#/domain/model";
 import type { CapBasis } from "#/domain/recommend";
-import { formatUsd } from "#/lib/format";
+import { formatDay, formatUsd } from "#/lib/format";
 
 const LINK =
 	"underline decoration-dotted underline-offset-2 hover:text-fg max-lg:inline-flex max-lg:min-h-11 max-lg:items-center";
@@ -16,6 +16,7 @@ export function PlanRow({
 	share,
 	shareLabel,
 	detail,
+	families,
 	lead = false,
 }: {
 	plan: Plan;
@@ -25,6 +26,8 @@ export function PlanRow({
 	/** The bar's text equivalent: "73% used", "60% covered". */
 	shareLabel: string;
 	detail: string;
+	/** The models the week is costed on: their promotions are in the verdict. */
+	families: readonly FamilyId[];
 	/** The verdict's plan: its bar takes the accent. */
 	lead?: boolean;
 }) {
@@ -42,6 +45,13 @@ export function PlanRow({
 				<BasisMark basis={basis} />
 			</p>
 			<SourceLinks plan={plan} />
+			{promotionsFor(plan, families).map((promotion) => (
+				<PromotionCaveat
+					key={promotion.summary}
+					plan={plan}
+					promotion={promotion}
+				/>
+			))}
 		</li>
 	);
 }
@@ -119,6 +129,34 @@ function SourceLinks({ plan }: { plan: Plan }) {
 					</a>
 				</>
 			)}
+		</p>
+	);
+}
+
+/** The promotions on the models this week uses; the plan fits partly on them. */
+function promotionsFor(plan: Plan, families: readonly FamilyId[]): Promotion[] {
+	return families.flatMap((family) => plan.promotionByFamily[family] ?? []);
+}
+
+/** Says the row's figures count a discount that will end, and where it's from. */
+function PromotionCaveat({
+	plan,
+	promotion,
+}: {
+	plan: Plan;
+	promotion: Promotion;
+}) {
+	return (
+		<p className="col-span-full text-[12px] leading-5 text-subtle">
+			<span className="font-medium text-muted">
+				Promo until {formatDay(promotion.endsOn)}:
+			</span>{" "}
+			{promotion.summary}
+			{" · "}
+			<a href={promotion.url} target="_blank" rel="noreferrer" className={LINK}>
+				<span className="sr-only">{plan.label} promotion </span>
+				Source
+			</a>
 		</p>
 	);
 }
