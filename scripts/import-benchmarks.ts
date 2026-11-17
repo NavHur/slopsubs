@@ -83,6 +83,10 @@ async function main() {
 	console.log(
 		`Wrote ${merged.models.length} benchmark points, ${Object.keys(frontier).length} frontier families, from ${pages.length} AA model pages`,
 	);
+	if (merged.unlisted.length)
+		console.log(
+			`Left out ${merged.unlisted.length} catalog models AA no longer lists and no plan covers: ${merged.unlisted.join(", ")}`,
+		);
 	if (merged.skipped.length)
 		console.log(
 			`Left out ${merged.skipped.length} AA models no plan covers: ${merged.skipped.join(", ")}`,

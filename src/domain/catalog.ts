@@ -88,6 +88,8 @@ type MergedCatalog = {
 	missingCost: string[];
 	/** AA models left out because no plan covers their family. */
 	skipped: string[];
+	/** Catalog points AA no longer lists, left out because no plan covers them. */
+	unlisted: string[];
 };
 
 type EffortLabel = { label: string; order: number };
@@ -147,13 +149,11 @@ function siteCostFill(point: SlopaPoint, siteCost: TaskCost | undefined) {
  * AA's own cost, tokens and time when its site has them. */
 function mergePoint(
 	point: SlopaPoint,
-	aaById: ReadonlyMap<string, AaModel>,
+	aa: AaModel,
 	siteCosts: ReadonlyMap<string, TaskCost>,
 	warnings: string[],
 	allowScoreDrift: boolean,
 ): SlopaPoint {
-	const aa = aaById.get(point.id);
-	if (!aa) throw new Error(`AA has no model for ${point.id} (${point.name})`);
 	const aaScore = aa.intelligenceIndex;
 	checkScore(point, aaScore, warnings, allowScoreDrift);
 	warnings.push(...priceWarnings(point, aa));
@@ -230,31 +230,50 @@ function aaOnlyModel(
 		: null;
 }
 
+/** The catalog points AA lists, merged, and the uncovered ones it does not.
+ * A covered point AA does not list stops the merge. */
+function mergeListed(
+	aaModels: readonly AaModel[],
+	slopaPoints: readonly SlopaPoint[],
+	{ coveredFamilies, siteCosts, allowScoreDrift = false }: MergeOptions,
+	warnings: string[],
+): { models: SlopaPoint[]; unlisted: string[] } {
+	const aaById = new Map(aaModels.map((model) => [model.slug, model]));
+	const models: SlopaPoint[] = [];
+	const unlisted: string[] = [];
+	for (const point of slopaPoints) {
+		const aa = aaById.get(point.id);
+		if (aa)
+			models.push(mergePoint(point, aa, siteCosts, warnings, allowScoreDrift));
+		else if (coveredFamilies.has(point.family))
+			throw new Error(`AA has no model for ${point.id} (${point.name})`);
+		else unlisted.push(point.id);
+	}
+	return { models, unlisted };
+}
+
 /**
  * Artificial Analysis wins on scores, prices, release dates, and the cost,
  * tokens and time per task its website publishes; slopalytics supplies the
  * catalog and fills the points the website doesn't cover. A score
  * disagreement is an error, since it means one side changed its benchmark. A
  * price disagreement is only a warning: AA's list price is what we plot, but
- * a promo can explain the gap.
+ * a promo can explain the gap. A catalog point AA does not list stops the
+ * merge when a plan covers its family, and is left out otherwise.
  */
 export function mergeCatalog(
 	aaModels: readonly AaModel[],
 	slopaPoints: readonly SlopaPoint[],
 	options: MergeOptions,
 ): MergedCatalog {
-	const aaById = new Map(aaModels.map((model) => [model.slug, model]));
 	const warnings: string[] = [];
 	const missingCost: string[] = [];
 	const skipped: string[] = [];
-	const models = slopaPoints.map((point) =>
-		mergePoint(
-			point,
-			aaById,
-			options.siteCosts,
-			warnings,
-			options.allowScoreDrift ?? false,
-		),
+	const { models, unlisted } = mergeListed(
+		aaModels,
+		slopaPoints,
+		options,
+		warnings,
 	);
 
 	const effortOf = new Map(
@@ -274,5 +293,5 @@ export function mergeCatalog(
 		if (added.costPerTaskUsd === null) missingCost.push(aa.slug);
 	}
 
-	return { models, warnings, missingCost, skipped };
+	return { models, warnings, missingCost, skipped, unlisted };
 }
