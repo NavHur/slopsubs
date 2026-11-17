@@ -4,7 +4,7 @@
 import type { ReportedCap } from "../src/domain/model.ts";
 
 /** A vendor's family of tiers priced as multiples of one base tier. */
-export type Ladder = "claude";
+export type Ladder = "claude" | "google-ai" | "minimax-m" | "x-subscription";
 
 /** A plan's usage as a multiple of its ladder's base tier, per the vendor. */
 export type Tier = { ladder: Ladder; times: number };
@@ -50,6 +50,21 @@ export function scaledCap(
 				? known.cap.basis
 				: `${known.cap.basis}, scaled from ${usage(known, known.base)} to ${usage(tier, known.base)}`,
 	};
+}
+
+/**
+ * The plan's cap scaled from its ladder's known tier, or null when the plan is
+ * on no ladder or its ladder has no known tier. Other sources may still cap it.
+ */
+export function ladderCap<L extends string>(
+	knownTiers: Readonly<Partial<Record<L, KnownTier>>>,
+	tier: { ladder: L; times: number } | undefined,
+	label: string,
+	families: readonly string[],
+): ReportedCap | null {
+	const known = tier && knownTiers[tier.ladder];
+	if (!tier || !known) return null;
+	return scaledCap(known, { label, times: tier.times }, families);
 }
 
 /** "Max's 5x Pro", or just "Pro" for the base tier itself. */

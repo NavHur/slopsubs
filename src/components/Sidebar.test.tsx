@@ -98,4 +98,59 @@ describe("PlanList", () => {
 		expect(rowOf("Credits")).toContain(">credit</span>");
 		expect(rowOf("Uncovered")).not.toContain(">credit</span>");
 	});
+
+	it("lists the unmeasured plans by vendor, with the models each includes", () => {
+		const unmeasured = (id: string, vendor: string): Plan => ({
+			...uncoveredPlan,
+			id: id as PlanId,
+			vendor,
+			label: id,
+			publishedAllowance: null,
+			families: [scored, unscored],
+		});
+		const html = renderToStaticMarkup(
+			<PlanList
+				plans={[
+					unmeasured("alpha-one", "Alpha"),
+					unmeasured("beta-one", "Beta"),
+					unmeasured("alpha-two", "Alpha"),
+				]}
+				selected={[]}
+				styles={new Map()}
+				showApi={false}
+				onToggle={() => {}}
+				onToggleApi={() => {}}
+			/>,
+		);
+		const section = html.slice(html.indexOf("Not yet measured"));
+		expect(section.match(/<h3[^>]*>(Alpha|Beta)<\/h3>/g)).toHaveLength(2);
+		expect(section.indexOf(">alpha-two<")).toBeLessThan(
+			section.indexOf(">beta-one<"),
+		);
+		expect(section).toContain(`${familyName(scored)}, ${familyName(unscored)}`);
+	});
+
+	it("shows an unmeasured plan's limits in a disclosure, not only a tooltip", () => {
+		const html = renderToStaticMarkup(
+			<PlanList
+				plans={[
+					{
+						...uncoveredPlan,
+						label: "Unmeasured",
+						limits: "5x higher usage limits",
+						publishedAllowance: null,
+					},
+				]}
+				selected={[]}
+				styles={new Map()}
+				showApi={false}
+				onToggle={() => {}}
+				onToggleApi={() => {}}
+			/>,
+		);
+		expect(html).toMatch(
+			/<details[^>]*><summary[^>]*>Limits<\/summary><p>5x higher usage limits<\/p><\/details>/,
+		);
+		expect(html).toContain('aria-label="Limits for Unmeasured"');
+	});
 });

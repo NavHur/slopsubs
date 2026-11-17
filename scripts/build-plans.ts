@@ -22,12 +22,8 @@ import { CLAUDE_ULTRA } from "./claude-caps.ts";
 import { creditAllowance, creditPromotions } from "./credit-plans.ts";
 import { CREDIT_PLANS } from "./credit-vendors.ts";
 import { listPriced, type TokenRates } from "./list-price.ts";
-import {
-	OPENCODE_GO_USD,
-	PLAN_FAMILIES,
-	type PlanEntry,
-} from "./plan-families.ts";
-import { type KnownTier, type Ladder, scaledCap } from "./tier-ladder.ts";
+import { OPENCODE_GO_USD, PLAN_FAMILIES } from "./plan-families.ts";
+import { type KnownTier, type Ladder, ladderCap } from "./tier-ladder.ts";
 import { WEEKLY_CREDIT_PLANS, weeklyCreditCap } from "./weekly-credit-caps.ts";
 
 const ROOT = new URL("..", import.meta.url);
@@ -84,18 +80,6 @@ const PUBLISHED_ALLOWANCES: Record<string, 0 | 1> = {
 const KNOWN_TIERS: Partial<Record<Ladder, KnownTier>> = {
 	claude: CLAUDE_ULTRA,
 };
-
-/** The known tier's caps scaled to the plan's own multiple, if its ladder has
- * a known tier. */
-function tierCap(
-	entry: PlanEntry,
-	label: string,
-	families: readonly string[],
-): ReportedCap | null {
-	const known = entry.tier && KNOWN_TIERS[entry.tier.ladder];
-	if (!entry.tier || !known) return null;
-	return scaledCap(known, { label, times: entry.tier.times }, families);
-}
 
 // Theo (t3.gg), "OpenAI is getting desperate", 2026-11-02, 5:08: "on the $500
 // plan, you now get around $10.5,000 of usage. And on the $200 plan... 4.3K".
@@ -331,7 +315,7 @@ const plans = Plans.parse(
 				reportedCap:
 					codexCap(p.planId, p.monthlyPriceUsd, families) ??
 					creditCap(p, families) ??
-					tierCap(entry, label, families),
+					ladderCap(KNOWN_TIERS, entry.tier, label, families),
 				publishedAllowance: allowance,
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
