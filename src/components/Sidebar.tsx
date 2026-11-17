@@ -4,6 +4,7 @@ import type { FamilyId, Plan, PlanId } from "#/domain/model";
 import {
 	type PlanCapacity,
 	planCapacity,
+	unsampledNote,
 	valueMultiple,
 	weeklyAllowance,
 } from "#/domain/value";
@@ -78,8 +79,10 @@ function PlanValue({ plan, capacity }: ValuedPlan) {
 			</span>
 		);
 	}
-	const source =
-		capacity.kind === "published" ? capacity.allowance : capacity.report;
+	const [source, by] =
+		capacity.kind === "published"
+			? [capacity.allowance, undefined]
+			: [capacity.report, capacity.report.by];
 	return (
 		<a
 			href={source.url}
@@ -87,7 +90,7 @@ function PlanValue({ plan, capacity }: ValuedPlan) {
 			rel="noreferrer"
 			onClick={(event) => event.stopPropagation()}
 			className="whitespace-nowrap tabular-nums text-[12px] text-muted underline decoration-dotted underline-offset-2 hover:text-fg"
-			title={`${source.basis}. Not measured by us yet.`}
+			title={`${source.basis}. ${unsampledNote(by)}`}
 		>
 			{text}
 		</a>

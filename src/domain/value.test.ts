@@ -140,6 +140,7 @@ describe("weeklyAllowance", () => {
 			capApiUsd: 1000,
 			basis: "estimated",
 			source: "estimate",
+			by: "Theo",
 			share: 1,
 			fillsFaster: null,
 		});
@@ -152,6 +153,7 @@ describe("weeklyAllowance", () => {
 			capApiUsd: 1000,
 			basis: "estimated",
 			source: "estimate",
+			by: "Theo",
 			share: 0.5,
 			fillsFaster: null,
 		});

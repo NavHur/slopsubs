@@ -36,6 +36,7 @@ function plan(id: string, label: string): Pricing {
 			capApiUsd: 100,
 			basis: "estimated",
 			source: "x",
+			by: "Theo",
 			share: 1,
 			fillsFaster: null,
 		},

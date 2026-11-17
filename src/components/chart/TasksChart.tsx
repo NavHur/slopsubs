@@ -1,5 +1,5 @@
 import type { PlanTasks, TaskRow } from "#/domain/ranges";
-import type { WeeklyAllowance } from "#/domain/value";
+import { unsampledNote, type WeeklyAllowance } from "#/domain/value";
 import { familyName } from "#/lib/families";
 import {
 	formatCapShare,
@@ -25,7 +25,7 @@ const TASK_UNITS: RangeUnits = {
 function capSource(allowance: WeeklyAllowance): string {
 	switch (allowance.basis) {
 		case "estimated":
-			return `${allowance.source}. Not measured by us yet.`;
+			return `${allowance.source}. ${unsampledNote(allowance.by)}`;
 		case "published":
 			return `${allowance.source}, averaged over the weeks of a month`;
 		case "measured":

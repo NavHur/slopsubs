@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
+import { OUR_GAUGE_READINGS } from "#/domain/enums";
 import type { BenchmarkPoint, FamilyId, Plan, PlanId } from "#/domain/model";
 import { tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
@@ -70,6 +71,18 @@ describe("TasksChart", () => {
 		const text = `${capBasis}. Not measured by us yet.`;
 		const elementText = markup().replaceAll("&#x27;", "'");
 		expect(elementText).toContain(`>${text}</`);
+	});
+
+	it("says a cap read off our own gauge was read by us, not that it is unmeasured", () => {
+		const ours: Plan = {
+			...plan,
+			reportedCap: { ...plan.reportedCap!, by: OUR_GAUGE_READINGS },
+		};
+		const html = markup(ours).replaceAll("&#x27;", "'");
+		expect(html).toContain(
+			`>${capBasis}. Read off our gauge by hand, not yet from usage samples.</`,
+		);
+		expect(html).not.toContain("Not measured by us yet.");
 	});
 
 	it("heads a plan with its fullest cap and says why a model's quota is smaller", () => {

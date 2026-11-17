@@ -1,4 +1,4 @@
-import { EFFORTS } from "./enums";
+import { EFFORTS, OUR_GAUGE_READINGS } from "./enums";
 import type {
 	BenchmarkPoint,
 	Effort,
@@ -61,8 +61,16 @@ type CapSource =
 	| { basis: "measured" }
 	/** `source` is the vendor's own description of the allowance. */
 	| { basis: "published"; source: string }
-	/** `source` is how the reported figure was reached. */
-	| { basis: "estimated"; source: string };
+	/** `source` is how the reported figure was reached, and `by` who reached it. */
+	| { basis: "estimated"; source: string; by: string };
+
+/** Said of a cap without usage samples: whether we have read it ourselves.
+ * `by` is the reporter, or undefined for the vendor's own figure. */
+export function unsampledNote(by?: string): string {
+	return by === OUR_GAUGE_READINGS
+		? "Read off our gauge by hand, not yet from usage samples."
+		: "Not measured by us yet.";
+}
 
 /** API-priced usage one family may spend in a sustained week on a plan. */
 export type WeeklyAllowance = CapSource & {
@@ -147,6 +155,7 @@ function wholeWeeklyAllowance(
 						apiUsd: weekly,
 						basis: "estimated",
 						source: capacity.report.basis,
+						by: capacity.report.by,
 					};
 		}
 		case "measured":
