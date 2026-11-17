@@ -12,36 +12,40 @@ type Fixture = {
 	effort?: string;
 	reasons?: boolean;
 	score: number;
+	/** The record's own slug; defaults to its release and effort. */
+	slug?: string;
 };
 
 /** A model id in the payload's 36-character uuid form. */
 const uuidOf = (index: number) =>
 	`${String(index).padStart(8, "0")}-0000-0000-0000-000000000000`;
 
-/** One model record as the flight payload lays it out, evals key last. */
+/** One model record as the flight payload lays it out, creator nested. */
 function modelRecord(
-	{ release, effort, reasons = true, score }: Fixture,
+	{ release, effort, reasons = true, score, slug }: Fixture,
 	index: number,
-): string {
-	const effortJson = effort ? `"effort":{"slug":"${effort}"},` : "";
-	const evals = JSON.stringify([
-		{ slug: "omniscience", score, costPerTask: 1.234567 },
-		{ slug: "not-a-chart-eval", score: 1 },
-	]);
-	return (
-		`{"id":"${uuidOf(index)}","slug":"${release}","name":"x","isReasoning":${reasons},${effortJson}"release":{"slug":"${release}"},` +
-		`"intelligenceIndexEvaluations":${evals}}`
-	);
+) {
+	return {
+		id: uuidOf(index),
+		slug: slug ?? [release, effort].filter(Boolean).join("-"),
+		creator: { id: uuidOf(900 + index), slug: "lab" },
+		isReasoning: reasons,
+		...(effort ? { effort: { slug: effort } } : {}),
+		release: { slug: release },
+		intelligenceIndex: 30,
+		omniscience: score,
+		terminalBench40: null,
+	};
 }
 
 /** An HTML page whose single push chunk carries the given model records. */
 function pageOf(records: Fixture[]): string {
-	const flight = `[${records.map(modelRecord).join(",")}]`;
+	const flight = `0:${JSON.stringify(records.map(modelRecord))}`;
 	return `<script>self.__next_f.push([1,${JSON.stringify(flight)}])</script>`;
 }
 
-const rowsOf = (records: Fixture[]) =>
-	extractEvals(flightFromHtml(pageOf(records)));
+const rowsOf = (...pages: Fixture[][]) =>
+	extractEvals(pages.map((records) => flightFromHtml(pageOf(records))));
 
 describe("extractEvals", () => {
 	it("keeps an effortless model's effort null instead of the previous model's", () => {
@@ -60,17 +64,32 @@ describe("extractEvals", () => {
 		expect(row.effort).toBe("none");
 	});
 
-	it("reads a model's own effort and rounds its cost", () => {
-		const [row] = rowsOf([{ release: "alpha", effort: "low", score: 0.5 }]);
-		expect(row).toEqual({
-			family: "alpha",
-			effort: "low",
-			eval: "omniscience",
-			score: 0.5,
-			costPerTaskUsd: 1.23457,
-			tokensPerTask: null,
-			secondsPerTask: null,
-		});
+	it("reads each scored eval, with no cost, tokens or time", () => {
+		expect(rowsOf([{ release: "alpha", effort: "low", score: 0.5 }])).toEqual([
+			{
+				family: "alpha",
+				effort: "low",
+				eval: "omniscience",
+				score: 0.5,
+				costPerTaskUsd: null,
+				tokensPerTask: null,
+				secondsPerTask: null,
+			},
+		]);
+	});
+
+	it("reads a model two pages embed once", () => {
+		const alpha = { release: "alpha", score: 0.5 };
+		expect(rowsOf([alpha], [alpha])).toHaveLength(1);
+	});
+
+	it("stops when two pages score one model differently", () => {
+		expect(() =>
+			rowsOf(
+				[{ release: "alpha", score: 0.5 }],
+				[{ release: "alpha", score: 0.6 }],
+			),
+		).toThrow(/disagree on alpha/);
 	});
 });
 
@@ -149,7 +168,12 @@ describe("resolveRows", () => {
 	it("files effortless reasoning and non-reasoning models by their mode", () => {
 		const raw = rowsOf([
 			{ release: "gamma", reasons: true, score: 0.5 },
-			{ release: "gamma", reasons: false, score: 0.3 },
+			{
+				release: "gamma",
+				slug: "gamma-non-reasoning",
+				reasons: false,
+				score: 0.3,
+			},
 		]);
 		const gamma = [
 			catalogModel("gamma", "default"),

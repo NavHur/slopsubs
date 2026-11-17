@@ -229,7 +229,17 @@ describe("mergeCatalog", () => {
 		).toThrow(/AA index 58.4, slopalytics 60.5/);
 	});
 
-	it("refuses a point AA does not list", () => {
+	it("leaves out a point AA does not list when no plan covers it", () => {
+		const uncovered = point({ id: "a-x-k2", family: "a-x-k2", name: "A.X-K2" });
+		const merged = mergeCatalog([CLAUDE], [point(), uncovered], {
+			coveredFamilies: covered,
+			siteCosts: NO_SITE_COSTS,
+		});
+		expect(merged.models.map((model) => model.id)).toEqual(["claude-opus-5-5"]);
+		expect(merged.unlisted).toEqual(["a-x-k2"]);
+	});
+
+	it("refuses a covered point AA does not list", () => {
 		expect(() =>
 			mergeCatalog([], [point()], {
 				coveredFamilies: covered,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { readAaSite } from "./aa-site";
+import { joinAaSites, readAaSite } from "./aa-site";
 
 /** A model id in the payload's 36-character uuid form. */
 const uuidOf = (index: number) =>
@@ -125,5 +125,31 @@ describe("readAaSite", () => {
 		expect(() =>
 			readAaSite(flightOf([{ slug: "alpha", cost: 1, selected: true }])),
 		).toThrow(/default chart selection/);
+	});
+});
+
+describe("joinAaSites", () => {
+	const page = (models: Fixture[]) => readAaSite(flightOf(models));
+
+	it("lists each model any page embeds once, with its cost", () => {
+		const joined = joinAaSites([
+			page([{ slug: "alpha", cost: 1 }, { slug: "beta" }]),
+			page([{ slug: "beta" }, { slug: "gamma", cost: 2 }]),
+		]);
+		expect(joined.models.map((model) => model.slug)).toEqual([
+			"alpha",
+			"beta",
+			"gamma",
+		]);
+		expect([...joined.costs.keys()]).toEqual(["alpha", "gamma"]);
+	});
+
+	it("stops when two pages read one model differently", () => {
+		expect(() =>
+			joinAaSites([
+				page([{ slug: "alpha", outputPrice: 1 }]),
+				page([{ slug: "alpha", outputPrice: 2 }]),
+			]),
+		).toThrow(/disagree on alpha/);
 	});
 });

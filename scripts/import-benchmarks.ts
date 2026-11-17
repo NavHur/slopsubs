@@ -4,10 +4,10 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { flightFromHtml } from "../src/domain/aa-evals.ts";
-import { readAaSite } from "../src/domain/aa-site.ts";
+import { joinAaSites, readAaSite } from "../src/domain/aa-site.ts";
 import { mergeCatalog, SlopaPoint } from "../src/domain/catalog.ts";
 import { roundedOrNull } from "../src/domain/rounding.ts";
-import { loadAaPage } from "./aa-page.ts";
+import { aaPageSlugs, loadAaPages } from "./aa-page.ts";
 import { parseArgs } from "./benchmark-args.ts";
 import { extract, type Literal } from "./bundle-literal.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
@@ -25,10 +25,7 @@ async function loadBundle(path: string | undefined): Promise<string> {
 
 async function main() {
 	const args = parseArgs(process.argv.slice(2));
-	const [bundle, page] = await Promise.all([
-		loadBundle(args.bundle),
-		loadAaPage(args.html),
-	]);
+	const bundle = await loadBundle(args.bundle);
 	const dataset = extract(bundle, /=\{fetchedAt:/) as Record<string, Literal>;
 	const frontier = extract(bundle, /=\{"gpt-6-astra":\{tier:/) as Record<
 		string,
@@ -56,11 +53,16 @@ async function main() {
 			outputPricePerMTokUsd: m.outputPrice,
 		})),
 	);
-	const aa = readAaSite(flightFromHtml(page));
+	const coveredFamilies = new Set(
+		Object.values(PLAN_FAMILIES).flatMap((plan) => plan.families),
+	);
+	const pages = await loadAaPages(
+		aaPageSlugs(coveredFamilies, slopa),
+		args.html,
+	);
+	const aa = joinAaSites(pages.map((page) => readAaSite(flightFromHtml(page))));
 	const merged = mergeCatalog(aa.models, slopa, {
-		coveredFamilies: new Set(
-			Object.values(PLAN_FAMILIES).flatMap((plan) => plan.families),
-		),
+		coveredFamilies,
 		siteCosts: aa.costs,
 		allowScoreDrift: args.allowScoreDrift,
 	});
@@ -79,8 +81,12 @@ async function main() {
 	};
 	await writeFile(OUTPUT, `${JSON.stringify(output, null, 2)}\n`);
 	console.log(
-		`Wrote ${merged.models.length} benchmark points, ${Object.keys(frontier).length} frontier families`,
+		`Wrote ${merged.models.length} benchmark points, ${Object.keys(frontier).length} frontier families, from ${pages.length} AA model pages`,
 	);
+	if (merged.unlisted.length)
+		console.log(
+			`Left out ${merged.unlisted.length} catalog models AA no longer lists and no plan covers: ${merged.unlisted.join(", ")}`,
+		);
 	if (merged.skipped.length)
 		console.log(
 			`Left out ${merged.skipped.length} AA models no plan covers: ${merged.skipped.join(", ")}`,
