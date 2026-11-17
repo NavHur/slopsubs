@@ -26,7 +26,7 @@ export function PlanRow({
 	/** The bar's text equivalent: "73% used", "60% covered". */
 	shareLabel: string;
 	detail: string;
-	/** The models the week is costed on: their promotions are in the verdict. */
+	/** The models this plan's verdict ran: their promotions are in its figures. */
 	families: readonly FamilyId[];
 	/** The verdict's plan: its bar takes the accent. */
 	lead?: boolean;
@@ -45,13 +45,7 @@ export function PlanRow({
 				<BasisMark basis={basis} />
 			</p>
 			<SourceLinks plan={plan} />
-			{promotionsFor(plan, families).map((promotion) => (
-				<PromotionCaveat
-					key={promotion.summary}
-					plan={plan}
-					promotion={promotion}
-				/>
-			))}
+			<PlanPromotions plan={plan} families={families} />
 		</li>
 	);
 }
@@ -136,6 +130,23 @@ function SourceLinks({ plan }: { plan: Plan }) {
 /** The promotions on the models this week uses; the plan fits partly on them. */
 function promotionsFor(plan: Plan, families: readonly FamilyId[]): Promotion[] {
 	return families.flatMap((family) => plan.promotionByFamily[family] ?? []);
+}
+
+/** A caveat for each promotion behind a plan's verdict on `families`. */
+export function PlanPromotions({
+	plan,
+	families,
+}: {
+	plan: Plan;
+	families: readonly FamilyId[];
+}) {
+	return promotionsFor(plan, families).map((promotion) => (
+		<PromotionCaveat
+			key={promotion.summary}
+			plan={plan}
+			promotion={promotion}
+		/>
+	));
 }
 
 /** Says the row's figures count a discount that will end, and where it's from. */
