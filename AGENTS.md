@@ -13,3 +13,7 @@ The five default role names: `needs-triage`, `needs-info`, `ready-for-agent`, `r
 ### Domain docs
 
 Single-context: root `GLOSSARY.md` and `docs/adr/`. See `docs/agents/domain.md`.
+
+### Data refresh
+
+Refreshing `src/data`, or an import script failing on a source's layout: follow `docs/agents/data-refresh.md`.
