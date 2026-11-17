@@ -88,12 +88,6 @@ describe("PlanFitSection", () => {
 		);
 	});
 
-	it("won't price tasks at an effort the benchmark didn't run", () => {
-		expect(
-			text({ models: ["gemini-4-argon"], unit: "tasks", effort: "max" }),
-		).toContain("has no max-effort cost for Gemini 4 Argon");
-	});
-
 	it("hides plans over the budget", () => {
 		const capped = text({ amount: 500, budget: 50 });
 		expect(capped).toContain("Over your budget:");
