@@ -607,6 +607,146 @@
     "promotionByFamily": {}
   },
   {
+    "id": "muse-code-everyday",
+    "vendor": "Muse Code",
+    "lab": "meta",
+    "label": "Muse Everyday",
+    "monthlyPriceUsd": 5,
+    "harnesses": [
+      "Muse Code (TUI, exec, ACP for editors)"
+    ],
+    "families": [
+      "muse-wonder",
+      "muse-spark-1-3",
+      "muse-ember"
+    ],
+    "limits": "\"Send 10-50 prompts every 5 hours, including image and video uploads\"; `muse usage` also shows a weekly gauge. Our gauge readings (2026-11-16): about $2 a 5-hour window and $6 a week at the price each model is billed, and the weekly gauge fills a third as fast as the window.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": "unclear",
+    "confidence": "primary",
+    "sourceUrl": "https://dev.meta.ai/products/muse-code",
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "muse-wonder": 16,
+        "muse-spark-1-3": 75,
+        "muse-ember": 4
+      },
+      "by": "slopsubs",
+      "url": "https://github.com/NavHur/slopsubs/blob/main/research/plans.md",
+      "basis": "Our Everyday gauge readings, contributor mode on"
+    },
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "muse-code-high",
+    "vendor": "Muse Code",
+    "lab": "meta",
+    "label": "Muse High",
+    "monthlyPriceUsd": 15,
+    "harnesses": [
+      "Muse Code (TUI, exec, ACP for editors)"
+    ],
+    "families": [
+      "muse-wonder",
+      "muse-spark-1-3",
+      "muse-ember"
+    ],
+    "limits": "\"5x more usage than the Everyday Usage plan\"; \"More multimodal inputs\".",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": "unclear",
+    "confidence": "primary",
+    "sourceUrl": "https://dev.meta.ai/products/muse-code",
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "muse-wonder": 80,
+        "muse-spark-1-3": 375,
+        "muse-ember": 20
+      },
+      "by": "slopsubs",
+      "url": "https://github.com/NavHur/slopsubs/blob/main/research/plans.md",
+      "basis": "Our Everyday gauge readings, contributor mode on, scaled from Everyday to Muse High's 5x Everyday"
+    },
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "muse-code-power",
+    "vendor": "Muse Code",
+    "lab": "meta",
+    "label": "Muse Power",
+    "monthlyPriceUsd": 50,
+    "harnesses": [
+      "Muse Code (TUI, exec, ACP for editors)"
+    ],
+    "families": [
+      "muse-wonder",
+      "muse-spark-1-3",
+      "muse-ember"
+    ],
+    "limits": "\"20x more usage than the Everyday Usage plan\"; \"Access to the most powerful Muse models, including Muse Wonder Full\".",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": "unclear",
+    "confidence": "primary",
+    "sourceUrl": "https://dev.meta.ai/products/muse-code",
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "muse-wonder": 320,
+        "muse-spark-1-3": 1500,
+        "muse-ember": 80
+      },
+      "by": "slopsubs",
+      "url": "https://github.com/NavHur/slopsubs/blob/main/research/plans.md",
+      "basis": "Our Everyday gauge readings, contributor mode on, scaled from Everyday to Muse Power's 20x Everyday"
+    },
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "muse-code-maximum",
+    "vendor": "Muse Code",
+    "lab": "meta",
+    "label": "Muse Maximum",
+    "monthlyPriceUsd": 200,
+    "harnesses": [
+      "Muse Code (TUI, exec, ACP for editors)"
+    ],
+    "families": [
+      "muse-wonder",
+      "muse-spark-1-3",
+      "muse-ember"
+    ],
+    "limits": "\"80x more usage than the Everyday Usage plan\"; \"Everything from the Power Usage plan\".",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": "unclear",
+    "confidence": "primary",
+    "sourceUrl": "https://dev.meta.ai/products/muse-code",
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "muse-wonder": 1280,
+        "muse-spark-1-3": 6000,
+        "muse-ember": 320
+      },
+      "by": "slopsubs",
+      "url": "https://github.com/NavHur/slopsubs/blob/main/research/plans.md",
+      "basis": "Our Everyday gauge readings, contributor mode on, scaled from Everyday to Muse Maximum's 80x Everyday"
+    },
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
     "id": "minimax-m-plan-go",
     "vendor": "MiniMax Code",
     "lab": "minimax",

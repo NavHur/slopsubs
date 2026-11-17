@@ -110,7 +110,10 @@ export const ChartData = z.object({
 });
 export type ChartData = z.infer<typeof ChartData>;
 
-/** A weekly cap someone else published, used until we measure our own. */
+/**
+ * A weekly cap estimated without usage samples: published by someone else, or
+ * read off our own gauge by hand. Used until samples measure it.
+ */
 const ReportedCap = z.object({
 	/**
 	 * API-equivalent spend on each model that fills the weekly cap once. Models

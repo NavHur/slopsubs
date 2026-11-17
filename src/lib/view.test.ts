@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import type { FamilyId } from "#/domain/model";
+import type { FamilyId, PlanId } from "#/domain/model";
 import { familyMatches } from "./families";
 import {
 	allSelected,
@@ -8,6 +8,7 @@ import {
 	hiddenReasoning,
 	isDefaultModelsView,
 	NOTABLE_FAMILIES,
+	planToggled,
 	selectedFamilies,
 	selectedPlans,
 	toggledGroup,
@@ -162,5 +163,43 @@ describe("familyMatches", () => {
 		expect(familyMatches(opus, "anthropic")).toBe(true);
 		expect(familyMatches(opus, "  ")).toBe(true);
 		expect(familyMatches(opus, "gemini")).toBe(false);
+	});
+});
+
+describe("selecting a Muse Code plan", () => {
+	const muse = ["muse-wonder", "muse-spark-1-3", "muse-ember"] as FamilyId[];
+	const everyday = "muse-code-everyday" as PlanId;
+
+	it("turns on all three Muse models in the default model list", () => {
+		const families = selectedFamilies(view({ plans: [everyday] }));
+		expect(families).toEqual(expect.arrayContaining(muse));
+		expect(isDefaultModelsView(view({ plans: [everyday] }))).toBe(true);
+	});
+
+	it("leaves Wonder and Ember off while no Muse plan is selected", () => {
+		const families = selectedFamilies(view({}));
+		expect(families).not.toContain("muse-wonder");
+		expect(families).not.toContain("muse-ember");
+	});
+
+	it("adds the Muse models to a hand-picked list when the plan is checked", () => {
+		const picked = view({ plans: [], families: [opus, "muse-ember"] });
+		expect(planToggled(picked, everyday)).toEqual({
+			plans: [everyday],
+			families: [opus, "muse-ember", "muse-wonder", "muse-spark-1-3"],
+		});
+	});
+
+	it("keeps a hand-picked list as it is when the plan is unchecked", () => {
+		const picked = view({ plans: [everyday], families: [opus] });
+		expect(planToggled(picked, everyday)).toEqual({ plans: [] });
+	});
+
+	it("doesn't add models for a plan outside the rule", () => {
+		const picked = view({ plans: [], families: [opus] });
+		expect(planToggled(picked, "opencode-go" as PlanId)).toEqual({
+			plans: ["opencode-go"],
+			families: [opus],
+		});
 	});
 });

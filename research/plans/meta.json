@@ -1,0 +1,116 @@
+[
+  {
+    "vendor": "Meta",
+    "planId": "muse-code-everyday",
+    "label": "Muse Code Everyday Usage",
+    "monthlyPriceUsd": 5,
+    "harnesses": [
+      "Muse Code (TUI, exec, ACP for editors)"
+    ],
+    "models": [
+      "Muse Wonder 1.0",
+      "Muse Spark 1.3",
+      "Muse Ember 1.0",
+      "Muse Image"
+    ],
+    "limits": "\"Send 10-50 prompts every 5 hours, including image and video uploads\"; `muse usage` also shows a weekly gauge. Our gauge readings (2026-11-16): about $2 a 5-hour window and $6 a week at the price each model is billed, and the weekly gauge fills a third as fast as the window.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://dev.meta.ai/products/muse-code",
+        "accessed": "2026-11-16"
+      },
+      {
+        "url": "https://dev.meta.ai/docs/pricing-rate-limits",
+        "accessed": "2026-11-16"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Monthly price only; no annual price listed. Ember is not named on the plan page, but Muse Code serves it on Everyday (we ran it). Muse Code's contributor toggle routes Spark and Wonder to their contributor variants, which fill the gauge about 10x and 3x slower; Ember has none. In contributor mode Meta may use the content for product improvement. The plan page doesn't say whether the subscription may power other harnesses."
+  },
+  {
+    "vendor": "Meta",
+    "planId": "muse-code-high",
+    "label": "Muse Code High Usage",
+    "monthlyPriceUsd": 15,
+    "harnesses": [
+      "Muse Code (TUI, exec, ACP for editors)"
+    ],
+    "models": [
+      "Muse Wonder 1.0",
+      "Muse Spark 1.3",
+      "Muse Ember 1.0",
+      "Muse Image"
+    ],
+    "limits": "\"5x more usage than the Everyday Usage plan\"; \"More multimodal inputs\".",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://dev.meta.ai/products/muse-code",
+        "accessed": "2026-11-16"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Was 3x Everyday at launch (2026-08-31); raised to 5x in September, per secondary sources."
+  },
+  {
+    "vendor": "Meta",
+    "planId": "muse-code-power",
+    "label": "Muse Code Power Usage",
+    "monthlyPriceUsd": 50,
+    "harnesses": [
+      "Muse Code (TUI, exec, ACP for editors)"
+    ],
+    "models": [
+      "Muse Wonder Full",
+      "Muse Wonder 1.0",
+      "Muse Spark 1.3",
+      "Muse Ember 1.0",
+      "Muse Image"
+    ],
+    "limits": "\"20x more usage than the Everyday Usage plan\"; \"Access to the most powerful Muse models, including Muse Wonder Full\".",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://dev.meta.ai/products/muse-code",
+        "accessed": "2026-11-16"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Wonder Full is not sold on the API, so it has no list price and the site leaves it off the plan. Was 10x Everyday at launch, per secondary sources. Not to be confused with the Meta Muse consumer app's $20 Power plan."
+  },
+  {
+    "vendor": "Meta",
+    "planId": "muse-code-maximum",
+    "label": "Muse Code Maximum Usage",
+    "monthlyPriceUsd": 200,
+    "harnesses": [
+      "Muse Code (TUI, exec, ACP for editors)"
+    ],
+    "models": [
+      "Muse Wonder Full",
+      "Muse Wonder 1.0",
+      "Muse Spark 1.3",
+      "Muse Ember 1.0",
+      "Muse Image"
+    ],
+    "limits": "\"80x more usage than the Everyday Usage plan\"; \"Everything from the Power Usage plan\".",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
+    "thirdPartyHarnessAllowed": "unclear",
+    "sources": [
+      {
+        "url": "https://dev.meta.ai/products/muse-code",
+        "accessed": "2026-11-16"
+      }
+    ],
+    "confidence": "primary",
+    "notes": "Added 2026-10-12, per secondary sources. Same usage per dollar as Power. Not to be confused with the Meta Muse consumer app's $100 Maximum plan."
+  }
+]

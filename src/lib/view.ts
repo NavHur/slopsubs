@@ -113,14 +113,52 @@ export function selectedPlans(view: ViewSearch): PlanId[] {
 /** Popular models shown by default alongside the frontier. */
 const DEFAULT_EXTRA_FAMILIES: string[] = ["muse-spark-1-3"];
 
-const DEFAULT_FAMILIES = COVERED_FAMILIES.filter(
-	(f) => FRONTIER.includes(f) || DEFAULT_EXTRA_FAMILIES.includes(f),
-);
+/**
+ * Labs whose plans are bought for every model they serve, so selecting one
+ * shows all its models: Muse Code's Wonder and Ember sit outside the default.
+ */
+const LABS_SHOWING_ALL_PLAN_MODELS = ["meta"];
+
+/** Models a selected plan turns on, by the rule above. */
+function familiesShownWith(planIds: readonly string[]): FamilyId[] {
+	return plans
+		.filter(
+			(p) =>
+				planIds.includes(p.id) && LABS_SHOWING_ALL_PLAN_MODELS.includes(p.lab),
+		)
+		.flatMap((p) => p.families);
+}
+
+/** The frontier, the popular extras, and the models the selected plans turn on. */
+function defaultFamilies(view: ViewSearch): FamilyId[] {
+	const shown = familiesShownWith(selectedPlans(view));
+	return COVERED_FAMILIES.filter(
+		(f) =>
+			FRONTIER.includes(f) ||
+			DEFAULT_EXTRA_FAMILIES.includes(f) ||
+			shown.includes(f),
+	);
+}
 
 export function selectedFamilies(view: ViewSearch): FamilyId[] {
 	return view.families
 		? COVERED_FAMILIES.filter((f) => view.families?.includes(f))
-		: DEFAULT_FAMILIES;
+		: defaultFamilies(view);
+}
+
+/**
+ * The URL patch that toggles one plan. Selecting a plan that turns its models
+ * on adds them to a hand-picked model list; an unset list's default already
+ * follows the plans.
+ */
+export function planToggled(view: ViewSearch, id: PlanId): Partial<ViewSearch> {
+	const current = selectedPlans(view);
+	const next = toggled(current, id);
+	if (!view.families || current.includes(id)) return { plans: next };
+	const added = familiesShownWith([id]).filter(
+		(f) => !view.families?.includes(f),
+	);
+	return { plans: next, families: [...view.families, ...added] };
 }
 
 /** A non-reasoning variant is a different mode, so it starts hidden. */
@@ -138,7 +176,7 @@ export const DEFAULT_MODELS_VIEW = {
 
 export function isDefaultModelsView(view: ViewSearch): boolean {
 	return (
-		sameMembers(selectedFamilies(view), DEFAULT_FAMILIES) &&
+		sameMembers(selectedFamilies(view), defaultFamilies(view)) &&
 		sameMembers(hiddenReasoning(view), DEFAULT_HIDDEN_REASONING)
 	);
 }

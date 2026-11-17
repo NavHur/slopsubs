@@ -111,6 +111,7 @@ describe("point tooltip", () => {
 			capApiUsd: 100,
 			basis: "estimated",
 			source: "estimate",
+			by: "Theo",
 			share,
 			fillsFaster,
 		};

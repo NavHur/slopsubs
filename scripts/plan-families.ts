@@ -2,6 +2,7 @@
 // multiple. import-benchmarks keeps the AA models these name; build-plans builds from them.
 
 import { CLAUDE_TIMES_PRO } from "./claude-caps.ts";
+import { MUSE_TIMES_EVERYDAY } from "./muse-caps.ts";
 import type { Tier } from "./tier-ladder.ts";
 
 const OPENAI = ["gpt-6-astra", "gpt-6-1-sol", "gpt-6-1-terra", "gpt-6-luna"];
@@ -173,6 +174,14 @@ const minimaxTier = (times: number): Tier => ({ ladder: "minimax-m", times });
 const X = { lab: "xai", vendor: "Cursor and Grok", families: ["grok-4-7"] };
 const xTier = (times: number): Tier => ({ ladder: "x-subscription", times });
 const claudeTier = (times: number): Tier => ({ ladder: "claude", times });
+/** Wonder Full, on Power and Maximum, isn't sold on the API, so it has no
+ * list price to value. Ember isn't on the plan page, but Muse Code serves it. */
+const MUSE = {
+	lab: "meta",
+	vendor: "Muse Code",
+	families: ["muse-wonder", "muse-spark-1-3", "muse-ember"],
+};
+const museTier = (times: number): Tier => ({ ladder: "muse-code", times });
 
 /** Each plan's families, and how it is grouped, labelled and scaled. */
 export const PLAN_FAMILIES: Record<string, PlanEntry> = {
@@ -255,6 +264,26 @@ export const PLAN_FAMILIES: Record<string, PlanEntry> = {
 		...MINIMAX,
 		shortLabel: "MiniMax Build",
 		tier: minimaxTier(7.5),
+	},
+	"muse-code-everyday": {
+		...MUSE,
+		shortLabel: "Muse Everyday",
+		tier: museTier(MUSE_TIMES_EVERYDAY.everyday),
+	},
+	"muse-code-high": {
+		...MUSE,
+		shortLabel: "Muse High",
+		tier: museTier(MUSE_TIMES_EVERYDAY.high),
+	},
+	"muse-code-power": {
+		...MUSE,
+		shortLabel: "Muse Power",
+		tier: museTier(MUSE_TIMES_EVERYDAY.power),
+	},
+	"muse-code-maximum": {
+		...MUSE,
+		shortLabel: "Muse Maximum",
+		tier: museTier(MUSE_TIMES_EVERYDAY.maximum),
 	},
 	"x-subscription-plus": { ...X, shortLabel: "X Plus", tier: xTier(1) },
 	"x-subscription-premium": {

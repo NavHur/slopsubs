@@ -32,3 +32,6 @@ export const BENCHMARK_IDS = [
 	...AA_EVAL_IDS,
 ] as const;
 export type BenchmarkId = (typeof BENCHMARK_IDS)[number];
+
+/** The `by` of a cap read off our own gauge rather than reported by others. */
+export const OUR_GAUGE_READINGS = "slopsubs";
