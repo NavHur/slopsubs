@@ -33,7 +33,8 @@ export const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	"gpt-5-6-luna": [15, 60],
 	"qwen3-7-plus": [60, 180],
 	"qwen3-8-max": [15, 60],
-	"glm-5-3": [15, 120],
+	// Raised on the Console Go page (opencode.ai/console/go, 2026-11-17).
+	"glm-5-3": [200, 400],
 	"glm-5-2": [60, 180],
 	"glm-5-3-flash": [60, 180],
 	"longcat-2-0": [60, 240],
