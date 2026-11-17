@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
+import plansJson from "../src/data/plans.json";
 import { OUR_GAUGE_READINGS } from "../src/domain/enums.ts";
-import type { FamilyId } from "../src/domain/model.ts";
-import { MUSE_EVERYDAY, MUSE_TIMES_EVERYDAY } from "./muse-caps.ts";
-import { scaledCap } from "./tier-ladder.ts";
-
-const FAMILIES = ["muse-wonder", "muse-spark-1-3", "muse-ember"] as const;
+import { MUSE_EVERYDAY } from "./muse-caps.ts";
 
 describe("MUSE_EVERYDAY", () => {
 	const caps = MUSE_EVERYDAY.cap.weeklyCapApiUsdByFamily;
@@ -20,17 +17,22 @@ describe("MUSE_EVERYDAY", () => {
 	])("caps a week of %s at $%d of list price", (family, usd) => {
 		expect(caps[family]).toBeCloseTo(usd);
 	});
+});
+
+describe("the shipped Muse Code plans", () => {
+	const FAMILIES = ["muse-wonder", "muse-spark-1-3", "muse-ember"];
 
 	it.each([
-		["high", MUSE_TIMES_EVERYDAY.high, [80, 375, 20]],
-		["power", MUSE_TIMES_EVERYDAY.power, [320, 1500, 80]],
-		["maximum", MUSE_TIMES_EVERYDAY.maximum, [1280, 6000, 320]],
-	])("scales to %s by the vendor's multiple", (label, times, expected) => {
-		const scaled = scaledCap(MUSE_EVERYDAY, { label, times }, FAMILIES);
-		const actual = FAMILIES.map(
-			(family) => scaled.weeklyCapApiUsdByFamily[family as FamilyId],
+		["muse-code-everyday", "Everyday's", [16, 75, 4]],
+		["muse-code-high", "5x Everyday's", [80, 375, 20]],
+		["muse-code-power", "20x Everyday's", [320, 1500, 80]],
+		["muse-code-maximum", "80x Everyday's", [1280, 6000, 320]],
+	])("%s: weekly caps are %s", (id, _multiple, expected) => {
+		const caps = plansJson.find((p) => p.id === id)?.reportedCap
+			?.weeklyCapApiUsdByFamily;
+		expect(caps).toBeDefined();
+		FAMILIES.forEach((family, i) =>
+			expect(caps?.[family as keyof typeof caps]).toBeCloseTo(expected[i]),
 		);
-		expect(actual).toHaveLength(expected.length);
-		actual.forEach((usd, i) => expect(usd).toBeCloseTo(expected[i]));
 	});
 });
