@@ -48,20 +48,22 @@
       "Conductor"
     ],
     "models": [
+      "GPT-6.2 Astra",
+      "GPT-6.2 Sol",
       "GPT-6.1 Sol",
       "GPT-6.1 Terra",
       "GPT-6 Sol",
       "GPT-6 Luna",
       "GPT-6 Astra"
     ],
-    "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6.1 Terra 35-285, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
+    "limits": "Local messages per five-hour period (estimates, 'not fixed message limits'): GPT-6.2 Astra 6-50, GPT-6.2 Sol 17-180, GPT-6 Astra 5-45, GPT-6.1 Sol 15-160, GPT-6.1 Terra 35-285, GPT-6 Sol 15-150, GPT-6 Luna 350-3,000. \"Local messages and cloud chats share your plan's usage allowance. Weekly limits may also apply.\" Fast mode uses included usage at 2.5x.",
     "allowanceKind": "rate-window",
     "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
     "sources": [
       {
         "url": "https://learn.chatgpt.com/docs/pricing",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-17"
       },
       {
         "url": "https://learn.chatgpt.com/codex/sign-in-with-chatgpt",
@@ -69,7 +71,7 @@
       }
     ],
     "confidence": "primary",
-    "notes": "Third-party use is officially supported through 'Sign in with ChatGPT': 'eligible ChatGPT Plus and Pro subscribers can also choose to use their ChatGPT plan for AI requests'. The listed open-source integrations are OpenClaw, OpenCode, Pi and T3. App usage 'counts toward your existing plan limits', and per-app weekly caps can be set. The pricing page table marks GPT-6 Astra as available on Plus; the model list on the plan card names only GPT-6.1 Sol and GPT-6 Luna. GPT-6.1 Terra (released 2026-10-26) is listed from the page's availability note, 'GPT-6.1 Terra is available in Work and Codex on Plus, Pro, Business, Enterprise, and Edu plans', and its feature table. GPT-5.5 retired from ChatGPT-sign-in Codex on 2026-10-14. Overage via ChatGPT credits. No annual price could be verified (chatgpt.com/pricing returns 403 to scripted fetches)."
+    "notes": "Third-party use is officially supported through 'Sign in with ChatGPT': 'eligible ChatGPT Plus and Pro subscribers can also choose to use their ChatGPT plan for AI requests'. The listed open-source integrations are OpenClaw, OpenCode, Pi and T3. App usage 'counts toward your existing plan limits', and per-app weekly caps can be set. The pricing page table marks GPT-6 Astra as available on Plus; the model list on the plan card names only GPT-6.1 Sol and GPT-6 Luna. GPT-6.1 Terra (released 2026-10-26) is listed from the page's availability note, 'GPT-6.1 Terra is available in Work and Codex on Plus, Pro, Business, Enterprise, and Edu plans', and its feature table. GPT-5.5 retired from ChatGPT-sign-in Codex on 2026-10-14. Overage via ChatGPT credits. No annual price could be verified (chatgpt.com/pricing returns 403 to scripted fetches). GPT-6.2 Astra ($8/$40 per MTok) and GPT-6.2 Sol ($2/$10) released 2026-11-17: 'GPT-6.2 Astra and GPT-6.2 Sol are available on Plus, Pro, Business, Enterprise, and Edu in ChatGPT Work on web, mobile, and desktop, and in the Codex app and CLI.' The older models stay listed. Fast mode on both uses included usage at 2x; Ultrafast at 6x."
   },
   {
     "vendor": "OpenAI",
@@ -95,6 +97,8 @@
       "Conductor"
     ],
     "models": [
+      "GPT-6.2 Astra",
+      "GPT-6.2 Sol",
       "GPT-6.1 Sol",
       "GPT-6.1 Terra",
       "GPT-6 Sol",
@@ -109,7 +113,7 @@
     "sources": [
       {
         "url": "https://learn.chatgpt.com/docs/pricing",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-17"
       },
       {
         "url": "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-plans",
@@ -121,7 +125,7 @@
       }
     ],
     "confidence": "primary",
-    "notes": "Price is primary. The 5x-Plus multiplier is from the April 2026 launch coverage (secondary), and the current help center doesn't restate it; with the 2026-10-29 doubling it is about 10x Plus. The help center was read via the r.jina.ai reader because help.openai.com returns 403 to direct fetches. The help center says 'Pro use is subject to our Terms of Use. Sharing account credentials, reselling access and automatically extracting data are prohibited.'"
+    "notes": "Price is primary. The 5x-Plus multiplier is from the April 2026 launch coverage (secondary), and the current help center doesn't restate it; with the 2026-10-29 doubling it is about 10x Plus. The help center was read via the r.jina.ai reader because help.openai.com returns 403 to direct fetches. The help center says 'Pro use is subject to our Terms of Use. Sharing account credentials, reselling access and automatically extracting data are prohibited.' GPT-6.2 Astra ($8/$40 per MTok) and GPT-6.2 Sol ($2/$10) released 2026-11-17: 'GPT-6.2 Astra and GPT-6.2 Sol are available on Plus, Pro, Business, Enterprise, and Edu in ChatGPT Work on web, mobile, and desktop, and in the Codex app and CLI.' The older models stay listed. Fast mode on both uses included usage at 2x; Ultrafast at 6x."
   },
   {
     "vendor": "OpenAI",
@@ -147,6 +151,8 @@
       "Conductor"
     ],
     "models": [
+      "GPT-6.2 Astra",
+      "GPT-6.2 Sol",
       "GPT-6.1 Sol",
       "GPT-6.1 Terra",
       "GPT-6 Sol",
@@ -165,11 +171,11 @@
       },
       {
         "url": "https://learn.chatgpt.com/docs/pricing",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-17"
       }
     ],
     "confidence": "primary",
-    "notes": "OpenAI cut the allowance on 2026-09-29 (to about 10x Plus, per Theo) and cancelled the cut on 2026-10-29: \"The reduction announced in our September 29 email is canceled.\" \"If you had the lower allowance, it has doubled to match.\" Grandfathered subscribers keep the old allowance (previously advertised as 20x Plus), so every Pro 200 subscription is back to it. OpenAI publishes no multiplier."
+    "notes": "OpenAI cut the allowance on 2026-09-29 (to about 10x Plus, per Theo) and cancelled the cut on 2026-10-29: \"The reduction announced in our September 29 email is canceled.\" \"If you had the lower allowance, it has doubled to match.\" Grandfathered subscribers keep the old allowance (previously advertised as 20x Plus), so every Pro 200 subscription is back to it. OpenAI publishes no multiplier. GPT-6.2 Astra ($8/$40 per MTok) and GPT-6.2 Sol ($2/$10) released 2026-11-17: 'GPT-6.2 Astra and GPT-6.2 Sol are available on Plus, Pro, Business, Enterprise, and Edu in ChatGPT Work on web, mobile, and desktop, and in the Codex app and CLI.' The older models stay listed. Fast mode on both uses included usage at 2x; Ultrafast at 6x."
   },
   {
     "vendor": "OpenAI",
@@ -195,6 +201,8 @@
       "Conductor"
     ],
     "models": [
+      "GPT-6.2 Astra",
+      "GPT-6.2 Sol",
       "GPT-6.1 Sol",
       "GPT-6.1 Terra",
       "GPT-6 Sol",
@@ -215,10 +223,10 @@
       },
       {
         "url": "https://learn.chatgpt.com/docs/pricing",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-17"
       }
     ],
     "confidence": "primary",
-    "notes": "Launched 2026-09-29. No usage multiplier relative to Plus is published; Theo reported 25x Plus at launch, which the 2026-10-29 doubling makes about 50x."
+    "notes": "Launched 2026-09-29. No usage multiplier relative to Plus is published; Theo reported 25x Plus at launch, which the 2026-10-29 doubling makes about 50x. GPT-6.2 Astra ($8/$40 per MTok) and GPT-6.2 Sol ($2/$10) released 2026-11-17: 'GPT-6.2 Astra and GPT-6.2 Sol are available on Plus, Pro, Business, Enterprise, and Edu in ChatGPT Work on web, mobile, and desktop, and in the Codex app and CLI.' The older models stay listed. Fast mode on both uses included usage at 2x; Ultrafast at 6x."
   }
 ]
