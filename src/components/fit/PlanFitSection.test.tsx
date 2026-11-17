@@ -118,6 +118,16 @@ describe("PlanFitSection", () => {
 		expect(html).toContain("Counted as Opus 5.5 25%, Fable 5.2 75%.");
 	});
 
+	it("never counts a partial share as 100%", () => {
+		const html = questionHtml(
+			screen(0, {
+				models: ["claude-opus-5-5", "claude-fable-5-2"],
+				weights: { "claude-opus-5-5": 199, "claude-fable-5-2": 1 },
+			}),
+		);
+		expect(html).toContain("Counted as Opus 5.5 &gt;99%, Fable 5.2 1%.");
+	});
+
 	it("tells a visitor why a field with no answer won't move on", () => {
 		const usage = questionHtml(screen(1, {}, ["amount"]));
 		expect(usage).toContain('aria-invalid="true"');
