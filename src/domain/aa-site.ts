@@ -2,7 +2,7 @@
 // release date, and the cost, tokens and time per task of those AA has run.
 
 import { z } from "zod";
-import { MODEL_START_PATTERN, stringLiteralEnd } from "./flight";
+import { flightRecords } from "./flight";
 import { roundedOrNull } from "./rounding";
 
 /** What one Intelligence Index task costs a model, at AA's prices. */
@@ -11,8 +11,6 @@ export type TaskCost = {
 	tokensPerTask: number | null;
 	secondsPerTask: number | null;
 };
-
-const BRACE_DELTA: Record<string, number> = { "{": 1, "}": -1 };
 
 /** The fields read from one model record; the page carries many more. */
 const SiteModel = z.object({
@@ -53,32 +51,6 @@ export type AaSite = {
 	costs: Map<string, TaskCost>;
 };
 
-/** End of the object starting at `start`, skipping braces inside strings. */
-function objectEnd(text: string, start: number): number {
-	let depth = 0;
-	for (let i = start; i < text.length; i++) {
-		if (text[i] === '"') i = stringLiteralEnd(text, i);
-		else depth += BRACE_DELTA[text[i]] ?? 0;
-		if (depth === 0) return i + 1;
-	}
-	throw new Error(`Object at offset ${start} never closes`);
-}
-
-/** The model record starting at `start`; null for an id-and-slug object
- * that is not one, such as a model's creator. */
-function recordAt(flight: string, start: number): SiteModel | null {
-	const text = flight.slice(start, objectEnd(flight, start));
-	let record: unknown;
-	try {
-		record = JSON.parse(text);
-	} catch (cause) {
-		throw new Error(`Record at offset ${start} is not valid JSON`, { cause });
-	}
-	if (typeof record !== "object" || !record || !("intelligenceIndex" in record))
-		return null;
-	return SiteModel.parse(record);
-}
-
 function taskCost(model: SiteModel): TaskCost | null {
 	const cost = model.intelligenceIndexCostPerTask?.cost.total;
 	if (cost === undefined) return null;
@@ -110,9 +82,9 @@ function aaModel(model: SiteModel): AaModel {
  * instead of every model.
  */
 function pageRecords(flight: string): SiteModel[] {
-	const records = [...flight.matchAll(MODEL_START_PATTERN)]
-		.map((found) => recordAt(flight, found.index))
-		.filter((model) => model !== null);
+	const records = flightRecords(flight).map((record) =>
+		SiteModel.parse(record),
+	);
 	if (!records.length) throw new Error("No model records in the page");
 	if (records.every((model) => model.chartDefaultSelected))
 		throw new Error(
