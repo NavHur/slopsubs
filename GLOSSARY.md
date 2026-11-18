@@ -13,3 +13,5 @@
 **Pay per token**: Buying model use at API list prices instead of through a plan. In the UI, the toggle that shows API lines.
 
 **Plan-covered family**: A model family that at least one checked plan draws a plan line for. API lines appear only for plan-covered families, so every API line has a plan line to compare against.
+
+**Promotion**: A limited-time offer on one model family in a plan, with a known end date. It either discounts the family's token prices or raises its monthly usage outright. A plan's value counts a promotion while it runs, and a caveat tells the visitor it is temporary. A promotion never ends on its own: once its end date passes, someone confirms the family's new allowance and removes it by hand.
