@@ -23,11 +23,8 @@ export const GO_PRICING: GoPricing = {
 		"mimo-v2-5-0424": [0.14, 0.28],
 		hy3: [0.14, 0.58],
 	},
-	// While a promo runs the allowance counts it. A price discount stretches
-	// the same monthly dollars over more tokens; an allowance raise replaces
-	// them. After endsOn build-plans refuses to run: confirm the family's new
-	// allowance on the live Console Go page, which renders its table only in a
-	// browser, then delete the promo and update OPENCODE_GO_USD if it moved.
+	// After endsOn build-plans refuses to run: confirm the new allowance on the
+	// Console Go page (browser-only), delete the promo, update OPENCODE_GO_USD.
 	promos: {
 		// GLM-5.3 is billed at list price, so the promoted dollars are list-priced.
 		"glm-5-3": {

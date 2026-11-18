@@ -36,7 +36,7 @@ const OPENCODE_MAX_EFFORT = {
 	"muse-spark-1-2": "xhigh",
 } as const;
 
-const GO_TIERS: Record<string, GoTier> = {
+const GO_TIERS: Partial<Record<string, GoTier>> = {
 	"opencode-go": 0,
 	"opencode-go-plus": 1,
 };

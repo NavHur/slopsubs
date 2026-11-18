@@ -194,7 +194,7 @@ function planPromotion({ benchmark, pricing }: ValuePoint) {
 	return pricing.plan.promotionByFamily[benchmark.family];
 }
 
-/** The plan's figures count a discount that will end. */
+/** The plan's figures count a promotion that will end. */
 function PromotionNote({ promotion }: { promotion: Promotion }) {
 	return (
 		<p className="mt-1.5 text-muted">

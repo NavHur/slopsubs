@@ -138,9 +138,9 @@ const PublishedAllowance = z.object({
 });
 export type PublishedAllowance = z.infer<typeof PublishedAllowance>;
 
-/** A limited-time discount a plan's value counts while it runs. */
+/** A limited-time offer a plan's value counts while it runs. */
 const Promotion = z.object({
-	/** What the discount is, shown next to the plan's figures. */
+	/** What the offer is, shown next to the plan's figures. */
 	summary: z.string(),
 	endsOn: z.iso.date(),
 	url: z.url(),

@@ -43,7 +43,7 @@ export type GoPlan = {
 /**
  * A tier's monthly usage in list-priced (API) dollars, and the promotions it
  * counts, for the families the plan lists. A promotion on a family with no
- * regular usage is a data mistake: it would show a caveat and change nothing.
+ * regular usage is a data mistake, so it throws.
  */
 export function goPlan(
 	pricing: GoPricing,
