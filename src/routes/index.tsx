@@ -22,6 +22,7 @@ import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/enums";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
+import { nothingToRank } from "#/lib/emptyChart";
 import { useRenderedView } from "#/lib/sharedLink";
 import { SCROLL_END_ID, useSectionNav } from "#/lib/useSectionNav";
 import {
@@ -399,7 +400,7 @@ function ValueView() {
 							<RankedChart rows={costRows} />
 						) : (
 							<p className="py-10 text-center text-sm text-muted">
-								Select a plan, or turn on API prices above, to rank their costs.
+								{nothingToRank()}
 							</p>
 						)}
 					</ChartSection>
