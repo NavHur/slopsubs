@@ -4,6 +4,7 @@ import type { FamilyId } from "#/domain/model";
 import type { ValuePoint } from "#/domain/value";
 import type { BenchmarkView } from "#/lib/benchmarks";
 import { paretoFrontier, spreadLabels } from "#/lib/chart";
+import { nothingToPlot } from "#/lib/emptyChart";
 import { familyColor } from "#/lib/families";
 import { useChartEscape } from "./chartEscape";
 import {
@@ -122,6 +123,7 @@ export function ValueChart({
 	showPareto,
 	showLabels,
 	benchmark,
+	plansChecked,
 }: {
 	points: readonly ValuePoint[];
 	scale: AxisScale;
@@ -129,6 +131,8 @@ export function ValueChart({
 	showLabels: boolean;
 	/** The benchmark the points score on. */
 	benchmark: BenchmarkView;
+	/** Whether any plan is checked, which the empty chart's message turns on. */
+	plansChecked: boolean;
 }) {
 	const { ref, element, size } = useChartRef();
 	const { width } = size;
@@ -158,7 +162,7 @@ export function ValueChart({
 				className="grid place-items-center text-sm text-muted lg:min-h-0 lg:flex-1"
 				style={{ height }}
 			>
-				Nothing to plot. Pick a model, or measure a plan.
+				{nothingToPlot(plansChecked)}
 			</div>
 		);
 	}

@@ -36,12 +36,17 @@ function pagePoints(benchmark: BenchmarkId) {
 }
 
 /** The section as the page renders it: styles built over every point. */
-function markupOf(points: readonly ValuePoint[], benchmark: BenchmarkId) {
+function markupOf(
+	points: readonly ValuePoint[],
+	benchmark: BenchmarkId,
+	plansChecked = true,
+) {
 	return renderToStaticMarkup(
 		<TradeoffSection
 			points={points}
 			pricings={pricingStyles(buildSeries(points))}
 			view={BENCHMARK_VIEWS[benchmark]}
+			plansChecked={plansChecked}
 		/>,
 	);
 }
@@ -252,5 +257,17 @@ describe("TradeoffSection", () => {
 		const html = markup("frontiercode");
 		expect(html).not.toContain('aria-roledescription="3D chart"');
 		expect(html).toContain("No plotted model has a time per task");
+	});
+
+	it("tells the visitor to check a plan when nothing is plotted and none is checked", () => {
+		const html = markupOf([], "intelligence", false);
+		expect(html).toContain(
+			"Nothing to plot. Check a plan to compare it with API prices.",
+		);
+	});
+
+	it("keeps the pick-a-model message when plans are checked", () => {
+		const html = markupOf([], "intelligence");
+		expect(html).toContain("Nothing to plot. Pick a model, or measure a plan.");
 	});
 });

@@ -174,7 +174,11 @@ function ApiRow({
 				checked={shown}
 				onChange={onToggle}
 				lineStyle={lineStyle}
-				detail={<span className="text-[11px] text-subtle">list price</span>}
+				detail={
+					<span className="text-[11px] text-subtle">
+						list price, plan models
+					</span>
+				}
 				value={
 					<span className="whitespace-nowrap tabular-nums text-[12px] text-fg">
 						1×

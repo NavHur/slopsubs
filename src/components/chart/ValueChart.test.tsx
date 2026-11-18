@@ -32,7 +32,12 @@ const point: ValuePoint = {
 };
 const benchmark = BENCHMARK_VIEWS.intelligence;
 
-function chart(points: ValuePoint[], labels = true, pareto = false) {
+function chart(
+	points: ValuePoint[],
+	labels = true,
+	pareto = false,
+	plansChecked = true,
+) {
 	return renderToStaticMarkup(
 		<ValueChart
 			points={points}
@@ -40,6 +45,7 @@ function chart(points: ValuePoint[], labels = true, pareto = false) {
 			showPareto={pareto}
 			showLabels={labels}
 			benchmark={benchmark}
+			plansChecked={plansChecked}
 		/>,
 	);
 }
@@ -125,6 +131,13 @@ describe("ValueChart", () => {
 		const html = chart([]);
 		expect(html).toContain("Nothing to plot. Pick a model, or measure a plan.");
 		expect(html).not.toContain("<svg");
+	});
+	it("tells the visitor to check a plan when none is checked", () => {
+		const html = chart([], true, false, false);
+		expect(html).toContain(
+			"Nothing to plot. Check a plan to compare it with API prices.",
+		);
+		expect(html).not.toContain("Pick a model");
 	});
 	it.each([390, 960])("names the model and benchmark at width %s", (width) => {
 		size.width = width;

@@ -206,6 +206,7 @@ function ValueView() {
 					showPareto={view.pareto}
 					showLabels
 					benchmark={benchmark}
+					plansChecked={planIds.length > 0}
 				/>
 			),
 			legend: (
@@ -339,6 +340,7 @@ function ValueView() {
 							showPareto={view.pareto}
 							showLabels={view.labels}
 							benchmark={benchmark}
+							plansChecked={planIds.length > 0}
 						/>
 						{/* From lg the side panel shows each plan's line style; the PNG draws its own key. */}
 						<PricingKey
@@ -346,7 +348,12 @@ function ValueView() {
 							className="mt-3 lg:hidden"
 						/>
 					</ChartSection>
-					<TradeoffSection points={points} pricings={styles} view={benchmark} />
+					<TradeoffSection
+						points={points}
+						pricings={styles}
+						view={benchmark}
+						plansChecked={planIds.length > 0}
+					/>
 					<ChartSection
 						id="tasks-per-week"
 						title="Tasks per week on each plan"
