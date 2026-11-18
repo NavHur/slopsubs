@@ -496,7 +496,7 @@ function FamilyGroup({
 	actions?: React.ReactNode;
 }) {
 	const { selected, onSelect } = selection;
-	const on = new Set(selected);
+	const chosen = new Set(selected);
 	return (
 		<section aria-label={title} className="mb-3">
 			<div className="mb-1 flex items-baseline justify-between gap-2">
@@ -511,7 +511,7 @@ function FamilyGroup({
 					<FamilyRow
 						key={family}
 						family={family}
-						on={on.has(family)}
+						on={chosen.has(family)}
 						unscoredNote={unscoredNote(coverage, family)}
 						onToggle={(f) => onSelect(toggled(selected, f))}
 					/>

@@ -263,7 +263,7 @@ plain JSON and the most stable of the four sources.
 
 Run these before committing, patched or not:
 
-- `vp check` and `vp test run` (README, step 4). `src/data/data.test.ts` fails
+- `vp check`, `vp test run`, and `vp run doctor` (README, step 4). `src/data/data.test.ts` fails
   when `plans.json` or `chart-benchmarks.json` differs from what its schema
   outputs, which means someone edited it by hand: rerun `build-plans`.
 - Parse each file you patched against its schema in one line, e.g.

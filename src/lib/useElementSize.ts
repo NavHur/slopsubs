@@ -15,8 +15,7 @@ export function useElementSize<T extends HTMLElement>() {
 				height: entry.contentRect.height,
 			}),
 		);
-		// False positive: a React 19 ref callback is not an effect, and the cleanup
-		// it returns on the next line runs on detach, which the rule cannot see.
+		// False positive: a React 19 ref callback's returned cleanup runs on detach.
 		// react-doctor-disable-next-line react-doctor/effect-needs-cleanup
 		observer.observe(node);
 		return () => observer.disconnect();

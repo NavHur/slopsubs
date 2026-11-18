@@ -248,7 +248,7 @@ function ValueView() {
 				inert={panelOpen}
 				className="flex h-(--header-h) shrink-0 items-center gap-8 border-b border-line px-4 sm:px-7"
 			>
-				{/* A design call, not a fix: the full reload resets the page's client state (open panels, hover, scroll), which a router Link would keep. */}
+				{/* A design call, not a fix: the full reload resets the page's client state (open panels, hover), which a router Link would keep. */}
 				{/* react-doctor-disable-next-line react-doctor/tanstack-start-no-anchor-element */}
 				<a href="/" className="text-[22px] font-semibold tracking-tight">
 					slop<span className="text-accent">subs</span>
