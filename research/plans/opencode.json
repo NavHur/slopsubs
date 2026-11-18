@@ -43,7 +43,7 @@
       "Iceman Contributor Free",
       "Crouton Alpha Free"
     ],
-    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\"; the 5-hour window gets 20% of the monthly dollars and the weekly window 50%. E.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K3.1 Pro 147 / $15; Kimi K2.7 Code 1,350 / $60; LongCat-2.0 11,400 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 43,330 / $100; Hy4 2,710 / $60; GLM-5.3 2,640 / $200. Beam Free, Iceman Contributor Free and Crouton Alpha Free are unlimited for a limited time.",
+    "limits": "\"Estimated requests per 5 hours and monthly usage limits by model\"; the 5-hour window gets 20% of the monthly dollars and the weekly window 50%. E.g. Kimi K3: 110 req/5h, $15 monthly usage; Kimi K3.1 Pro 147 / $15; Kimi K2.7 Code 1,350 / $60; LongCat-2.0 11,400 / $60; MiniMax M3 3,200 / $60; DeepSeek V4.1 Flash 43,330 / $100; Hy4 2,710 / $60; GLM-5.3 $500 through 2026-11-22 (regularly 2,640 req/5h, $200). Beam Free, Iceman Contributor Free and Crouton Alpha Free are unlimited for a limited time.",
     "allowanceKind": "rate-window",
     "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
@@ -66,7 +66,7 @@
       }
     ],
     "confidence": "primary",
-    "notes": "Monthly usage is expressed in dollars per model at Go's token prices, roughly 1.5-24x the subscription price. Limited-time promos: Gemini 4 Argon at 50% off ($2/$10 per MTok instead of $4/$20) through 2026-11-30; Beam Free is free with no cap for a limited time, in limited regions; Iceman Contributor Free is free with no cap for a limited time, in exchange for training on prompts; Crouton Alpha Free is free with no cap for a limited time, excluding many regions including China, Russia and the EU. Extra Usage lets requests continue on a pay-as-you-go balance after a limit, on by default for Teams. Go Teams costs $20 per member per month, with each member's allowance $5 above Go on every model. DeepSeek V4.1 Flash has served the 1017 build since 2026-10-19 (https://x.com/opencode/status/2112220734768779441). DeepSeek is billed at double rates during peak hours (01:00-04:00 and 06:00-10:00 UTC weekdays). The Muse Spark Contributor variants are cheap in exchange for training on prompts. GLM-5.3's allowance rose on 2026-11-17 from $15 (Go) and $120 (Go Plus) to $200 and $400, per the rendered Console Go page; the page's server-rendered HTML still showed the old figures."
+    "notes": "Monthly usage is expressed in dollars per model at Go's token prices, regularly about 1.5-24x the subscription price (GLM-5.3's promo reaches 50x on Go). Limited-time promos: Gemini 4 Argon at 50% off ($2/$10 per MTok instead of $4/$20) through 2026-11-30; GLM-5.3 is $500 a month on Go (regularly $200) through 2026-11-22, per the Console Go page and OpenCode's 2026-11-18 tweet \"$10 for $500 GLM 5.3 till end of the week\", with no promoted request estimates published (the req/5h figure above is the regular one); Beam Free is free with no cap for a limited time, in limited regions; Iceman Contributor Free is free with no cap for a limited time, in exchange for training on prompts; Crouton Alpha Free is free with no cap for a limited time, excluding many regions including China, Russia and the EU. Extra Usage lets requests continue on a pay-as-you-go balance after a limit, on by default for Teams. Go Teams costs $20 per member per month, with each member's allowance $5 above Go on every model. DeepSeek V4.1 Flash has served the 1017 build since 2026-10-19 (https://x.com/opencode/status/2112220734768779441). DeepSeek is billed at double rates during peak hours (01:00-04:00 and 06:00-10:00 UTC weekdays). The Muse Spark Contributor variants are cheap in exchange for training on prompts. GLM-5.3's allowance rose on 2026-11-17 from $15 (Go) and $120 (Go Plus) to $200 and $400, per the rendered Console Go page; the page's server-rendered HTML still showed the old figures."
   },
   {
     "vendor": "Anomaly (OpenCode)",
@@ -81,7 +81,7 @@
     "models": [
       "same as Go"
     ],
-    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K3.1 Pro 588 / $60; Kimi K2.7 Code 4,050 / $180; LongCat-2.0 45,600 / $240; DeepSeek V4.1 Flash 86,670 / $200; Hy4 10,840 / $240; GLM-5.3 5,280 / $400.",
+    "limits": "\"Higher limits and fewer interruptions\", e.g. Kimi K3: 440 req/5h, $60 monthly usage; Kimi K3.1 Pro 588 / $60; Kimi K2.7 Code 4,050 / $180; LongCat-2.0 45,600 / $240; DeepSeek V4.1 Flash 86,670 / $200; Hy4 10,840 / $240; GLM-5.3 $1,000 through 2026-11-22 (regularly 5,280 req/5h, $400).",
     "allowanceKind": "rate-window",
     "availability": "on-sale",
     "thirdPartyHarnessAllowed": true,
@@ -104,6 +104,6 @@
       }
     ],
     "confidence": "primary",
-    "notes": "Same token prices and promos as Go. GLM-5.3's allowance rose on 2026-11-17 from $15 (Go) and $120 (Go Plus) to $200 and $400, per the rendered Console Go page; the page's server-rendered HTML still showed the old figures."
+    "notes": "Same token prices and promos as Go, except that the GLM-5.3 promo gives Go Plus $1,000 a month (regularly $400) through 2026-11-22; the tweet states only Go's $500, so the $1,000 figure is from the Console Go page as reported on 2026-11-18. The regular GLM-5.3 allowance rose on 2026-11-17 from $15 (Go) and $120 (Go Plus) to $200 and $400, per the rendered Console Go page; the page's server-rendered HTML still showed the old figures."
   }
 ]

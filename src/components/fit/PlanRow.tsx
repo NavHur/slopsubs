@@ -149,7 +149,7 @@ export function PlanPromotions({
 	));
 }
 
-/** Says the row's figures count a discount that will end, and where it's from. */
+/** Says the row's figures count a promotion that will end, and where it's from. */
 function PromotionCaveat({
 	plan,
 	promotion,
