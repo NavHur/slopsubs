@@ -391,9 +391,10 @@ function ValueView() {
 						}
 					>
 						<p className="mb-3 max-w-[72ch] text-[13px] leading-5 text-muted">
-							Each model on each selected plan, and at API prices when they are
-							on, from low to max effort. Rows rank by their cheapest effort, so
-							the top rows are the cheapest way to run a task at all.
+							Each model on each selected plan, and those models at API prices
+							when they are on, from low to max effort. Rows rank by their
+							cheapest effort, so the top rows are the cheapest way to run a
+							task at all.
 						</p>
 						<CapBasisKey solidLabel={RANKED_KEY} className="mb-3" />
 						{costRows.length > 0 ? (
