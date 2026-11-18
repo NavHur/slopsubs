@@ -298,8 +298,8 @@ bun run doctor
 and makes an error fail the run, test and story files included; the script's
 `--no-score` turns off telemetry, so run the script, never bare `react-doctor`.
 CI runs it as the "React Doctor" job in `verify.yml`. Warnings are fixed at the
-cause. A false positive gets the narrowest suppression, with its reason beside
-it.
+cause. A false positive or a deliberate design call gets the narrowest
+suppression, with its reason beside it.
 
 
 
