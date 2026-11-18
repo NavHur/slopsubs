@@ -285,6 +285,20 @@ vp check # format, lint, and type-aware checks together
 lint also reports TypeScript's compiler errors. There is no separate typecheck
 command. `bun run format` and `bun run lint` run the same two steps.
 
+## React Doctor
+
+[react-doctor](https://react.doctor/docs) scans the React code for bugs,
+performance problems, and accessibility issues:
+
+```bash
+bun run doctor
+```
+
+`doctor.config.ts` keeps it offline (no score API, share URL, or Socket.dev
+checks) and makes an error fail the run; CI runs it as the "React Doctor" job in
+`verify.yml`. Warnings are fixed at the cause. A false positive gets the
+narrowest suppression, with its reason beside it.
+
 
 
 ## Routing
