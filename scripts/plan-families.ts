@@ -17,7 +17,7 @@ const OPENAI = [
 ];
 const CLAUDE = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 // Monthly usage on Go and Go Plus (opencode.ai/docs/go, 2026-11-06), in dollars
-// at Go's token prices; build-plans converts the off-list ones.
+// at Go's token prices; go-plans.ts converts the off-list ones.
 export const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	"kimi-k3-1-pro": [15, 60],
 	"kimi-k3": [15, 60],
