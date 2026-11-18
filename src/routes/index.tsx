@@ -181,12 +181,13 @@ function ValueView() {
 	const benchmark = BENCHMARK_VIEWS[view.benchmark];
 	const leaderboard = leaderboards[view.benchmark];
 	const planIds = selectedPlans(view);
+	const checkedPlanIds = new Set(planIds);
 	const plansChecked = planIds.length > 0;
 	const families = selectedFamilies(view);
 	const points = valuePoints({
 		benchmarks: leaderboard.models,
 		families,
-		plans: plans.filter((p) => planIds.includes(p.id)),
+		plans: plans.filter((p) => checkedPlanIds.has(p.id)),
 		samples,
 		showApi: view.api,
 		hiddenEfforts: hiddenReasoning(view),
@@ -247,6 +248,8 @@ function ValueView() {
 				inert={panelOpen}
 				className="flex h-(--header-h) shrink-0 items-center gap-8 border-b border-line px-4 sm:px-7"
 			>
+				{/* A design call, not a fix: the full reload resets the page's client state (open panels, hover), which a router Link would keep. */}
+				{/* react-doctor-disable-next-line react-doctor/tanstack-start-no-anchor-element */}
 				<a href="/" className="text-[22px] font-semibold tracking-tight">
 					slop<span className="text-accent">subs</span>
 				</a>

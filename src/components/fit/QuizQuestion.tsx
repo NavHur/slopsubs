@@ -55,7 +55,9 @@ export function QuizQuestion({
 	const last = index === QUIZ_STEPS.length - 1;
 	const { title, hint } = QUESTIONS[step];
 	return (
-		// oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Enter from the focused question heading submits, as it does from the fields; the controls inside stay native
+		// Not a fix, a design call: progress is client state (finished answers reach
+		// the URL), so a no-JavaScript submit has nothing to post; the handler advances it.
+		// oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, react-doctor/no-prevent-default -- Enter from the focused question heading submits, as it does from the fields; the controls inside stay native
 		<form
 			onKeyDown={submitOnEnter}
 			onSubmit={(event) => {

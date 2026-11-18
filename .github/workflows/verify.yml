@@ -25,6 +25,10 @@ jobs:
           # Lint runs with typeCheck on (tsrs-lint), so this is also the type check.
           - name: Format, lint & typecheck
             command: vp check
+          # doctor.config.ts turns off the score API, share URL, and supply-chain
+          # checks; the script's --no-score turns off telemetry. An error fails the job.
+          - name: React Doctor
+            command: vp run doctor
           - name: Tests
             command: vp test run
           - name: Build

@@ -207,6 +207,7 @@ export function SeriesLine({
 	benchmark: BenchmarkView;
 }) {
 	const { isApi, lineWidth } = series.pricing;
+	const shown = new Set(shownPoints);
 	return (
 		<g opacity={groupOpacity(emphasis)} className="transition-opacity">
 			<g opacity={lineOpacity(emphasis)} className="transition-opacity">
@@ -230,7 +231,7 @@ export function SeriesLine({
 						point={p}
 						x={x}
 						y={y}
-						shown={shownPoints.includes(p)}
+						shown={shown.has(p)}
 						onDetails={onDetails}
 						benchmark={benchmark}
 					/>
@@ -320,6 +321,7 @@ export function ModelTags({
 	pinnedModels: readonly FamilyId[];
 	onHighlight: (event: HighlightEvent) => void;
 }) {
+	const pinned = new Set(pinnedModels);
 	return labels.map((label) => {
 		const model = models.find((candidate) => candidate.id === label.id);
 		if (!model) return null;
@@ -330,7 +332,7 @@ export function ModelTags({
 				from={[px(x(modelEnd(model).costPerTaskUsd)), label.anchorY]}
 				at={[right + 24, label.y]}
 				dimmed={isFaded(lit, model.id)}
-				pinned={pinnedModels.includes(model.id)}
+				pinned={pinned.has(model.id)}
 				onHighlight={onHighlight}
 			/>
 		);
@@ -431,13 +433,14 @@ export function ModelLegend({
 	pinnedModels: readonly FamilyId[];
 	onHighlight: (event: HighlightEvent) => void;
 }) {
+	const pinned = new Set(pinnedModels);
 	return (
 		<ul className="mt-3 grid grid-cols-2 gap-x-3 gap-y-0.5 text-[14px] font-medium">
 			{models.map((model) => (
 				<li key={model.id} className="min-w-0">
 					<LegendButton
 						model={model}
-						pinned={pinnedModels.includes(model.id)}
+						pinned={pinned.has(model.id)}
 						muted={isFaded(lit, model.id)}
 						onHighlight={onHighlight}
 					/>

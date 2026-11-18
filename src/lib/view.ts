@@ -118,8 +118,8 @@ export const DEFAULT_VIEW: ViewSearch = ViewSearch.parse({});
 const DEFAULT_PLANS = ["claude-max-20x", "chatgpt-pro-200", "opencode-go"];
 
 export function selectedPlans(view: ViewSearch): PlanId[] {
-	const chosen = view.plans ?? DEFAULT_PLANS;
-	return plans.filter((p) => chosen.includes(p.id)).map((p) => p.id);
+	const chosen = new Set(view.plans ?? DEFAULT_PLANS);
+	return plans.filter((p) => chosen.has(p.id)).map((p) => p.id);
 }
 
 /** Popular models shown by default alongside the frontier. */
@@ -129,14 +129,14 @@ const DEFAULT_EXTRA_FAMILIES: string[] = ["muse-spark-1-3"];
  * Labs whose plans are bought for every model they serve, so selecting one
  * shows all its models: Muse Code's Wonder and Ember sit outside the default.
  */
-const LABS_SHOWING_ALL_PLAN_MODELS = ["meta"];
+const LABS_SHOWING_ALL_PLAN_MODELS = new Set(["meta"]);
 
 /** Models a selected plan turns on, by the rule above. */
 function familiesShownWith(planIds: readonly string[]): FamilyId[] {
+	const selected = new Set(planIds);
 	return plans
 		.filter(
-			(p) =>
-				planIds.includes(p.id) && LABS_SHOWING_ALL_PLAN_MODELS.includes(p.lab),
+			(p) => selected.has(p.id) && LABS_SHOWING_ALL_PLAN_MODELS.has(p.lab),
 		)
 		.flatMap((p) => p.families);
 }
@@ -166,11 +166,11 @@ export function selectedFamilies(view: ViewSearch): FamilyId[] {
 export function planToggled(view: ViewSearch, id: PlanId): Partial<ViewSearch> {
 	const current = selectedPlans(view);
 	const next = toggled(current, id);
-	if (!view.families || current.includes(id)) return { plans: next };
-	const added = familiesShownWith([id]).filter(
-		(f) => !view.families?.includes(f),
-	);
-	return { plans: next, families: [...view.families, ...added] };
+	const { families } = view;
+	if (!families || current.includes(id)) return { plans: next };
+	const picked = new Set(families);
+	const added = familiesShownWith([id]).filter((f) => !picked.has(f));
+	return { plans: next, families: [...families, ...added] };
 }
 
 /** A non-reasoning variant is a different mode, so it starts hidden. */
@@ -194,7 +194,8 @@ export function isDefaultModelsView(view: ViewSearch): boolean {
 }
 
 function sameMembers<T>(a: readonly T[], b: readonly T[]): boolean {
-	return a.length === b.length && a.every((x) => b.includes(x));
+	const members = new Set(b);
+	return a.length === b.length && a.every((x) => members.has(x));
 }
 
 type FrontierTier = Frontier[string]["tier"];
@@ -217,13 +218,15 @@ export const NOTABLE_FAMILIES = COVERED_FAMILIES.filter(
 
 /** Whether every family in `group` is selected. */
 export function allSelected<T>(selected: readonly T[], group: readonly T[]) {
-	return group.length > 0 && group.every((x) => selected.includes(x));
+	const chosen = new Set(selected);
+	return group.length > 0 && group.every((x) => chosen.has(x));
 }
 
 /** Deselects the group when all of it is selected, else selects all of it. */
 export function toggledGroup<T>(selected: readonly T[], group: readonly T[]) {
+	const dropped = new Set(group);
 	return allSelected(selected, group)
-		? selected.filter((x) => !group.includes(x))
+		? selected.filter((x) => !dropped.has(x))
 		: [...new Set([...selected, ...group])];
 }
 

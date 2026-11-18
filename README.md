@@ -67,8 +67,8 @@ A scheduled agent runs it twice a day (every 12 hours), in this order:
 3. A clean tree means nothing changed: close any open refresh PR, close the
    failure issue (comment "No data changed" and the run's UTC time, then close
    it), and stop.
-4. Otherwise run `vp check` and `vp test run`. If either fails, the run failed
-   at that check: stop before pushing.
+4. Otherwise run `vp check`, `vp test run`, and `vp run doctor`. If any of them
+   fails, the run failed at that check: stop before pushing.
 5. Skip the push only when `origin/data-refresh/main` is based on the current
    `origin/main` and the last line of
    `bun scripts/data-changes.ts origin/data-refresh/main` starts "No data
@@ -284,6 +284,22 @@ vp check # format, lint, and type-aware checks together
 `vite.config.ts` points type-aware lint at tsrs-lint and sets `typeCheck`, so
 lint also reports TypeScript's compiler errors. There is no separate typecheck
 command. `bun run format` and `bun run lint` run the same two steps.
+
+## React Doctor
+
+[react-doctor](https://react.doctor/docs) scans the React code for bugs,
+performance problems, and accessibility issues:
+
+```bash
+bun run doctor
+```
+
+`doctor.config.ts` turns off the score API, share URL, and Socket.dev checks
+and makes an error fail the run, test and story files included; the script's
+`--no-score` turns off telemetry, so run the script, never bare `react-doctor`.
+CI runs it as the "React Doctor" job in `verify.yml`. Warnings are fixed at the
+cause. A false positive or a deliberate design call gets the narrowest
+suppression, with its reason beside it.
 
 
 

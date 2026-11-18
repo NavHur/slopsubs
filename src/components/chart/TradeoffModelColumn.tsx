@@ -49,6 +49,7 @@ export function TradeoffModelColumn({
 }) {
 	if (!hasModelColumn(viewport.width)) return null;
 	const x = viewport.width - viewport.padding.right + COLUMN_GAP_PX;
+	const pinned = new Set(pinnedModels);
 	return modelLabels(scene, viewport).map(({ id, end, y }) => {
 		const model = models.find((m) => m.id === id);
 		return (
@@ -59,7 +60,7 @@ export function TradeoffModelColumn({
 					from={[end.x, end.y]}
 					at={[x, y]}
 					dimmed={isFaded(lit, id)}
-					pinned={pinnedModels.includes(id)}
+					pinned={pinned.has(id)}
 					onHighlight={onHighlight}
 				/>
 			)
