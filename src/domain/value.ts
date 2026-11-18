@@ -262,13 +262,15 @@ export function valuePoints({
 	showApi: boolean;
 	hiddenEfforts: readonly Effort[];
 }): ValuePoint[] {
+	const hidden = new Set(hiddenEfforts);
+	const shownFamilies = new Set(families);
 	const plottable = benchmarks
 		.filter(isPlottable)
-		.filter((p) => !hiddenEfforts.includes(p.effort));
+		.filter((p) => !hidden.has(p.effort));
 	const subscribed = plans.flatMap((plan) => {
 		const capacity = planCapacity(plan, samples);
 		return plan.families
-			.filter((f) => families.includes(f))
+			.filter((f) => shownFamilies.has(f))
 			.flatMap((family) => {
 				const allowance = weeklyAllowance(plan, capacity, family);
 				if (allowance === null) return [];

@@ -181,12 +181,13 @@ function ValueView() {
 	const benchmark = BENCHMARK_VIEWS[view.benchmark];
 	const leaderboard = leaderboards[view.benchmark];
 	const planIds = selectedPlans(view);
+	const planIdSet = new Set(planIds);
 	const plansChecked = planIds.length > 0;
 	const families = selectedFamilies(view);
 	const points = valuePoints({
 		benchmarks: leaderboard.models,
 		families,
-		plans: plans.filter((p) => planIds.includes(p.id)),
+		plans: plans.filter((p) => planIdSet.has(p.id)),
 		samples,
 		showApi: view.api,
 		hiddenEfforts: hiddenReasoning(view),

@@ -95,7 +95,10 @@ function ShareFields({
 }) {
 	const base = useId();
 	const errorId = (family: FamilyId) => `${base}-${family}`;
-	const rejected = inputs.models.filter((f) => invalid.includes(shareField(f)));
+	const invalidFields = new Set(invalid);
+	const rejected = inputs.models.filter((f) =>
+		invalidFields.has(shareField(f)),
+	);
 	const counted = countedSplit(inputs);
 	return (
 		<div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px]">
@@ -106,7 +109,7 @@ function ShareFields({
 					<NumberField
 						value={inputs.weights[family] ?? null}
 						placeholder={String(Math.round(modelWeight(inputs, family)))}
-						invalid={invalid.includes(shareField(family))}
+						invalid={invalidFields.has(shareField(family))}
 						errorId={errorId(family)}
 						onChange={(entry) => onEntry(shareField(family), entry)}
 						className="min-h-11 w-20"

@@ -206,6 +206,7 @@ export function PlanList({
 	onToggleApi: () => void;
 }) {
 	const { valued, unmeasured } = byCapacity(plans);
+	const checked = new Set(selected);
 	return (
 		<section aria-labelledby="plans-heading">
 			<div className="flex items-baseline justify-between">
@@ -236,7 +237,7 @@ export function PlanList({
 							<li key={plan.id}>
 								<PricingRow
 									label={plan.label}
-									checked={selected.includes(plan.id)}
+									checked={checked.has(plan.id)}
 									onChange={() => onToggle(plan.id)}
 									lineStyle={styles.get(plan.id)}
 									detail={<PlanPrice plan={plan} />}
@@ -495,6 +496,7 @@ function FamilyGroup({
 	actions?: React.ReactNode;
 }) {
 	const { selected, onSelect } = selection;
+	const on = new Set(selected);
 	return (
 		<section aria-label={title} className="mb-3">
 			<div className="mb-1 flex items-baseline justify-between gap-2">
@@ -509,7 +511,7 @@ function FamilyGroup({
 					<FamilyRow
 						key={family}
 						family={family}
-						on={selected.includes(family)}
+						on={on.has(family)}
 						unscoredNote={unscoredNote(coverage, family)}
 						onToggle={(f) => onSelect(toggled(selected, f))}
 					/>
