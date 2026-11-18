@@ -266,28 +266,28 @@ describe("valuePoints", () => {
 		const points = valuePoints({
 			benchmarks: [benchmark("none", 0), ...benchmarks],
 			families: [opus],
-			plans: [],
-			samples: [],
+			plans: [plan],
+			samples: [sample(0, 10, 120)],
 			showApi: true,
 			hiddenEfforts: ["none", "max"],
 		});
-		expect(points.map((p) => p.benchmark.effort)).toEqual(["low"]);
+		expect(points.map((p) => p.benchmark.effort)).toEqual(["low", "low"]);
 	});
 
 	it("plots the non-reasoning variant first when shown", () => {
 		const points = valuePoints({
 			benchmarks: [...benchmarks, benchmark("none", 0)],
 			families: [opus],
-			plans: [],
-			samples: [],
+			plans: [plan],
+			samples: [sample(0, 10, 120)],
 			showApi: true,
 			hiddenEfforts: [],
 		});
-		expect(points.map((p) => p.benchmark.effort)).toEqual([
-			"none",
-			"low",
-			"max",
-		]);
+		expect(
+			points
+				.filter((p) => p.pricing.kind === "api")
+				.map((p) => p.benchmark.effort),
+		).toEqual(["none", "low", "max"]);
 	});
 
 	it("omits plans that have not been measured", () => {
@@ -379,5 +379,100 @@ describe("valuePoints", () => {
 			[opus, "max", 8 / 1.5],
 			[haiku, "max", 8 / 6],
 		]);
+	});
+});
+
+describe("valuePoints API lines", () => {
+	const fable = "claude-fable-5-2" as FamilyId;
+	const otherPlan = "other-plan" as PlanId;
+	const benchmarks = [
+		benchmark("low", 2),
+		benchmark("max", 8),
+		{ ...benchmark("max", 8), family: fable, id: "fable-max" },
+	];
+	const measured = [sample(0, 10, 120)];
+	// A plan whose published allowance covers only the families named.
+	function publishedPlan(
+		id: PlanId,
+		families: FamilyId[],
+		covered: FamilyId[],
+	) {
+		return {
+			...plan,
+			id,
+			families,
+			publishedAllowance: {
+				apiUsdPerMonthByFamily: Object.fromEntries(covered.map((f) => [f, 15])),
+				url: "https://example.com/limits",
+				basis: "monthly usage by model",
+			},
+		};
+	}
+	function apiFamilies(
+		input: Partial<Parameters<typeof valuePoints>[0]> = {},
+	): FamilyId[] {
+		const points = valuePoints({
+			benchmarks,
+			families: [opus, fable],
+			plans: [plan],
+			samples: measured,
+			showApi: true,
+			hiddenEfforts: [],
+			...input,
+		});
+		const families = points
+			.filter((p) => p.pricing.kind === "api")
+			.map((p) => p.benchmark.family);
+		return [...new Set(families)];
+	}
+
+	it("draws API lines only for the families a checked plan covers", () => {
+		expect(apiFamilies()).toEqual([opus]);
+	});
+
+	it("covers the families of every checked plan", () => {
+		const fablePlan = publishedPlan(otherPlan, [fable], [fable]);
+		expect(apiFamilies({ plans: [plan, fablePlan] })).toEqual([opus, fable]);
+	});
+
+	it("keeps a family the model list has unticked off the chart", () => {
+		expect(apiFamilies({ families: [fable] })).toEqual([]);
+	});
+
+	it("draws no API line for a family the plan lists but has no cap for", () => {
+		const partial = publishedPlan(otherPlan, [opus, fable], [opus]);
+		expect(apiFamilies({ plans: [partial], samples: [] })).toEqual([opus]);
+	});
+
+	it("draws no API line when every effort the plan serves is hidden", () => {
+		const lowOnly = { ...plan, maxEffortByFamily: { [opus]: "low" } } as Plan;
+		expect(apiFamilies({ plans: [lowOnly], hiddenEfforts: ["low"] })).toEqual(
+			[],
+		);
+	});
+
+	it("shows the API's efforts above the plan's cap", () => {
+		const capped = { ...plan, maxEffortByFamily: { [opus]: "low" } } as Plan;
+		const points = valuePoints({
+			benchmarks,
+			families: [opus],
+			plans: [capped],
+			samples: measured,
+			showApi: true,
+			hiddenEfforts: [],
+		});
+		expect(
+			points
+				.filter((p) => p.pricing.kind === "api")
+				.map((p) => p.benchmark.effort),
+		).toEqual(["low", "max"]);
+	});
+
+	it("draws no API lines when no plan is checked", () => {
+		expect(apiFamilies({ plans: [] })).toEqual([]);
+	});
+
+	it("draws no API lines when the pay-per-token view is off", () => {
+		expect(apiFamilies({ showApi: false })).toEqual([]);
 	});
 });
