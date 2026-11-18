@@ -180,6 +180,7 @@ function ValueView() {
 	const benchmark = BENCHMARK_VIEWS[view.benchmark];
 	const leaderboard = leaderboards[view.benchmark];
 	const planIds = selectedPlans(view);
+	const plansChecked = planIds.length > 0;
 	const families = selectedFamilies(view);
 	const points = valuePoints({
 		benchmarks: leaderboard.models,
@@ -206,7 +207,7 @@ function ValueView() {
 					showPareto={view.pareto}
 					showLabels
 					benchmark={benchmark}
-					plansChecked={planIds.length > 0}
+					plansChecked={plansChecked}
 				/>
 			),
 			legend: (
@@ -340,7 +341,7 @@ function ValueView() {
 							showPareto={view.pareto}
 							showLabels={view.labels}
 							benchmark={benchmark}
-							plansChecked={planIds.length > 0}
+							plansChecked={plansChecked}
 						/>
 						{/* From lg the side panel shows each plan's line style; the PNG draws its own key. */}
 						<PricingKey
@@ -352,7 +353,7 @@ function ValueView() {
 						points={points}
 						pricings={styles}
 						view={benchmark}
-						plansChecked={planIds.length > 0}
+						plansChecked={plansChecked}
 					/>
 					<ChartSection
 						id="tasks-per-week"
