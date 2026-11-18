@@ -8,7 +8,9 @@ export function nothingToPlot(plansChecked: boolean): string {
 		: "Nothing to plot. Check a plan to compare it with API prices.";
 }
 
-/** The ranked-cost empty state: API prices alone cannot fill it, so it asks for a plan. */
-export function nothingToRank(): string {
-	return "Select a plan to rank its costs.";
+/** The ranked-cost empty state: API prices alone cannot fill it, so it asks for a plan or a model. */
+export function nothingToRank(plansChecked: boolean): string {
+	return plansChecked
+		? "Nothing to rank. Pick a model, or measure a plan."
+		: "Select a plan to rank its costs.";
 }

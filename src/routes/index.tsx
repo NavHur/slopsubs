@@ -400,7 +400,7 @@ function ValueView() {
 							<RankedChart rows={costRows} />
 						) : (
 							<p className="py-10 text-center text-sm text-muted">
-								{nothingToRank()}
+								{nothingToRank(plansChecked)}
 							</p>
 						)}
 					</ChartSection>
