@@ -20,49 +20,15 @@ import {
 import { CLAUDE_ULTRA } from "./claude-caps.ts";
 import { creditAllowance, creditPromotions } from "./credit-plans.ts";
 import { CREDIT_PLANS } from "./credit-vendors.ts";
-import { listPriced, type TokenRates } from "./list-price.ts";
+import { type GoTier, goPlan } from "./go-plans.ts";
+import { GO_PRICING, OPENCODE_DOCS } from "./go-pricing.ts";
+import type { TokenRates } from "./list-price.ts";
 import { MUSE_EVERYDAY } from "./muse-caps.ts";
-import { OPENCODE_GO_USD, PLAN_FAMILIES } from "./plan-families.ts";
+import { PLAN_FAMILIES } from "./plan-families.ts";
 import { type KnownTier, type Ladder, ladderCap } from "./tier-ladder.ts";
 import { WEEKLY_CREDIT_PLANS, weeklyCreditCap } from "./weekly-credit-caps.ts";
 
 const ROOT = new URL("..", import.meta.url);
-
-/** Go's docs, the source of its allowances, prices and promos. */
-const OPENCODE_DOCS = "https://opencode.ai/docs/go#usage-limits";
-
-/** Go's regular [input, output] $/MTok where it differs from the list price. */
-const GO_OFF_LIST_PRICES: Record<string, [input: number, output: number]> = {
-	"gemini-4-argon": [4, 20],
-	// The Contributor variants, billed far below Meta's list price.
-	"muse-spark-1-3": [0.1, 0.2],
-	"muse-spark-1-2": [0.1, 0.2],
-	"longcat-2-0": [0.3, 1.2],
-	"mimo-v2-5-pro": [0.435, 0.87],
-	"mimo-v2-5-0424": [0.14, 0.28],
-	hy3: [0.14, 0.58],
-};
-
-/**
- * Limited-time discounts on Go's token prices. A discount stretches the same
- * monthly dollars over more tokens, so the allowance counts it while it runs.
- */
-const GO_PROMOS: Record<
-	string,
-	{ prices: [input: number, output: number]; promotion: Promotion }
-> = {
-	"gemini-4-argon": {
-		prices: [2, 10],
-		promotion: {
-			summary: "Go bills Gemini 4 Argon at 50% off, doubling its usage",
-			endsOn: "2026-11-30",
-			url: OPENCODE_DOCS,
-		},
-	},
-};
-const OPENCODE_PROMOTIONS = Object.fromEntries(
-	Object.entries(GO_PROMOS).map(([family, p]) => [family, p.promotion]),
-);
 
 /** Max effort on Muse Spark is only served by Meta's own API. */
 const OPENCODE_MAX_EFFORT = {
@@ -70,7 +36,7 @@ const OPENCODE_MAX_EFFORT = {
 	"muse-spark-1-2": "xhigh",
 } as const;
 
-const PUBLISHED_ALLOWANCES: Record<string, 0 | 1> = {
+const GO_TIERS: Record<string, GoTier> = {
 	"opencode-go": 0,
 	"opencode-go-plus": 1,
 };
@@ -197,12 +163,6 @@ function listRates(family: string): TokenRates {
 	return [list.inputPricePerMTokUsd, list.outputPricePerMTokUsd];
 }
 
-/** Converts a Go-priced dollar allowance into list-priced (API) dollars. */
-function listPricedUsd(family: string, goUsd: number): number {
-	const goPrice = GO_PROMOS[family]?.prices ?? GO_OFF_LIST_PRICES[family];
-	return goPrice ? listPriced(goUsd, goPrice, listRates(family)) : goUsd;
-}
-
 /** The vendor's own statement of each model's monthly usage: OpenCode Go's
  * per-model dollars, or a credit plan's credit valued at list price. */
 function publishedAllowance(
@@ -212,15 +172,11 @@ function publishedAllowance(
 ): PublishedAllowance | null {
 	const credit = CREDIT_PLANS[planId];
 	if (credit) return creditAllowance(credit, priceUsd, families, listRates);
-	const tier = PUBLISHED_ALLOWANCES[planId];
+	const tier = GO_TIERS[planId];
 	if (tier === undefined) return null;
 	return {
-		apiUsdPerMonthByFamily: Object.fromEntries(
-			Object.entries(OPENCODE_GO_USD).map(([family, usd]) => [
-				family,
-				listPricedUsd(family, usd[tier]),
-			]),
-		),
+		apiUsdPerMonthByFamily: goPlan(GO_PRICING, tier, families, listRates)
+			.apiUsdPerMonthByFamily,
 		url: OPENCODE_DOCS,
 		basis:
 			"OpenCode's published monthly usage for each model, at list prices, with current promos",
@@ -238,15 +194,16 @@ function creditCap(
 	return weeklyCreditCap(plan, families, listRates);
 }
 
-/** The limited-time discounts a plan's allowance counts, by family. */
+/** The limited-time promotions a plan's allowance counts, by family. */
 function promotions(
 	planId: string,
-	lab: string,
 	families: readonly string[],
 ): Record<string, Promotion> {
 	const credit = CREDIT_PLANS[planId];
 	if (credit) return creditPromotions(credit, families);
-	return lab === "opencode" ? OPENCODE_PROMOTIONS : {};
+	const tier = GO_TIERS[planId];
+	if (tier === undefined) return {};
+	return goPlan(GO_PRICING, tier, families, listRates).promotionByFamily;
 }
 
 /** A plan has a credit exactly when its research row says credit, and the
@@ -320,7 +277,7 @@ const plans = Plans.parse(
 				publishedAllowance: allowance,
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
-				promotionByFamily: promotions(p.planId, lab, families),
+				promotionByFamily: promotions(p.planId, families),
 			};
 		}),
 );
