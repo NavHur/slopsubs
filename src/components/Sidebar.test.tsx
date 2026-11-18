@@ -60,6 +60,20 @@ const uncoveredPlan: Plan = {
 };
 
 describe("PlanList", () => {
+	it("says the API row follows the plans' models", () => {
+		const html = renderToStaticMarkup(
+			<PlanList
+				plans={[uncoveredPlan]}
+				selected={[]}
+				styles={new Map()}
+				showApi
+				onToggle={() => {}}
+				onToggleApi={() => {}}
+			/>,
+		);
+		expect(html).toContain("list price, plan models");
+	});
+
 	it("shows a dash, not Infinity, for a plan with no multiple", () => {
 		const html = renderToStaticMarkup(
 			<PlanList

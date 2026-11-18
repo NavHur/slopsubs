@@ -241,9 +241,11 @@ function seriesFor(
 }
 
 /**
- * Every plotted point: each selected family at API prices, and again under
- * each selected plan with a known cap that covers it at that plan's effective
- * cost, leaving out the hidden reasoning efforts.
+ * Every plotted point: each selected family under each selected plan with a
+ * known cap that covers it, at that plan's effective cost, and, when `showApi`
+ * is on, at API prices for each family that some plan line was drawn for. With
+ * no plan line there is no API line to compare it with. Hidden reasoning
+ * efforts are left out; a plan's effort cap clips only its own line.
  */
 export function valuePoints({
 	benchmarks,
@@ -263,9 +265,6 @@ export function valuePoints({
 	const plottable = benchmarks
 		.filter(isPlottable)
 		.filter((p) => !hiddenEfforts.includes(p.effort));
-	const api = showApi
-		? families.flatMap((f) => seriesFor(plottable, f, { kind: "api" }))
-		: [];
 	const subscribed = plans.flatMap((plan) => {
 		const capacity = planCapacity(plan, samples);
 		return plan.families
@@ -282,5 +281,11 @@ export function valuePoints({
 				});
 			});
 	});
+	const covered = new Set(subscribed.map((p) => p.benchmark.family));
+	const api = showApi
+		? families
+				.filter((f) => covered.has(f))
+				.flatMap((f) => seriesFor(plottable, f, { kind: "api" }))
+		: [];
 	return [...api, ...subscribed];
 }

@@ -137,7 +137,9 @@ describe("tasksPerWeek", () => {
 	});
 
 	it("leaves out API pricing, which has no weekly cap", () => {
-		expect(tasksOf([], true)).toEqual([]);
+		expect(tasksOf([ultra], true).map((p) => p.plan)).toEqual([
+			"claude-max-20x",
+		]);
 	});
 });
 
@@ -166,7 +168,7 @@ describe("rankedCost", () => {
 	});
 
 	it("keeps each row's efforts lowest first at their effective cost", () => {
-		const apiOpus = ranked([], true).find((r) => r.id.startsWith(opus));
+		const apiOpus = ranked([ultra], true).find((r) => r.id === `${opus}@api`);
 		expect(apiOpus?.costs).toEqual([
 			["low", 2],
 			["max", 4],
@@ -175,7 +177,9 @@ describe("rankedCost", () => {
 
 	it("breaks ties by series so the order is stable", () => {
 		const tied = [benchmark(opus, "low", 2), benchmark(fable, "low", 2)];
-		const ids = ranked([], true, tied).map((r) => r.id);
+		const ids = ranked([ultra], true, tied)
+			.map((r) => r.id)
+			.filter((id) => id.endsWith("@api"));
 		expect(ids).toEqual([`${fable}@api`, `${opus}@api`]);
 	});
 });

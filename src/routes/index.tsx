@@ -22,6 +22,7 @@ import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/enums";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
+import { nothingToRank } from "#/lib/emptyChart";
 import { useRenderedView } from "#/lib/sharedLink";
 import { SCROLL_END_ID, useSectionNav } from "#/lib/useSectionNav";
 import {
@@ -180,6 +181,7 @@ function ValueView() {
 	const benchmark = BENCHMARK_VIEWS[view.benchmark];
 	const leaderboard = leaderboards[view.benchmark];
 	const planIds = selectedPlans(view);
+	const plansChecked = planIds.length > 0;
 	const families = selectedFamilies(view);
 	const points = valuePoints({
 		benchmarks: leaderboard.models,
@@ -206,6 +208,7 @@ function ValueView() {
 					showPareto={view.pareto}
 					showLabels
 					benchmark={benchmark}
+					plansChecked={plansChecked}
 				/>
 			),
 			legend: (
@@ -339,6 +342,7 @@ function ValueView() {
 							showPareto={view.pareto}
 							showLabels={view.labels}
 							benchmark={benchmark}
+							plansChecked={plansChecked}
 						/>
 						{/* From lg the side panel shows each plan's line style; the PNG draws its own key. */}
 						<PricingKey
@@ -346,7 +350,12 @@ function ValueView() {
 							className="mt-3 lg:hidden"
 						/>
 					</ChartSection>
-					<TradeoffSection points={points} pricings={styles} view={benchmark} />
+					<TradeoffSection
+						points={points}
+						pricings={styles}
+						view={benchmark}
+						plansChecked={plansChecked}
+					/>
 					<ChartSection
 						id="tasks-per-week"
 						title="Tasks per week on each plan"
@@ -382,16 +391,17 @@ function ValueView() {
 						}
 					>
 						<p className="mb-3 max-w-[72ch] text-[13px] leading-5 text-muted">
-							Each model on each selected plan, and at API prices when they are
-							on, from low to max effort. Rows rank by their cheapest effort, so
-							the top rows are the cheapest way to run a task at all.
+							Each model on each selected plan, and those models at API prices
+							when they are on, from low to max effort. Rows rank by their
+							cheapest effort, so the top rows are the cheapest way to run a
+							task at all.
 						</p>
 						<CapBasisKey solidLabel={RANKED_KEY} className="mb-3" />
 						{costRows.length > 0 ? (
 							<RankedChart rows={costRows} />
 						) : (
 							<p className="py-10 text-center text-sm text-muted">
-								Select a plan, or turn on API prices above, to rank their costs.
+								{nothingToRank(plansChecked)}
 							</p>
 						)}
 					</ChartSection>

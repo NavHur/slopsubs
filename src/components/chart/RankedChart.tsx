@@ -26,7 +26,7 @@ function costRow(row: CostRow): RangeRow {
 	});
 }
 
-/** Every model on every selected plan and at API prices, cheapest first. */
+/** Every model on every selected plan, and those models at API prices, cheapest first. */
 export function RankedChart({ rows }: { rows: readonly CostRow[] }) {
 	return (
 		<RangeChart

@@ -10,6 +10,7 @@ import { TradeoffChart } from "#/components/chart/TradeoffChart";
 import { type TimedPoint, timedPoints } from "#/domain/tradeoffs";
 import type { ValuePoint } from "#/domain/value";
 import type { BenchmarkView } from "#/lib/benchmarks";
+import { nothingToPlot } from "#/lib/emptyChart";
 import { ChartSection } from "./ChartSection";
 import { Segmented } from "./Segmented";
 import { type Plotted, TradeoffKey, tradeoffPng } from "./TradeoffKey";
@@ -23,9 +24,12 @@ const PRESET_OPTIONS = [
 ] as const satisfies readonly { value: ViewPreset; label: string }[];
 
 /** Why the chart has nothing to show. */
-function emptyMessage(points: readonly ValuePoint[], view: BenchmarkView) {
-	if (points.length === 0)
-		return "Nothing to plot. Pick a model, or measure a plan.";
+function emptyMessage(
+	points: readonly ValuePoint[],
+	view: BenchmarkView,
+	plansChecked: boolean,
+) {
+	if (points.length === 0) return nothingToPlot(plansChecked);
 	return `No plotted model has a time per task on ${view.tabLabel}. Pick another benchmark to weigh time too.`;
 }
 
@@ -98,6 +102,7 @@ export function TradeoffSection({
 	points,
 	pricings,
 	view,
+	plansChecked,
 }: {
 	points: readonly ValuePoint[];
 	/** The styles the side panel uses, built from every point, not only timed
@@ -105,6 +110,8 @@ export function TradeoffSection({
 	pricings: Plotted["pricings"];
 	/** The benchmark the points score on. */
 	view: BenchmarkView;
+	/** Whether any plan is checked, which the empty chart's message turns on. */
+	plansChecked: boolean;
 }) {
 	const timed = useMemo(() => timedPoints(points), [points]);
 	const [angles, setAngles] = useState<Angles>(VIEW_PRESETS.perspective);
@@ -132,7 +139,7 @@ export function TradeoffSection({
 				/>
 			) : (
 				<p className="py-10 text-center text-sm text-muted">
-					{emptyMessage(points, view)}
+					{emptyMessage(points, view, plansChecked)}
 				</p>
 			)}
 		</ChartSection>
