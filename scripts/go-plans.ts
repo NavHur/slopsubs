@@ -7,16 +7,32 @@ import { listPriced, type TokenRates } from "./list-price.ts";
 /** Go is tier 0 and Go Plus tier 1, the order of a family's usage pair. */
 export type GoTier = 0 | 1;
 
-/** A limited-time discount on one family's token prices. */
-type GoPricePromo = { prices: TokenRates; promotion: Promotion };
+/** A family's usage as [Go, Go Plus], in dollars at Go's token prices. */
+type TierUsd = [go: number, goPlus: number];
+
+/**
+ * A limited-time offer on one family, with one effect: it either discounts
+ * the family's token prices, stretching the same dollars over more tokens, or
+ * raises its monthly dollars outright.
+ */
+type GoPromo =
+	| { kind: "price"; prices: TokenRates; promotion: Promotion }
+	| {
+			kind: "allowance";
+			/** Replaces the regular usage while the promo runs. */
+			usageUsd: TierUsd;
+			/** What each tier's caveat says, since each tier's figure differs. */
+			summaries: [go: string, goPlus: string];
+			endsOn: string;
+			url: string;
+	  };
 
 export type GoPricing = {
-	/** Each family's regular monthly usage as [Go, Go Plus], in dollars at
-	 * Go's token prices. */
-	usageUsd: Record<string, [go: number, goPlus: number]>;
+	/** Each family's regular monthly usage. */
+	usageUsd: Record<string, TierUsd>;
 	/** Go's regular rates where they differ from the list price. */
 	offListRates: Record<string, TokenRates>;
-	promos: Record<string, GoPricePromo>;
+	promos: Record<string, GoPromo>;
 };
 
 export type GoPlan = {
@@ -34,27 +50,41 @@ export function goPlan(
 ): GoPlan {
 	return {
 		apiUsdPerMonthByFamily: Object.fromEntries(
-			Object.entries(pricing.usageUsd).map(([family, usd]) => [
+			Object.keys(pricing.usageUsd).map((family) => [
 				family,
-				listPricedUsd(pricing, family, usd[tier], listRates),
+				listPricedUsd(pricing, family, tier, listRates),
 			]),
 		),
 		promotionByFamily: Object.fromEntries(
 			Object.entries(pricing.promos)
 				.filter(([family]) => families.includes(family))
-				.map(([family, p]) => [family, p.promotion]),
+				.map(([family, promo]) => [family, promotionFor(promo, tier)]),
 		),
 	};
 }
 
-/** Converts a Go-priced dollar allowance into list-priced (API) dollars. */
+function promotionFor(promo: GoPromo, tier: GoTier): Promotion {
+	if (promo.kind === "price") return promo.promotion;
+	return {
+		summary: promo.summaries[tier],
+		endsOn: promo.endsOn,
+		url: promo.url,
+	};
+}
+
+/** Converts a family's Go-priced dollar usage into list-priced (API) dollars. */
 function listPricedUsd(
 	pricing: GoPricing,
 	family: string,
-	goUsd: number,
+	tier: GoTier,
 	listRates: (family: string) => TokenRates,
 ): number {
+	const promo = pricing.promos[family];
+	const goUsd =
+		promo?.kind === "allowance"
+			? promo.usageUsd[tier]
+			: pricing.usageUsd[family][tier];
 	const goRates =
-		pricing.promos[family]?.prices ?? pricing.offListRates[family];
+		promo?.kind === "price" ? promo.prices : pricing.offListRates[family];
 	return goRates ? listPriced(goUsd, goRates, listRates(family)) : goUsd;
 }

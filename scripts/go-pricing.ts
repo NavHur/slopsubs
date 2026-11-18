@@ -24,6 +24,7 @@ export const GO_PRICING: GoPricing = {
 	// allowance counts it while it runs.
 	promos: {
 		"gemini-4-argon": {
+			kind: "price",
 			prices: [2, 10],
 			promotion: {
 				summary: "Go bills Gemini 4 Argon at 50% off, doubling its usage",
