@@ -4,13 +4,13 @@ import { nothingToPlot, nothingToRank } from "./emptyChart";
 describe("nothingToRank", () => {
 	it("asks a visitor with no plan checked for a plan, without offering API prices", () => {
 		const text = nothingToRank(false);
-		expect(text).toMatch(/select a plan/i);
+		expect(text).toMatch(/check a plan/i);
 		expect(text).not.toMatch(/API/i);
 	});
 
-	it("tells a visitor with a plan checked to pick a model, not to select a plan", () => {
+	it("tells a visitor with a plan checked to pick a model, not to check a plan", () => {
 		const text = nothingToRank(true);
-		expect(text).not.toMatch(/select a plan/i);
+		expect(text).not.toMatch(/check a plan/i);
 		expect(text).toContain("Pick a model");
 	});
 });

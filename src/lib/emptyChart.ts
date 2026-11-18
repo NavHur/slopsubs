@@ -12,5 +12,5 @@ export function nothingToPlot(plansChecked: boolean): string {
 export function nothingToRank(plansChecked: boolean): string {
 	return plansChecked
 		? "Nothing to rank. Pick a model, or measure a plan."
-		: "Select a plan to rank its costs.";
+		: "Check a plan to rank its costs.";
 }
