@@ -113,13 +113,20 @@ describe("a Go plan's promotions", () => {
 		expect(summaryOf(GO_PLUS)?.summary).toBe("Go Plus raises it to $100");
 	});
 
-	it("leaves out a promotion on a family the plan does not list", () => {
-		const { promotionByFamily } = goPlan(
-			pricing,
-			GO,
-			["plain", "offList"],
-			listRates,
-		);
-		expect(promotionByFamily).toEqual({});
+	it("counts neither a promotion nor its figure on a family the plan does not list", () => {
+		const plan = goPlan(pricing, GO, ["plain", "offList"], listRates);
+		expect(plan.promotionByFamily).toEqual({});
+		expect(Object.keys(plan.apiUsdPerMonthByFamily)).toEqual([
+			"plain",
+			"offList",
+		]);
+	});
+
+	it("refuses a promotion on a family with no regular usage", () => {
+		const orphaned: GoPricing = {
+			...pricing,
+			promos: { ghost: pricing.promos.raised },
+		};
+		expect(() => goPlan(orphaned, GO, families, listRates)).toThrow(/ghost/);
 	});
 });

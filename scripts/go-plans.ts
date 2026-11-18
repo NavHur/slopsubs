@@ -40,24 +40,35 @@ export type GoPlan = {
 	promotionByFamily: Record<string, Promotion>;
 };
 
-/** A tier's monthly usage in list-priced (API) dollars, and the promotions
- * it counts for the families the plan lists. */
+/**
+ * A tier's monthly usage in list-priced (API) dollars, and the promotions it
+ * counts, for the families the plan lists. A promotion on a family with no
+ * regular usage is a data mistake: it would show a caveat and change nothing.
+ */
 export function goPlan(
 	pricing: GoPricing,
 	tier: GoTier,
 	families: readonly string[],
 	listRates: (family: string) => TokenRates,
 ): GoPlan {
+	const orphans = Object.keys(pricing.promos).filter(
+		(family) => !(family in pricing.usageUsd),
+	);
+	if (orphans.length)
+		throw new Error(
+			`Go promotions on families with no usage: ${orphans.join(", ")}`,
+		);
+	const listed = families.filter((family) => family in pricing.usageUsd);
 	return {
 		apiUsdPerMonthByFamily: Object.fromEntries(
-			Object.keys(pricing.usageUsd).map((family) => [
+			listed.map((family) => [
 				family,
 				listPricedUsd(pricing, family, tier, listRates),
 			]),
 		),
 		promotionByFamily: Object.fromEntries(
 			Object.entries(pricing.promos)
-				.filter(([family]) => families.includes(family))
+				.filter(([family]) => listed.includes(family))
 				.map(([family, promo]) => [family, promotionFor(promo, tier)]),
 		),
 	};
