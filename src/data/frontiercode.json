@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-17T18:28:01.740Z",
+  "fetchedAt": "2026-11-19T02:35:44.385Z",
   "source": "Cognition's FrontierCode 2.0",
   "rows": [
     {
@@ -246,6 +246,76 @@
       "score": 39.65,
       "costPerTaskUsd": 1.029,
       "tokensPerTask": 41479
+    },
+    {
+      "family": "gpt-6-2-astra",
+      "effort": "low",
+      "score": 38.07,
+      "costPerTaskUsd": 1.415,
+      "tokensPerTask": 8154
+    },
+    {
+      "family": "gpt-6-2-astra",
+      "effort": "medium",
+      "score": 42.2,
+      "costPerTaskUsd": 2.469,
+      "tokensPerTask": 14364
+    },
+    {
+      "family": "gpt-6-2-astra",
+      "effort": "high",
+      "score": 43.56,
+      "costPerTaskUsd": 3.952,
+      "tokensPerTask": 24452
+    },
+    {
+      "family": "gpt-6-2-astra",
+      "effort": "xhigh",
+      "score": 44.12,
+      "costPerTaskUsd": 4.289,
+      "tokensPerTask": 28568
+    },
+    {
+      "family": "gpt-6-2-astra",
+      "effort": "max",
+      "score": 44.19,
+      "costPerTaskUsd": 5.966,
+      "tokensPerTask": 45974
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "low",
+      "score": 33.14,
+      "costPerTaskUsd": 0.402,
+      "tokensPerTask": 9789
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "medium",
+      "score": 38.29,
+      "costPerTaskUsd": 0.685,
+      "tokensPerTask": 16457
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "high",
+      "score": 39.72,
+      "costPerTaskUsd": 0.876,
+      "tokensPerTask": 22415
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "xhigh",
+      "score": 39.78,
+      "costPerTaskUsd": 0.98,
+      "tokensPerTask": 26387
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "max",
+      "score": 43.76,
+      "costPerTaskUsd": 1.287,
+      "tokensPerTask": 38078
     },
     {
       "family": "gemini-4-argon",
