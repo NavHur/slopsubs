@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-19T14:39:08.588Z",
+  "fetchedAt": "2026-11-20T02:38:59.049469Z",
   "source": "Artificial Analysis website (model page flight payload)",
   "evals": [
     "aa-briefcase",
@@ -3743,7 +3743,7 @@
       "family": "gpt-6-luna",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1336.35,
+      "score": 1336.55,
       "costPerTaskUsd": 0.16999,
       "tokensPerTask": 110019,
       "secondsPerTask": 1070.5
@@ -5120,7 +5120,7 @@
       "family": "gpt-6-1-terra",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1398.61,
+      "score": 1399.69,
       "costPerTaskUsd": 0.80778,
       "tokensPerTask": 61442,
       "secondsPerTask": 839.6
@@ -5363,7 +5363,7 @@
       "family": "gpt-6-1-sol",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1557.04,
+      "score": 1556.87,
       "costPerTaskUsd": 2.3126,
       "tokensPerTask": 114994,
       "secondsPerTask": 2053.2
@@ -7874,7 +7874,7 @@
       "family": "gpt-6-2-astra",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1643.24,
+      "score": 1643.55,
       "costPerTaskUsd": 5.49,
       "tokensPerTask": 51000,
       "secondsPerTask": 918
@@ -7955,7 +7955,7 @@
       "family": "gpt-6-2-astra",
       "effort": "xhigh",
       "eval": "aa-briefcase",
-      "score": 1594.37,
+      "score": 1594.38,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -8036,7 +8036,7 @@
       "family": "gpt-6-2-astra",
       "effort": "high",
       "eval": "aa-briefcase",
-      "score": 1570.41,
+      "score": 1570.4,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -8117,7 +8117,7 @@
       "family": "gpt-6-2-sol",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1612.06,
+      "score": 1612.07,
       "costPerTaskUsd": 1.57,
       "tokensPerTask": 59000,
       "secondsPerTask": 816
@@ -8198,7 +8198,7 @@
       "family": "gpt-6-2-astra",
       "effort": "medium",
       "eval": "aa-briefcase",
-      "score": 1408.2,
+      "score": 1408.1,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -8360,7 +8360,7 @@
       "family": "gpt-6-2-astra",
       "effort": "low",
       "eval": "aa-briefcase",
-      "score": 1038.71,
+      "score": 1038.62,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -9242,7 +9242,7 @@
       "family": "gpt-6-2-sol",
       "effort": "high",
       "eval": "aa-briefcase",
-      "score": 1540.79,
+      "score": 1540.77,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -9404,7 +9404,7 @@
       "family": "gpt-6-2-sol",
       "effort": "low",
       "eval": "aa-briefcase",
-      "score": 1229.56,
+      "score": 1229.43,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null

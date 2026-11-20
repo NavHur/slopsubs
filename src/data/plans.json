@@ -1249,7 +1249,7 @@
         "mimo-v2-6-flash": 60,
         "mimo-v2-5-pro": 12,
         "mimo-v2-5-0424": 48,
-        "hy3": 57.78,
+        "hy3": 60,
         "deepseek-v4-1-flash-1017": 100,
         "deepseek-v4-pro": 15,
         "grok-4-7": 15
@@ -1344,7 +1344,7 @@
         "mimo-v2-6-flash": 120,
         "mimo-v2-5-pro": 48,
         "mimo-v2-5-0424": 96,
-        "hy3": 231.12,
+        "hy3": 240,
         "deepseek-v4-1-flash-1017": 200,
         "deepseek-v4-pro": 60,
         "grok-4-7": 60
