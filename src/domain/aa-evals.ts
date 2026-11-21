@@ -186,8 +186,8 @@ function outputSpeed(record: EvalRecord): number | null {
 	const seconds = record.intelligenceIndexTimePerTask;
 	if (!tokens || !seconds) return null;
 	const speed = tokens / seconds;
-	if (!Number.isFinite(speed))
-		throw new Error(`AA's index output speed for ${record.slug} is not finite`);
+	if (!Number.isFinite(speed) || speed <= 0)
+		throw new Error(`AA's index output speed for ${record.slug} is not usable`);
 	return speed;
 }
 

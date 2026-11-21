@@ -234,7 +234,14 @@ describe("importAaEvals checks", () => {
 	it("stops when AA's index time makes the output speed overflow", () => {
 		const record = modelRecord();
 		record.intelligenceIndexTimePerTask = 5e-324;
-		expect(() => run({ models: [record] })).toThrow(/not finite/);
+		expect(() => run({ models: [record] })).toThrow(/not usable/);
+	});
+
+	it("stops when AA's index time makes the output speed underflow", () => {
+		const record = modelRecord();
+		record.intelligenceIndexOutputTokensPerTask.output = Number.MIN_VALUE;
+		record.intelligenceIndexTimePerTask = Number.MAX_VALUE;
+		expect(() => run({ models: [record] })).toThrow(/not usable/);
 	});
 
 	it("stops when AA's index time per task is negative", () => {
