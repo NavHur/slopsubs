@@ -108,15 +108,20 @@ seven others) come from the same AA pages. `import-aa-evals` reads each
 model's per-eval scores from its record's named fields, resolved against the
 catalog (unknown families/efforts are skipped with a log; ambiguous ones stop
 the import). A family the catalog has only as `default` takes the website's
-row when the site lists it at one effort, and the log names it. AA's model
-pages no longer carry per-eval cost, tokens or time, so the import writes the
-fresh scores to `$TMPDIR/slopsubs-aa-eval-scores.json` and stops without
-touching `src/data/aa-evals.json`; the refresh runbook merges them into the
-committed rows.
+row when the site lists it at one effort, and the log names it. Each row's cost
+per task is AA's weighted cost for the eval over its Intelligence Index weight,
+from the model page. Its tokens per task come from the eval pages
+(`/evaluations/<eval>`), which embed exact token counts for the models each
+chart shows by default, and its time is those tokens over the model's output
+speed. A figure no page carries this run keeps the value `aa-evals.json`
+already holds, and the log counts the rows that carried one. The import stops
+when its weights or task counts stop matching AA's index totals, when an eval
+page fails to load, or when no row has a fresh cost or fresh tokens.
 
 Each script takes cached input for offline runs: `import-benchmarks` accepts
 `--bundle <bundle.js>`, and both AA importers accept `--html <page.html>`,
-once per cached model page. `import-frontiercode` has no flags.
+once per cached model page; `import-aa-evals` also takes `--eval-html
+<page.html>`, once per cached eval page. `import-frontiercode` has no flags.
 
 AA's cost, tokens and time per task, from the same model page `import-aa-evals`
 reads, win over slopalytics' whenever AA has them; slopalytics supplies the
