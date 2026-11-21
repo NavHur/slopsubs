@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-20T02:38:59.049469Z",
+  "fetchedAt": "2026-11-21T02:36:40.657226Z",
   "source": "Artificial Analysis website (model page flight payload)",
   "evals": [
     "aa-briefcase",
@@ -3257,7 +3257,7 @@
       "family": "grok-4-7",
       "effort": "xhigh",
       "eval": "aa-briefcase",
-      "score": 1635.7,
+      "score": 1634.49,
       "costPerTaskUsd": 8.02556,
       "tokensPerTask": 161224,
       "secondsPerTask": 2390.7
@@ -6497,7 +6497,7 @@
       "family": "muse-ember",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1520.48,
+      "score": 1520.25,
       "costPerTaskUsd": 0.13474,
       "tokensPerTask": 90524,
       "secondsPerTask": null
@@ -9323,7 +9323,7 @@
       "family": "gpt-6-2-sol",
       "effort": "medium",
       "eval": "aa-briefcase",
-      "score": 1498.07,
+      "score": 1494.88,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
