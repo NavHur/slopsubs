@@ -1,8 +1,5 @@
-// Fetches the Artificial Analysis pages that import-benchmarks and
-// import-aa-evals read. A model page embeds full records only for its own
-// release's variants, AA's default chart selection and a few related models,
-// so the importers read one page per plan-covered family and join them. An
-// eval page embeds token counts for its chart's default models only.
+// Fetches the AA pages import-benchmarks and import-aa-evals read: one model
+// page per plan-covered family, and one page per eval.
 
 import { readFile } from "node:fs/promises";
 import { AA_EVAL_INDEX } from "../src/domain/aa-eval-index.ts";
@@ -31,27 +28,35 @@ export function aaPageSlugs(
 	return [...slugs].sort();
 }
 
+const HEADERS = { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)" };
+
 async function fetchPage(url: string): Promise<string> {
-	const response = await fetch(url, {
-		headers: { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)" },
-	});
+	const response = await fetch(url, { headers: HEADERS });
 	if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
 	return response.text();
 }
 
-/** The pages' HTML: the cached copies at `paths` when given, else one request
+/** An eval page's HTML; a renamed slug redirects or 404s, so only a plain 200
+ * counts. */
+async function fetchEvalPage(url: string): Promise<string> {
+	const response = await fetch(url, { headers: HEADERS, redirect: "manual" });
+	if (response.status !== 200)
+		throw new Error(`${url}: HTTP ${response.status}`);
+	return response.text();
+}
+
+/** The pages' HTML: the cached copies at `paths` when given, else one `fetchUrl`
  * per URL, a few at a time. */
 async function loadPages(
 	urls: readonly string[],
 	paths: readonly string[],
+	fetchUrl: (url: string) => Promise<string>,
 ): Promise<string[]> {
 	if (paths.length) return Promise.all(paths.map((p) => readFile(p, "utf8")));
 	const pages: string[] = [];
 	for (let i = 0; i < urls.length; i += PARALLEL_FETCHES)
 		pages.push(
-			...(await Promise.all(
-				urls.slice(i, i + PARALLEL_FETCHES).map(fetchPage),
-			)),
+			...(await Promise.all(urls.slice(i, i + PARALLEL_FETCHES).map(fetchUrl))),
 		);
 	return pages;
 }
@@ -64,6 +69,7 @@ export function loadAaPages(
 	return loadPages(
 		slugs.map((slug) => MODEL_PAGE + slug),
 		paths,
+		fetchPage,
 	);
 }
 
@@ -73,5 +79,6 @@ export function loadAaEvalPages(paths: readonly string[]): Promise<string[]> {
 	return loadPages(
 		[...pages].map((page) => EVAL_PAGE + page),
 		paths,
+		fetchEvalPage,
 	);
 }
