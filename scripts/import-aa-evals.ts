@@ -1,7 +1,5 @@
-// Imports Artificial Analysis per-eval Intelligence Index scores and task
-// figures from the plan-covered families' model pages and the eval pages into
-// src/data/aa-evals.json. A figure AA no longer publishes keeps the value the
-// file already holds.
+// Imports AA's per-eval Intelligence Index scores and task figures into
+// src/data/aa-evals.json; a figure AA stops publishing keeps its prior value.
 
 import { readFile, writeFile } from "node:fs/promises";
 import type { Skips } from "../src/domain/aa-evals.ts";
@@ -11,25 +9,13 @@ import {
 } from "../src/domain/aa-task-figures.ts";
 import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import { AaEvalsDataset, type AaEvalRow } from "../src/domain/model.ts";
+import { parseArgs, readLine } from "./aa-eval-cli.ts";
 import { aaPageSlugs, loadAaEvalPages, loadAaPages } from "./aa-page.ts";
 import { loadCatalogByFamily } from "./catalog-by-family.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
 
 const ROOT = new URL("..", import.meta.url);
 const OUTPUT = new URL("src/data/aa-evals.json", ROOT);
-
-type Args = { html: string[]; evalHtml: string[] };
-
-function parseArgs(argv: string[]): Args {
-	const args: Args = { html: [], evalHtml: [] };
-	for (let i = 0; i < argv.length; i++) {
-		if (argv[i] === "--html") args.html.push(...argv.slice(++i, i + 1));
-		else if (argv[i] === "--eval-html")
-			args.evalHtml.push(...argv.slice(++i, i + 1));
-		else throw new Error(`Unknown argument ${argv[i]}`);
-	}
-	return args;
-}
 
 /** The rows the file holds now; none when there is no file yet. */
 async function readPriorRows(): Promise<AaEvalRow[]> {
@@ -45,8 +31,8 @@ async function readPriorRows(): Promise<AaEvalRow[]> {
 	}
 }
 
-function logSummary(rowCount: number, skips: Skips): void {
-	console.log(`Read ${rowCount} eval rows`);
+function logSummary(rows: Parameters<typeof readLine>[0], skips: Skips): void {
+	console.log(readLine(rows));
 	if (skips.families.size)
 		console.log(`No catalog family for ${[...skips.families].join(", ")}`);
 	if (skips.efforts.size)
@@ -83,7 +69,7 @@ async function main() {
 		byFamily,
 		prior: await readPriorRows(),
 	});
-	logSummary(rows.length, skips);
+	logSummary(rows, skips);
 	logCarry(carry);
 	const output = {
 		fetchedAt: new Date().toISOString(),
