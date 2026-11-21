@@ -37,7 +37,9 @@ async function readPriorRows(): Promise<AaEvalRow[]> {
 		const text = await readFile(OUTPUT, "utf8");
 		return AaEvalsDataset.parse(JSON.parse(text)).rows;
 	} catch (cause) {
-		if ((cause as NodeJS.ErrnoException).code !== "ENOENT") throw cause;
+		const missing =
+			cause instanceof Error && "code" in cause && cause.code === "ENOENT";
+		if (!missing) throw cause;
 		console.log(`No ${OUTPUT.pathname} yet: no figures to carry forward`);
 		return [];
 	}

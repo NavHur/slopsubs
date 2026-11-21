@@ -130,6 +130,7 @@ export function importAaEvals(input: ImportInput): ImportResult {
 	const raw = models.flatMap((model) =>
 		withTokensAndTime(model, tokens.get(model.id)),
 	);
+	if (!raw.length) throw new Error("No eval rows extracted from website");
 	const { rows: fresh, skips } = resolveRows(raw, input.byFamily);
 	if (!fresh.length) throw new Error("No eval rows matched the catalog");
 	const prior = new Map(input.prior.map((r) => [rowKey(r), r]));

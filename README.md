@@ -123,8 +123,8 @@ Each script takes cached input for offline runs: `import-benchmarks` accepts
 once per cached model page; `import-aa-evals` also takes `--eval-html
 <page.html>`, once per cached eval page. `import-frontiercode` has no flags.
 
-AA's cost, tokens and time per task, from the same model page `import-aa-evals`
-reads, win over slopalytics' whenever AA has them; slopalytics supplies the
+AA's cost, tokens and time per task for the index, from the same model page
+`import-aa-evals` reads, win over slopalytics' whenever AA has them; slopalytics supplies the
 rest. A model AA lists that the slopalytics catalog lacks takes AA's figures
 alone when a plan covers its family (the others are left out and logged), and
 when AA has no cost for it the import stops, so the gap is deliberate rather

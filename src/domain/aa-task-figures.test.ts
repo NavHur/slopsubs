@@ -287,3 +287,9 @@ describe("importAaEvals guards", () => {
 		expect(() => run({ models })).toThrow(/No eval rows matched the catalog/);
 	});
 });
+
+describe("importAaEvals empty pages", () => {
+	it("stops when the model pages carry no records", () => {
+		expect(() => run({ models: [] })).toThrow(/No eval rows extracted/);
+	});
+});

@@ -2,7 +2,7 @@
 // flight payloads and files them under the catalog's families and efforts.
 
 import { z } from "zod";
-import { AA_EVAL_INDEX } from "./aa-eval-index";
+import { AA_EVAL_INDEX, isAaEvalId } from "./aa-eval-index";
 import type { AaEvalId } from "./eval-units";
 import { firstReading, flightRecords, stringLiteralEnd } from "./flight";
 import type { BenchmarkPoint, Effort } from "./model";
@@ -129,16 +129,16 @@ const COST_SUM_TOLERANCE = 1e-4;
 /** The record's cost per task for each eval it costs: AA's weighted cost over
  * the eval's weight in the index. Throws when the costs do not add up to the
  * record's index total, or cover an eval the importer lacks a weight for. */
-function recordCosts(record: EvalRecord): Map<string, number> {
-	const costs = new Map<string, number>();
+function recordCosts(record: EvalRecord): Map<AaEvalId, number> {
+	const costs = new Map<AaEvalId, number>();
 	const index = record.intelligenceIndexCostPerTask;
 	if (!index) return costs;
 	let weighted = 0;
 	for (const { slug, weightedCostPerTask } of index.evaluations) {
-		const entry = AA_EVAL_INDEX[slug as AaEvalId];
-		if (!entry) throw new Error(`AA's index costs an unknown eval: ${slug}`);
+		if (!isAaEvalId(slug))
+			throw new Error(`AA's index costs an unknown eval: ${slug}`);
 		weighted += weightedCostPerTask;
-		costs.set(slug, weightedCostPerTask / entry.weight);
+		costs.set(slug, weightedCostPerTask / AA_EVAL_INDEX[slug].weight);
 	}
 	if (
 		Math.abs(weighted - index.cost.total) >

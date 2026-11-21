@@ -73,3 +73,7 @@ export const AA_EVAL_INDEX: Record<AaEvalId, EvalIndexEntry> = {
 		tasks: 70,
 	},
 };
+
+/** Whether AA's eval slug is one the importer has a weight for. */
+export const isAaEvalId = (slug: string): slug is AaEvalId =>
+	Object.hasOwn(AA_EVAL_INDEX, slug);
