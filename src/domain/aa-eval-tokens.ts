@@ -17,8 +17,8 @@ const TOKEN_SUM_TOLERANCE = 1e-3;
 export type EvalTokens = Map<AaEvalId, number>;
 
 const TokenCount = z.object({
-	answer: z.number().nullish(),
-	reasoning: z.number().nullish(),
+	answer: z.number().nonnegative().nullish(),
+	reasoning: z.number().nonnegative().nullish(),
 });
 
 /** An eval page's record: a model and its token counts across the evals. */
@@ -37,6 +37,15 @@ function evalTokens(evalId: AaEvalId, counts: TokenCounts): number | null {
 	if (typeof count?.answer !== "number") return null;
 	if (typeof count.reasoning !== "number") return null;
 	return (count.answer + count.reasoning) / tasks;
+}
+
+/** The record's raw answer and reasoning counts per eval, in `AA_EVAL_IDS`
+ * order, so two pages' records compare whatever their keys' order or split. */
+function rawCounts(counts: TokenCounts) {
+	return AA_EVAL_IDS.map((evalId) => {
+		const count = counts?.[AA_EVAL_INDEX[evalId].tokenKey];
+		return [evalId, count?.answer ?? null, count?.reasoning ?? null];
+	});
 }
 
 function recordTokens(counts: TokenCounts): EvalTokens {
@@ -60,7 +69,13 @@ export function tokensByRecord(
 	for (const raw of evalFlights.flatMap(flightRecords)) {
 		const { id, canonicalEvalTokenCounts } = EvalPageRecord.parse(raw);
 		const tokens = recordTokens(canonicalEvalTokenCounts);
-		if (firstReading(seen, id, JSON.stringify([...tokens])))
+		if (
+			firstReading(
+				seen,
+				id,
+				JSON.stringify(rawCounts(canonicalEvalTokenCounts)),
+			)
+		)
 			byRecord.set(id, tokens);
 	}
 	return byRecord;

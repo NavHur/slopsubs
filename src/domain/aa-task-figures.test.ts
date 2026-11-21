@@ -217,6 +217,35 @@ describe("importAaEvals checks", () => {
 		).toThrow();
 	});
 
+	it("stops when AA's token counts are negative", () => {
+		const { answer, reasoning } = SONNET.tokenCounts.briefcase;
+		const briefcase = { answer: -1, reasoning: answer + reasoning + 1 };
+		const evalPages = [[evalPageRecord({ tokenCounts: { briefcase } })]];
+		expect(() => run({ evalPages })).toThrow(/too small/i);
+	});
+
+	it("stops when AA's index output tokens are negative", () => {
+		const record = modelRecord();
+		record.intelligenceIndexOutputTokensPerTask.output = -1;
+		expect(() => run({ models: [record] })).toThrow(/too small/i);
+	});
+
+	it("stops when AA's index time per task is negative", () => {
+		const record = modelRecord();
+		record.intelligenceIndexTimePerTask = -1;
+		expect(() => run({ models: [record] })).toThrow(/too small/i);
+	});
+
+	it("stops when two eval pages split one eval's tokens differently, though they sum alike", () => {
+		const { answer, reasoning } = SONNET.tokenCounts.briefcase;
+		const briefcase = { answer: answer + 1, reasoning: reasoning - 1 };
+		const evalPages = [
+			[evalPageRecord()],
+			[evalPageRecord({ tokenCounts: { briefcase } })],
+		];
+		expect(() => run({ evalPages })).toThrow(/disagree on b171d979/);
+	});
+
 	it("stops when AA costs one eval twice, though the costs add up", () => {
 		const record = modelRecord();
 		const costs = record.intelligenceIndexCostPerTask;

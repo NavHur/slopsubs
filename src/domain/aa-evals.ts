@@ -37,9 +37,9 @@ const EvalRecord = z.object({
 		})
 		.nullish(),
 	intelligenceIndexOutputTokensPerTask: z
-		.object({ output: z.number() })
+		.object({ output: z.number().nonnegative() })
 		.nullish(),
-	intelligenceIndexTimePerTask: z.number().nullish(),
+	intelligenceIndexTimePerTask: z.number().nonnegative().nullish(),
 	release: z.object({ slug: z.string().min(1) }),
 	effort: z.object({ slug: z.string().min(1) }).nullish(),
 	isReasoning: z.boolean(),

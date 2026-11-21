@@ -1,5 +1,5 @@
-// Each Intelligence Index eval's score field, and the weight and task count that
-// turn AA's weighted figures raw (AA methodology, checked 2026-11-20 on Sonnet 5.5).
+// Each eval's score field. The weight recovers cost per task from AA's weighted
+// cost; the task count turns an eval's token total into tokens per task.
 
 import type { AaEvalId } from "./eval-units";
 
