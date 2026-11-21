@@ -64,7 +64,7 @@ describe("extractEvals", () => {
 		expect(row.effort).toBe("none");
 	});
 
-	it("reads each scored eval, with no cost, tokens or time", () => {
+	it("reads each scored eval, leaving figures null for a record without index figures", () => {
 		expect(rowsOf([{ release: "alpha", effort: "low", score: 0.5 }])).toEqual([
 			{
 				family: "alpha",

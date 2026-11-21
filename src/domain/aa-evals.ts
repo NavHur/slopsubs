@@ -2,9 +2,13 @@
 // flight payloads and files them under the catalog's families and efforts.
 
 import { z } from "zod";
+import { AA_EVAL_INDEX, isAaEvalId } from "./aa-eval-index";
 import type { AaEvalId } from "./eval-units";
 import { firstReading, flightRecords, stringLiteralEnd } from "./flight";
 import type { BenchmarkPoint, Effort } from "./model";
+import { roundedOrNull } from "./rounding";
+
+const COST_DECIMALS = 5;
 
 /** Website release slugs the catalog files under another family. */
 const FAMILY_ALIASES: Record<string, string> = {
@@ -17,7 +21,20 @@ const Score = z.number().nullish();
 
 /** The fields read from one model record: who it is, and its eval scores. */
 const EvalRecord = z.object({
+	id: z.string().min(1),
 	slug: z.string().min(1),
+	intelligenceIndexCostPerTask: z
+		.object({
+			cost: z.object({ total: z.number() }),
+			evaluations: z.array(
+				z.object({ slug: z.string(), weightedCostPerTask: z.number() }),
+			),
+		})
+		.nullish(),
+	intelligenceIndexOutputTokensPerTask: z
+		.object({ output: z.number() })
+		.nullish(),
+	intelligenceIndexTimePerTask: z.number().nullish(),
 	release: z.object({ slug: z.string().min(1) }),
 	effort: z.object({ slug: z.string().min(1) }).nullish(),
 	isReasoning: z.boolean(),
@@ -52,9 +69,9 @@ const SCORE_OF: Record<
 };
 
 /** A website row. `effort` is the website's slug, `none` for an effortless model
- * that does not reason, and null for one that does. The model pages no longer
- * carry per-eval cost, tokens or time, so those stay null. */
-type EvalRow = {
+ * that does not reason, and null for one that does. The model pages carry the
+ * cost per task but no tokens or time, so those start null. */
+export type EvalRow = {
 	family: string;
 	effort: string | null;
 	eval: AaEvalId;
@@ -105,10 +122,39 @@ function recordEffort(record: EvalRecord): string | null {
 	return record.isReasoning ? null : "none";
 }
 
+/** How far apart the record's weighted costs and its total may be, relative to
+ * the total, before the index is taken to have changed. */
+const COST_SUM_TOLERANCE = 1e-4;
+
+/** The record's cost per task for each eval it costs: AA's weighted cost over
+ * the eval's weight in the index. Throws when the costs do not add up to the
+ * record's index total, or cover an eval the importer lacks a weight for. */
+function recordCosts(record: EvalRecord): Map<AaEvalId, number> {
+	const costs = new Map<AaEvalId, number>();
+	const index = record.intelligenceIndexCostPerTask;
+	if (!index) return costs;
+	let weighted = 0;
+	for (const { slug, weightedCostPerTask } of index.evaluations) {
+		if (!isAaEvalId(slug))
+			throw new Error(`AA's index costs an unknown eval: ${slug}`);
+		weighted += weightedCostPerTask;
+		costs.set(slug, weightedCostPerTask / AA_EVAL_INDEX[slug].weight);
+	}
+	if (
+		Math.abs(weighted - index.cost.total) >
+		index.cost.total * COST_SUM_TOLERANCE
+	)
+		throw new Error(
+			`The weighted costs for ${record.slug} add up to ${weighted}, but AA's index cost is ${index.cost.total}`,
+		);
+	return costs;
+}
+
 /** One row per eval the record has a score for. */
 function recordRows(record: EvalRecord): EvalRow[] {
 	const family = record.release.slug;
 	const effort = recordEffort(record);
+	const costs = recordCosts(record);
 	return (Object.keys(SCORE_OF) as AaEvalId[]).flatMap((id) => {
 		const score = SCORE_OF[id](record);
 		if (score === null || score === undefined) return [];
@@ -118,7 +164,7 @@ function recordRows(record: EvalRecord): EvalRow[] {
 				effort,
 				eval: id,
 				score,
-				costPerTaskUsd: null,
+				costPerTaskUsd: roundedOrNull(costs.get(id), COST_DECIMALS),
 				tokensPerTask: null,
 				secondsPerTask: null,
 			},
@@ -126,17 +172,49 @@ function recordRows(record: EvalRecord): EvalRow[] {
 	});
 }
 
+/** A model page's record, read: its eval rows, and the output speed (tokens per
+ * second) that turns its tokens per task into time. */
+export type ModelReading = {
+	id: string;
+	slug: string;
+	rows: EvalRow[];
+	outputSpeed: number | null;
+	/** The index's output tokens per task, the sum of the evals' weighted tokens. */
+	indexOutputTokens: number | null;
+};
+
+function outputSpeed(record: EvalRecord): number | null {
+	const tokens = record.intelligenceIndexOutputTokensPerTask?.output;
+	const seconds = record.intelligenceIndexTimePerTask;
+	return tokens && seconds ? tokens / seconds : null;
+}
+
 /**
- * Eval rows for every model the flight payloads embed, each model once. A
- * model several pages embed must score the same on all of them.
+ * Every model the flight payloads embed, each once. A model several pages
+ * embed must score the same on all of them.
  */
-export function extractEvals(flights: readonly string[]): EvalRow[] {
+export function readModels(flights: readonly string[]): ModelReading[] {
 	const seen = new Map<string, string>();
 	return flights.flatMap(flightRecords).flatMap((record) => {
 		const parsed = EvalRecord.parse(record);
 		const rows = recordRows(parsed);
-		return firstReading(seen, parsed.slug, JSON.stringify(rows)) ? rows : [];
+		if (!firstReading(seen, parsed.slug, JSON.stringify(rows))) return [];
+		return [
+			{
+				id: parsed.id,
+				slug: parsed.slug,
+				rows,
+				outputSpeed: outputSpeed(parsed),
+				indexOutputTokens:
+					parsed.intelligenceIndexOutputTokensPerTask?.output ?? null,
+			},
+		];
 	});
+}
+
+/** Eval rows for every model the flight payloads embed, each model once. */
+export function extractEvals(flights: readonly string[]): EvalRow[] {
+	return readModels(flights).flatMap((model) => model.rows);
 }
 
 /** The catalog model a website effort names; null when the catalog lacks it.
