@@ -184,7 +184,11 @@ export type ModelReading = {
 function outputSpeed(record: EvalRecord): number | null {
 	const tokens = record.intelligenceIndexOutputTokensPerTask?.output;
 	const seconds = record.intelligenceIndexTimePerTask;
-	return tokens && seconds ? tokens / seconds : null;
+	if (!tokens || !seconds) return null;
+	const speed = tokens / seconds;
+	if (!Number.isFinite(speed))
+		throw new Error(`AA's index output speed for ${record.slug} is not finite`);
+	return speed;
 }
 
 /**
