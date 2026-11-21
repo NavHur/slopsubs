@@ -1,8 +1,9 @@
-// Reads per-model Intelligence Index eval scores out of AA model pages' Next.js
+// Reads per-model Intelligence Index scores and cost out of AA model pages' Next.js
 // flight payloads and files them under the catalog's families and efforts.
 
 import { z } from "zod";
 import { AA_EVAL_INDEX, isAaEvalId } from "./aa-eval-index";
+import { AA_EVAL_IDS } from "./enums";
 import type { AaEvalId } from "./eval-units";
 import { firstReading, flightRecords, stringLiteralEnd } from "./flight";
 import type { BenchmarkPoint, Effort } from "./model";
@@ -19,15 +20,19 @@ const CHUNK_MARKER = "__next_f.push([1,";
 
 const Score = z.number().nullish();
 
-/** The fields read from one model record: who it is, and its eval scores. */
+/** The fields read from one model record: who it is, its eval scores, and the
+ * index's cost, output tokens and time per task. */
 const EvalRecord = z.object({
 	id: z.string().min(1),
 	slug: z.string().min(1),
 	intelligenceIndexCostPerTask: z
 		.object({
-			cost: z.object({ total: z.number() }),
+			cost: z.object({ total: z.number().nonnegative() }),
 			evaluations: z.array(
-				z.object({ slug: z.string(), weightedCostPerTask: z.number() }),
+				z.object({
+					slug: z.string(),
+					weightedCostPerTask: z.number().nonnegative(),
+				}),
 			),
 		})
 		.nullish(),
@@ -51,22 +56,6 @@ const EvalRecord = z.object({
 	terminalBenchScience: Score,
 });
 type EvalRecord = z.infer<typeof EvalRecord>;
-
-/** Where each eval's score sits in a model record. */
-const SCORE_OF: Record<
-	AaEvalId,
-	(record: EvalRecord) => number | null | undefined
-> = {
-	"aa-briefcase": (r) => r.briefcaseBreakdown?.overall.elo,
-	"automationbench-aa": (r) => r.automationBenchPartialScore,
-	"terminalbench-4-0": (r) => r.terminalBench40,
-	"frontiercode-2-0": (r) => r.frontierCode20,
-	omniscience: (r) => r.omniscience,
-	"gdp-pdf": (r) => r.gdpPdfAllPass,
-	"hle-diamond": (r) => r.hleDiamond,
-	"critpt-v2-hard": (r) => r.critptAgenticHard,
-	"terminal-bench-science": (r) => r.terminalBenchScience,
-};
 
 /** A website row. `effort` is the website's slug, `none` for an effortless model
  * that does not reason, and null for one that does. The model pages carry the
@@ -111,7 +100,7 @@ export function flightFromHtml(html: string): string {
 		chunks.push(chunk.text);
 		marker = html.indexOf(CHUNK_MARKER, chunk.next);
 	}
-	if (!chunks.length) throw new Error("No flight chunks found in model page");
+	if (!chunks.length) throw new Error("No flight chunks found in page");
 	return chunks.join("");
 }
 
@@ -126,19 +115,28 @@ function recordEffort(record: EvalRecord): string | null {
  * the total, before the index is taken to have changed. */
 const COST_SUM_TOLERANCE = 1e-4;
 
+/** The eval AA's cost entry is for. Throws on one the importer lacks a weight for. */
+function costedEval(slug: string): AaEvalId {
+	if (!isAaEvalId(slug))
+		throw new Error(`AA's index costs an unknown eval: ${slug}`);
+	return slug;
+}
+
 /** The record's cost per task for each eval it costs: AA's weighted cost over
  * the eval's weight in the index. Throws when the costs do not add up to the
- * record's index total, or cover an eval the importer lacks a weight for. */
+ * record's index total, cover an eval the importer lacks a weight for, or cover
+ * one eval twice. */
 function recordCosts(record: EvalRecord): Map<AaEvalId, number> {
 	const costs = new Map<AaEvalId, number>();
 	const index = record.intelligenceIndexCostPerTask;
 	if (!index) return costs;
 	let weighted = 0;
 	for (const { slug, weightedCostPerTask } of index.evaluations) {
-		if (!isAaEvalId(slug))
-			throw new Error(`AA's index costs an unknown eval: ${slug}`);
+		const evalId = costedEval(slug);
+		if (costs.has(evalId))
+			throw new Error(`AA's index costs ${slug} twice for ${record.slug}`);
 		weighted += weightedCostPerTask;
-		costs.set(slug, weightedCostPerTask / AA_EVAL_INDEX[slug].weight);
+		costs.set(evalId, weightedCostPerTask / AA_EVAL_INDEX[evalId].weight);
 	}
 	if (
 		Math.abs(weighted - index.cost.total) >
@@ -155,8 +153,8 @@ function recordRows(record: EvalRecord): EvalRow[] {
 	const family = record.release.slug;
 	const effort = recordEffort(record);
 	const costs = recordCosts(record);
-	return (Object.keys(SCORE_OF) as AaEvalId[]).flatMap((id) => {
-		const score = SCORE_OF[id](record);
+	return AA_EVAL_IDS.flatMap((id) => {
+		const score = AA_EVAL_INDEX[id].score(record);
 		if (score === null || score === undefined) return [];
 		return [
 			{
@@ -191,30 +189,23 @@ function outputSpeed(record: EvalRecord): number | null {
 
 /**
  * Every model the flight payloads embed, each once. A model several pages
- * embed must score the same on all of them.
+ * embed must read the same on all of them.
  */
 export function readModels(flights: readonly string[]): ModelReading[] {
 	const seen = new Map<string, string>();
 	return flights.flatMap(flightRecords).flatMap((record) => {
 		const parsed = EvalRecord.parse(record);
-		const rows = recordRows(parsed);
-		if (!firstReading(seen, parsed.slug, JSON.stringify(rows))) return [];
-		return [
-			{
-				id: parsed.id,
-				slug: parsed.slug,
-				rows,
-				outputSpeed: outputSpeed(parsed),
-				indexOutputTokens:
-					parsed.intelligenceIndexOutputTokensPerTask?.output ?? null,
-			},
-		];
+		const reading: ModelReading = {
+			id: parsed.id,
+			slug: parsed.slug,
+			rows: recordRows(parsed),
+			outputSpeed: outputSpeed(parsed),
+			indexOutputTokens:
+				parsed.intelligenceIndexOutputTokensPerTask?.output ?? null,
+		};
+		if (!firstReading(seen, parsed.slug, JSON.stringify(reading))) return [];
+		return [reading];
 	});
-}
-
-/** Eval rows for every model the flight payloads embed, each model once. */
-export function extractEvals(flights: readonly string[]): EvalRow[] {
-	return readModels(flights).flatMap((model) => model.rows);
 }
 
 /** The catalog model a website effort names; null when the catalog lacks it.

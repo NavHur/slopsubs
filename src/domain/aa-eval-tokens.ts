@@ -59,8 +59,9 @@ export function tokensByRecord(
 	const byRecord = new Map<string, EvalTokens>();
 	for (const raw of evalFlights.flatMap(flightRecords)) {
 		const { id, canonicalEvalTokenCounts } = EvalPageRecord.parse(raw);
-		if (firstReading(seen, id, JSON.stringify(canonicalEvalTokenCounts)))
-			byRecord.set(id, recordTokens(canonicalEvalTokenCounts));
+		const tokens = recordTokens(canonicalEvalTokenCounts);
+		if (firstReading(seen, id, JSON.stringify([...tokens])))
+			byRecord.set(id, tokens);
 	}
 	return byRecord;
 }

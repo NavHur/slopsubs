@@ -1,102 +1,13 @@
 import { describe, expect, it } from "vite-plus/test";
 import { importAaEvals } from "./aa-task-figures";
-import { AA_EVAL_IDS } from "./enums";
+import {
+	ALPHA,
+	SONNET,
+	evalPageRecord,
+	modelRecord,
+	pageOf,
+} from "./aa-test-pages";
 import type { BenchmarkPoint } from "./model";
-
-/** Claude Sonnet 5.5 (max) as AA's pages carried it on 2026-11-20. */
-const SONNET = {
-	id: "b171d979-5ec1-45de-b8b9-db1ee65e77ec",
-	slug: "claude-sonnet-5-5",
-	scores: {
-		briefcaseBreakdown: { overall: { elo: 1815.14 } },
-		automationBenchPartialScore: 0.7176882128193995,
-		terminalBench40: 0.636363636363636,
-		frontierCode20: 0.416993434343434,
-		omniscience: 30.466666666666665,
-		gdpPdfAllPass: 0.258,
-		hleDiamond: 0.533,
-		critptAgenticHard: 0.59,
-		terminalBenchScience: 0.533333333333333,
-	},
-	/** AA's weighted cost per task for each eval, in `AA_EVAL_IDS` order. */
-	weightedCosts: [
-		3.071086362898891, 0.051622199990514886, 1.2646441608317138,
-		1.733627426843996, 0.022773200799999997, 0.039716396, 0.0803716788,
-		0.1926741603570175, 3.5641057568736194,
-	],
-	totalCost: 10.020621343395753,
-	outputTokensPerTask: 285387.11335048935,
-	secondsPerTask: 1995.3302417810676,
-	/** The record's answer and reasoning tokens for each eval, by AA's key. */
-	tokenCounts: {
-		briefcase: { answer: 19316127, reasoning: 37574868 },
-		automationBench: { answer: 12194455, reasoning: 27824106 },
-		terminalBench40: { answer: 6131049, reasoning: 19109282 },
-		frontierCode20: { answer: 11727454, reasoning: 29982620 },
-		omniscience: { answer: 216035, reasoning: 45227159 },
-		gdpPdf: { answer: 197628, reasoning: 4221285 },
-		hleDiamond: { answer: 527912, reasoning: 79715780 },
-		critptAgenticHard: { answer: 494212, reasoning: 5143006 },
-		terminalBenchScience: { answer: 10380324, reasoning: 25238209 },
-	},
-};
-
-type Sonnet = typeof SONNET;
-type Who = { id: string; slug: string };
-/** A second model with Sonnet's figures, to stand beside it on a page. */
-const ALPHA: Who = {
-	id: "a1fa0000-0000-0000-0000-000000000000",
-	slug: "alpha",
-};
-type ModelOverrides = Partial<{
-	who: Who;
-	weightedCosts: number[];
-	totalCost: number;
-	tokenCounts: Partial<Sonnet["tokenCounts"]>;
-}>;
-
-const identity = (who: Who = SONNET) => ({
-	id: who.id,
-	slug: who.slug,
-	release: { slug: who.slug },
-	effort: { slug: "max" },
-	isReasoning: true,
-	intelligenceIndex: 30,
-});
-
-/** A model page's record: scores, and the index's cost and time per task. */
-function modelRecord(over: ModelOverrides = {}) {
-	const costs = over.weightedCosts ?? SONNET.weightedCosts;
-	return {
-		...identity(over.who),
-		...SONNET.scores,
-		intelligenceIndexCostPerTask: {
-			cost: { total: over.totalCost ?? SONNET.totalCost },
-			evaluations: AA_EVAL_IDS.map((slug, i) => ({
-				slug,
-				weightedCostPerTask: costs[i],
-			})),
-		},
-		intelligenceIndexOutputTokensPerTask: {
-			output: SONNET.outputTokensPerTask,
-		},
-		intelligenceIndexTimePerTask: SONNET.secondsPerTask,
-	};
-}
-
-/** An eval page's record: the same model with its token counts. */
-function evalPageRecord(over: ModelOverrides = {}) {
-	return {
-		...identity(over.who),
-		canonicalEvalTokenCounts: { ...SONNET.tokenCounts, ...over.tokenCounts },
-	};
-}
-
-/** An HTML page whose single push chunk carries the given records. */
-function pageOf(records: object[]): string {
-	const flight = `0:${JSON.stringify(records)}`;
-	return `<script>self.__next_f.push([1,${JSON.stringify(flight)}])</script>`;
-}
 
 const catalogOf = (...families: string[]) =>
 	new Map(
@@ -206,6 +117,23 @@ describe("importAaEvals carry-forward", () => {
 		expect([row?.costPerTaskUsd, row?.tokensPerTask]).toEqual([0.2, 15148]);
 	});
 
+	it("carries only the cost of an eval whose weighted cost AA dropped, the rest staying fresh", () => {
+		const record = modelRecord();
+		const costs = record.intelligenceIndexCostPerTask;
+		const [omniscience] = costs.evaluations.splice(4, 1);
+		expect(omniscience.slug).toBe("omniscience");
+		costs.cost.total -= omniscience.weightedCostPerTask;
+		const prior = [
+			priorRow("omniscience", { costPerTaskUsd: 0.2 }),
+			priorRow("aa-briefcase", { costPerTaskUsd: 9.9 }),
+		];
+		const { rows, carry } = run({ models: [record], prior });
+		expect(rowOf(rows, "omniscience")?.costPerTaskUsd).toBe(0.2);
+		expect(rowOf(rows, "omniscience")?.tokensPerTask).toBe(15148);
+		expect(rowOf(rows, "aa-briefcase")?.costPerTaskUsd).toBe(20.47391);
+		expect([carry.costFresh, carry.costCarried]).toEqual([8, 1]);
+	});
+
 	it("leaves a figure null when no earlier row had it", () => {
 		const row = rowOf(run(SONNET_UNCHARTED).rows, "omniscience");
 		expect([row?.tokensPerTask, row?.secondsPerTask]).toEqual([null, null]);
@@ -229,6 +157,14 @@ describe("importAaEvals carry report", () => {
 			figuresCarried: 1,
 			withoutFigures: 8,
 		});
+	});
+});
+
+describe("importAaEvals carry report pairs", () => {
+	it("counts a carried row with tokens but no time as missing its figures", () => {
+		const prior = [priorRow("omniscience", { secondsPerTask: null })];
+		const { carry } = run({ ...SONNET_UNCHARTED, prior });
+		expect([carry.figuresCarried, carry.withoutFigures]).toEqual([0, 9]);
 	});
 });
 
@@ -265,9 +201,66 @@ describe("importAaEvals checks", () => {
 	});
 
 	it("takes no rows or scores from an eval page's records", () => {
-		const evalPages = [[evalPageRecord(), evalPageRecord({ who: ALPHA })]];
-		expect(new Set(run({ evalPages }).rows.map((r) => r.family))).toEqual(
-			new Set([SONNET.slug]),
+		const conflicting = { ...evalPageRecord(), omniscience: 99 };
+		const evalPages = [[conflicting, evalPageRecord({ who: ALPHA })]];
+		const { rows } = run({ evalPages });
+		expect(new Set(rows.map((r) => r.family))).toEqual(new Set([SONNET.slug]));
+		expect(rowOf(rows, "omniscience")?.score).toBe(SONNET.scores.omniscience);
+	});
+
+	it("stops when AA's costs are negative, though they add up", () => {
+		const weightedCosts = [...SONNET.weightedCosts];
+		weightedCosts[0] = -1;
+		const totalCost = weightedCosts.reduce((sum, cost) => sum + cost, 0);
+		expect(() =>
+			run({ models: [modelRecord({ weightedCosts, totalCost })] }),
+		).toThrow();
+	});
+
+	it("stops when AA costs one eval twice, though the costs add up", () => {
+		const record = modelRecord();
+		const costs = record.intelligenceIndexCostPerTask;
+		costs.evaluations.push({ ...costs.evaluations[0] });
+		costs.cost.total += costs.evaluations[0].weightedCostPerTask;
+		expect(() => run({ models: [record] })).toThrow(
+			/costs aa-briefcase twice for claude-sonnet-5-5/,
+		);
+	});
+
+	it("reads two eval pages' equal counts alike whatever order their keys come in", () => {
+		const reversed = Object.fromEntries(
+			Object.entries(SONNET.tokenCounts)
+				.reverse()
+				.map(([key, { answer, reasoning }]) => [key, { reasoning, answer }]),
+		);
+		const evalPages = [
+			[evalPageRecord()],
+			[{ ...evalPageRecord(), canonicalEvalTokenCounts: reversed }],
+		];
+		expect(run({ evalPages }).rows).toHaveLength(9);
+	});
+
+	it("stops when two records for one model differ in id", () => {
+		const twin = modelRecord({ who: { ...SONNET, id: ALPHA.id } });
+		expect(() => run({ models: [modelRecord(), twin] })).toThrow(
+			/disagree on claude-sonnet-5-5/,
+		);
+	});
+
+	it("stops when two records for one model differ in output speed", () => {
+		const slower = { ...modelRecord(), intelligenceIndexTimePerTask: 4000 };
+		expect(() => run({ models: [modelRecord(), slower] })).toThrow(
+			/disagree on claude-sonnet-5-5/,
+		);
+	});
+
+	it("stops when two records for one model differ in index output tokens", () => {
+		const twin = {
+			...modelRecord(),
+			intelligenceIndexOutputTokensPerTask: { output: 1 },
+		};
+		expect(() => run({ models: [modelRecord(), twin] })).toThrow(
+			/disagree on claude-sonnet-5-5/,
 		);
 	});
 });

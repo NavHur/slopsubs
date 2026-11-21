@@ -1,6 +1,5 @@
-// Builds the AA eval dataset's rows from AA's model and eval pages: scores and
-// cost per task from the model pages, tokens and time per task from the eval
-// pages, and the last value read for any figure a page no longer carries.
+// Builds the AA eval rows: scores and cost from model pages, tokens from eval pages,
+// time from tokens over output speed; a figure a page drops is carried forward.
 
 import {
 	checkTokenWeights,
@@ -42,8 +41,9 @@ type ImportInput = {
 	prior: readonly PriorRow[];
 };
 
-/** How many rows have each task figure fresh from AA, carried forward from the
- * prior dataset, or not at all. Tokens and time count as one figure. */
+/** How many rows have each task figure fresh from AA or carried forward from
+ * the prior dataset. Tokens and time count as one figure, present only when
+ * both are. `withoutFigures` counts rows still missing the cost or that pair. */
 export type CarryReport = {
 	costFresh: number;
 	costCarried: number;
@@ -54,7 +54,8 @@ export type CarryReport = {
 
 type ImportResult = { rows: ResolvedRow[]; skips: Skips; carry: CarryReport };
 
-/** The model's rows with the tokens and time its eval-page record gives them. */
+/** The model's rows with the tokens its eval-page record gives them, and the
+ * time those tokens take at the model page's output speed. */
 function withTokensAndTime(
 	model: ModelReading,
 	tokens: EvalTokens | undefined,
@@ -94,20 +95,21 @@ const count = (
 	has: (r: ResolvedRow) => boolean,
 ) => rows.filter(has).length;
 const hasCost = (r: ResolvedRow) => r.costPerTaskUsd !== null;
-const hasTokens = (r: ResolvedRow) => r.tokensPerTask !== null;
+const hasTokensAndTime = (r: ResolvedRow) =>
+	r.tokensPerTask !== null && r.secondsPerTask !== null;
 
 function carryReport(
 	fresh: readonly ResolvedRow[],
 	carried: readonly ResolvedRow[],
 ): CarryReport {
 	const costFresh = count(fresh, hasCost);
-	const figuresFresh = count(fresh, hasTokens);
+	const figuresFresh = count(fresh, hasTokensAndTime);
 	return {
 		costFresh,
 		costCarried: count(carried, hasCost) - costFresh,
 		figuresFresh,
-		figuresCarried: count(carried, hasTokens) - figuresFresh,
-		withoutFigures: count(carried, (r) => !hasCost(r) || !hasTokens(r)),
+		figuresCarried: count(carried, hasTokensAndTime) - figuresFresh,
+		withoutFigures: count(carried, (r) => !hasCost(r) || !hasTokensAndTime(r)),
 	};
 }
 
