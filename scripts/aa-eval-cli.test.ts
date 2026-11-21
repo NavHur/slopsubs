@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vite-plus/test";
-import { parseArgs, readLine } from "./aa-eval-cli.ts";
+import { parseArgs, summaryLine } from "./aa-eval-cli.ts";
 
 describe("import-aa-evals arguments", () => {
 	it("reads cached model and eval pages in any order", () => {
@@ -39,6 +39,6 @@ describe("import-aa-evals summary", () => {
 			row("a", "low"),
 			row("b", "high"),
 		];
-		expect(readLine(rows)).toBe("Read 4 eval rows for 3 model variants");
+		expect(summaryLine(rows)).toBe("Read 4 eval rows for 3 model variants");
 	});
 });

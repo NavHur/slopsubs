@@ -26,7 +26,7 @@ export function parseArgs(argv: string[]): Args {
 }
 
 /** How many eval rows were read and for how many model variants. */
-export function readLine(
+export function summaryLine(
 	rows: readonly { family: string; effort: string }[],
 ): string {
 	const variants = new Set(rows.map((r) => `${r.family}@${r.effort}`));

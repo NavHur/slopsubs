@@ -9,7 +9,7 @@ import {
 } from "../src/domain/aa-task-figures.ts";
 import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import { AaEvalsDataset, type AaEvalRow } from "../src/domain/model.ts";
-import { parseArgs, readLine } from "./aa-eval-cli.ts";
+import { parseArgs, summaryLine } from "./aa-eval-cli.ts";
 import { aaPageSlugs, loadAaEvalPages, loadAaPages } from "./aa-page.ts";
 import { loadCatalogByFamily } from "./catalog-by-family.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
@@ -31,8 +31,11 @@ async function readPriorRows(): Promise<AaEvalRow[]> {
 	}
 }
 
-function logSummary(rows: Parameters<typeof readLine>[0], skips: Skips): void {
-	console.log(readLine(rows));
+function logSummary(
+	rows: Parameters<typeof summaryLine>[0],
+	skips: Skips,
+): void {
+	console.log(summaryLine(rows));
 	if (skips.families.size)
 		console.log(`No catalog family for ${[...skips.families].join(", ")}`);
 	if (skips.efforts.size)
@@ -71,12 +74,12 @@ async function main() {
 	});
 	logSummary(rows, skips);
 	logCarry(carry);
-	const output = {
+	const output = AaEvalsDataset.parse({
 		fetchedAt: new Date().toISOString(),
 		source: "Artificial Analysis website (model and eval page flight payloads)",
 		evals: [...AA_EVAL_IDS],
 		rows,
-	};
+	});
 	await writeFile(OUTPUT, `${JSON.stringify(output, null, 2)}\n`);
 }
 
