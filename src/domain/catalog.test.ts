@@ -1,6 +1,13 @@
+import { Schema } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import type { AaModel, TaskCost } from "./aa-site";
-import { deriveModel, mergeCatalog, type SlopaPoint } from "./catalog";
+import {
+	deriveModel,
+	mergeCatalog,
+	type SlopaPoint,
+	slopaPoint,
+	SlopalyticsDataset,
+} from "./catalog";
 
 const AA = {
 	releaseDate: "2026-09-22",
@@ -392,5 +399,31 @@ describe("mergeCatalog", () => {
 		expect(byId.get("mistral-large-4-preview")?.score).toBe(25.3);
 		expect(byId.get("mistral-large-4-preview")?.inputPricePerMTokUsd).toBe(0.7);
 		expect(merged.skipped).toEqual([]);
+	});
+});
+
+describe("the Slopalytics bundle", () => {
+	const raw = {
+		...point(),
+		inputPrice: 1,
+		outputPrice: 5,
+	};
+	const decode = Schema.decodeUnknownSync(SlopalyticsDataset);
+
+	it("keeps unpublished figures missing and rounds published numbers", () => {
+		const {
+			models: [model],
+		} = decode({ models: [{ ...raw, cost: 0.0123456 }] });
+		expect(slopaPoint(model)).toMatchObject({
+			score: null,
+			costPerTaskUsd: 0.01235,
+			tokensPerTask: null,
+		});
+	});
+
+	it("rejects a string masquerading as a task figure", () => {
+		expect(() => decode({ models: [{ ...raw, tokens: "52" }] })).toThrow(
+			Schema.SchemaError,
+		);
 	});
 });

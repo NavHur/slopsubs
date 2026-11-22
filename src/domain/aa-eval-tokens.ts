@@ -1,12 +1,14 @@
 // Reads tokens per task from AA's eval pages, whose embedded model records carry
 // each eval's total token counts, and checks them against the model pages.
 
-import { z } from "zod";
+import { Schema } from "effect";
 import { AA_EVAL_INDEX } from "./aa-eval-index";
 import type { ModelReading } from "./aa-evals";
+import { AaImportError } from "./aa-import-error";
 import { AA_EVAL_IDS } from "./enums";
 import type { AaEvalId } from "./eval-units";
 import { firstReading, flightRecords } from "./flight";
+import { NonNegative } from "./wire-schemas";
 
 /** How far apart the weighted tokens and the index's output tokens may be,
  * relative to the index's, before the weights or task counts are taken to be
@@ -16,20 +18,21 @@ const TOKEN_SUM_TOLERANCE = 1e-3;
 /** A model's tokens per task for each eval its record has counts for. */
 export type EvalTokens = Map<AaEvalId, number>;
 
-const TokenCount = z.object({
-	answer: z.number().nonnegative().nullish(),
-	reasoning: z.number().nonnegative().nullish(),
+const TokenCount = Schema.Struct({
+	answer: Schema.optional(Schema.NullOr(NonNegative)),
+	reasoning: Schema.optional(Schema.NullOr(NonNegative)),
 });
 
 /** An eval page's record: a model and its token counts across the evals. */
-const EvalPageRecord = z.object({
-	id: z.string().min(1),
-	slug: z.string().min(1),
-	canonicalEvalTokenCounts: z
-		.record(z.string(), TokenCount.nullish())
-		.nullish(),
+const EvalPageRecord = Schema.Struct({
+	id: Schema.NonEmptyString,
+	slug: Schema.NonEmptyString,
+	canonicalEvalTokenCounts: Schema.optional(
+		Schema.NullOr(Schema.Record(Schema.String, Schema.NullishOr(TokenCount))),
+	),
 });
-type TokenCounts = z.infer<typeof EvalPageRecord>["canonicalEvalTokenCounts"];
+const decodeEvalPageRecord = Schema.decodeUnknownSync(EvalPageRecord);
+type TokenCounts = (typeof EvalPageRecord.Type)["canonicalEvalTokenCounts"];
 
 /** Tokens per task for one eval; null when the record has no counts for it. */
 function evalTokens(evalId: AaEvalId, counts: TokenCounts): number | null {
@@ -68,7 +71,7 @@ export function tokensByRecord(
 	const seen = new Map<string, string>();
 	const byRecord = new Map<string, EvalTokens>();
 	for (const raw of evalFlights.flatMap(flightRecords)) {
-		const { id, slug, canonicalEvalTokenCounts } = EvalPageRecord.parse(raw);
+		const { id, slug, canonicalEvalTokenCounts } = decodeEvalPageRecord(raw);
 		const tokens = recordTokens(canonicalEvalTokenCounts);
 		if (
 			firstReading(
@@ -98,7 +101,7 @@ export function checkTokenWeights(
 		Math.abs(weighted - model.indexOutputTokens) >
 		model.indexOutputTokens * TOKEN_SUM_TOLERANCE
 	)
-		throw new Error(
-			`The weighted tokens per task for ${model.slug} add up to ${Math.round(weighted)}, but AA's index output tokens are ${Math.round(model.indexOutputTokens)}`,
-		);
+		throw new AaImportError({
+			message: `The weighted tokens per task for ${model.slug} add up to ${Math.round(weighted)}, but AA's index output tokens are ${Math.round(model.indexOutputTokens)}`,
+		});
 }

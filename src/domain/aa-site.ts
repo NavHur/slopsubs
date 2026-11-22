@@ -1,9 +1,11 @@
 // Reads an AA model page's flight payload: each model's score, prices and
 // release date, and the cost, tokens and time per task of those AA has run.
 
-import { z } from "zod";
+import { Schema } from "effect";
+import { AaImportError } from "./aa-import-error";
 import { firstReading, flightRecords } from "./flight";
 import { roundedOrNull } from "./rounding";
+import { NonNegative } from "./wire-schemas";
 
 /** What one Intelligence Index task costs a model, at AA's prices. */
 export type TaskCost = {
@@ -13,24 +15,29 @@ export type TaskCost = {
 };
 
 /** The fields read from one model record; the page carries many more. */
-const SiteModel = z.object({
-	slug: z.string().min(1),
-	name: z.string().min(1),
-	releaseDate: z.string().min(1),
-	creator: z.object({ slug: z.string().min(1), name: z.string().min(1) }),
-	chartDefaultSelected: z.boolean(),
-	intelligenceIndex: z.number().nullable(),
-	price1mInputTokens: z.number().nonnegative().nullable(),
-	price1mOutputTokens: z.number().nonnegative().nullable(),
-	intelligenceIndexCostPerTask: z
-		.object({ cost: z.object({ total: z.number().nonnegative() }) })
-		.nullish(),
-	intelligenceIndexOutputTokensPerTask: z
-		.object({ output: z.number() })
-		.nullish(),
-	intelligenceIndexTimePerTask: z.number().nullish(),
+const SiteModel = Schema.Struct({
+	slug: Schema.NonEmptyString,
+	name: Schema.NonEmptyString,
+	releaseDate: Schema.NonEmptyString,
+	creator: Schema.Struct({
+		slug: Schema.NonEmptyString,
+		name: Schema.NonEmptyString,
+	}),
+	chartDefaultSelected: Schema.Boolean,
+	intelligenceIndex: Schema.NullOr(Schema.Finite),
+	price1mInputTokens: Schema.NullOr(NonNegative),
+	price1mOutputTokens: Schema.NullOr(NonNegative),
+	intelligenceIndexCostPerTask: Schema.optional(
+		Schema.NullOr(
+			Schema.Struct({ cost: Schema.Struct({ total: NonNegative }) }),
+		),
+	),
+	intelligenceIndexOutputTokensPerTask: Schema.optional(
+		Schema.NullOr(Schema.Struct({ output: Schema.Finite })),
+	),
+	intelligenceIndexTimePerTask: Schema.optional(Schema.NullOr(Schema.Finite)),
 });
-type SiteModel = z.infer<typeof SiteModel>;
+type SiteModel = typeof SiteModel.Type;
 
 /** One model AA lists, as the catalog merge reads it. */
 export type AaModel = Pick<
@@ -76,6 +83,8 @@ function aaModel(model: SiteModel): AaModel {
 	};
 }
 
+const decodeSiteModel = Schema.decodeUnknownSync(SiteModel);
+
 /**
  * Every model record on the page. Throws when the page has no model records,
  * or carries only AA's default chart selection, which a model in it gets
@@ -83,13 +92,15 @@ function aaModel(model: SiteModel): AaModel {
  */
 function pageRecords(flight: string): SiteModel[] {
 	const records = flightRecords(flight).map((record) =>
-		SiteModel.parse(record),
+		decodeSiteModel(record),
 	);
-	if (!records.length) throw new Error("No model records in the page");
+	if (!records.length)
+		throw new AaImportError({ message: "No model records in the page" });
 	if (records.every((model) => model.chartDefaultSelected))
-		throw new Error(
-			"The page lists only AA's default chart selection; read a model page outside it",
-		);
+		throw new AaImportError({
+			message:
+				"The page lists only AA's default chart selection; read a model page outside it",
+		});
 	return records;
 }
 
@@ -103,7 +114,9 @@ export function readAaSite(flight: string): AaSite {
 	const slugs = new Set<string>();
 	for (const model of records) {
 		if (slugs.has(model.slug))
-			throw new Error(`The page lists ${model.slug} twice`);
+			throw new AaImportError({
+				message: `The page lists ${model.slug} twice`,
+			});
 		slugs.add(model.slug);
 		const cost = taskCost(model);
 		if (cost) costs.set(model.slug, cost);

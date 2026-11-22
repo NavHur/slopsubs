@@ -1,8 +1,11 @@
 // Fetches the AA pages import-benchmarks and import-aa-evals read: one model
 // page per plan-covered family, and one page per eval.
 
-import { readFile } from "node:fs/promises";
+import { Effect, Schema } from "effect";
 import { AA_EVAL_INDEX } from "../src/domain/aa-eval-index.ts";
+import { AaImportError } from "../src/domain/aa-import-error.ts";
+import { TextFiles } from "./effects/files.ts";
+import { getText } from "./effects/http.ts";
 
 const MODEL_PAGE = "https://artificialanalysis.ai/models/";
 const EVAL_PAGE = "https://artificialanalysis.ai/evaluations/";
@@ -30,55 +33,55 @@ export function aaPageSlugs(
 
 const HEADERS = { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)" };
 
-async function fetchPage(url: string): Promise<string> {
-	const response = await fetch(url, { headers: HEADERS });
-	if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
-	return response.text();
-}
-
-/** An eval page's HTML; a renamed slug redirects or 404s, so only a plain 200
- * counts. */
-async function fetchEvalPage(url: string): Promise<string> {
-	const response = await fetch(url, { headers: HEADERS, redirect: "manual" });
-	if (response.status !== 200)
-		throw new Error(`${url}: HTTP ${response.status}`);
-	return response.text();
-}
-
-/** The pages' HTML: the cached copies at `paths` when given, else one `fetchUrl`
- * per URL, a few at a time. */
-async function loadPages(
+/** Cached HTML when paths are given, otherwise fetch up to four pages at once. */
+function loadPages(
 	urls: readonly string[],
 	paths: readonly string[],
-	fetchUrl: (url: string) => Promise<string>,
-): Promise<string[]> {
-	if (paths.length) return Promise.all(paths.map((p) => readFile(p, "utf8")));
-	const pages: string[] = [];
-	for (let i = 0; i < urls.length; i += PARALLEL_FETCHES)
-		pages.push(
-			...(await Promise.all(urls.slice(i, i + PARALLEL_FETCHES).map(fetchUrl))),
+	fetchOptions: { rejectRedirects?: boolean } = {},
+) {
+	return Effect.gen(function* () {
+		const files = yield* TextFiles;
+		if (paths.length)
+			return yield* Effect.forEach(paths, (path) => files.read(path), {
+				concurrency: PARALLEL_FETCHES,
+			});
+		return yield* Effect.forEach(
+			urls,
+			(url) => getText(url, { headers: HEADERS, ...fetchOptions }),
+			{ concurrency: PARALLEL_FETCHES },
 		);
-	return pages;
+	});
 }
 
 /** The model pages' HTML, one per page slug, or the cached copies at `paths`. */
 export function loadAaPages(
 	slugs: readonly string[],
 	paths: readonly string[],
-): Promise<string[]> {
+) {
 	return loadPages(
 		slugs.map((slug) => MODEL_PAGE + slug),
 		paths,
-		fetchPage,
 	);
 }
 
-/** The eval pages' HTML, one per eval, or the cached copies at `paths`. */
-export function loadAaEvalPages(paths: readonly string[]): Promise<string[]> {
+/** An eval page's slug can change. Require a direct 200 so a redirect fails. */
+export function loadAaEvalPages(paths: readonly string[]) {
 	const pages = new Set(Object.values(AA_EVAL_INDEX).map((e) => e.page));
 	return loadPages(
 		[...pages].map((page) => EVAL_PAGE + page),
 		paths,
-		fetchEvalPage,
+		{ rejectRedirects: true },
 	);
+}
+
+/** Keep malformed AA input in the error channel and let parser bugs surface. */
+export function readAaPayload<A>(parse: () => A) {
+	return Effect.try({
+		try: parse,
+		catch: (cause) => {
+			if (cause instanceof AaImportError || cause instanceof Schema.SchemaError)
+				return cause;
+			throw cause;
+		},
+	});
 }

@@ -1,13 +1,15 @@
 // Reads per-model Intelligence Index scores and cost out of AA model pages' Next.js
 // flight payloads and files them under the catalog's families and efforts.
 
-import { z } from "zod";
+import { Schema } from "effect";
 import { AA_EVAL_INDEX, isAaEvalId } from "./aa-eval-index";
+import { AaImportError } from "./aa-import-error";
 import { AA_EVAL_IDS } from "./enums";
 import type { AaEvalId } from "./eval-units";
 import { firstReading, flightRecords, stringLiteralEnd } from "./flight";
 import type { BenchmarkPoint, Effort } from "./model";
 import { roundedOrNull } from "./rounding";
+import { NonNegative } from "./wire-schemas";
 
 const COST_DECIMALS = 5;
 
@@ -18,34 +20,40 @@ const FAMILY_ALIASES: Record<string, string> = {
 
 const CHUNK_MARKER = "__next_f.push([1,";
 
-const Score = z.number().nullish();
+const Score = Schema.optional(Schema.NullOr(Schema.Finite));
 
 /** The fields read from one model record: who it is, its eval scores, and the
  * index's cost, output tokens and time per task. */
-const EvalRecord = z.object({
-	id: z.string().min(1),
-	slug: z.string().min(1),
-	intelligenceIndexCostPerTask: z
-		.object({
-			cost: z.object({ total: z.number().nonnegative() }),
-			evaluations: z.array(
-				z.object({
-					slug: z.string(),
-					weightedCostPerTask: z.number().nonnegative(),
-				}),
-			),
-		})
-		.nullish(),
-	intelligenceIndexOutputTokensPerTask: z
-		.object({ output: z.number().nonnegative() })
-		.nullish(),
-	intelligenceIndexTimePerTask: z.number().nonnegative().nullish(),
-	release: z.object({ slug: z.string().min(1) }),
-	effort: z.object({ slug: z.string().min(1) }).nullish(),
-	isReasoning: z.boolean(),
-	briefcaseBreakdown: z
-		.object({ overall: z.object({ elo: z.number() }) })
-		.nullish(),
+const EvalRecord = Schema.Struct({
+	id: Schema.NonEmptyString,
+	slug: Schema.NonEmptyString,
+	intelligenceIndexCostPerTask: Schema.optional(
+		Schema.NullOr(
+			Schema.Struct({
+				cost: Schema.Struct({ total: NonNegative }),
+				evaluations: Schema.Array(
+					Schema.Struct({
+						slug: Schema.String,
+						weightedCostPerTask: NonNegative,
+					}),
+				),
+			}),
+		),
+	),
+	intelligenceIndexOutputTokensPerTask: Schema.optional(
+		Schema.NullOr(Schema.Struct({ output: NonNegative })),
+	),
+	intelligenceIndexTimePerTask: Schema.optional(Schema.NullOr(NonNegative)),
+	release: Schema.Struct({ slug: Schema.NonEmptyString }),
+	effort: Schema.optional(
+		Schema.NullOr(Schema.Struct({ slug: Schema.NonEmptyString })),
+	),
+	isReasoning: Schema.Boolean,
+	briefcaseBreakdown: Schema.optional(
+		Schema.NullOr(
+			Schema.Struct({ overall: Schema.Struct({ elo: Schema.Finite }) }),
+		),
+	),
 	automationBenchPartialScore: Score,
 	terminalBench40: Score,
 	frontierCode20: Score,
@@ -55,7 +63,11 @@ const EvalRecord = z.object({
 	critptAgenticHard: Score,
 	terminalBenchScience: Score,
 });
-export type EvalRecord = z.infer<typeof EvalRecord>;
+const decodeEvalRecord = Schema.decodeUnknownSync(EvalRecord);
+const decodeChunkText = Schema.decodeUnknownSync(
+	Schema.fromJsonString(Schema.String),
+);
+export type EvalRecord = typeof EvalRecord.Type;
 
 /** A website row. `effort` is the website's slug, `none` for an effortless model
  * that does not reason, and null for one that does. The model pages carry the
@@ -80,12 +92,19 @@ function decodeChunk(
 ): { text: string; next: number } {
 	const open = marker + CHUNK_MARKER.length;
 	if (html[open] !== '"')
-		throw new Error(`Flight chunk at offset ${marker} has no string literal`);
+		throw new AaImportError({
+			message: `Flight chunk at offset ${marker} has no string literal`,
+		});
 	const close = stringLiteralEnd(html, open);
 	try {
-		return { text: JSON.parse(html.slice(open, close + 1)), next: close + 1 };
+		return {
+			text: decodeChunkText(html.slice(open, close + 1)),
+			next: close + 1,
+		};
 	} catch (cause) {
-		throw new Error(`Flight chunk at offset ${marker} is not a JSON string`, {
+		if (!(cause instanceof Schema.SchemaError)) throw cause;
+		throw new AaImportError({
+			message: `Flight chunk at offset ${marker} is not a JSON string`,
 			cause,
 		});
 	}
@@ -100,7 +119,8 @@ export function flightFromHtml(html: string): string {
 		chunks.push(chunk.text);
 		marker = html.indexOf(CHUNK_MARKER, chunk.next);
 	}
-	if (!chunks.length) throw new Error("No flight chunks found in page");
+	if (!chunks.length)
+		throw new AaImportError({ message: "No flight chunks found in page" });
 	return chunks.join("");
 }
 
@@ -118,7 +138,9 @@ const COST_SUM_TOLERANCE = 1e-4;
 /** The eval AA's cost entry is for. Throws on one the importer lacks a weight for. */
 function costedEval(slug: string): AaEvalId {
 	if (!isAaEvalId(slug))
-		throw new Error(`AA's index costs an unknown eval: ${slug}`);
+		throw new AaImportError({
+			message: `AA's index costs an unknown eval: ${slug}`,
+		});
 	return slug;
 }
 
@@ -134,7 +156,9 @@ function recordCosts(record: EvalRecord): Map<AaEvalId, number> {
 	for (const { slug, weightedCostPerTask } of index.evaluations) {
 		const evalId = costedEval(slug);
 		if (costs.has(evalId))
-			throw new Error(`AA's index costs ${slug} twice for ${record.slug}`);
+			throw new AaImportError({
+				message: `AA's index costs ${slug} twice for ${record.slug}`,
+			});
 		weighted += weightedCostPerTask;
 		costs.set(evalId, weightedCostPerTask / AA_EVAL_INDEX[evalId].weight);
 	}
@@ -142,9 +166,9 @@ function recordCosts(record: EvalRecord): Map<AaEvalId, number> {
 		Math.abs(weighted - index.cost.total) >
 		index.cost.total * COST_SUM_TOLERANCE
 	)
-		throw new Error(
-			`The weighted costs for ${record.slug} add up to ${weighted}, but AA's index cost is ${index.cost.total}`,
-		);
+		throw new AaImportError({
+			message: `The weighted costs for ${record.slug} add up to ${weighted}, but AA's index cost is ${index.cost.total}`,
+		});
 	return costs;
 }
 
@@ -187,7 +211,9 @@ function outputSpeed(record: EvalRecord): number | null {
 	if (!tokens || !seconds) return null;
 	const speed = tokens / seconds;
 	if (!Number.isFinite(speed) || speed <= 0)
-		throw new Error(`AA's index output speed for ${record.slug} is not usable`);
+		throw new AaImportError({
+			message: `AA's index output speed for ${record.slug} is not usable`,
+		});
 	return speed;
 }
 
@@ -198,7 +224,7 @@ function outputSpeed(record: EvalRecord): number | null {
 export function readModels(flights: readonly string[]): ModelReading[] {
 	const seen = new Map<string, string>();
 	return flights.flatMap(flightRecords).flatMap((record) => {
-		const parsed = EvalRecord.parse(record);
+		const parsed = decodeEvalRecord(record);
 		const reading: ModelReading = {
 			id: parsed.id,
 			slug: parsed.slug,
@@ -224,7 +250,8 @@ export function pickModel(
 	const [only, ...rest] = candidates;
 	if (!rest.length) return only.effort === "none" ? null : only;
 	const fallback = candidates.find((m) => m.effort === "default");
-	if (!fallback) throw new Error(`Ambiguous null effort for ${family}`);
+	if (!fallback)
+		throw new AaImportError({ message: `Ambiguous null effort for ${family}` });
 	return fallback;
 }
 
@@ -305,7 +332,8 @@ export function resolveRows(
 		const row = resolveRow(r, resolution);
 		if (!row) continue;
 		const key = rowKey(row);
-		if (rows.has(key)) throw new Error(`Two rows for ${key}`);
+		if (rows.has(key))
+			throw new AaImportError({ message: `Two rows for ${key}` });
 		rows.set(key, row);
 	}
 	return { rows: [...rows.values()], skips };
