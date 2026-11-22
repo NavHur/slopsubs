@@ -1,8 +1,9 @@
-import * as z from "zod/mini";
+import * as Schema from "effect/Schema";
 import { frontier, plans, samples } from "#/data";
 import type { Effort, FamilyId } from "#/domain/model";
 import type { SizedPlan, Workload } from "#/domain/recommend";
 import { planCapacity } from "#/domain/value";
+import { knownItems, optionalValid } from "./search-schema";
 
 /**
  * The models the "Which plan fits" section offers: frontier models some plan
@@ -53,39 +54,28 @@ if (!FIT_FAMILIES.includes(DEFAULT_FAMILY)) {
 	throw new Error(`Default plan-fit model ${DEFAULT_FAMILY} is not on a plan`);
 }
 
-const knownFamily = (item: unknown): item is string =>
-	FIT_FAMILIES.some((f) => f === item);
+const Positive = Schema.Finite.check(Schema.isGreaterThan(0));
 
-const Positive = z.number().check(z.positive());
-
-function optionalValid<T extends z.ZodMiniType>(schema: T) {
-	return z.catch(z.optional(schema), undefined);
+function fitSelection(kept: string[]) {
+	return kept.length ? [...new Set(kept)] : undefined;
 }
 
 /**
  * The section's inputs in the URL, one `fit` param. Each field falls back on
  * its own, so a link from an older or newer version still loads.
  */
-export const FitSearch = z.object({
-	any: optionalValid(z.boolean()),
+export const FitSearch = Schema.Struct({
+	any: optionalValid(Schema.Boolean),
 	/** Plain strings: structural sharing reads a brand as String's methods. */
-	models: optionalValid(
-		z.pipe(
-			z.array(z.unknown()),
-			z.transform((items) => {
-				const kept = [...new Set(items.filter(knownFamily))];
-				return kept.length > 0 ? kept : undefined;
-			}),
-		),
-	),
+	models: knownItems<string>(FIT_FAMILIES, fitSelection),
 	/** Each model's percent of the week; unset models get an equal part. */
-	weights: optionalValid(z.record(z.string(), Positive)),
-	unit: optionalValid(z.enum(FIT_UNITS)),
+	weights: optionalValid(Schema.Record(Schema.String, Positive)),
+	unit: optionalValid(Schema.Literals(FIT_UNITS)),
 	amount: optionalValid(Positive),
-	effort: optionalValid(z.enum(FIT_EFFORTS)),
+	effort: optionalValid(Schema.Literals(FIT_EFFORTS)),
 	budget: optionalValid(Positive),
 });
-export type FitSearch = z.infer<typeof FitSearch>;
+export type FitSearch = typeof FitSearch.Type;
 
 /** The inputs with every default filled in, as the section shows them. */
 export type FitInputs = {

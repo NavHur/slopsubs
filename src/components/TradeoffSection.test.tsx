@@ -17,13 +17,13 @@ import { type ValuePoint, valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
 import { familyName } from "#/lib/families";
 import { formatUsd } from "#/lib/format";
-import { selectedFamilies, selectedPlans, ViewSearch } from "#/lib/view";
+import { selectedFamilies, selectedPlans, parseViewSearch } from "#/lib/view";
 import { tradeoffPng } from "./TradeoffKey";
 import { TradeoffSection } from "./TradeoffSection";
 
 /** The page's default selection on one benchmark tab. */
 function pagePoints(benchmark: BenchmarkId) {
-	const view = ViewSearch.parse({ benchmark });
+	const view = parseViewSearch({ benchmark });
 	const planIds = selectedPlans(view);
 	return valuePoints({
 		benchmarks: leaderboards[benchmark].models,

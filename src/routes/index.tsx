@@ -38,11 +38,12 @@ import {
 	SCROLL_ONLY_PARAMS,
 	selectedFamilies,
 	selectedPlans,
-	ViewSearch,
+	type ViewSearch,
+	parseViewSearch,
 } from "#/lib/view";
 
 export const Route = createFileRoute("/")({
-	validateSearch: ViewSearch,
+	validateSearch: parseViewSearch,
 	component: ValueView,
 });
 

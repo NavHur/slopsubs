@@ -7,16 +7,16 @@ import {
 	modelToggle,
 	unitChange,
 } from "./fit";
-import { ViewSearch } from "./view";
+import { parseViewSearch } from "./view";
 
 const opus = "claude-opus-5-5" as FamilyId;
 const fable = "claude-fable-5-2" as FamilyId;
-const parseFit = (fit: unknown) => fitInputs(ViewSearch.parse({ fit }).fit);
+const parseFit = (fit: unknown) => fitInputs(parseViewSearch({ fit }).fit);
 
 describe("the fit param", () => {
 	it("loads defaults for a link from before the section existed", () => {
 		expect(
-			fitInputs(ViewSearch.parse({ benchmark: "omniscience" }).fit),
+			fitInputs(parseViewSearch({ benchmark: "omniscience" }).fit),
 		).toEqual({
 			any: false,
 			models: [opus],

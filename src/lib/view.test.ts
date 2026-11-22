@@ -12,13 +12,13 @@ import {
 	selectedFamilies,
 	selectedPlans,
 	toggledGroup,
-	ViewSearch,
+	parseViewSearch,
 } from "./view";
 
 const opus = "claude-opus-5-5" as FamilyId;
 const haiku = "claude-haiku-5-5" as FamilyId;
 const kimi = "kimi-k3" as FamilyId;
-const view = (search: object) => ViewSearch.parse(search);
+const view = (search: object) => parseViewSearch(search);
 
 describe("hiddenReasoning", () => {
 	it("hides only the non-reasoning variant by default", () => {

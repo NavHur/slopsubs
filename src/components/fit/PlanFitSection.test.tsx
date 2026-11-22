@@ -2,13 +2,13 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vite-plus/test";
 import type { FitSearch } from "#/lib/fit";
 import type { QuestionScreen } from "#/lib/fitQuiz";
-import { ViewSearch } from "#/lib/view";
+import { parseViewSearch } from "#/lib/view";
 import { PlanFitSection } from "./PlanFitSection";
 import { QuizQuestion } from "./QuizQuestion";
 
 /** The section's text for a `fit` param, parsed the way the page parses it. */
 function text(fit?: unknown): string {
-	const parsed = ViewSearch.parse(fit === undefined ? {} : { fit }).fit;
+	const parsed = parseViewSearch(fit === undefined ? {} : { fit }).fit;
 	const html = renderToStaticMarkup(
 		<PlanFitSection
 			benchmark="intelligence"
