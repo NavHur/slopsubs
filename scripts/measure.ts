@@ -28,8 +28,17 @@ const BENCHMARKS = new URL("src/data/benchmarks.json", ROOT);
 
 function mark(args: string[]) {
 	return Effect.gen(function* () {
-		const [plan, usedPercent, resets] =
-			yield* Schema.decodeUnknownEffect(MarkArgs)(args);
+		const [plan, usedPercent, resets] = yield* Schema.decodeUnknownEffect(
+			MarkArgs,
+		)(args).pipe(
+			Effect.mapError(
+				(cause) =>
+					new InvalidCommandArguments({
+						message: "usage: measure mark <planId> <usedPercent> <resetsAt>",
+						cause,
+					}),
+			),
+		);
 		const entry = yield* Schema.decodeUnknownEffect(Mark)({
 			at: new Date(yield* Clock.currentTimeMillis).toISOString(),
 			plan,

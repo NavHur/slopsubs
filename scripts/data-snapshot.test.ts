@@ -18,7 +18,15 @@ const compare = (base: typeof texts, current: typeof texts) =>
 
 describe("comparing data snapshots", () => {
 	it("finds no changes between identical copies", async () => {
-		await expect(compare(texts, texts)).resolves.toBeDefined();
+		await expect(compare(texts, texts)).resolves.toEqual({
+			familiesAdded: [],
+			familiesRemoved: [],
+			scores: [],
+			prices: [],
+			planValues: [],
+			changedFiles: [],
+			refetchedFiles: [],
+		});
 	});
 	it("names the git ref when its copy of a file fails to decode", async () => {
 		await expect(
