@@ -1,5 +1,5 @@
 import type { Dirent } from "node:fs";
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { appendFile, readdir, readFile, writeFile } from "node:fs/promises";
 import { Context, Data, Effect, Layer, Schema } from "effect";
 
 export class FileReadError extends Data.TaggedError("FileReadError")<{
@@ -36,6 +36,10 @@ export class TextFiles extends Context.Service<
 		readonly list: (
 			path: string | URL,
 		) => Effect.Effect<Dirent[], FileReadError>;
+		readonly append: (
+			path: string | URL,
+			text: string,
+		) => Effect.Effect<void, FileWriteError>;
 		readonly write: (
 			path: string | URL,
 			text: string,
@@ -53,6 +57,11 @@ export class TextFiles extends Context.Service<
 				try: () => readdir(path, { withFileTypes: true }),
 				catch: (cause) => new FileReadError({ path: String(path), cause }),
 			}),
+		append: (path, text) =>
+			Effect.tryPromise({
+				try: () => appendFile(path, text),
+				catch: (cause) => new FileWriteError({ path: String(path), cause }),
+			}),
 		write: (path, text) =>
 			Effect.tryPromise({
 				try: (signal) => writeFile(path, text, { signal }),
@@ -61,16 +70,22 @@ export class TextFiles extends Context.Service<
 	});
 }
 
-export const decodeJsonFile = <S extends Schema.Constraint>(
+export const decodeFileValue = <S extends Schema.Constraint>(
 	schema: S,
 	path: string | URL,
-	text: string,
+	value: unknown,
 ) =>
-	Schema.decodeUnknownEffect(Schema.fromJsonString(schema))(text).pipe(
+	Schema.decodeUnknownEffect(schema)(value).pipe(
 		Effect.mapError(
 			(cause) => new InvalidJsonFile({ path: String(path), cause }),
 		),
 	);
+
+export const decodeJsonFile = <S extends Schema.Constraint>(
+	schema: S,
+	path: string | URL,
+	text: string,
+) => decodeFileValue(Schema.fromJsonString(schema), path, text);
 
 export const readJsonFile = <S extends Schema.Constraint>(
 	schema: S,

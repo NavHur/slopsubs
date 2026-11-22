@@ -1,101 +1,103 @@
 // Reads Claude Code's logs and prices them between two weekly-gauge marks.
 
-import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { z } from "zod";
-import type { BenchmarkPoint, LimitSample } from "../src/domain/model.ts";
+import { Effect, Option, Result, Schema } from "effect";
+import type { BenchmarkPoint, LimitSamples } from "../src/domain/model.ts";
 import {
-	type ClaudeUsage,
+	ClaudeUsage,
 	claudeMessageUsd,
+	modelFamilySlug,
 	priceFor,
-	UnpricedModelError,
 } from "../src/domain/pricing.ts";
+import { UtcTimestamp } from "../src/domain/wire-schemas.ts";
+import {
+	decodeFileValue,
+	decodeJsonFile,
+	type FileReadError,
+	type InvalidJsonFile,
+	TextFiles,
+} from "./effects/files.ts";
+
+export const GaugePercent = Schema.isBetween({ minimum: 0, maximum: 100 });
 
 /** A weekly gauge reading from /usage, recorded by `measure mark`. */
-export const Mark = z.object({
-	at: z.iso.datetime(),
-	plan: z.string().min(1),
-	usedPercent: z.number().min(0).max(100),
-	resetsAt: z.iso.datetime(),
-	host: z.string(),
+export const Mark = Schema.Struct({
+	at: UtcTimestamp,
+	plan: Schema.NonEmptyString,
+	usedPercent: Schema.Finite.check(GaugePercent),
+	resetsAt: UtcTimestamp,
+	host: Schema.String,
 });
-export type Mark = z.infer<typeof Mark>;
+export type Mark = typeof Mark.Type;
 
-const ClaudeLine = z.object({
-	type: z.literal("assistant"),
-	timestamp: z.iso.datetime(),
-	requestId: z.string().optional(),
-	requestRef: z.string().optional(),
-	message: z.object({
-		id: z.string(),
-		model: z.string(),
-		usage: z.custom<ClaudeUsage>(
-			(u) =>
-				z
-					.object({ input_tokens: z.number(), output_tokens: z.number() })
-					.safeParse(u).success,
-		),
+const AssistantTag = Schema.Struct({ type: Schema.Literal("assistant") });
+const ClaudeLine = Schema.Struct({
+	...AssistantTag.fields,
+	timestamp: UtcTimestamp,
+	requestId: Schema.optional(Schema.String),
+	requestRef: Schema.optional(Schema.String),
+	message: Schema.Struct({
+		id: Schema.String,
+		model: Schema.String,
+		usage: Schema.optional(Schema.NullOr(ClaudeUsage)),
 	}),
 });
+
 export type ClaudeMessage = { at: number; model: string; usage: ClaudeUsage };
+type PricedLine = readonly [requestKey: string, message: ClaudeMessage];
+const isAssistant = Schema.is(AssistantTag);
 
-async function* jsonlFiles(dir: string): AsyncGenerator<string> {
-	for (const entry of await readdir(dir, { withFileTypes: true })) {
-		const path = join(dir, entry.name);
-		if (entry.isDirectory()) yield* jsonlFiles(path);
-		else if (entry.name.endsWith(".jsonl")) yield path;
-	}
+function assistantMessage(line: string, path: string, lineNumber: number) {
+	return Effect.gen(function* () {
+		if (!/"type"\s*:\s*"assistant"/.test(line))
+			return Option.none<PricedLine>();
+		const location = `${path}:${lineNumber}`;
+		const raw = yield* decodeJsonFile(Schema.Unknown, location, line);
+		if (!isAssistant(raw)) return Option.none<PricedLine>();
+		const { message, timestamp, requestId, requestRef } =
+			yield* decodeFileValue(ClaudeLine, location, raw);
+		const { usage } = message;
+		if (!usage) return Option.none<PricedLine>();
+		const request = requestRef ?? requestId ?? "";
+		return Option.some<PricedLine>([
+			`${message.id}:${request}`,
+			{ at: Date.parse(timestamp), model: message.model, usage },
+		]);
+	});
 }
 
-/** Every line of every .jsonl file under `dirs`. */
-async function* logLines(dirs: string[]): AsyncGenerator<string> {
-	for (const dir of dirs) {
-		for await (const file of jsonlFiles(dir))
-			yield* (await readFile(file, "utf8")).split("\n");
-	}
+function readClaudeFile(path: string, seen: Map<string, ClaudeMessage>) {
+	return Effect.gen(function* () {
+		const files = yield* TextFiles;
+		const lines = (yield* files.read(path)).split("\n");
+		for (const [index, line] of lines.entries()) {
+			const entry = yield* assistantMessage(line, path, index + 1);
+			if (Option.isSome(entry)) seen.set(...entry.value);
+		}
+	});
 }
 
-/** The message an assistant line records, keyed by message and request so a
- * re-written line replaces its earlier copy; null for any other line. */
-function parseAssistantLine(line: string): [string, ClaudeMessage] | null {
-	if (!line.includes('"type":"assistant"')) return null;
-	const parsed = ClaudeLine.safeParse(JSON.parse(line));
-	if (!parsed.success) return null;
-	const { message, timestamp, requestId, requestRef } = parsed.data;
-	const request = requestRef ?? requestId ?? "";
-	return [
-		`${message.id}:${request}`,
-		{ at: Date.parse(timestamp), model: message.model, usage: message.usage },
-	];
+function readClaudeDir(
+	dir: string,
+	seen: Map<string, ClaudeMessage>,
+): Effect.Effect<void, InvalidJsonFile | FileReadError, TextFiles> {
+	return Effect.gen(function* () {
+		const files = yield* TextFiles;
+		for (const entry of yield* files.list(dir)) {
+			const path = join(dir, entry.name);
+			if (entry.isDirectory()) yield* readClaudeDir(path, seen);
+			else if (entry.name.endsWith(".jsonl")) yield* readClaudeFile(path, seen);
+		}
+	});
 }
 
 /** Assistant messages from Claude Code logs, deduplicated across re-writes. */
-export async function readClaudeMessages(
-	dirs: string[],
-): Promise<ClaudeMessage[]> {
-	const seen = new Map<string, ClaudeMessage>();
-	for await (const line of logLines(dirs)) {
-		const entry = parseAssistantLine(line);
-		if (entry) seen.set(...entry);
-	}
-	return [...seen.values()];
-}
-
-/** A dated snapshot's date, as in `claude-opus-5-5-20261001`. */
-const DATED_SNAPSHOT_SUFFIX = /-\d{8}$/;
-
-/** What a message would have cost through the API; null when no benchmark
- * prices its model. */
-function apiUsd(
-	message: ClaudeMessage,
-	benchmarks: BenchmarkPoint[],
-): number | null {
-	try {
-		return claudeMessageUsd(message.usage, priceFor(message.model, benchmarks));
-	} catch (error) {
-		if (error instanceof UnpricedModelError) return null;
-		throw error;
-	}
+export function readClaudeMessages(dirs: readonly string[]) {
+	return Effect.gen(function* () {
+		const seen = new Map<string, ClaudeMessage>();
+		for (const dir of dirs) yield* readClaudeDir(dir, seen);
+		return [...seen.values()];
+	});
 }
 
 export function priceWindow(
@@ -103,22 +105,22 @@ export function priceWindow(
 	messages: ClaudeMessage[],
 	benchmarks: BenchmarkPoint[],
 	unpriced: Set<string>,
-): LimitSample {
+): (typeof LimitSamples.Encoded)[number] {
 	const from = Date.parse(start.at);
 	const to = Date.parse(end.at);
 	const byFamily: Record<string, number> = {};
 	for (const m of messages.filter(({ at }) => at >= from && at < to)) {
-		const usd = apiUsd(m, benchmarks);
-		if (usd === null) {
-			unpriced.add(m.model);
+		const price = priceFor(m.model, benchmarks);
+		if (Result.isFailure(price)) {
+			unpriced.add(price.failure.modelId);
 			continue;
 		}
-		const family = m.model.replace(DATED_SNAPSHOT_SUFFIX, "");
+		const family = modelFamilySlug(m.model);
+		const usd = claudeMessageUsd(m.usage, price.success);
 		byFamily[family] = (byFamily[family] ?? 0) + usd;
 	}
 	return {
-		// SAFETY: not validated here; measure.ts brands every sample with the LimitSamples schema.
-		plan: start.plan as LimitSample["plan"],
+		plan: start.plan,
 		from: start.at,
 		to: end.at,
 		startUsedPercent: start.usedPercent,
