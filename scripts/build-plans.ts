@@ -1,8 +1,8 @@
+import { Schema } from "effect";
 // Builds src/data/plans.json from research/plans/, and the trimmed
 // chart-benchmarks.json from the imported leaderboards.
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
-import { z } from "zod";
 import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import type { AaEvalId } from "../src/domain/eval-units.ts";
 import { evalPoints, frontierCodePoints } from "../src/domain/leaderboards.ts";
@@ -17,6 +17,7 @@ import {
 	type PublishedAllowance,
 	type ReportedCap,
 } from "../src/domain/model.ts";
+import { UrlString } from "../src/domain/wire-schemas.ts";
 import { CLAUDE_ULTRA } from "./claude-caps.ts";
 import { creditAllowance, creditPromotions } from "./credit-plans.ts";
 import { CREDIT_PLANS } from "./credit-vendors.ts";
@@ -89,19 +90,24 @@ function codexCap(
 	};
 }
 
-const ResearchPlan = z.object({
-	vendor: z.string(),
-	planId: z.string(),
-	label: z.string(),
-	monthlyPriceUsd: z.number(),
-	harnesses: z.array(z.string()),
-	limits: z.string(),
+const ResearchPlan = Schema.Struct({
+	vendor: Schema.String,
+	planId: Schema.String,
+	label: Schema.String,
+	monthlyPriceUsd: Schema.Finite,
+	harnesses: Schema.mutable(Schema.Array(Schema.String)),
+	limits: Schema.String,
 	allowanceKind: AllowanceKind,
 	/** Only plans on sale ship; the others stay in research with the reason. */
-	availability: z.enum(["on-sale", "closed", "discontinued"]),
-	thirdPartyHarnessAllowed: z.union([z.boolean(), z.literal("unclear")]),
-	sources: z.array(z.object({ url: z.url(), accessed: z.string() })).min(1),
-	confidence: z.enum(["primary", "secondary", "unverified"]),
+	availability: Schema.Literals(["on-sale", "closed", "discontinued"]),
+	thirdPartyHarnessAllowed: Schema.Union([
+		Schema.Boolean,
+		Schema.Literal("unclear"),
+	]),
+	sources: Schema.Array(
+		Schema.Struct({ url: UrlString, accessed: Schema.String }),
+	).check(Schema.isMinLength(1)),
+	confidence: Schema.Literals(["primary", "secondary", "unverified"]),
 });
 
 async function readJson(path: string): Promise<unknown> {
@@ -112,9 +118,11 @@ async function readJson(path: string): Promise<unknown> {
 async function readVendorFile(
 	dir: string,
 	name: string,
-): Promise<z.infer<typeof ResearchPlan>[]> {
+): Promise<(typeof ResearchPlan.Type)[]> {
 	try {
-		return z.array(ResearchPlan).parse(await readJson(dir + name));
+		return Schema.decodeUnknownSync(Schema.mutable(Schema.Array(ResearchPlan)))(
+			await readJson(dir + name),
+		);
 	} catch (cause) {
 		const message = cause instanceof Error ? cause.message : String(cause);
 		throw new Error(`${dir}${name}: ${message}`, { cause });
@@ -122,7 +130,7 @@ async function readVendorFile(
 }
 
 /** Every researched plan, from one file per vendor, in file-name order. */
-async function readResearch(): Promise<z.infer<typeof ResearchPlan>[]> {
+async function readResearch(): Promise<(typeof ResearchPlan.Type)[]> {
 	const dir = "research/plans/";
 	const files = (await readdir(new URL(dir, ROOT)))
 		.filter((name) => name.endsWith(".json"))
@@ -134,7 +142,7 @@ async function readResearch(): Promise<z.infer<typeof ResearchPlan>[]> {
 }
 
 const research = await readResearch();
-const dataset = BenchmarkDataset.parse(
+const dataset = Schema.decodeUnknownSync(BenchmarkDataset)(
 	await readJson("src/data/benchmarks.json"),
 );
 const { models } = dataset;
@@ -185,7 +193,7 @@ function publishedAllowance(
 
 /** A weekly credit quota's estimated cap, for plans billed in credits. */
 function creditCap(
-	p: z.infer<typeof ResearchPlan>,
+	p: typeof ResearchPlan.Type,
 	families: readonly string[],
 ): ReportedCap | null {
 	const plan = WEEKLY_CREDIT_PLANS[p.planId];
@@ -209,7 +217,7 @@ function promotions(
 /** A plan has a credit exactly when its research row says credit, and the
  * credit cites a page that row lists. */
 function requireSourcedCredit(
-	p: z.infer<typeof ResearchPlan>,
+	p: typeof ResearchPlan.Type,
 	allowance: PublishedAllowance | null,
 ): void {
 	if (p.planId in CREDIT_PLANS && p.allowanceKind !== "credit")
@@ -224,7 +232,7 @@ function requireSourcedCredit(
 
 /** Refuses a figure whose page the plan's research row does not list. */
 function requireCited(
-	p: z.infer<typeof ResearchPlan>,
+	p: typeof ResearchPlan.Type,
 	url: string,
 	figure: string,
 ): void {
@@ -234,7 +242,7 @@ function requireCited(
 		);
 }
 
-const plans = Plans.parse(
+const plans = Schema.decodeUnknownSync(Plans)(
 	research
 		.filter((p) => p.planId in PLAN_FAMILIES)
 		.map((p) => {
@@ -302,10 +310,12 @@ await writeFile(
 const covered = new Set<string>(plans.flatMap((p) => p.families));
 const onPlans = <T extends { family: string }>(points: readonly T[]) =>
 	points.filter((m) => covered.has(m.family));
-const frontierCode = FrontierCodeDataset.parse(
+const frontierCode = Schema.decodeUnknownSync(FrontierCodeDataset)(
 	await readJson("src/data/frontiercode.json"),
 );
-const aaEvals = AaEvalsDataset.parse(await readJson("src/data/aa-evals.json"));
+const aaEvals = Schema.decodeUnknownSync(AaEvalsDataset)(
+	await readJson("src/data/aa-evals.json"),
+);
 const evalBoard = (evalSlug: AaEvalId) => ({
 	fetchedAt: aaEvals.fetchedAt,
 	models: evalPoints(onPlans(aaEvals.rows), models, evalSlug),
@@ -313,7 +323,7 @@ const evalBoard = (evalSlug: AaEvalId) => ({
 const evalBoards = Object.fromEntries(
 	AA_EVAL_IDS.map((id) => [id, evalBoard(id)]),
 ) as Record<AaEvalId, ReturnType<typeof evalBoard>>;
-const chart = ChartData.parse({
+const chart = Schema.decodeUnknownSync(ChartData)({
 	frontier: dataset.frontier,
 	leaderboards: {
 		intelligence: { fetchedAt: dataset.fetchedAt, models: onPlans(models) },

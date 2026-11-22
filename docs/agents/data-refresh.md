@@ -206,7 +206,7 @@ Run these before committing, patched or not:
   when `plans.json` or `chart-benchmarks.json` differs from what its schema
   outputs, which means someone edited it by hand: rerun `build-plans`.
 - Parse each file you patched against its schema in one line, e.g.
-  `bun -e 'import {AaEvalsDataset} from "./src/domain/model.ts"; AaEvalsDataset.parse(await Bun.file("src/data/aa-evals.json").json())'`.
+  `bun -e 'import {Schema} from "effect"; import {AaEvalsDataset} from "./src/domain/model.ts"; Schema.decodeUnknownSync(AaEvalsDataset)(await Bun.file("src/data/aa-evals.json").json())'`.
 - **Score moves.** The summary lists Intelligence Index and eval scores that
   moved by 0.1 points or more. An Intelligence Index move over 1.5 points, or
   any eval moving over 3 points, needs an AA regrade note: a changelog entry

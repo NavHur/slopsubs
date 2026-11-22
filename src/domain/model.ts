@@ -1,209 +1,230 @@
-import { z } from "zod";
+import { Schema } from "effect";
 import {
 	AA_EVAL_IDS,
 	BENCHMARK_IDS,
 	type BenchmarkId,
 	EFFORTS,
 } from "./enums.ts";
+import { IsoDate, UtcTimestamp, UrlString } from "./wire-schemas.ts";
 
-const Effort = z.enum(EFFORTS);
-export type Effort = z.infer<typeof Effort>;
+const Effort = Schema.Literals(EFFORTS);
+export type Effort = typeof Effort.Type;
 
-const FamilyId = z.string().min(1).brand<"FamilyId">();
-export type FamilyId = z.infer<typeof FamilyId>;
+const FamilyId = Schema.NonEmptyString.pipe(Schema.brand("FamilyId"));
+export type FamilyId = typeof FamilyId.Type;
 
-const PlanId = z.string().min(1).brand<"PlanId">();
-export type PlanId = z.infer<typeof PlanId>;
+const PlanId = Schema.NonEmptyString.pipe(Schema.brand("PlanId"));
+export type PlanId = typeof PlanId.Type;
 
-const Usd = z.number().nonnegative();
+/** The 0-100 range of a percentage. */
+export const isPercent = Schema.isBetween({ minimum: 0, maximum: 100 });
+const Percentage = Schema.Finite.check(isPercent);
+const PositiveUsd = Schema.Finite.check(Schema.isGreaterThan(0));
+const Usd = Schema.Finite.check(Schema.isGreaterThanOrEqualTo(0));
 
 /** One model at one reasoning effort, as one benchmark scored it. */
-const BenchmarkPoint = z.object({
-	id: z.string(),
+const BenchmarkPoint = Schema.Struct({
+	id: Schema.String,
 	family: FamilyId,
-	name: z.string(),
-	lab: z.string(),
-	labName: z.string(),
-	deprecated: z.boolean(),
+	name: Schema.String,
+	lab: Schema.String,
+	labName: Schema.String,
+	deprecated: Schema.Boolean,
 	effort: Effort,
-	effortLabel: z.string(),
-	effortOrder: z.number(),
-	score: z.number().nullable(),
-	costPerTaskUsd: Usd.nullable(),
-	tokensPerTask: z.number().nullable(),
+	effortLabel: Schema.String,
+	effortOrder: Schema.Finite,
+	score: Schema.NullOr(Schema.Finite),
+	costPerTaskUsd: Schema.NullOr(Usd),
+	tokensPerTask: Schema.NullOr(Schema.Finite),
 	/** Wall-clock time to finish one task, where the benchmark measured it. */
-	secondsPerTask: z.number().nullable(),
-	inputPricePerMTokUsd: Usd.nullable(),
-	outputPricePerMTokUsd: Usd.nullable(),
+	secondsPerTask: Schema.NullOr(Schema.Finite),
+	inputPricePerMTokUsd: Schema.NullOr(Usd),
+	outputPricePerMTokUsd: Schema.NullOr(Usd),
 });
-export type BenchmarkPoint = z.infer<typeof BenchmarkPoint>;
+export type BenchmarkPoint = typeof BenchmarkPoint.Type;
 
 /** The frontier families' size tier and chart colour, by family id. */
-const Frontier = z.record(
-	z.string(),
-	z.object({ tier: z.enum(["Small", "Medium", "Large"]), color: z.string() }),
+const Frontier = Schema.Record(
+	Schema.String,
+	Schema.Struct({
+		tier: Schema.Literals(["Small", "Medium", "Large"]),
+		color: Schema.String,
+	}),
 );
-export type Frontier = z.infer<typeof Frontier>;
+export type Frontier = typeof Frontier.Type;
 
 /** Artificial Analysis's Intelligence Index, as imported. */
-export const BenchmarkDataset = z.object({
-	fetchedAt: z.iso.datetime(),
-	source: z.string(),
+export const BenchmarkDataset = Schema.Struct({
+	fetchedAt: UtcTimestamp,
+	source: Schema.String,
 	frontier: Frontier,
-	models: z.array(BenchmarkPoint),
+	models: Schema.mutable(Schema.Array(BenchmarkPoint)),
 });
-export type BenchmarkDataset = z.infer<typeof BenchmarkDataset>;
+export type BenchmarkDataset = typeof BenchmarkDataset.Type;
 
 /** One FrontierCode 2.0 result, keyed by Artificial Analysis family id. */
-export const FrontierCodeRow = z.object({
+export const FrontierCodeRow = Schema.Struct({
 	family: FamilyId,
 	effort: Effort,
-	score: z.number(),
-	costPerTaskUsd: Usd.nullable(),
-	tokensPerTask: z.number().nullable(),
+	score: Schema.Finite,
+	costPerTaskUsd: Schema.NullOr(Usd),
+	tokensPerTask: Schema.NullOr(Schema.Finite),
 });
-export type FrontierCodeRow = z.infer<typeof FrontierCodeRow>;
+export type FrontierCodeRow = typeof FrontierCodeRow.Type;
 
 /** Cognition's FrontierCode 2.0 leaderboard, as imported. */
-export const FrontierCodeDataset = z.object({
-	fetchedAt: z.iso.datetime(),
-	source: z.string(),
-	rows: z.array(FrontierCodeRow),
+export const FrontierCodeDataset = Schema.Struct({
+	fetchedAt: UtcTimestamp,
+	source: Schema.String,
+	rows: Schema.mutable(Schema.Array(FrontierCodeRow)),
 });
-export type FrontierCodeDataset = z.infer<typeof FrontierCodeDataset>;
+export type FrontierCodeDataset = typeof FrontierCodeDataset.Type;
 
 /** One Artificial Analysis Intelligence Index eval result, by release slug. */
-export const AaEvalRow = z.object({
+export const AaEvalRow = Schema.Struct({
 	family: FamilyId,
 	effort: Effort,
-	eval: z.enum(AA_EVAL_IDS),
-	score: z.number(),
-	costPerTaskUsd: Usd.nullable(),
-	tokensPerTask: z.number().nullable(),
-	secondsPerTask: z.number().nullable(),
+	eval: Schema.Literals(AA_EVAL_IDS),
+	score: Schema.Finite,
+	costPerTaskUsd: Schema.NullOr(Usd),
+	tokensPerTask: Schema.NullOr(Schema.Finite),
+	secondsPerTask: Schema.NullOr(Schema.Finite),
 });
-export type AaEvalRow = z.infer<typeof AaEvalRow>;
+export type AaEvalRow = typeof AaEvalRow.Type;
 
 /** The nine Intelligence Index evals, as imported from the AA website. */
-export const AaEvalsDataset = z.object({
-	fetchedAt: z.iso.datetime(),
-	source: z.string(),
-	evals: z.array(z.enum(AA_EVAL_IDS)),
-	rows: z.array(AaEvalRow),
+export const AaEvalsDataset = Schema.Struct({
+	fetchedAt: UtcTimestamp,
+	source: Schema.String,
+	evals: Schema.mutable(Schema.Array(Schema.Literals(AA_EVAL_IDS))),
+	rows: Schema.mutable(Schema.Array(AaEvalRow)),
 });
-export type AaEvalsDataset = z.infer<typeof AaEvalsDataset>;
+export type AaEvalsDataset = typeof AaEvalsDataset.Type;
 
-const Leaderboard = z.object({
-	fetchedAt: z.iso.datetime(),
-	models: z.array(BenchmarkPoint),
+const Leaderboard = Schema.Struct({
+	fetchedAt: UtcTimestamp,
+	models: Schema.mutable(Schema.Array(BenchmarkPoint)),
 });
-export type Leaderboard = z.infer<typeof Leaderboard>;
+export type Leaderboard = typeof Leaderboard.Type;
 
 const LEADERBOARD_SHAPE = Object.fromEntries(
 	BENCHMARK_IDS.map((id) => [id, Leaderboard]),
 ) as Record<BenchmarkId, typeof Leaderboard>;
 
 /** What the site ships: each benchmark's points for the families on plans. */
-export const ChartData = z.object({
+export const ChartData = Schema.Struct({
 	frontier: Frontier,
-	leaderboards: z.object(LEADERBOARD_SHAPE),
+	leaderboards: Schema.Struct(LEADERBOARD_SHAPE),
 });
-export type ChartData = z.infer<typeof ChartData>;
+export type ChartData = typeof ChartData.Type;
 
 /**
  * A weekly cap estimated without usage samples: published by someone else, or
  * read off our own gauge by hand. Used until samples measure it.
  */
-const ReportedCap = z.object({
+const ReportedCap = Schema.Struct({
 	/**
 	 * API-equivalent spend on each model that fills the weekly cap once. Models
 	 * differ: a model that fills the gauge faster gets fewer API dollars.
+	 * Keys are checked first: a record drops keys its key schema rejects.
 	 */
-	weeklyCapApiUsdByFamily: z.record(FamilyId, Usd.positive()),
-	by: z.string(),
-	url: z.url(),
+	weeklyCapApiUsdByFamily: Schema.Record(Schema.String, Schema.Unknown)
+		.check(Schema.isPropertyNames(FamilyId))
+		.pipe(Schema.decodeTo(Schema.Record(FamilyId, PositiveUsd))),
+	by: Schema.String,
+	url: UrlString,
 	/** How the figure was reached, shown next to it. */
-	basis: z.string(),
+	basis: Schema.String,
 });
-export type ReportedCap = z.infer<typeof ReportedCap>;
+export type ReportedCap = typeof ReportedCap.Type;
 
 /**
  * A vendor's own statement of how much API-priced usage each model gets per
  * month, for plans whose allowance differs by model.
  */
-const PublishedAllowance = z.object({
-	apiUsdPerMonthByFamily: z.record(z.string(), Usd.positive()),
-	url: z.url(),
-	basis: z.string(),
+const PublishedAllowance = Schema.Struct({
+	apiUsdPerMonthByFamily: Schema.Record(Schema.String, PositiveUsd),
+	url: UrlString,
+	basis: Schema.String,
 });
-export type PublishedAllowance = z.infer<typeof PublishedAllowance>;
+export type PublishedAllowance = typeof PublishedAllowance.Type;
 
 /** A limited-time offer a plan's value counts while it runs. */
-const Promotion = z.object({
+const Promotion = Schema.Struct({
 	/** What the offer is, shown next to the plan's figures. */
-	summary: z.string(),
-	endsOn: z.iso.date(),
-	url: z.url(),
+	summary: Schema.String,
+	endsOn: IsoDate,
+	url: UrlString,
 });
-export type Promotion = z.infer<typeof Promotion>;
+export type Promotion = typeof Promotion.Type;
 
 /**
  * How a plan's allowance works: a credit plan grants a fixed amount of usage a
  * month at the vendor's rates, in dollars or its own credits; a rate-window
  * plan caps usage per 5-hour window or week.
  */
-export const AllowanceKind = z.enum(["credit", "rate-window"]);
+export const AllowanceKind = Schema.Literals(["credit", "rate-window"]);
 
 /** A flat-rate subscription usable for agentic coding. */
-const Plan = z.object({
+const Plan = Schema.Struct({
 	id: PlanId,
-	vendor: z.string(),
-	lab: z.string(),
-	label: z.string(),
-	monthlyPriceUsd: Usd.positive(),
-	harnesses: z.array(z.string()).min(1),
-	families: z.array(FamilyId).min(1),
-	limits: z.string(),
+	vendor: Schema.String,
+	lab: Schema.String,
+	label: Schema.String,
+	monthlyPriceUsd: PositiveUsd,
+	harnesses: Schema.mutable(Schema.Array(Schema.String)).check(
+		Schema.isMinLength(1),
+	),
+	families: Schema.mutable(Schema.Array(FamilyId)).check(Schema.isMinLength(1)),
+	limits: Schema.String,
 	allowanceKind: AllowanceKind,
 	/** Pay-per-token credit bundled with the plan, usable from any harness. */
 	includedApiCreditUsd: Usd,
-	thirdPartyHarnessAllowed: z.union([z.boolean(), z.literal("unclear")]),
-	confidence: z.enum(["primary", "secondary", "unverified"]),
-	sourceUrl: z.url(),
-	reportedCap: ReportedCap.nullable(),
-	publishedAllowance: PublishedAllowance.nullable(),
+	thirdPartyHarnessAllowed: Schema.Union([
+		Schema.Boolean,
+		Schema.Literal("unclear"),
+	]),
+	confidence: Schema.Literals(["primary", "secondary", "unverified"]),
+	sourceUrl: UrlString,
+	reportedCap: Schema.NullOr(ReportedCap),
+	publishedAllowance: Schema.NullOr(PublishedAllowance),
 	/**
 	 * Fraction of the weekly cap a family may use, where below the whole cap:
 	 * Claude Max and Ultra give Fable "up to half your weekly limit". It limits
 	 * the family's tasks a week, not its price, which comes from the family's
 	 * own weekly cap.
 	 */
-	weeklyShareByFamily: z.record(z.string(), z.number().gt(0).lte(1)),
+	weeklyShareByFamily: Schema.Record(
+		Schema.String,
+		Schema.Finite.check(Schema.isGreaterThan(0), Schema.isLessThanOrEqualTo(1)),
+	),
 	/** Highest effort the plan serves for a family, where below its maximum. */
-	maxEffortByFamily: z.record(z.string(), Effort),
+	maxEffortByFamily: Schema.Record(Schema.String, Effort),
 	/** Promotions included in the plan's value, by family. */
-	promotionByFamily: z.record(z.string(), Promotion),
+	promotionByFamily: Schema.Record(Schema.String, Promotion),
 });
-export type Plan = z.infer<typeof Plan>;
-export const Plans = z.array(Plan);
+export type Plan = typeof Plan.Type;
+export const Plans = Schema.mutable(Schema.Array(Plan));
 
 /**
  * API-equivalent spend observed while a plan's weekly-cap gauge moved from
  * `startUsedPercent` to `endUsedPercent`, inside one weekly window.
  */
-const LimitSample = z
-	.object({
-		plan: PlanId,
-		from: z.iso.datetime(),
-		to: z.iso.datetime(),
-		startUsedPercent: z.number().min(0).max(100),
-		endUsedPercent: z.number().min(0).max(100),
-		apiUsd: Usd,
-		apiUsdByFamily: z.record(z.string(), Usd),
-		host: z.string(),
-	})
-	.refine((s) => s.endUsedPercent > s.startUsedPercent, {
-		message: "endUsedPercent must exceed startUsedPercent",
-	});
-export type LimitSample = z.infer<typeof LimitSample>;
-export const LimitSamples = z.array(LimitSample);
+const LimitSample = Schema.Struct({
+	plan: PlanId,
+	from: UtcTimestamp,
+	to: UtcTimestamp,
+	startUsedPercent: Percentage,
+	endUsedPercent: Percentage,
+	apiUsd: Usd,
+	apiUsdByFamily: Schema.Record(Schema.String, Usd),
+	host: Schema.String,
+}).check(
+	Schema.makeFilter(
+		(s) =>
+			s.endUsedPercent > s.startUsedPercent ||
+			"endUsedPercent must exceed startUsedPercent",
+	),
+);
+export type LimitSample = typeof LimitSample.Type;
+export const LimitSamples = Schema.mutable(Schema.Array(LimitSample));

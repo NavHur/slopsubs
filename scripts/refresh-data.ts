@@ -2,10 +2,11 @@
 // Flags and behavior: README.md, "Benchmark Data".
 
 import { spawnSync } from "node:child_process";
-import { writeFile } from "node:fs/promises";
+import { Effect } from "effect";
 import { hasDataChanges } from "../src/domain/data-changes.ts";
 import { renderDataChanges } from "./data-changes-markdown.ts";
 import { changesSince, restore } from "./data-snapshot.ts";
+import { TextFiles } from "./effects/files.ts";
 
 type Args = {
 	importFlags: string[];
@@ -60,20 +61,21 @@ function runStep(script: string, args: string[]): void {
 	process.exit(code);
 }
 
-async function main() {
+const main = Effect.gen(function* () {
 	const args = parseArgs(process.argv.slice(2));
 	for (const [script, flags] of steps(args.importFlags)) runStep(script, flags);
 
-	const { changes, base } = await changesSince(args.base);
+	const { changes, base } = yield* changesSince(args.base);
 	const changed = hasDataChanges(changes);
-	if (!changed) await restore(base);
+	if (!changed) yield* restore(base);
 	const summary = renderDataChanges(changes);
-	if (args.summary) await writeFile(args.summary, `${summary}\n`);
+	const files = yield* TextFiles;
+	if (args.summary) yield* files.write(args.summary, `${summary}\n`);
 	console.log(
 		changed
 			? `\nData changed since ${args.base}:\n\n${summary}`
 			: `\nNo data changed since ${args.base}; kept its files and fetch dates.`,
 	);
-}
+});
 
-await main();
+await Effect.runPromise(main.pipe(Effect.provide(TextFiles.layer)));

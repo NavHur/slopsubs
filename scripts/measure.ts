@@ -1,3 +1,4 @@
+import { Schema } from "effect";
 // Measures how much API-equivalent spend fills a subscription's weekly cap.
 //
 //   bun run measure mark <planId> <usedPercent> <resetsAt>
@@ -67,12 +68,12 @@ async function build(args: string[]) {
 		options: { "claude-dir": { type: "string", multiple: true } },
 	});
 	const dirs = values["claude-dir"] ?? [join(homedir(), ".claude/projects")];
-	const { models } = BenchmarkDataset.parse(
+	const { models } = Schema.decodeUnknownSync(BenchmarkDataset)(
 		JSON.parse(await readFile(BENCHMARKS, "utf8")),
 	);
 	const messages = await readClaudeMessages(dirs);
 	const unpriced = new Set<string>();
-	const samples = LimitSamples.parse(
+	const samples = Schema.decodeUnknownSync(LimitSamples)(
 		windows(await readMarks()).map((w) =>
 			priceWindow(w, messages, models, unpriced),
 		),
