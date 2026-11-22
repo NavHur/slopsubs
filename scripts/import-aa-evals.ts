@@ -1,36 +1,35 @@
-import { Schema } from "effect";
 // Imports AA's per-eval Intelligence Index scores and task figures into
 // src/data/aa-evals.json; a figure AA stops publishing keeps its prior value.
 
-import { readFile, writeFile } from "node:fs/promises";
+import { Clock, Effect, Layer, Schema } from "effect";
+import { FetchHttpClient } from "effect/http";
 import type { Skips } from "../src/domain/aa-evals.ts";
 import {
 	importAaEvals,
 	type CarryReport,
 } from "../src/domain/aa-task-figures.ts";
 import { AA_EVAL_IDS } from "../src/domain/enums.ts";
-import { AaEvalsDataset, type AaEvalRow } from "../src/domain/model.ts";
+import { AaEvalsDataset } from "../src/domain/model.ts";
 import { parseArgs, summaryLine } from "./aa-eval-cli.ts";
 import { aaPageSlugs, loadAaEvalPages, loadAaPages } from "./aa-page.ts";
 import { loadCatalogByFamily } from "./catalog-by-family.ts";
+import { readJsonFile, TextFiles } from "./effects/files.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
 
 const ROOT = new URL("..", import.meta.url);
 const OUTPUT = new URL("src/data/aa-evals.json", ROOT);
 
 /** The rows the file holds now; none when there is no file yet. */
-async function readPriorRows(): Promise<AaEvalRow[]> {
-	try {
-		const text = await readFile(OUTPUT, "utf8");
-		return Schema.decodeUnknownSync(AaEvalsDataset)(JSON.parse(text)).rows;
-	} catch (cause) {
-		const missing =
-			cause instanceof Error && "code" in cause && cause.code === "ENOENT";
-		if (!missing) throw cause;
+const readPriorRows = readJsonFile(AaEvalsDataset, OUTPUT).pipe(
+	Effect.map(({ rows }) => rows),
+	Effect.catchTag("FileReadError", (error) => {
+		const cause = error.cause;
+		if (!(cause instanceof Error && "code" in cause && cause.code === "ENOENT"))
+			return Effect.fail(error);
 		console.log(`No ${OUTPUT.pathname} yet: no figures to carry forward`);
-		return [];
-	}
-}
+		return Effect.succeed([]);
+	}),
+);
 
 function logSummary(
 	rows: Parameters<typeof summaryLine>[0],
@@ -60,28 +59,33 @@ function logCarry(carry: CarryReport): void {
 		);
 }
 
-async function main() {
+const main = Effect.gen(function* () {
+	const files = yield* TextFiles;
 	const { html, evalHtml } = parseArgs(process.argv.slice(2));
-	const byFamily = await loadCatalogByFamily(ROOT);
+	const byFamily = yield* loadCatalogByFamily(ROOT);
 	const covered = Object.values(PLAN_FAMILIES).flatMap((plan) => plan.families);
 	const { rows, skips, carry } = importAaEvals({
-		modelPages: await loadAaPages(
+		modelPages: yield* loadAaPages(
 			aaPageSlugs(covered, [...byFamily.values()].flat()),
 			html,
 		),
-		evalPages: await loadAaEvalPages(evalHtml),
+		evalPages: yield* loadAaEvalPages(evalHtml),
 		byFamily,
-		prior: await readPriorRows(),
+		prior: yield* readPriorRows,
 	});
 	logSummary(rows, skips);
 	logCarry(carry);
-	const output = Schema.decodeUnknownSync(AaEvalsDataset)({
-		fetchedAt: new Date().toISOString(),
+	const output = yield* Schema.decodeUnknownEffect(AaEvalsDataset)({
+		fetchedAt: new Date(yield* Clock.currentTimeMillis).toISOString(),
 		source: "Artificial Analysis website (model and eval page flight payloads)",
 		evals: [...AA_EVAL_IDS],
 		rows,
 	});
-	await writeFile(OUTPUT, `${JSON.stringify(output, null, 2)}\n`);
-}
+	yield* files.write(OUTPUT, `${JSON.stringify(output, null, 2)}\n`);
+});
 
-await main();
+await Effect.runPromise(
+	main.pipe(
+		Effect.provide(Layer.mergeAll(TextFiles.layer, FetchHttpClient.layer)),
+	),
+);

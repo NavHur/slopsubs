@@ -1,20 +1,22 @@
-import { Schema } from "effect";
 // Reads the imported catalog, shared by the importers that file rows under it.
 
-import { readFile } from "node:fs/promises";
+import { Effect } from "effect";
 import { BenchmarkDataset, type BenchmarkPoint } from "../src/domain/model.ts";
+import { readJsonFile } from "./effects/files.ts";
 
 /** The catalog's models grouped by family. */
-export async function loadCatalogByFamily(
-	root: URL,
-): Promise<Map<string, BenchmarkPoint[]>> {
-	const catalog = Schema.decodeUnknownSync(BenchmarkDataset)(
-		JSON.parse(
-			await readFile(new URL("src/data/benchmarks.json", root), "utf8"),
-		),
-	);
-	const byFamily = new Map<string, BenchmarkPoint[]>();
-	for (const m of catalog.models)
-		byFamily.set(m.family, [...(byFamily.get(m.family) ?? []), m]);
-	return byFamily;
+export function loadCatalogByFamily(root: URL) {
+	return Effect.gen(function* () {
+		const { models } = yield* readJsonFile(
+			BenchmarkDataset,
+			new URL("src/data/benchmarks.json", root),
+		);
+		const byFamily = new Map<string, BenchmarkPoint[]>();
+		for (const model of models) {
+			const family = byFamily.get(model.family);
+			if (family) family.push(model);
+			else byFamily.set(model.family, [model]);
+		}
+		return byFamily;
+	});
 }

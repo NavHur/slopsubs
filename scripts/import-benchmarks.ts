@@ -2,14 +2,18 @@
 // and slopalytics (the catalog, and figures AA's site lacks) into
 // src/data/benchmarks.json.
 
-import { readFile, writeFile } from "node:fs/promises";
+import { Clock, Data, Effect, Layer, Schema } from "effect";
+import { FetchHttpClient } from "effect/http";
 import { flightFromHtml } from "../src/domain/aa-evals.ts";
 import { joinAaSites, readAaSite } from "../src/domain/aa-site.ts";
 import { mergeCatalog, SlopaPoint } from "../src/domain/catalog.ts";
+import { BenchmarkDataset } from "../src/domain/model.ts";
 import { roundedOrNull } from "../src/domain/rounding.ts";
 import { aaPageSlugs, loadAaPages } from "./aa-page.ts";
 import { parseArgs } from "./benchmark-args.ts";
 import { extract, type Literal } from "./bundle-literal.ts";
+import { TextFiles } from "./effects/files.ts";
+import { getText } from "./effects/http.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
 
 const SITE = "https://slopalytics.com";
@@ -43,17 +47,27 @@ function withSuccessors(
 	);
 }
 
-async function loadBundle(path: string | undefined): Promise<string> {
-	if (path) return readFile(path, "utf8");
-	const html = await (await fetch(SITE)).text();
-	const script = html.match(/\/assets\/index-[\w-]+\.js/)?.[0];
-	if (!script) throw new Error(`No index bundle referenced from ${SITE}`);
-	return (await fetch(SITE + script)).text();
+class MissingIndexBundle extends Data.TaggedError("MissingIndexBundle")<{}> {
+	override get message() {
+		return `No index bundle referenced from ${SITE}`;
+	}
 }
 
-async function main() {
+function loadBundle(path: string | undefined) {
+	return Effect.gen(function* () {
+		const files = yield* TextFiles;
+		if (path) return yield* files.read(path);
+		const html = yield* getText(SITE);
+		const script = html.match(/\/assets\/index-[\w-]+\.js/)?.[0];
+		if (!script) return yield* new MissingIndexBundle();
+		return yield* getText(SITE + script);
+	});
+}
+
+const main = Effect.gen(function* () {
+	const files = yield* TextFiles;
 	const args = parseArgs(process.argv.slice(2));
-	const bundle = await loadBundle(args.bundle);
+	const bundle = yield* loadBundle(args.bundle);
 	const dataset = extract(bundle, /=\{fetchedAt:/) as Record<string, Literal>;
 	const frontier = withSuccessors(
 		extract(bundle, /=\{"gpt-6-astra":\{tier:/) as Record<string, Literal>,
@@ -83,7 +97,7 @@ async function main() {
 	const coveredFamilies = new Set(
 		Object.values(PLAN_FAMILIES).flatMap((plan) => plan.families),
 	);
-	const pages = await loadAaPages(
+	const pages = yield* loadAaPages(
 		aaPageSlugs(coveredFamilies, slopa),
 		args.html,
 	);
@@ -100,13 +114,14 @@ async function main() {
 				'"No cost data".',
 		);
 	const output = {
-		fetchedAt: new Date().toISOString(),
+		fetchedAt: new Date(yield* Clock.currentTimeMillis).toISOString(),
 		source:
 			"Artificial Analysis website (scores, prices, releases, cost, tokens and time per task); Slopalytics (catalog, and figures AA's site lacks)",
 		frontier,
 		models: merged.models,
 	};
-	await writeFile(OUTPUT, `${JSON.stringify(output, null, 2)}\n`);
+	yield* Schema.decodeUnknownEffect(BenchmarkDataset)(output);
+	yield* files.write(OUTPUT, `${JSON.stringify(output, null, 2)}\n`);
 	console.log(
 		`Wrote ${merged.models.length} benchmark points, ${Object.keys(frontier).length} frontier families, from ${pages.length} AA model pages`,
 	);
@@ -121,6 +136,10 @@ async function main() {
 	for (const warning of merged.warnings) console.warn(`warning: ${warning}`);
 	if (merged.missingCost.length)
 		console.warn(`No cost data yet: ${merged.missingCost.join(", ")}`);
-}
+});
 
-await main();
+await Effect.runPromise(
+	main.pipe(
+		Effect.provide(Layer.mergeAll(TextFiles.layer, FetchHttpClient.layer)),
+	),
+);
