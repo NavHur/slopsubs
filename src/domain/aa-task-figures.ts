@@ -10,6 +10,7 @@ import {
 	flightFromHtml,
 	readModels,
 	resolveRows,
+	rowKey,
 	type EvalRow,
 	type ModelReading,
 	type ResolvedRow,
@@ -74,9 +75,6 @@ function withTokensAndTime(
 		};
 	});
 }
-
-const rowKey = (r: { family: string; effort: string; eval: string }) =>
-	`${r.family}@${r.effort}@${r.eval}`;
 
 /** The row with any figure AA did not publish taken from `before`: the cost on
  * its own, tokens and time together. */

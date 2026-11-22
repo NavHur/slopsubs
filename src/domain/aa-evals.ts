@@ -285,6 +285,10 @@ function siteEffortsOf(raw: EvalRow[]): Map<string, Set<string | null>> {
 	return efforts;
 }
 
+/** The key a resolved row is unique by across the dataset. */
+export const rowKey = (r: { family: string; effort: string; eval: string }) =>
+	`${r.family}@${r.effort}@${r.eval}`;
+
 /** Resolves rows against the catalog, failing loud on duplicates. */
 export function resolveRows(
 	raw: EvalRow[],
@@ -300,7 +304,7 @@ export function resolveRows(
 	for (const r of raw) {
 		const row = resolveRow(r, resolution);
 		if (!row) continue;
-		const key = `${row.family}@${row.effort}@${row.eval}`;
+		const key = rowKey(row);
 		if (rows.has(key)) throw new Error(`Two rows for ${key}`);
 		rows.set(key, row);
 	}
