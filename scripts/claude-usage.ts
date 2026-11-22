@@ -2,7 +2,11 @@
 
 import { join } from "node:path";
 import { Effect, Option, Result, Schema } from "effect";
-import type { BenchmarkPoint, LimitSamples } from "../src/domain/model.ts";
+import {
+	type BenchmarkPoint,
+	isPercent,
+	type LimitSamples,
+} from "../src/domain/model.ts";
 import {
 	ClaudeUsage,
 	claudeMessageUsd,
@@ -18,13 +22,11 @@ import {
 	TextFiles,
 } from "./effects/files.ts";
 
-export const GaugePercent = Schema.isBetween({ minimum: 0, maximum: 100 });
-
 /** A weekly gauge reading from /usage, recorded by `measure mark`. */
 export const Mark = Schema.Struct({
 	at: UtcTimestamp,
 	plan: Schema.NonEmptyString,
-	usedPercent: Schema.Finite.check(GaugePercent),
+	usedPercent: Schema.Finite.check(isPercent),
 	resetsAt: UtcTimestamp,
 	host: Schema.String,
 });
