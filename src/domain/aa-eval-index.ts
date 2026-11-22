@@ -1,22 +1,25 @@
 // Each eval's score field. The weight recovers cost per task from AA's weighted
 // cost; the task count turns an eval's token total into tokens per task.
 
+import type { EvalRecord } from "./aa-evals";
 import type { AaEvalId } from "./eval-units";
 
-type Score = number | null | undefined;
+/** The score fields of a model record, one or more per eval; the record's own
+ * schema types them, so a renamed field fails to compile here. */
+type ScoreFields = Pick<
+	EvalRecord,
+	| "briefcaseBreakdown"
+	| "automationBenchPartialScore"
+	| "terminalBench40"
+	| "frontierCode20"
+	| "omniscience"
+	| "gdpPdfAllPass"
+	| "hleDiamond"
+	| "critptAgenticHard"
+	| "terminalBenchScience"
+>;
 
-/** The score fields of a model record, one or more per eval. */
-type ScoreFields = {
-	briefcaseBreakdown?: { overall: { elo: number } } | null;
-	automationBenchPartialScore?: Score;
-	terminalBench40?: Score;
-	frontierCode20?: Score;
-	omniscience?: Score;
-	gdpPdfAllPass?: Score;
-	hleDiamond?: Score;
-	critptAgenticHard?: Score;
-	terminalBenchScience?: Score;
-};
+type Score = number | null | undefined;
 
 type EvalIndexEntry = {
 	/** Reads the eval's score out of a model record. */
