@@ -16,9 +16,9 @@ export type FamilyId = typeof FamilyId.Type;
 const PlanId = Schema.NonEmptyString.pipe(Schema.brand("PlanId"));
 export type PlanId = typeof PlanId.Type;
 
-const Percentage = Schema.Finite.check(
-	Schema.isBetween({ minimum: 0, maximum: 100 }),
-);
+/** The 0-100 range of a percentage. */
+export const isPercent = Schema.isBetween({ minimum: 0, maximum: 100 });
+const Percentage = Schema.Finite.check(isPercent);
 const PositiveUsd = Schema.Finite.check(Schema.isGreaterThan(0));
 const Usd = Schema.Finite.check(Schema.isGreaterThanOrEqualTo(0));
 
