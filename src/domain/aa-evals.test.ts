@@ -1,53 +1,14 @@
 import { describe, expect, it } from "vite-plus/test";
-import {
-	extractEvals,
-	flightFromHtml,
-	pickModel,
-	resolveRows,
-} from "./aa-evals";
+import { flightFromHtml, pickModel, readModels, resolveRows } from "./aa-evals";
+import { pageOf, scoredRecord, type Fixture } from "./aa-test-pages";
 import type { BenchmarkPoint } from "./model";
 
-type Fixture = {
-	release: string;
-	effort?: string;
-	reasons?: boolean;
-	score: number;
-	/** The record's own slug; defaults to its release and effort. */
-	slug?: string;
-};
-
-/** A model id in the payload's 36-character uuid form. */
-const uuidOf = (index: number) =>
-	`${String(index).padStart(8, "0")}-0000-0000-0000-000000000000`;
-
-/** One model record as the flight payload lays it out, creator nested. */
-function modelRecord(
-	{ release, effort, reasons = true, score, slug }: Fixture,
-	index: number,
-) {
-	return {
-		id: uuidOf(index),
-		slug: slug ?? [release, effort].filter(Boolean).join("-"),
-		creator: { id: uuidOf(900 + index), slug: "lab" },
-		isReasoning: reasons,
-		...(effort ? { effort: { slug: effort } } : {}),
-		release: { slug: release },
-		intelligenceIndex: 30,
-		omniscience: score,
-		terminalBench40: null,
-	};
-}
-
-/** An HTML page whose single push chunk carries the given model records. */
-function pageOf(records: Fixture[]): string {
-	const flight = `0:${JSON.stringify(records.map(modelRecord))}`;
-	return `<script>self.__next_f.push([1,${JSON.stringify(flight)}])</script>`;
-}
-
 const rowsOf = (...pages: Fixture[][]) =>
-	extractEvals(pages.map((records) => flightFromHtml(pageOf(records))));
+	readModels(
+		pages.map((records) => flightFromHtml(pageOf(records.map(scoredRecord)))),
+	).flatMap((model) => model.rows);
 
-describe("extractEvals", () => {
+describe("readModels", () => {
 	it("keeps an effortless model's effort null instead of the previous model's", () => {
 		const rows = rowsOf([
 			{ release: "alpha", effort: "high", score: 0.5 },
@@ -64,7 +25,7 @@ describe("extractEvals", () => {
 		expect(row.effort).toBe("none");
 	});
 
-	it("reads each scored eval, with no cost, tokens or time", () => {
+	it("reads each scored eval, leaving figures null for a record without index figures", () => {
 		expect(rowsOf([{ release: "alpha", effort: "low", score: 0.5 }])).toEqual([
 			{
 				family: "alpha",

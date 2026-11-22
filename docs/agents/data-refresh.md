@@ -22,7 +22,7 @@ the only rows worth patching by hand.
 | AA model pages | `https://artificialanalysis.ai/models/<slug>`, one per covered family | `import-benchmarks` | `benchmarks.json` | `BenchmarkDataset` |
 | slopalytics bundle | `https://slopalytics.com`, its `/assets/index-*.js` | `import-benchmarks` | `benchmarks.json` | `BenchmarkDataset` |
 | AA model pages (same pages) | as above | `import-aa-evals` | `aa-evals.json` | `AaEvalsDataset` |
-| AA eval pages | `https://artificialanalysis.ai/evaluations/<eval>` | none; read by hand | `aa-evals.json` | `AaEvalsDataset` |
+| AA eval pages | `https://artificialanalysis.ai/evaluations/<eval>`, one per eval | `import-aa-evals` | `aa-evals.json` | `AaEvalsDataset` |
 | Cognition FrontierCode | `https://cognition.com/data/frontier-code-2.0/data.json` | `import-frontiercode` | `frontiercode.json` | `FrontierCodeDataset` |
 | the three files above | | `build-plans` | `plans.json`, `chart-benchmarks.json` | `Plans`, `ChartData` |
 
@@ -40,8 +40,15 @@ Field by field:
   `frontier` block comes from the slopalytics bundle as is.
 - **`aa-evals.json`** (one row per family, effort and eval): `score` comes from
   the AA record's named field for each of the nine evals (table under
-  [AA model page](#aa-model-page)). `costPerTaskUsd`, `tokensPerTask` and
-  `secondsPerTask` come from the eval pages' charts only.
+  [AA model page](#aa-model-page)). `costPerTaskUsd` is the record's
+  `intelligenceIndexCostPerTask.evaluations[].weightedCostPerTask` over the
+  eval's index weight (5 decimals). `tokensPerTask` is the eval page record's
+  answer plus reasoning tokens over the eval's task count, and `secondsPerTask`
+  is those tokens over the model's output speed. The weights and task counts
+  live in `src/domain/aa-eval-index.ts`. AA's eval pages embed records for
+  their chart's default models only, so most rows **carry forward** their
+  tokens and time from the file on disk: expected, not stale. The import logs
+  how many rows carried a figure.
 - **`frontiercode.json`**: Cognition's `data[<model name>][<effort>].main`.
   `score` is `new_score × 100` (2 decimals), `costPerTaskUsd` is `cost`, and
   `tokensPerTask` is `tokens`. The family is the slugified model name, with the
@@ -85,37 +92,6 @@ For each covered family, open its AA page and run the
 
 Leave uncovered families alone. The importer prunes them, and `main`'s copy
 already has the right set.
-
-### Hand-patching `aa-evals.json`
-
-This is the normal path today. `import-aa-evals` stops on every run because
-AA's model pages no longer carry per-eval cost, tokens or time, so you patch
-this file every time. Before it stops, it writes the fresh scores to
-`$TMPDIR/slopsubs-aa-eval-scores.json` (`/tmp/...` on the devbox). Merge them
-into `main`'s rows, which keeps every cost, token and time figure and drops rows
-for points no longer in `benchmarks.json` (`build-plans` would fail on them):
-
-```sh
-git show origin/main:src/data/aa-evals.json | jq \
-  --slurpfile fresh /tmp/slopsubs-aa-eval-scores.json \
-  --slurpfile catalog src/data/benchmarks.json '
-  def key: "\(.family)@\(.effort)@\(.eval)";
-  ($fresh[0] | map({key: key, value: .score}) | from_entries) as $s
-  | ($catalog[0].models | map({key: "\(.family)@\(.effort)", value: true}) | from_entries) as $c
-  | (.rows | map(key)) as $have
-  | .rows |= map(select($c["\(.family)@\(.effort)"]) | .score = ($s[key] // .score))
-  | .rows += [$fresh[0][] | select(key as $k | $have | index($k) | not)]
-  | .fetchedAt = (now | todate)' > /tmp/aa-evals.json && mv /tmp/aa-evals.json src/data/aa-evals.json
-```
-
-New rows enter with null cost, tokens and time: the score charts show them and
-the cost charts leave them out. If you have time after the PR is open, fill
-those three figures from the [eval page snippet](#aa-eval-pages) for the
-models the charts show. Main's rows that the scores file lacks are stale.
-
-When the scores file is missing (the script failed before writing it), build
-the same row list by hand from the model page snippet's `evals`, then run the
-merge.
 
 ### Hand-patching `frontiercode.json`
 
@@ -194,43 +170,6 @@ array during the week of 2026-11-10), which models a page embeds, and the
 `{"id":…,"slug":…` record opening. The flight payload itself has held through
 several redesigns.
 
-### AA eval pages
-
-`https://artificialanalysis.ai/evaluations/<eval>`, one per eval id in
-`AA_EVAL_IDS` (`src/domain/enums.ts`); `critpt-v2-hard` is
-`/evaluations/critpt-v2?critpt-subset=hard`. The page draws "Cost per Task",
-"Output Tokens per Task" and "Time per Task" (minutes) for AA's default
-selection of about 29 models. Their data arrives encrypted from
-`/data/<hash>.txt`, and "Download data" is behind AA Pro, so read the rendered
-labels. Charts render lazily, so scroll first:
-
-```js
-(async () => {
-  for (let y = 0; y < document.body.scrollHeight; y += 600) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 250)); }
-  await new Promise((r) => setTimeout(r, 1500));
-  const chart = (title) => {
-    const head = [...document.querySelectorAll("*")].find((e) => e.children.length === 0 && /^[^{]*: /.test(e.textContent) && e.textContent.trim().endsWith(`: ${title}`));
-    let box = head; while (box && !box.querySelector("svg text")) box = box.parentElement;
-    const svg = [...box.querySelectorAll("svg")].sort((a, b) => b.querySelectorAll("text").length - a.querySelectorAll("text").length)[0];
-    const values = [...svg.querySelectorAll("text")].map((t) => t.textContent.trim());
-    const lines = box.innerText.split("\n").map((s) => s.trim()).filter(Boolean);
-    return { lines: lines.slice(lines.findIndex((s) => /^\d+ of \d+ models$/.test(s)) + 1), values };
-  };
-  return ["Cost per Task", "Output Tokens per Task", "Time per Task"].map((c) => ({ c, ...chart(c) }));
-})()
-```
-
-`lines` starts with the legend (Answer, Reasoning, …), then lists model names
-in bar order. Cost and time charts pair in order once the counts match: on
-2026-11-17 the cost chart's `values` opened with one to three annotation
-labels, so drop leading values until the counts match. The token chart printed
-two label rows that disagreed slightly, so read a token bar's total by hovering
-it (`preview_act` hover; the tooltip gives the total) rather than pairing. Values are rounded ($0.65, 108k,
-22.9 min): change a stored value only when it rounds to something other than
-the label, and convert minutes to seconds. A `*` after a label marks an
-estimate, so leave that row as it is. Likely to move: everything here. When
-the snippet returns nothing useful, keep the figures and list them as stale.
-
 ### slopalytics
 
 The catalog is a literal in the site's JS bundle, not JSON. On
@@ -287,15 +226,18 @@ Run these before committing, patched or not:
 
 | Error | Meaning | Do |
 | --- | --- | --- |
-| `import-aa-evals`: `carry no per-eval cost, tokens or time` | Expected on every run since AA moved those figures off the model pages (2026-11). | Merge the scores file ([aa-evals](#hand-patching-aa-evalsjson)), then continue. |
+| `import-aa-evals`: `weighted tokens per task for <slug>` | The hard-coded eval weights or task counts no longer match AA's index. | Re-derive them from AA's Intelligence Index methodology page, update `src/domain/aa-eval-index.ts`, and open an issue. |
+| `import-aa-evals`: `weighted costs for <slug>`, `unknown eval` | The set of evals in AA's index changed. | Add or remove the eval in `aa-eval-index.ts`, `AA_EVAL_IDS` and the schema; that is a code change, so open an issue. |
+| `import-aa-evals`: `output speed for <slug> is not usable` | AA's index output tokens or time for that model are out of range. | Keep `aa-evals.json` as `main` has it and open an issue with the model's `intelligenceIndexOutputTokensPerTask` and `intelligenceIndexTimePerTask`. |
+| `import-aa-evals`: `no fresh cost`, `no fresh tokens` | AA moved the cost or token counts off its pages again (the #83 failure). | Open an issue with the page URL; keep `aa-evals.json` as `main` has it and list it as stale. |
 | `AA has no model for <id>` | A covered point is on no fetched AA page: AA renamed the slug, retired the model, or stopped embedding it. Until 2026-11-17 uncovered models raised this too (`a-x-k2`, #83); those are now skipped and logged. | Look for it on its family page; hand-patch `benchmarks.json` and list it as stale. |
-| `AA's pages disagree on <slug>` | Two pages carry different records for one model, usually mid-deploy. | Rerun once; if it repeats, hand-patch from the family's own page. |
+| `AA's pages disagree on <slug>` | Two pages, model or eval, carry different records for one model, usually mid-deploy. | Rerun once; if it repeats, hand-patch from the family's own page (for `import-aa-evals`, keep `aa-evals.json` as `main` has it). |
 | `AA index X, slopalytics Y` | The two sources score a point differently. | With an AA regrade note, rerun with `--allow-score-drift`; otherwise hand-patch, keep the old score, list it as stale. |
 | `lists … with no cost data` | A newly covered AA model has no cost on either source. | Rerun with `--allow-missing-cost`; the cost chart leaves it out until a source costs it. |
-| `No model records in the page`, `No flight chunks`, `not valid JSON`, zod errors | AA changed its page layout. | Hand-patch `benchmarks.json` from the browser, then open an issue (`docs/agents/issue-tracker.md`) with the error and the page URL. |
-| `HTTP 404` from `/models/<slug>` | A family's page slug changed. | Find the family's page from AA's search; hand-patch, and open an issue naming the old and new slug. |
-| `HTTP 403`/`429`, timeouts | AA or Cognition is blocking or down. | Rerun once; if it repeats, hand-patch from the browser. |
-| `build-plans`: `No catalog model for <family>@<effort>` | An `aa-evals.json` row names a point `benchmarks.json` lacks. | Drop that row (the merge above does), or restore the catalog row you dropped. |
+| `No model records in the page`, `No flight chunks found in page`, `not valid JSON`, zod errors | AA changed its page layout, on a model page or an eval page. | From `import-benchmarks`: hand-patch `benchmarks.json` from the browser. From `import-aa-evals`: keep `aa-evals.json` as `main` has it (the run writes nothing). Either way, open an issue (`docs/agents/issue-tracker.md`) with the error and the command you ran. |
+| `HTTP 404` from `/models/<slug>`, or a 404 or redirect (3xx) from `/evaluations/<page>` | A family's or eval's page slug changed. | Find the page from AA's search; for an eval page, fix the eval page slug in `AA_EVAL_INDEX` (`page` in `aa-eval-index.ts`). Otherwise hand-patch, and open an issue naming the old and new slug. |
+| `HTTP 403`/`429`/5xx, any other non-200 from `/evaluations/<page>` but a 404 or 3xx, timeouts | AA or Cognition is blocking or down. | Rerun once; if it repeats, hand-patch from the browser (for `import-aa-evals`, keep `aa-evals.json` as `main` has it) and open an issue. |
+| `build-plans`: `No catalog model for <family>@<effort>` | An `aa-evals.json` row names a point `benchmarks.json` lacks, e.g. `import-benchmarks` dropped a variant after `import-aa-evals` failed and left `main`'s file. | Rerun `import-aa-evals` if it can now run. If it still fails, delete that point's rows (`family`, `effort`) from `aa-evals.json` and name them in the PR's **Stale data** section, then rerun `build-plans`. |
 | `build-plans`: promotion ended | A plan's promotion is past its end date. | Code change: open an issue, and stop before pushing. |
 
 Anything else that only a code change can fix: hand-patch what you can, open

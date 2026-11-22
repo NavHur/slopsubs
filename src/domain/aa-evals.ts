@@ -1,10 +1,15 @@
-// Reads per-model Intelligence Index eval scores out of AA model pages' Next.js
+// Reads per-model Intelligence Index scores and cost out of AA model pages' Next.js
 // flight payloads and files them under the catalog's families and efforts.
 
 import { z } from "zod";
+import { AA_EVAL_INDEX, isAaEvalId } from "./aa-eval-index";
+import { AA_EVAL_IDS } from "./enums";
 import type { AaEvalId } from "./eval-units";
 import { firstReading, flightRecords, stringLiteralEnd } from "./flight";
 import type { BenchmarkPoint, Effort } from "./model";
+import { roundedOrNull } from "./rounding";
+
+const COST_DECIMALS = 5;
 
 /** Website release slugs the catalog files under another family. */
 const FAMILY_ALIASES: Record<string, string> = {
@@ -15,9 +20,26 @@ const CHUNK_MARKER = "__next_f.push([1,";
 
 const Score = z.number().nullish();
 
-/** The fields read from one model record: who it is, and its eval scores. */
+/** The fields read from one model record: who it is, its eval scores, and the
+ * index's cost, output tokens and time per task. */
 const EvalRecord = z.object({
+	id: z.string().min(1),
 	slug: z.string().min(1),
+	intelligenceIndexCostPerTask: z
+		.object({
+			cost: z.object({ total: z.number().nonnegative() }),
+			evaluations: z.array(
+				z.object({
+					slug: z.string(),
+					weightedCostPerTask: z.number().nonnegative(),
+				}),
+			),
+		})
+		.nullish(),
+	intelligenceIndexOutputTokensPerTask: z
+		.object({ output: z.number().nonnegative() })
+		.nullish(),
+	intelligenceIndexTimePerTask: z.number().nonnegative().nullish(),
 	release: z.object({ slug: z.string().min(1) }),
 	effort: z.object({ slug: z.string().min(1) }).nullish(),
 	isReasoning: z.boolean(),
@@ -33,28 +55,12 @@ const EvalRecord = z.object({
 	critptAgenticHard: Score,
 	terminalBenchScience: Score,
 });
-type EvalRecord = z.infer<typeof EvalRecord>;
-
-/** Where each eval's score sits in a model record. */
-const SCORE_OF: Record<
-	AaEvalId,
-	(record: EvalRecord) => number | null | undefined
-> = {
-	"aa-briefcase": (r) => r.briefcaseBreakdown?.overall.elo,
-	"automationbench-aa": (r) => r.automationBenchPartialScore,
-	"terminalbench-4-0": (r) => r.terminalBench40,
-	"frontiercode-2-0": (r) => r.frontierCode20,
-	omniscience: (r) => r.omniscience,
-	"gdp-pdf": (r) => r.gdpPdfAllPass,
-	"hle-diamond": (r) => r.hleDiamond,
-	"critpt-v2-hard": (r) => r.critptAgenticHard,
-	"terminal-bench-science": (r) => r.terminalBenchScience,
-};
+export type EvalRecord = z.infer<typeof EvalRecord>;
 
 /** A website row. `effort` is the website's slug, `none` for an effortless model
- * that does not reason, and null for one that does. The model pages no longer
- * carry per-eval cost, tokens or time, so those stay null. */
-type EvalRow = {
+ * that does not reason, and null for one that does. The model pages carry the
+ * cost per task but no tokens or time, so those start null. */
+export type EvalRow = {
 	family: string;
 	effort: string | null;
 	eval: AaEvalId;
@@ -94,7 +100,7 @@ export function flightFromHtml(html: string): string {
 		chunks.push(chunk.text);
 		marker = html.indexOf(CHUNK_MARKER, chunk.next);
 	}
-	if (!chunks.length) throw new Error("No flight chunks found in model page");
+	if (!chunks.length) throw new Error("No flight chunks found in page");
 	return chunks.join("");
 }
 
@@ -105,12 +111,50 @@ function recordEffort(record: EvalRecord): string | null {
 	return record.isReasoning ? null : "none";
 }
 
+/** How far apart the record's weighted costs and its total may be, relative to
+ * the total, before the index is taken to have changed. */
+const COST_SUM_TOLERANCE = 1e-4;
+
+/** The eval AA's cost entry is for. Throws on one the importer lacks a weight for. */
+function costedEval(slug: string): AaEvalId {
+	if (!isAaEvalId(slug))
+		throw new Error(`AA's index costs an unknown eval: ${slug}`);
+	return slug;
+}
+
+/** The record's cost per task for each eval it costs: AA's weighted cost over
+ * the eval's weight in the index. Throws when the costs do not add up to the
+ * record's index total, cover an eval the importer lacks a weight for, or cover
+ * one eval twice. */
+function recordCosts(record: EvalRecord): Map<AaEvalId, number> {
+	const costs = new Map<AaEvalId, number>();
+	const index = record.intelligenceIndexCostPerTask;
+	if (!index) return costs;
+	let weighted = 0;
+	for (const { slug, weightedCostPerTask } of index.evaluations) {
+		const evalId = costedEval(slug);
+		if (costs.has(evalId))
+			throw new Error(`AA's index costs ${slug} twice for ${record.slug}`);
+		weighted += weightedCostPerTask;
+		costs.set(evalId, weightedCostPerTask / AA_EVAL_INDEX[evalId].weight);
+	}
+	if (
+		Math.abs(weighted - index.cost.total) >
+		index.cost.total * COST_SUM_TOLERANCE
+	)
+		throw new Error(
+			`The weighted costs for ${record.slug} add up to ${weighted}, but AA's index cost is ${index.cost.total}`,
+		);
+	return costs;
+}
+
 /** One row per eval the record has a score for. */
 function recordRows(record: EvalRecord): EvalRow[] {
 	const family = record.release.slug;
 	const effort = recordEffort(record);
-	return (Object.keys(SCORE_OF) as AaEvalId[]).flatMap((id) => {
-		const score = SCORE_OF[id](record);
+	const costs = recordCosts(record);
+	return AA_EVAL_IDS.flatMap((id) => {
+		const score = AA_EVAL_INDEX[id].score(record);
 		if (score === null || score === undefined) return [];
 		return [
 			{
@@ -118,7 +162,7 @@ function recordRows(record: EvalRecord): EvalRow[] {
 				effort,
 				eval: id,
 				score,
-				costPerTaskUsd: null,
+				costPerTaskUsd: roundedOrNull(costs.get(id), COST_DECIMALS),
 				tokensPerTask: null,
 				secondsPerTask: null,
 			},
@@ -126,16 +170,45 @@ function recordRows(record: EvalRecord): EvalRow[] {
 	});
 }
 
+/** A model page's record, read: its eval rows, and the output speed (tokens per
+ * second) that turns its tokens per task into time. */
+export type ModelReading = {
+	id: string;
+	slug: string;
+	rows: EvalRow[];
+	outputSpeed: number | null;
+	/** The index's output tokens per task, the sum of the evals' weighted tokens. */
+	indexOutputTokens: number | null;
+};
+
+function outputSpeed(record: EvalRecord): number | null {
+	const tokens = record.intelligenceIndexOutputTokensPerTask?.output;
+	const seconds = record.intelligenceIndexTimePerTask;
+	if (!tokens || !seconds) return null;
+	const speed = tokens / seconds;
+	if (!Number.isFinite(speed) || speed <= 0)
+		throw new Error(`AA's index output speed for ${record.slug} is not usable`);
+	return speed;
+}
+
 /**
- * Eval rows for every model the flight payloads embed, each model once. A
- * model several pages embed must score the same on all of them.
+ * Every model the flight payloads embed, each once. A model several pages
+ * embed must read the same on all of them.
  */
-export function extractEvals(flights: readonly string[]): EvalRow[] {
+export function readModels(flights: readonly string[]): ModelReading[] {
 	const seen = new Map<string, string>();
 	return flights.flatMap(flightRecords).flatMap((record) => {
 		const parsed = EvalRecord.parse(record);
-		const rows = recordRows(parsed);
-		return firstReading(seen, parsed.slug, JSON.stringify(rows)) ? rows : [];
+		const reading: ModelReading = {
+			id: parsed.id,
+			slug: parsed.slug,
+			rows: recordRows(parsed),
+			outputSpeed: outputSpeed(parsed),
+			indexOutputTokens:
+				parsed.intelligenceIndexOutputTokensPerTask?.output ?? null,
+		};
+		if (!firstReading(seen, parsed.slug, JSON.stringify(reading))) return [];
+		return [reading];
 	});
 }
 
@@ -212,6 +285,10 @@ function siteEffortsOf(raw: EvalRow[]): Map<string, Set<string | null>> {
 	return efforts;
 }
 
+/** The key a resolved row is unique by across the dataset. */
+export const rowKey = (r: { family: string; effort: string; eval: string }) =>
+	`${r.family}@${r.effort}@${r.eval}`;
+
 /** Resolves rows against the catalog, failing loud on duplicates. */
 export function resolveRows(
 	raw: EvalRow[],
@@ -227,7 +304,7 @@ export function resolveRows(
 	for (const r of raw) {
 		const row = resolveRow(r, resolution);
 		if (!row) continue;
-		const key = `${row.family}@${row.effort}@${row.eval}`;
+		const key = rowKey(row);
 		if (rows.has(key)) throw new Error(`Two rows for ${key}`);
 		rows.set(key, row);
 	}
