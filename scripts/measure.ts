@@ -14,7 +14,7 @@
 import { homedir, hostname } from "node:os";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
-import { Clock, Data, Effect, Schema } from "effect";
+import { Clock, Effect, Schema } from "effect";
 import { BenchmarkDataset, LimitSamples } from "../src/domain/model.ts";
 import {
 	GaugePercent,
@@ -23,6 +23,7 @@ import {
 	readClaudeMessages,
 } from "./claude-usage.ts";
 
+import { InvalidCommandArguments } from "./effects/arguments.ts";
 import { decodeJsonFile, readJsonFile, TextFiles } from "./effects/files.ts";
 
 const ROOT = new URL("..", import.meta.url);
@@ -39,13 +40,6 @@ const MarkArgs = Schema.Tuple([
 		),
 	),
 ]).annotate({ title: "measure mark <planId> <usedPercent> <resetsAt>" });
-
-class InvalidMeasureArguments extends Data.TaggedError(
-	"InvalidMeasureArguments",
-)<{
-	message: string;
-	cause?: unknown;
-}> {}
 
 function mark(args: string[]) {
 	return Effect.gen(function* () {
@@ -100,7 +94,7 @@ function buildOptions(args: string[]) {
 				options: { "claude-dir": { type: "string", multiple: true } },
 			}).values,
 		catch: (cause) =>
-			new InvalidMeasureArguments({ message: String(cause), cause }),
+			new InvalidCommandArguments({ message: String(cause), cause }),
 	}).pipe(Effect.flatMap(Schema.decodeUnknownEffect(BuildOptions)));
 }
 
@@ -139,7 +133,7 @@ const main = Effect.gen(function* () {
 		case "build":
 			return yield* build(args);
 		default:
-			return yield* new InvalidMeasureArguments({
+			return yield* new InvalidCommandArguments({
 				message: "usage: measure <mark|build> ...",
 			});
 	}

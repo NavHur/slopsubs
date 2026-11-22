@@ -1,31 +1,34 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import { parseArgs, summaryLine } from "./aa-eval-cli.ts";
+
+const parse = (args: string[]) => Effect.runSync(parseArgs(args));
 
 describe("import-aa-evals arguments", () => {
 	it("reads cached model and eval pages in any order", () => {
 		expect(
-			parseArgs(["--eval-html", "e1", "--html", "m1", "--html", "m2"]),
+			parse(["--eval-html", "e1", "--html", "m1", "--html", "m2"]),
 		).toEqual({ html: ["m1", "m2"], evalHtml: ["e1"] });
 	});
 	it("defaults to live pages", () => {
-		expect(parseArgs([])).toEqual({ html: [], evalHtml: [] });
+		expect(parse([])).toEqual({ html: [], evalHtml: [] });
 	});
 	it.each(["--html", "--eval-html"])(
 		"names %s when its path is missing",
 		(flag) => {
-			expect(() => parseArgs([flag])).toThrow(`${flag} needs a file path`);
+			expect(() => parse([flag])).toThrow(`${flag} needs a file path`);
 		},
 	);
 	it("rejects another option as a path", () => {
-		expect(() => parseArgs(["--html", "--eval-html", "e1"])).toThrow(
+		expect(() => parse(["--html", "--eval-html", "e1"])).toThrow(
 			"--html needs a file path",
 		);
-		expect(() => parseArgs(["--eval-html", "--html", "m1"])).toThrow(
+		expect(() => parse(["--eval-html", "--html", "m1"])).toThrow(
 			"--eval-html needs a file path",
 		);
 	});
 	it("rejects an unknown flag", () => {
-		expect(() => parseArgs(["--wat"])).toThrow("Unknown argument --wat");
+		expect(() => parse(["--wat"])).toThrow("Unknown argument --wat");
 	});
 });
 

@@ -48,7 +48,7 @@ class GitReadError extends Data.TaggedError("GitReadError")<{
 function readGitFile(ref: string, file: FileName) {
 	return Effect.tryPromise({
 		try: (signal) =>
-			run("git", ["show", `${ref}:${DATA_DIR}${file}`], {
+			run("git", ["show", "--end-of-options", `${ref}:${DATA_DIR}${file}`], {
 				cwd: ROOT,
 				maxBuffer: GIT_SHOW_MAX_BYTES,
 				signal,

@@ -2,10 +2,11 @@
 // Flags and behavior: README.md, "Benchmark Data".
 
 import { spawnSync } from "node:child_process";
-import { Effect } from "effect";
+import { Data, Effect, Schema } from "effect";
 import { hasDataChanges } from "../src/domain/data-changes.ts";
 import { renderDataChanges } from "./data-changes-markdown.ts";
 import { changesSince, restore } from "./data-snapshot.ts";
+import { decodeArgument, FlagValue } from "./effects/arguments.ts";
 import { TextFiles } from "./effects/files.ts";
 
 type Args = {
@@ -14,26 +15,46 @@ type Args = {
 	summary?: string;
 };
 
-const IMPORT_FLAGS = new Set(["--allow-score-drift", "--allow-missing-cost"]);
+const Flag = Schema.Literals([
+	"--allow-score-drift",
+	"--allow-missing-cost",
+	"--base",
+	"--summary",
+]);
 
-/** The value after a flag, which must be there. */
-function valueOf(argv: string[], i: number): string {
-	const value = argv[i + 1];
-	if (value === undefined || value.startsWith("--"))
-		throw new Error(`${argv[i]} needs a value`);
-	return value;
-}
-
-function parseArgs(argv: string[]): Args {
-	const args: Args = { importFlags: [], base: "HEAD" };
-	for (let i = 0; i < argv.length; i++) {
-		const arg = argv[i];
-		if (IMPORT_FLAGS.has(arg)) args.importFlags.push(arg);
-		else if (arg === "--base") args.base = valueOf(argv, i++);
-		else if (arg === "--summary") args.summary = valueOf(argv, i++);
-		else throw new Error(`Unknown argument ${arg}`);
-	}
-	return args;
+function parseArgs(argv: string[]) {
+	return Effect.gen(function* () {
+		const args: Args = { importFlags: [], base: "HEAD" };
+		for (let i = 0; i < argv.length; i++) {
+			const token = argv[i];
+			const flag = yield* decodeArgument(
+				Flag,
+				token,
+				`Unknown argument ${token}`,
+			);
+			switch (flag) {
+				case "--allow-score-drift":
+				case "--allow-missing-cost":
+					args.importFlags.push(flag);
+					break;
+				case "--base":
+					args.base = yield* decodeArgument(
+						FlagValue,
+						argv[++i],
+						`${flag} needs a value`,
+					);
+					break;
+				case "--summary":
+					args.summary = yield* decodeArgument(
+						FlagValue,
+						argv[++i],
+						`${flag} needs a value`,
+					);
+					break;
+			}
+		}
+		return args;
+	});
 }
 
 /** import-benchmarks writes the catalog that import-aa-evals and import-frontiercode read;
@@ -47,23 +68,38 @@ function steps(importFlags: string[]): [script: string, args: string[]][] {
 	];
 }
 
-function runStep(script: string, args: string[]): void {
-	console.log(`\n▶ ${script} ${args.join(" ")}`.trimEnd());
-	const result = spawnSync("bun", ["run", script, ...args], {
-		stdio: "inherit",
+class RefreshStepFailed extends Data.TaggedError("RefreshStepFailed")<{
+	script: string;
+	status: number;
+	signal: NodeJS.Signals | null;
+	cause?: Error;
+}> {
+	override get message() {
+		const detail = this.signal ? `, ${this.signal}` : "";
+		return `refresh-data: ${this.script} failed (exit ${this.status}${detail}); the steps after it did not run.`;
+	}
+}
+
+function runStep(script: string, args: string[]) {
+	return Effect.gen(function* () {
+		console.log(`\n▶ ${script} ${args.join(" ")}`.trimEnd());
+		const result = spawnSync("bun", ["run", script, ...args], {
+			stdio: "inherit",
+		});
+		if (result.status !== 0)
+			return yield* new RefreshStepFailed({
+				script,
+				status: result.status ?? 1,
+				signal: result.signal,
+				cause: result.error,
+			});
 	});
-	if (result.error) throw result.error;
-	if (result.status === 0) return;
-	const code = result.status ?? 1;
-	console.error(
-		`\nrefresh-data: ${script} failed (exit ${code}${result.signal ? `, ${result.signal}` : ""}); the steps after it did not run.`,
-	);
-	process.exit(code);
 }
 
 const main = Effect.gen(function* () {
-	const args = parseArgs(process.argv.slice(2));
-	for (const [script, flags] of steps(args.importFlags)) runStep(script, flags);
+	const args = yield* parseArgs(process.argv.slice(2));
+	for (const [script, flags] of steps(args.importFlags))
+		yield* runStep(script, flags);
 
 	const { changes, base } = yield* changesSince(args.base);
 	const changed = hasDataChanges(changes);
@@ -78,4 +114,15 @@ const main = Effect.gen(function* () {
 	);
 });
 
-await Effect.runPromise(main.pipe(Effect.provide(TextFiles.layer)));
+await Effect.runPromise(
+	main.pipe(
+		Effect.catchTag("RefreshStepFailed", (error) =>
+			Effect.sync(() => {
+				console.error(`\n${error.message}`);
+				if (error.cause) console.error(error.cause);
+				process.exitCode = error.status;
+			}),
+		),
+		Effect.provide(TextFiles.layer),
+	),
+);
