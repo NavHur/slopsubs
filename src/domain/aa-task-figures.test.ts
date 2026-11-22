@@ -198,7 +198,7 @@ describe("importAaEvals checks", () => {
 			[evalPageRecord()],
 			[evalPageRecord({ tokenCounts: { briefcase } })],
 		];
-		expect(() => run({ evalPages })).toThrow(/disagree on b171d979/);
+		expect(() => run({ evalPages })).toThrow(/disagree on claude-sonnet-5-5/);
 	});
 
 	it("takes no rows or scores from an eval page's records", () => {
@@ -257,7 +257,7 @@ describe("importAaEvals checks", () => {
 			[evalPageRecord()],
 			[evalPageRecord({ tokenCounts: { briefcase } })],
 		];
-		expect(() => run({ evalPages })).toThrow(/disagree on b171d979/);
+		expect(() => run({ evalPages })).toThrow(/disagree on claude-sonnet-5-5/);
 	});
 
 	it("stops when AA costs one eval twice, though the costs add up", () => {

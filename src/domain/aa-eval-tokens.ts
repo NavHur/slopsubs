@@ -24,6 +24,7 @@ const TokenCount = z.object({
 /** An eval page's record: a model and its token counts across the evals. */
 const EvalPageRecord = z.object({
 	id: z.string().min(1),
+	slug: z.string().min(1),
 	canonicalEvalTokenCounts: z
 		.record(z.string(), TokenCount.nullish())
 		.nullish(),
@@ -67,12 +68,12 @@ export function tokensByRecord(
 	const seen = new Map<string, string>();
 	const byRecord = new Map<string, EvalTokens>();
 	for (const raw of evalFlights.flatMap(flightRecords)) {
-		const { id, canonicalEvalTokenCounts } = EvalPageRecord.parse(raw);
+		const { id, slug, canonicalEvalTokenCounts } = EvalPageRecord.parse(raw);
 		const tokens = recordTokens(canonicalEvalTokenCounts);
 		if (
 			firstReading(
 				seen,
-				id,
+				slug,
 				JSON.stringify(rawCounts(canonicalEvalTokenCounts)),
 			)
 		)
