@@ -16,30 +16,15 @@ import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { Clock, Effect, Schema } from "effect";
 import { BenchmarkDataset, LimitSamples } from "../src/domain/model.ts";
-import {
-	GaugePercent,
-	Mark,
-	priceWindow,
-	readClaudeMessages,
-} from "./claude-usage.ts";
-
+import { Mark, priceWindow, readClaudeMessages } from "./claude-usage.ts";
 import { InvalidCommandArguments } from "./effects/arguments.ts";
 import { decodeJsonFile, readJsonFile, TextFiles } from "./effects/files.ts";
+import { MarkArgs } from "./measure-args.ts";
 
 const ROOT = new URL("..", import.meta.url);
 const MARKS = new URL("measurements/marks.jsonl", ROOT);
 const SAMPLES = new URL("src/data/samples.json", ROOT);
 const BENCHMARKS = new URL("src/data/benchmarks.json", ROOT);
-
-const MarkArgs = Schema.Tuple([
-	Schema.NonEmptyString,
-	Schema.FiniteFromString.check(GaugePercent),
-	Schema.DateFromString.check(
-		Schema.makeFilter(
-			(date) => Number.isFinite(date.getTime()) || "Expected a reset time",
-		),
-	),
-]).annotate({ title: "measure mark <planId> <usedPercent> <resetsAt>" });
 
 function mark(args: string[]) {
 	return Effect.gen(function* () {

@@ -4,6 +4,7 @@
 import { Effect, Schema } from "effect";
 import { renderDataChanges } from "./data-changes-markdown.ts";
 import { changesSince } from "./data-snapshot.ts";
+import { InvalidCommandArguments } from "./effects/arguments.ts";
 import { TextFiles } from "./effects/files.ts";
 
 const Args = Schema.Union([
@@ -18,6 +19,14 @@ const Args = Schema.Union([
 const main = Effect.gen(function* () {
 	const [ref, , path] = yield* Schema.decodeUnknownEffect(Args)(
 		process.argv.slice(2),
+	).pipe(
+		Effect.mapError(
+			(cause) =>
+				new InvalidCommandArguments({
+					message: "Usage: data-changes.ts <ref> [--summary <file.md>]",
+					cause,
+				}),
+		),
 	);
 	const { changes } = yield* changesSince(ref);
 	const summary = renderDataChanges(changes);
