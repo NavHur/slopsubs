@@ -1,27 +1,24 @@
 // Reads data literals out of slopalytics' minified JS bundle.
 
+import { Data, Effect, Option, Schema } from "effect";
 import { stringLiteralEnd } from "../src/domain/flight.ts";
 
-export type Literal =
-	| null
-	| boolean
-	| number
-	| string
-	| Literal[]
-	| { [key: string]: Literal };
+export class BundleLayoutError extends Data.TaggedError("BundleLayoutError")<{
+	message: string;
+}> {}
 
 const QUOTES = new Set(["`", '"', "'"]);
 const BRACE_DELTA: Record<string, number> = { "{": 1, "}": -1 };
 
 /** End of the object literal opening at `start`, skipping string contents. */
-function objectEnd(source: string, start: number): number {
+function objectEnd(source: string, start: number): Option.Option<number> {
 	let depth = 0;
 	for (let i = start; i < source.length; i++) {
 		if (QUOTES.has(source[i])) i = stringLiteralEnd(source, i);
 		else depth += BRACE_DELTA[source[i]] ?? 0;
-		if (depth === 0) return i + 1;
+		if (depth === 0) return Option.some(i + 1);
 	}
-	throw new Error(`Unbalanced literal starting at ${start}`);
+	return Option.none();
 }
 
 /** Minified tokens: a backtick string, a double-quoted string (left as is), a
@@ -51,11 +48,21 @@ function literalToJson(literal: string): string {
 }
 
 /** The object literal the first match of `anchor` opens, as JSON data. */
-export function extract(source: string, anchor: RegExp): Literal {
-	const found = anchor.exec(source);
-	if (!found) throw new Error(`Anchor ${anchor} not found in bundle`);
-	const start = found.index + found[0].indexOf("{");
-	return JSON.parse(
-		literalToJson(source.slice(start, objectEnd(source, start))),
-	);
+export function extract(source: string, anchor: RegExp) {
+	return Effect.gen(function* () {
+		const found = anchor.exec(source);
+		if (!found)
+			return yield* new BundleLayoutError({
+				message: `Anchor ${anchor} not found in bundle`,
+			});
+		const start = found.index + found[0].indexOf("{");
+		const end = objectEnd(source, start);
+		if (Option.isNone(end))
+			return yield* new BundleLayoutError({
+				message: `Unbalanced literal starting at ${start}`,
+			});
+		return yield* Schema.decodeUnknownEffect(
+			Schema.fromJsonString(Schema.Unknown),
+		)(literalToJson(source.slice(start, end.value)));
+	});
 }

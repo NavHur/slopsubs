@@ -44,7 +44,7 @@ const BenchmarkPoint = Schema.Struct({
 export type BenchmarkPoint = typeof BenchmarkPoint.Type;
 
 /** The frontier families' size tier and chart colour, by family id. */
-const Frontier = Schema.Record(
+export const Frontier = Schema.Record(
 	Schema.String,
 	Schema.Struct({
 		tier: Schema.Literals(["Small", "Medium", "Large"]),

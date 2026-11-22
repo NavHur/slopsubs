@@ -1,31 +1,61 @@
-import { z } from "zod";
+import { Data, Schema } from "effect";
 import type { AaModel, TaskCost } from "./aa-site";
 import { EFFORTS } from "./enums";
 import type { Effort } from "./model";
 import { roundedOrNull } from "./rounding";
+import { NonNegative } from "./wire-schemas";
 
-/** The fields the import keeps from one slopalytics bundle point. */
-export const SlopaPoint = z.object({
-	id: z.string().min(1),
-	family: z.string().min(1),
-	name: z.string().min(1),
-	variant: z.string().min(1),
-	lab: z.string().min(1),
-	labName: z.string().min(1),
-	released: z.string().min(1),
-	open: z.boolean(),
-	deprecated: z.boolean(),
-	effort: z.enum(EFFORTS),
-	effortLabel: z.string().min(1),
-	effortOrder: z.number(),
-	score: z.number().nullable(),
-	costPerTaskUsd: z.number().nonnegative().nullable(),
-	tokensPerTask: z.number().nullable(),
-	secondsPerTask: z.number().nullable(),
-	inputPricePerMTokUsd: z.number().nonnegative().nullable(),
-	outputPricePerMTokUsd: z.number().nonnegative().nullable(),
+export class CatalogMismatch extends Data.TaggedError("CatalogMismatch")<{
+	message: string;
+}> {}
+
+/** The wire fields the import reads from one Slopalytics bundle point. */
+const SlopaWirePoint = Schema.Struct({
+	id: Schema.NonEmptyString,
+	family: Schema.NonEmptyString,
+	name: Schema.NonEmptyString,
+	variant: Schema.NonEmptyString,
+	lab: Schema.NonEmptyString,
+	labName: Schema.NonEmptyString,
+	released: Schema.NonEmptyString,
+	open: Schema.Boolean,
+	deprecated: Schema.Boolean,
+	effort: Schema.Literals(EFFORTS),
+	effortLabel: Schema.NonEmptyString,
+	effortOrder: Schema.Finite,
+	intelligence: Schema.optional(Schema.NullOr(Schema.Finite)),
+	cost: Schema.optional(Schema.NullOr(NonNegative)),
+	tokens: Schema.optional(Schema.NullOr(Schema.Finite)),
+	time: Schema.optional(Schema.NullOr(Schema.Finite)),
+	inputPrice: Schema.NullOr(NonNegative),
+	outputPrice: Schema.NullOr(NonNegative),
 });
-export type SlopaPoint = z.infer<typeof SlopaPoint>;
+
+export const SlopalyticsDataset = Schema.Struct({
+	models: Schema.Array(SlopaWirePoint),
+});
+
+export function slopaPoint(point: typeof SlopaWirePoint.Type) {
+	const {
+		intelligence,
+		cost,
+		tokens,
+		time,
+		inputPrice,
+		outputPrice,
+		...identity
+	} = point;
+	return {
+		...identity,
+		score: roundedOrNull(intelligence, 2),
+		costPerTaskUsd: roundedOrNull(cost, 5),
+		tokensPerTask: roundedOrNull(tokens, 0),
+		secondsPerTask: roundedOrNull(time, 1),
+		inputPricePerMTokUsd: inputPrice,
+		outputPricePerMTokUsd: outputPrice,
+	};
+}
+export type SlopaPoint = ReturnType<typeof slopaPoint>;
 
 /** Two sources rounding to one decimal still agree within this. */
 const SCORE_TOLERANCE = 0.06;
@@ -104,9 +134,9 @@ function checkScore(
 ): void {
 	if (point.score === null) return;
 	if (aaScore === null)
-		throw new Error(
-			`${point.id}: slopalytics scores ${point.score}, AA has no index`,
-		);
+		throw new CatalogMismatch({
+			message: `${point.id}: slopalytics scores ${point.score}, AA has no index`,
+		});
 	const drift = Math.abs(aaScore - point.score);
 	if (drift <= SCORE_TOLERANCE) return;
 	if (allowScoreDrift && drift <= SCORE_DRIFT_LIMIT) {
@@ -115,9 +145,9 @@ function checkScore(
 		);
 		return;
 	}
-	throw new Error(
-		`${point.id}: AA index ${aaScore}, slopalytics ${point.score}`,
-	);
+	throw new CatalogMismatch({
+		message: `${point.id}: AA index ${aaScore}, slopalytics ${point.score}`,
+	});
 }
 
 /** One warning per price AA and slopalytics disagree on. */
@@ -183,7 +213,9 @@ function aaOnlyPoint(
 ): SlopaPoint {
 	const effort = effortOf.get(derived.effort);
 	if (!effort)
-		throw new Error(`No effort label for ${aa.slug}'s ${derived.effort}`);
+		throw new CatalogMismatch({
+			message: `No effort label for ${aa.slug}'s ${derived.effort}`,
+		});
 	const name = displayName(aa.name);
 	return {
 		id: aa.slug,
@@ -220,9 +252,9 @@ function aaOnlyModel(
 	const derived = deriveModel(aa);
 	if (!derived) {
 		if (inCoveredFamily(aa.slug, coveredFamilies))
-			throw new Error(
-				`AA's ${aa.slug} (${aa.name}) is in a family a plan covers, but cannot read an effort from its name`,
-			);
+			throw new CatalogMismatch({
+				message: `AA's ${aa.slug} (${aa.name}) is in a family a plan covers, but cannot read an effort from its name`,
+			});
 		return null;
 	}
 	return coveredFamilies.has(derived.family)
@@ -246,7 +278,9 @@ function mergeListed(
 		if (aa)
 			models.push(mergePoint(point, aa, siteCosts, warnings, allowScoreDrift));
 		else if (coveredFamilies.has(point.family))
-			throw new Error(`AA has no model for ${point.id} (${point.name})`);
+			throw new CatalogMismatch({
+				message: `AA has no model for ${point.id} (${point.name})`,
+			});
 		else unlisted.push(point.id);
 	}
 	return { models, unlisted };
