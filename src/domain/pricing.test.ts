@@ -1,3 +1,4 @@
+import { Result } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import type { BenchmarkPoint, FamilyId } from "./model";
 import { claudeMessageUsd, priceFor, UnpricedModelError } from "./pricing";
@@ -11,14 +12,18 @@ const opus = {
 
 describe("priceFor", () => {
 	it("resolves dated snapshots to their family", () => {
-		expect(priceFor("claude-opus-5-5-20261001", [opus])).toEqual({
-			inputPerMTokUsd: 5,
-			outputPerMTokUsd: 25,
-		});
+		expect(priceFor("claude-opus-5-5-20261001", [opus])).toEqual(
+			Result.succeed({
+				inputPerMTokUsd: 5,
+				outputPerMTokUsd: 25,
+			}),
+		);
 	});
 
 	it("refuses models it cannot price", () => {
-		expect(() => priceFor("mystery-model", [opus])).toThrow(UnpricedModelError);
+		expect(priceFor("mystery-model", [opus])).toEqual(
+			Result.fail(new UnpricedModelError({ modelId: "mystery-model" })),
+		);
 	});
 });
 

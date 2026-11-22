@@ -17,7 +17,12 @@ import {
 	LimitSamples,
 	Plans,
 } from "../src/domain/model.ts";
-import { decodeJsonFile, InvalidJsonFile, TextFiles } from "./effects/files.ts";
+import {
+	decodeFileValue,
+	decodeJsonFile,
+	type InvalidJsonFile,
+	TextFiles,
+} from "./effects/files.ts";
 
 const ROOT = new URL("..", import.meta.url);
 const DATA_DIR = "src/data/";
@@ -43,7 +48,7 @@ class GitReadError extends Data.TaggedError("GitReadError")<{
 function readGitFile(ref: string, file: FileName) {
 	return Effect.tryPromise({
 		try: (signal) =>
-			run("git", ["show", `${ref}:${DATA_DIR}${file}`], {
+			run("git", ["show", "--end-of-options", `${ref}:${DATA_DIR}${file}`], {
 				cwd: ROOT,
 				maxBuffer: GIT_SHOW_MAX_BYTES,
 				signal,
@@ -74,9 +79,7 @@ function decodeDataset<S extends Schema.Constraint>(
 	return Effect.gen(function* () {
 		// The raw JSON also matters when comparing metadata the schema drops.
 		const raw = yield* decodeJsonFile(Schema.Unknown, path, text);
-		const data = yield* Schema.decodeUnknownEffect(schema)(raw).pipe(
-			Effect.mapError((cause) => new InvalidJsonFile({ path, cause })),
-		);
+		const data = yield* decodeFileValue(schema, path, raw);
 		return { data, raw };
 	});
 }

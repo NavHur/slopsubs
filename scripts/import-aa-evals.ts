@@ -66,7 +66,7 @@ function logCarry(carry: CarryReport): void {
 
 const main = Effect.gen(function* () {
 	const files = yield* TextFiles;
-	const { html, evalHtml } = parseArgs(process.argv.slice(2));
+	const { html, evalHtml } = yield* parseArgs(process.argv.slice(2));
 	const byFamily = yield* loadCatalogByFamily(ROOT);
 	const covered = Object.values(PLAN_FAMILIES).flatMap((plan) => plan.families);
 	const modelPages = yield* loadAaPages(

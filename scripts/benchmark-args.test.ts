@@ -1,9 +1,12 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import { parseArgs } from "./benchmark-args.ts";
 
+const parse = (args: string[]) => Effect.runSync(parseArgs(args));
+
 describe("benchmark arguments", () => {
 	it("defaults to live sources and strict costs and scores", () => {
-		expect(parseArgs([])).toEqual({
+		expect(parse([])).toEqual({
 			html: [],
 			allowMissingCost: false,
 			allowScoreDrift: false,
@@ -11,7 +14,7 @@ describe("benchmark arguments", () => {
 	});
 	it("reads cached sources and independent opt-ins in any order", () => {
 		expect(
-			parseArgs([
+			parse([
 				"--allow-score-drift",
 				"--html",
 				"page",
@@ -29,7 +32,7 @@ describe("benchmark arguments", () => {
 		});
 	});
 	it("keeps the last repeated path and consumes flag-like values as paths", () => {
-		expect(parseArgs(["--bundle", "first", "--bundle", "--html"])).toEqual({
+		expect(parse(["--bundle", "first", "--bundle", "--html"])).toEqual({
 			bundle: "--html",
 			html: [],
 			allowMissingCost: false,
@@ -37,9 +40,9 @@ describe("benchmark arguments", () => {
 		});
 	});
 	it("ignores a missing path", () => {
-		expect(parseArgs(["--html"]).html).toEqual([]);
+		expect(parse(["--html"]).html).toEqual([]);
 	});
 	it("rejects an unknown argument with its name", () => {
-		expect(() => parseArgs(["--wat"])).toThrow("Unknown argument --wat");
+		expect(() => parse(["--wat"])).toThrow("Unknown argument --wat");
 	});
 });

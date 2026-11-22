@@ -86,7 +86,7 @@ function logCatalogNotes(merged: ReturnType<typeof mergeCatalog>) {
 
 const main = Effect.gen(function* () {
 	const files = yield* TextFiles;
-	const args = parseArgs(process.argv.slice(2));
+	const args = yield* parseArgs(process.argv.slice(2));
 	const bundle = yield* loadBundle(args.bundle);
 	const dataset = yield* Schema.decodeUnknownEffect(SlopalyticsDataset)(
 		yield* extract(bundle, /=\{fetchedAt:/),

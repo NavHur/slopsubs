@@ -1,6 +1,7 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { Effect } from "effect";
 import { afterEach, beforeEach, describe, expect, it } from "vite-plus/test";
 import type { BenchmarkPoint, FamilyId } from "../src/domain/model.ts";
 import {
@@ -9,6 +10,7 @@ import {
 	priceWindow,
 	readClaudeMessages,
 } from "./claude-usage.ts";
+import { TextFiles } from "./effects/files.ts";
 
 const usage = (input: number) => ({ input_tokens: input, output_tokens: 0 });
 
@@ -30,6 +32,11 @@ function assistantLine({ id, at, requestId, requestRef, input = 1 }: Line) {
 		message: { id, model: "claude-opus-5-5", usage: usage(input) },
 	});
 }
+
+const readMessages = (dirs: string[]) =>
+	Effect.runPromise(
+		readClaudeMessages(dirs).pipe(Effect.provide(TextFiles.layer)),
+	);
 
 describe("readClaudeMessages", () => {
 	let root: string;
@@ -55,7 +62,7 @@ describe("readClaudeMessages", () => {
 		await write("a/notes.txt", [
 			assistantLine({ id: "m3", at: "2026-10-03T00:00:00Z" }),
 		]);
-		const messages = await readClaudeMessages([join(root, "a")]);
+		const messages = await readMessages([join(root, "a")]);
 		expect(messages).toHaveLength(2);
 		expect(messages).toContainEqual({
 			at: Date.parse("2026-10-01T00:00:00Z"),
@@ -72,12 +79,24 @@ describe("readClaudeMessages", () => {
 				message: { id: "m1", model: "claude-opus-5-5" },
 			}),
 		]);
-		expect(await readClaudeMessages([root])).toEqual([]);
+		expect(await readMessages([root])).toEqual([]);
 	});
 
 	it("throws on an assistant line that is not JSON", async () => {
 		await write("s.jsonl", ['{"type":"assistant",']);
-		await expect(readClaudeMessages([root])).rejects.toThrow(SyntaxError);
+		await expect(readMessages([root])).rejects.toMatchObject({
+			_tag: "InvalidJsonFile",
+			path: join(root, "s.jsonl") + ":1",
+		});
+	});
+
+	it("rejects a malformed cache counter instead of using it to price the message", async () => {
+		await write("s.jsonl", [
+			'{"type":"assistant","timestamp":"2026-10-01T00:00:00Z","message":{"id":"m1","model":"claude-opus-5-5","usage":{"input_tokens":5,"output_tokens":1,"cache_read_input_tokens":"100"}}}',
+		]);
+		await expect(readMessages([root])).rejects.toMatchObject({
+			_tag: "InvalidJsonFile",
+		});
 	});
 
 	it("keeps one message per id and request, the last one read", async () => {
@@ -92,10 +111,7 @@ describe("readClaudeMessages", () => {
 			assistantLine({ id: "m2", at, input: 5 }),
 			assistantLine({ id: "m2", at, input: 6 }),
 		]);
-		const messages = await readClaudeMessages([
-			join(root, "one"),
-			join(root, "two"),
-		]);
+		const messages = await readMessages([join(root, "one"), join(root, "two")]);
 		expect(messages.map((m) => m.usage.input_tokens)).toEqual([2, 4, 6]);
 	});
 
@@ -105,7 +121,7 @@ describe("readClaudeMessages", () => {
 			assistantLine({ id: "m1", at, requestId: "r1", requestRef: "x" }),
 			assistantLine({ id: "m1", at, requestId: "r1", requestRef: "y" }),
 		]);
-		expect(await readClaudeMessages([root])).toHaveLength(2);
+		expect(await readMessages([root])).toHaveLength(2);
 	});
 });
 

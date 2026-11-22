@@ -1,15 +1,19 @@
-import { Schema } from "effect";
 // Builds src/data/plans.json from research/plans/, and the trimmed
 // chart-benchmarks.json from the imported leaderboards.
 
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { Clock, Data, Effect, Schema } from "effect";
 import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import type { AaEvalId } from "../src/domain/eval-units.ts";
-import { evalPoints, frontierCodePoints } from "../src/domain/leaderboards.ts";
+import {
+	evalPoints,
+	frontierCodePoints,
+	LeaderboardDataError,
+} from "../src/domain/leaderboards.ts";
 import {
 	AaEvalsDataset,
 	AllowanceKind,
 	BenchmarkDataset,
+	type BenchmarkPoint,
 	ChartData,
 	FrontierCodeDataset,
 	Plans,
@@ -21,6 +25,7 @@ import { UrlString } from "../src/domain/wire-schemas.ts";
 import { CLAUDE_ULTRA } from "./claude-caps.ts";
 import { creditAllowance, creditPromotions } from "./credit-plans.ts";
 import { CREDIT_PLANS } from "./credit-vendors.ts";
+import { readJsonFile, TextFiles } from "./effects/files.ts";
 import { type GoTier, goPlan } from "./go-plans.ts";
 import { GO_PRICING, OPENCODE_DOCS } from "./go-pricing.ts";
 import type { TokenRates } from "./list-price.ts";
@@ -104,70 +109,65 @@ const ResearchPlan = Schema.Struct({
 		Schema.Boolean,
 		Schema.Literal("unclear"),
 	]),
-	sources: Schema.Array(
+	sources: Schema.NonEmptyArray(
 		Schema.Struct({ url: UrlString, accessed: Schema.String }),
-	).check(Schema.isMinLength(1)),
+	),
 	confidence: Schema.Literals(["primary", "secondary", "unverified"]),
 });
 
-async function readJson(path: string): Promise<unknown> {
-	return JSON.parse(await readFile(new URL(path, ROOT), "utf8"));
-}
+type ResearchPlan = typeof ResearchPlan.Type;
 
-/** One vendor's plans; a failure names the file. */
-async function readVendorFile(
-	dir: string,
-	name: string,
-): Promise<(typeof ResearchPlan.Type)[]> {
-	try {
-		return Schema.decodeUnknownSync(Schema.mutable(Schema.Array(ResearchPlan)))(
-			await readJson(dir + name),
-		);
-	} catch (cause) {
-		const message = cause instanceof Error ? cause.message : String(cause);
-		throw new Error(`${dir}${name}: ${message}`, { cause });
-	}
-}
+class PlanDataError extends Data.TaggedError("PlanDataError")<{
+	message: string;
+}> {}
 
 /** Every researched plan, from one file per vendor, in file-name order. */
-async function readResearch(): Promise<(typeof ResearchPlan.Type)[]> {
-	const dir = "research/plans/";
-	const files = (await readdir(new URL(dir, ROOT)))
+const readResearch = Effect.gen(function* () {
+	const files = yield* TextFiles;
+	const dir = new URL("research/plans/", ROOT);
+	const names = (yield* files.list(dir))
+		.map((entry) => entry.name)
 		.filter((name) => name.endsWith(".json"))
 		.sort();
-	const rows = await Promise.all(
-		files.map((name) => readVendorFile(dir, name)),
+	const rows = yield* Effect.forEach(
+		names,
+		(name) => readJsonFile(Schema.Array(ResearchPlan), new URL(name, dir)),
+		{ concurrency: 4 },
 	);
 	return rows.flat();
+});
+
+function checkResearch(research: readonly ResearchPlan[]) {
+	const missing = Object.keys(PLAN_FAMILIES).filter(
+		(id) => !research.some((p) => p.planId === id),
+	);
+	if (missing.length)
+		throw new PlanDataError({
+			message: `Plans not in research: ${missing.join(", ")}`,
+		});
+	const offSale = research.filter(
+		(p) => p.planId in PLAN_FAMILIES && p.availability !== "on-sale",
+	);
+	if (offSale.length)
+		throw new PlanDataError({
+			message: `Plans no longer on sale can't ship: ${offSale.map((p) => `${p.planId} (${p.availability})`).join(", ")}`,
+		});
 }
 
-const research = await readResearch();
-const dataset = Schema.decodeUnknownSync(BenchmarkDataset)(
-	await readJson("src/data/benchmarks.json"),
-);
-const { models } = dataset;
-const benchmarked = new Set<string>(models.map((m) => m.family));
-
-const missing = Object.keys(PLAN_FAMILIES).filter(
-	(id) => !research.some((p) => p.planId === id),
-);
-if (missing.length)
-	throw new Error(`Plans not in research: ${missing.join(", ")}`);
-const offSale = research.filter(
-	(p) => p.planId in PLAN_FAMILIES && p.availability !== "on-sale",
-);
-if (offSale.length)
-	throw new Error(
-		`Plans no longer on sale can't ship: ${offSale.map((p) => `${p.planId} (${p.availability})`).join(", ")}`,
-	);
+type ListRates = (family: string) => TokenRates;
 
 /** The family's list [input, output] $/MTok, from the benchmark catalog. */
-function listRates(family: string): TokenRates {
+function listRates(
+	models: readonly BenchmarkPoint[],
+	family: string,
+): TokenRates {
 	const list = models.find(
 		(m) => m.family === family && m.inputPricePerMTokUsd !== null,
 	);
 	if (!list?.inputPricePerMTokUsd || !list.outputPricePerMTokUsd)
-		throw new Error(`${family}: no list price to value its allowance at`);
+		throw new PlanDataError({
+			message: `${family}: no list price to value its allowance at`,
+		});
 	return [list.inputPricePerMTokUsd, list.outputPricePerMTokUsd];
 }
 
@@ -177,6 +177,7 @@ function publishedAllowance(
 	planId: string,
 	priceUsd: number,
 	families: readonly string[],
+	listRates: ListRates,
 ): PublishedAllowance | null {
 	const credit = CREDIT_PLANS[planId];
 	if (credit) return creditAllowance(credit, priceUsd, families, listRates);
@@ -193,8 +194,9 @@ function publishedAllowance(
 
 /** A weekly credit quota's estimated cap, for plans billed in credits. */
 function creditCap(
-	p: typeof ResearchPlan.Type,
+	p: ResearchPlan,
 	families: readonly string[],
+	listRates: ListRates,
 ): ReportedCap | null {
 	const plan = WEEKLY_CREDIT_PLANS[p.planId];
 	if (!plan) return null;
@@ -206,6 +208,7 @@ function creditCap(
 function promotions(
 	planId: string,
 	families: readonly string[],
+	listRates: ListRates,
 ): Record<string, Promotion> {
 	const credit = CREDIT_PLANS[planId];
 	if (credit) return creditPromotions(credit, families);
@@ -217,33 +220,37 @@ function promotions(
 /** A plan has a credit exactly when its research row says credit, and the
  * credit cites a page that row lists. */
 function requireSourcedCredit(
-	p: typeof ResearchPlan.Type,
+	p: ResearchPlan,
 	allowance: PublishedAllowance | null,
 ): void {
 	if (p.planId in CREDIT_PLANS && p.allowanceKind !== "credit")
-		throw new Error(
-			`${p.planId}: it has a credit, but its research row says ${p.allowanceKind}`,
-		);
+		throw new PlanDataError({
+			message: `${p.planId}: it has a credit, but its research row says ${p.allowanceKind}`,
+		});
 	if (p.allowanceKind !== "credit") return;
 	if (!allowance)
-		throw new Error(`${p.planId}: a credit plan needs its sourced credit`);
+		throw new PlanDataError({
+			message: `${p.planId}: a credit plan needs its sourced credit`,
+		});
 	requireCited(p, allowance.url, "credit");
 }
 
 /** Refuses a figure whose page the plan's research row does not list. */
-function requireCited(
-	p: typeof ResearchPlan.Type,
-	url: string,
-	figure: string,
-): void {
+function requireCited(p: ResearchPlan, url: string, figure: string): void {
 	if (!p.sources.some((source) => source.url === url))
-		throw new Error(
-			`${p.planId}: its ${figure} figure cites ${url}, which its research row does not list`,
-		);
+		throw new PlanDataError({
+			message: `${p.planId}: its ${figure} figure cites ${url}, which its research row does not list`,
+		});
 }
 
-const plans = Schema.decodeUnknownSync(Plans)(
-	research
+function planRows(
+	research: readonly ResearchPlan[],
+	models: readonly BenchmarkPoint[],
+) {
+	checkResearch(research);
+	const benchmarked = new Set<string>(models.map((m) => m.family));
+	const rates: ListRates = (family) => listRates(models, family);
+	return research
 		.filter((p) => p.planId in PLAN_FAMILIES)
 		.map((p) => {
 			const entry = PLAN_FAMILIES[p.planId];
@@ -256,12 +263,15 @@ const plans = Schema.decodeUnknownSync(Plans)(
 			} = entry;
 			const unknown = families.filter((f) => !benchmarked.has(f));
 			if (unknown.length)
-				throw new Error(`${p.planId}: unbenchmarked ${unknown.join(", ")}`);
+				throw new PlanDataError({
+					message: `${p.planId}: unbenchmarked ${unknown.join(", ")}`,
+				});
 			const label = entry.shortLabel ?? p.label;
 			const allowance = publishedAllowance(
 				p.planId,
 				p.monthlyPriceUsd,
 				families,
+				rates,
 			);
 			requireSourcedCredit(p, allowance);
 			return {
@@ -280,67 +290,120 @@ const plans = Schema.decodeUnknownSync(Plans)(
 				sourceUrl: p.sources[0].url,
 				reportedCap:
 					codexCap(p.planId, p.monthlyPriceUsd, families) ??
-					creditCap(p, families) ??
+					creditCap(p, families, rates) ??
 					ladderCap(KNOWN_TIERS, entry.tier, label, families),
 				publishedAllowance: allowance,
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
-				promotionByFamily: promotions(p.planId, families),
+				promotionByFamily: promotions(p.planId, families, rates),
 			};
-		}),
-);
+		});
+}
 
-// A plan's value counts its promotions only while they run.
-const today = new Date().toISOString().slice(0, 10);
-for (const plan of plans)
-	for (const [family, promotion] of Object.entries(plan.promotionByFamily))
-		if (promotion.endsOn < today)
-			throw new Error(
-				`${plan.id}: the ${family} promotion ended on ${promotion.endsOn}; delete it and rebuild the plans.`,
-			);
+/** A plan's value counts its promotions only while they run. */
+function checkPromotions(plans: typeof Plans.Type, today: string) {
+	for (const plan of plans)
+		for (const [family, promotion] of Object.entries(plan.promotionByFamily))
+			if (promotion.endsOn < today)
+				throw new PlanDataError({
+					message: `${plan.id}: the ${family} promotion ended on ${promotion.endsOn}; delete it and rebuild the plans.`,
+				});
+}
 
-await writeFile(
-	new URL("src/data/plans.json", ROOT),
-	`${JSON.stringify(plans, null, 2)}\n`,
-);
-
-// The site ships only the benchmark points some plan covers. Leaderboard rows
-// are filtered before they are resolved, since the catalog need not know an
-// uncovered family or its effort.
-const covered = new Set<string>(plans.flatMap((p) => p.families));
-const onPlans = <T extends { family: string }>(points: readonly T[]) =>
-	points.filter((m) => covered.has(m.family));
-const frontierCode = Schema.decodeUnknownSync(FrontierCodeDataset)(
-	await readJson("src/data/frontiercode.json"),
-);
-const aaEvals = Schema.decodeUnknownSync(AaEvalsDataset)(
-	await readJson("src/data/aa-evals.json"),
-);
-const evalBoard = (evalSlug: AaEvalId) => ({
-	fetchedAt: aaEvals.fetchedAt,
-	models: evalPoints(onPlans(aaEvals.rows), models, evalSlug),
-});
-const evalBoards = Object.fromEntries(
-	AA_EVAL_IDS.map((id) => [id, evalBoard(id)]),
-) as Record<AaEvalId, ReturnType<typeof evalBoard>>;
-const chart = Schema.decodeUnknownSync(ChartData)({
-	frontier: dataset.frontier,
-	leaderboards: {
-		intelligence: { fetchedAt: dataset.fetchedAt, models: onPlans(models) },
-		frontiercode: {
-			fetchedAt: frontierCode.fetchedAt,
-			models: frontierCodePoints(onPlans(frontierCode.rows), models),
+// Filter out uncovered rows before resolving them against the catalog.
+function chartData({
+	plans,
+	dataset,
+	frontierCode,
+	aaEvals,
+}: {
+	plans: typeof Plans.Type;
+	dataset: BenchmarkDataset;
+	frontierCode: FrontierCodeDataset;
+	aaEvals: AaEvalsDataset;
+}) {
+	const { models } = dataset;
+	const covered = new Set<string>(plans.flatMap((p) => p.families));
+	const onPlans = <T extends { family: string }>(points: readonly T[]) =>
+		points.filter((m) => covered.has(m.family));
+	const evalBoard = (evalSlug: AaEvalId) => ({
+		fetchedAt: aaEvals.fetchedAt,
+		models: evalPoints(onPlans(aaEvals.rows), models, evalSlug),
+	});
+	const evalBoards = Object.fromEntries(
+		AA_EVAL_IDS.map((id) => [id, evalBoard(id)]),
+	) as Record<AaEvalId, ReturnType<typeof evalBoard>>;
+	return {
+		frontier: dataset.frontier,
+		leaderboards: {
+			intelligence: { fetchedAt: dataset.fetchedAt, models: onPlans(models) },
+			frontiercode: {
+				fetchedAt: frontierCode.fetchedAt,
+				models: frontierCodePoints(onPlans(frontierCode.rows), models),
+			},
+			...evalBoards,
 		},
-		...evalBoards,
-	},
+	};
+}
+
+/** Known input inconsistencies stop the build. Keep unexpected exceptions as defects. */
+function checkPlanData<A>(evaluate: () => A) {
+	return Effect.try({
+		try: evaluate,
+		catch: (cause) => {
+			if (
+				cause instanceof PlanDataError ||
+				cause instanceof LeaderboardDataError
+			)
+				return cause;
+			throw cause;
+		},
+	});
+}
+
+const main = Effect.gen(function* () {
+	const files = yield* TextFiles;
+	const data = new URL("src/data/", ROOT);
+	const { research, dataset, frontierCode, aaEvals } = yield* Effect.all(
+		{
+			research: readResearch,
+			dataset: readJsonFile(BenchmarkDataset, new URL("benchmarks.json", data)),
+			frontierCode: readJsonFile(
+				FrontierCodeDataset,
+				new URL("frontiercode.json", data),
+			),
+			aaEvals: readJsonFile(AaEvalsDataset, new URL("aa-evals.json", data)),
+		},
+		{ concurrency: 4 },
+	);
+
+	const plans = yield* Schema.decodeUnknownEffect(Plans)(
+		yield* checkPlanData(() => planRows(research, dataset.models)),
+	);
+	const today = new Date(yield* Clock.currentTimeMillis)
+		.toISOString()
+		.slice(0, 10);
+	yield* checkPlanData(() => checkPromotions(plans, today));
+	const chart = yield* Schema.decodeUnknownEffect(ChartData)(
+		yield* checkPlanData(() =>
+			chartData({ plans, dataset, frontierCode, aaEvals }),
+		),
+	);
+
+	yield* files.write(
+		new URL("plans.json", data),
+		`${JSON.stringify(plans, null, 2)}\n`,
+	);
+	yield* files.write(
+		new URL("chart-benchmarks.json", data),
+		`${JSON.stringify(chart)}\n`,
+	);
+	const counts = Object.entries(chart.leaderboards).map(
+		([id, board]) => `${board.models.length} ${id}`,
+	);
+	console.log(
+		`Wrote ${plans.length} plans and ${counts.join(", ")} chart benchmark points`,
+	);
 });
-await writeFile(
-	new URL("src/data/chart-benchmarks.json", ROOT),
-	`${JSON.stringify(chart)}\n`,
-);
-const counts = Object.entries(chart.leaderboards).map(
-	([id, board]) => `${board.models.length} ${id}`,
-);
-console.log(
-	`Wrote ${plans.length} plans and ${counts.join(", ")} chart benchmark points`,
-);
+
+await Effect.runPromise(main.pipe(Effect.provide(TextFiles.layer)));

@@ -1,3 +1,4 @@
+import { Data, Result, Schema } from "effect";
 import type { BenchmarkPoint } from "./model.ts";
 
 const TOKENS_PER_MTOK = 1_000_000;
@@ -9,21 +10,38 @@ const ANTHROPIC_CACHE = {
 	write1h: 2,
 } as const;
 
-/** The `usage` block Claude Code writes on each assistant message. */
-export type ClaudeUsage = {
-	input_tokens: number;
-	output_tokens: number;
-	cache_read_input_tokens?: number;
-	cache_creation_input_tokens?: number;
-	cache_creation?: {
-		ephemeral_5m_input_tokens?: number;
-		ephemeral_1h_input_tokens?: number;
-	};
-};
+const TokenCount = Schema.Int.check(Schema.isGreaterThanOrEqualTo(0));
+const OptionalCount = Schema.optional(Schema.NullOr(TokenCount));
+
+/** The usage counters that affect the price of a Claude Code message. */
+export const ClaudeUsage = Schema.Struct({
+	input_tokens: TokenCount,
+	output_tokens: TokenCount,
+	cache_read_input_tokens: OptionalCount,
+	cache_creation_input_tokens: OptionalCount,
+	cache_creation: Schema.optional(
+		Schema.NullOr(
+			Schema.Struct({
+				ephemeral_5m_input_tokens: OptionalCount,
+				ephemeral_1h_input_tokens: OptionalCount,
+			}),
+		),
+	),
+});
+export type ClaudeUsage = typeof ClaudeUsage.Type;
 
 type TokenPrice = { inputPerMTokUsd: number; outputPerMTokUsd: number };
 
-export class UnpricedModelError extends Error {}
+export class UnpricedModelError extends Data.TaggedError("UnpricedModelError")<{
+	modelId: string;
+}> {
+	override get message() {
+		return `No API price for model ${this.modelId}`;
+	}
+}
+
+export const modelFamilySlug = (modelId: string) =>
+	modelId.replace(/-\d{8}$/, "");
 
 /**
  * Per-token price for a model id as logged by a harness. Dated snapshots
@@ -32,8 +50,8 @@ export class UnpricedModelError extends Error {}
 export function priceFor(
 	modelId: string,
 	benchmarks: readonly BenchmarkPoint[],
-): TokenPrice {
-	const family = modelId.replace(/-\d{8}$/, "");
+): Result.Result<TokenPrice, UnpricedModelError> {
+	const family = modelFamilySlug(modelId);
 	const priced = benchmarks.find(
 		(b) =>
 			b.family === family &&
@@ -41,12 +59,12 @@ export function priceFor(
 			b.outputPricePerMTokUsd !== null,
 	);
 	if (!priced?.inputPricePerMTokUsd || !priced.outputPricePerMTokUsd) {
-		throw new UnpricedModelError(`No API price for model ${modelId}`);
+		return Result.fail(new UnpricedModelError({ modelId }));
 	}
-	return {
+	return Result.succeed({
 		inputPerMTokUsd: priced.inputPricePerMTokUsd,
 		outputPerMTokUsd: priced.outputPricePerMTokUsd,
-	};
+	});
 }
 
 /** What one Claude message would have cost through the API. */
