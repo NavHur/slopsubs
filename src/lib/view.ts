@@ -1,8 +1,9 @@
-import * as z from "zod/mini";
+import * as Schema from "effect/Schema";
 import { frontier, plans } from "#/data";
 import { BENCHMARK_IDS } from "#/domain/enums";
 import type { Effort, FamilyId, Frontier, PlanId } from "#/domain/model";
 import { FitSearch } from "./fit";
+import { knownItems, optionalValid, withFallback } from "./search-schema";
 
 /** Reasoning efforts the Models panel can hide; "default" always shows. */
 export const REASONING_LEVELS = [
@@ -44,45 +45,23 @@ function rank(family: FamilyId): number {
  * empty list stays a deliberate "none selected".
  */
 function knownSelection<T extends string>(known: readonly T[]) {
-	const isKnown = (item: unknown): item is T =>
-		known.some((value) => value === item);
-	return optionalValid(
-		z.pipe(
-			z.array(z.unknown()),
-			z.transform((items) => {
-				const kept = items.filter(isKnown);
-				return items.length > 0 && kept.length === 0 ? undefined : kept;
-			}),
-		),
+	return knownItems(known, (kept, count) =>
+		count > 0 && kept.length === 0 ? undefined : kept,
 	);
-}
-
-/** `schema`, or `fallback` when the value is missing or this version rejects it. */
-function withFallback<T extends z.ZodMiniType>(
-	schema: T,
-	fallback: Exclude<z.output<T>, undefined>,
-) {
-	return z.catch(z._default(schema, fallback), fallback);
-}
-
-/** `schema` when the value is present and valid, else unset. */
-function optionalValid<T extends z.ZodMiniType>(schema: T) {
-	return z.catch(z.optional(schema), undefined);
 }
 
 /**
  * Chart state, kept in the URL so every view is shareable. A value this
  * version does not know (a retired benchmark, a hand-edited link) falls back
- * to its default instead of failing the page. zod/mini keeps this, the
- * client's one runtime parse, from bundling all of zod.
+ * to its default. The router validates search before passing it to the page.
  */
-export const ViewSearch = z.object({
-	benchmark: withFallback(z.enum(BENCHMARK_IDS), "intelligence"),
-	scale: withFallback(z.enum(["log", "linear"]), "log"),
-	pareto: withFallback(z.boolean(), false),
-	api: withFallback(z.boolean(), true),
+const ViewSearch = Schema.Struct({
+	benchmark: withFallback(Schema.Literals(BENCHMARK_IDS), "intelligence"),
+	scale: withFallback(Schema.Literals(["log", "linear"]), "log"),
+	pareto: withFallback(Schema.Boolean, false),
+	api: withFallback(Schema.Boolean, true),
 	/** Model names at the right end of each line; off gives the plot more room. */
-	labels: withFallback(z.boolean(), true),
+	labels: withFallback(Schema.Boolean, true),
 	// Plain strings, not brands: structural sharing needs JSON shapes and reads a
 	// brand as String's methods. selectedPlans and selectedFamilies return brands.
 	plans: knownSelection<string>(plans.map((p) => p.id)),
@@ -91,14 +70,20 @@ export const ViewSearch = z.object({
 	/** The "Which plan fits" inputs; see fit.ts. */
 	fit: optionalValid(FitSearch),
 	/** The section in view; unset is the top of the page. */
-	chart: optionalValid(z.enum(CHART_SECTIONS)),
+	chart: optionalValid(Schema.Literals(CHART_SECTIONS)),
 });
-export type ViewSearch = z.infer<typeof ViewSearch>;
+export type ViewSearch = typeof ViewSearch.Type;
+export const parseViewSearch = Schema.decodeUnknownSync(ViewSearch);
 
 /** Params that only pick the section to scroll to, so they draw nothing. */
 export const SCROLL_ONLY_PARAMS = [
 	"chart",
 ] as const satisfies readonly (keyof ViewSearch)[];
+
+/** Search keys that change what the prerendered page draws. */
+export const DRAWN_PARAMS = Object.keys(ViewSearch.fields).filter(
+	(key) => !SCROLL_ONLY_PARAMS.some((scrollKey) => scrollKey === key),
+);
 
 /** The view without the scroll-only params. */
 export type DrawnView = Omit<ViewSearch, (typeof SCROLL_ONLY_PARAMS)[number]>;
@@ -112,7 +97,7 @@ export const FIT_ONLY_PARAMS = [
 export type ChartView = Omit<DrawnView, (typeof FIT_ONLY_PARAMS)[number]>;
 
 /** The view of a link with no query string: the one the page is prerendered with. */
-export const DEFAULT_VIEW: ViewSearch = ViewSearch.parse({});
+export const DEFAULT_VIEW: ViewSearch = parseViewSearch({});
 
 /** The plans people compare first: each harness's headline tier. */
 const DEFAULT_PLANS = ["claude-max-20x", "chatgpt-pro-200", "opencode-go"];

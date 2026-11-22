@@ -1,14 +1,6 @@
 import { useHydrated } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { SCROLL_ONLY_PARAMS, ViewSearch } from "#/lib/view";
-
-/**
- * The params that change what the page draws. The scroll-only ones are left
- * out: the prerendered page is right for them.
- */
-const DRAWN_PARAMS = Object.keys(ViewSearch.shape).filter(
-	(key) => !(SCROLL_ONLY_PARAMS as readonly string[]).includes(key),
-);
+import { DRAWN_PARAMS } from "#/lib/view";
 
 /**
  * Runs in <head> before first paint. A link that sets a drawn param gets

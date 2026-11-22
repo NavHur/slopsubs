@@ -1,5 +1,5 @@
-// The fixed value sets the schemas and the page share. Kept free of zod so the
-// client can import them without bundling the schemas.
+// Value sets shared by the schemas and the page. Kept here so the page does
+// not import the dataset schemas.
 
 export const EFFORTS = [
 	"none",

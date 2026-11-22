@@ -1,7 +1,9 @@
+import * as Effect from "effect/Effect";
 import { createElement, Fragment, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { DEFAULT_HEIGHT } from "#/components/chart/geometry";
 import { DM_SANS, DM_SANS_LATIN_URL } from "#/lib/webFont";
+import { cachedFontDataUrl, FontAssets } from "./export-font";
 
 /** The chart lays out at this size for export, whatever the screen size, so
  * phones export the wide desktop layout too, not their compact one. A chart
@@ -228,36 +230,14 @@ function serializeWithStyles(svg: SVGSVGElement): string {
 	return new XMLSerializer().serializeToString(clone);
 }
 
-let fontCssPromise: Promise<string> | null = null;
+const fontDataUrl = cachedFontDataUrl(DM_SANS_LATIN_URL).pipe(
+	Effect.provide(FontAssets.layer),
+);
 
 /** DM Sans as data URLs: an SVG image cannot fetch the page's web fonts. */
-function embeddedFontCss(): Promise<string> {
-	fontCssPromise ??= loadFontCss().catch((error: unknown) => {
-		fontCssPromise = null;
-		throw error;
-	});
-	return fontCssPromise;
-}
-
-async function loadFontCss(): Promise<string> {
-	const dataUrl = await fetchDataUrl(DM_SANS_LATIN_URL);
+async function embeddedFontCss(): Promise<string> {
+	const dataUrl = await Effect.runPromise(fontDataUrl);
 	return `@font-face { font-family: "${DM_SANS}"; font-weight: 100 1000; src: url(${dataUrl}) format("woff2"); }`;
-}
-
-async function fetchOk(url: string): Promise<Response> {
-	const response = await fetch(url);
-	if (!response.ok) throw new Error(`${url} returned ${response.status}`);
-	return response;
-}
-
-async function fetchDataUrl(url: string): Promise<string> {
-	const blob = await (await fetchOk(url)).blob();
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onload = () => resolve(reader.result as string);
-		reader.onerror = () => reject(reader.error);
-		reader.readAsDataURL(blob);
-	});
 }
 
 async function svgImage(

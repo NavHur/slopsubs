@@ -64,8 +64,8 @@ const config = defineConfig({
 		},
 		overrides: [
 			{
-				// Classic zod and the schemas stay out of the client bundle; validate
-				// at import (scripts/*, data.test.ts). zod/mini and types are fine.
+				// Keep the generated dataset schemas out of the client bundle.
+				// The import scripts and data tests validate those files.
 				files: [
 					"src/components/**",
 					"src/routes/**",
@@ -77,13 +77,6 @@ const config = defineConfig({
 					"no-restricted-imports": [
 						"error",
 						{
-							paths: ["zod", "zod/v3", "zod/v4", "zod/v4/classic"].map(
-								(name) => ({
-									name,
-									message:
-										"Use zod/mini: classic zod bloats the client bundle.",
-								}),
-							),
 							patterns: [
 								{
 									group: ["#/domain/model", "**/domain/model*", "./model*"],
