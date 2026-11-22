@@ -37,6 +37,7 @@ describe("built site server", () => {
 		expect(await response.text()).toBe("built asset");
 		expect(readFile).toHaveBeenCalledWith(
 			expect.stringContaining(`/dist/client/${file}`),
+			expect.objectContaining({ signal: expect.any(AbortSignal) }),
 		);
 	});
 	it.each(["ENOENT", "EISDIR"])("returns an empty 404 for %s", async (code) => {
@@ -48,6 +49,21 @@ describe("built site server", () => {
 		expect(response.status).toBe(404);
 		expect(await response.text()).toBe("");
 	});
+	it("rejects a request target outside the local origin before reading files", async () => {
+		server = await serveSite();
+		const handle = vi.mocked(createServer).mock.calls[0][0] as RequestListener;
+		const response = { writeHead: vi.fn(), end: vi.fn() };
+		response.writeHead.mockReturnValue(response);
+		await expect(
+			handle(
+				{ url: "//different-origin.example/app.js" } as IncomingMessage,
+				response as unknown as ServerResponse,
+			),
+		).resolves.toBeUndefined();
+		expect(response.writeHead).toHaveBeenCalledWith(400);
+		expect(readFile).not.toHaveBeenCalled();
+	});
+
 	it("answers 500 and rethrows any other read failure", async () => {
 		const failure = Object.assign(new Error("denied"), { code: "EACCES" });
 		vi.mocked(readFile).mockRejectedValue(failure);
@@ -60,7 +76,7 @@ describe("built site server", () => {
 				{ url: "/app.js" } as IncomingMessage,
 				response as unknown as ServerResponse,
 			),
-		).rejects.toBe(failure);
+		).rejects.toMatchObject({ _tag: "AssetReadFailed", cause: failure });
 		expect(response.writeHead).toHaveBeenCalledWith(500);
 		expect(response.end).toHaveBeenCalledExactlyOnceWith();
 	});
