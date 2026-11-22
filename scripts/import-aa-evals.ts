@@ -11,7 +11,12 @@ import {
 import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import { AaEvalsDataset } from "../src/domain/model.ts";
 import { parseArgs, summaryLine } from "./aa-eval-cli.ts";
-import { aaPageSlugs, loadAaEvalPages, loadAaPages } from "./aa-page.ts";
+import {
+	aaPageSlugs,
+	loadAaEvalPages,
+	loadAaPages,
+	readAaPayload,
+} from "./aa-page.ts";
 import { loadCatalogByFamily } from "./catalog-by-family.ts";
 import { readJsonFile, TextFiles } from "./effects/files.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
@@ -64,15 +69,15 @@ const main = Effect.gen(function* () {
 	const { html, evalHtml } = parseArgs(process.argv.slice(2));
 	const byFamily = yield* loadCatalogByFamily(ROOT);
 	const covered = Object.values(PLAN_FAMILIES).flatMap((plan) => plan.families);
-	const { rows, skips, carry } = importAaEvals({
-		modelPages: yield* loadAaPages(
-			aaPageSlugs(covered, [...byFamily.values()].flat()),
-			html,
-		),
-		evalPages: yield* loadAaEvalPages(evalHtml),
-		byFamily,
-		prior: yield* readPriorRows,
-	});
+	const modelPages = yield* loadAaPages(
+		aaPageSlugs(covered, [...byFamily.values()].flat()),
+		html,
+	);
+	const evalPages = yield* loadAaEvalPages(evalHtml);
+	const prior = yield* readPriorRows;
+	const { rows, skips, carry } = yield* readAaPayload(() =>
+		importAaEvals({ modelPages, evalPages, byFamily, prior }),
+	);
 	logSummary(rows, skips);
 	logCarry(carry);
 	const output = yield* Schema.decodeUnknownEffect(AaEvalsDataset)({

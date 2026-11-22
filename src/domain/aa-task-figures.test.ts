@@ -1,5 +1,5 @@
+import { Schema } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-import { ZodError } from "zod";
 import { importAaEvals } from "./aa-task-figures";
 import {
 	ALPHA,
@@ -222,13 +222,13 @@ describe("importAaEvals checks", () => {
 		const { answer, reasoning } = SONNET.tokenCounts.briefcase;
 		const briefcase = { answer: -1, reasoning: answer + reasoning + 1 };
 		const evalPages = [[evalPageRecord({ tokenCounts: { briefcase } })]];
-		expect(() => run({ evalPages })).toThrow(ZodError);
+		expect(() => run({ evalPages })).toThrow(Schema.SchemaError);
 	});
 
 	it("stops when AA's index output tokens are negative", () => {
 		const record = modelRecord();
 		record.intelligenceIndexOutputTokensPerTask.output = -1;
-		expect(() => run({ models: [record] })).toThrow(ZodError);
+		expect(() => run({ models: [record] })).toThrow(Schema.SchemaError);
 	});
 
 	it("stops when AA's index time makes the output speed overflow", () => {
@@ -247,7 +247,7 @@ describe("importAaEvals checks", () => {
 	it("stops when AA's index time per task is negative", () => {
 		const record = modelRecord();
 		record.intelligenceIndexTimePerTask = -1;
-		expect(() => run({ models: [record] })).toThrow(ZodError);
+		expect(() => run({ models: [record] })).toThrow(Schema.SchemaError);
 	});
 
 	it("stops when two eval pages split one eval's tokens differently, though they sum alike", () => {

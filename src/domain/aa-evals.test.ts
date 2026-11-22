@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { flightFromHtml, pickModel, readModels, resolveRows } from "./aa-evals";
+import { AaImportError } from "./aa-import-error";
 import { pageOf, scoredRecord, type Fixture } from "./aa-test-pages";
 import type { BenchmarkPoint } from "./model";
 
@@ -159,4 +160,10 @@ describe("resolveRows", () => {
 			resolveRows([row("beta", null), row("beta", "default")], byFamily),
 		).toThrow(/Two rows for beta@default@omniscience/);
 	});
+});
+
+it("rejects a malformed flight chunk as an AA import error", () => {
+	expect(() => flightFromHtml(String.raw`__next_f.push([1,"\q"])`)).toThrow(
+		AaImportError,
+	);
 });

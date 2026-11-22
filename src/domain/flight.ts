@@ -1,6 +1,9 @@
 // Scanning primitives shared by the readers of an AA model page's Next.js
 // flight payload, and by the importer reading slopalytics' JS bundle.
 
+import { Schema } from "effect";
+import { AaImportError } from "./aa-import-error";
+
 const BRACE_DELTA: Record<string, number> = { "{": 1, "}": -1 };
 
 /** Where a model record (or another id-and-slug object) opens. */
@@ -28,7 +31,8 @@ export function firstReading(
 		seen.set(slug, reading);
 		return true;
 	}
-	if (earlier !== reading) throw new Error(`AA's pages disagree on ${slug}`);
+	if (earlier !== reading)
+		throw new AaImportError({ message: `AA's pages disagree on ${slug}` });
 	return false;
 }
 
@@ -40,28 +44,33 @@ function objectEnd(text: string, start: number): number {
 		else depth += BRACE_DELTA[text[i]] ?? 0;
 		if (depth === 0) return i + 1;
 	}
-	throw new Error(`Object at offset ${start} never closes`);
+	throw new AaImportError({
+		message: `Object at offset ${start} never closes`,
+	});
 }
 
+const decodeObject = Schema.decodeUnknownSync(
+	Schema.fromJsonString(Schema.Record(Schema.String, Schema.Unknown)),
+);
+
 /** The object starting at `start`, parsed. */
-function objectAt(flight: string, start: number): unknown {
+function objectAt(flight: string, start: number) {
 	const text = flight.slice(start, objectEnd(flight, start));
 	try {
-		return JSON.parse(text);
+		return decodeObject(text);
 	} catch (cause) {
-		throw new Error(`Record at offset ${start} is not valid JSON`, { cause });
+		if (!(cause instanceof Schema.SchemaError)) throw cause;
+		throw new AaImportError({
+			message: `Record at offset ${start} is not valid JSON`,
+			cause,
+		});
 	}
 }
 
 /** Every model record in the payload, unvalidated: each id-and-slug object
  * that carries an Intelligence Index field, which a nested creator lacks. */
-export function flightRecords(flight: string): object[] {
+export function flightRecords(flight: string) {
 	return [...flight.matchAll(MODEL_START_PATTERN)]
 		.map((found) => objectAt(flight, found.index))
-		.filter(
-			(record): record is object =>
-				typeof record === "object" &&
-				record !== null &&
-				"intelligenceIndex" in record,
-		);
+		.filter((record) => Object.hasOwn(record, "intelligenceIndex"));
 }

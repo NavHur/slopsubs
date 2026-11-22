@@ -9,7 +9,7 @@ import { joinAaSites, readAaSite } from "../src/domain/aa-site.ts";
 import { mergeCatalog, SlopaPoint } from "../src/domain/catalog.ts";
 import { BenchmarkDataset } from "../src/domain/model.ts";
 import { roundedOrNull } from "../src/domain/rounding.ts";
-import { aaPageSlugs, loadAaPages } from "./aa-page.ts";
+import { aaPageSlugs, loadAaPages, readAaPayload } from "./aa-page.ts";
 import { parseArgs } from "./benchmark-args.ts";
 import { extract, type Literal } from "./bundle-literal.ts";
 import { TextFiles } from "./effects/files.ts";
@@ -101,7 +101,9 @@ const main = Effect.gen(function* () {
 		aaPageSlugs(coveredFamilies, slopa),
 		args.html,
 	);
-	const aa = joinAaSites(pages.map((page) => readAaSite(flightFromHtml(page))));
+	const aa = yield* readAaPayload(() =>
+		joinAaSites(pages.map((page) => readAaSite(flightFromHtml(page)))),
+	);
 	const merged = mergeCatalog(aa.models, slopa, {
 		coveredFamilies,
 		siteCosts: aa.costs,

@@ -28,3 +28,7 @@ export const UtcTimestamp = Schema.String.check(
 export const UrlString = Schema.String.check(
 	Schema.makeFilter((value) => URL.canParse(value) || "Expected a URL"),
 );
+
+export const NonNegative = Schema.Finite.check(
+	Schema.isGreaterThanOrEqualTo(0),
+);

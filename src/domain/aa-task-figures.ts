@@ -16,6 +16,7 @@ import {
 	type ResolvedRow,
 	type Skips,
 } from "./aa-evals";
+import { AaImportError } from "./aa-import-error";
 import type { BenchmarkPoint } from "./model";
 import { roundedOrNull } from "./rounding";
 
@@ -115,9 +116,13 @@ function carryReport(
  * pages again, which carrying figures forward must not hide. */
 function checkSomethingFresh(carry: CarryReport): void {
 	if (!carry.costFresh)
-		throw new Error("AA's model pages gave no fresh cost for any row");
+		throw new AaImportError({
+			message: "AA's model pages gave no fresh cost for any row",
+		});
 	if (!carry.figuresFresh)
-		throw new Error("AA's eval pages gave no fresh tokens for any row");
+		throw new AaImportError({
+			message: "AA's eval pages gave no fresh tokens for any row",
+		});
 }
 
 export function importAaEvals(input: ImportInput): ImportResult {
@@ -130,9 +135,11 @@ export function importAaEvals(input: ImportInput): ImportResult {
 	const raw = models.flatMap((model) =>
 		withTokensAndTime(model, tokens.get(model.id)),
 	);
-	if (!raw.length) throw new Error("No eval rows extracted from website");
+	if (!raw.length)
+		throw new AaImportError({ message: "No eval rows extracted from website" });
 	const { rows: fresh, skips } = resolveRows(raw, input.byFamily);
-	if (!fresh.length) throw new Error("No eval rows matched the catalog");
+	if (!fresh.length)
+		throw new AaImportError({ message: "No eval rows matched the catalog" });
 	const prior = new Map(input.prior.map((r) => [rowKey(r), r]));
 	const rows = fresh.map((row) => carryRow(row, prior.get(rowKey(row))));
 	const carry = carryReport(fresh, rows);
