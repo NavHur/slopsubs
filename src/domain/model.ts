@@ -126,8 +126,11 @@ const ReportedCap = Schema.Struct({
 	/**
 	 * API-equivalent spend on each model that fills the weekly cap once. Models
 	 * differ: a model that fills the gauge faster gets fewer API dollars.
+	 * Keys are checked first: a record drops keys its key schema rejects.
 	 */
-	weeklyCapApiUsdByFamily: Schema.Record(FamilyId, PositiveUsd),
+	weeklyCapApiUsdByFamily: Schema.Record(Schema.String, Schema.Unknown)
+		.check(Schema.isPropertyNames(FamilyId))
+		.pipe(Schema.decodeTo(Schema.Record(FamilyId, PositiveUsd))),
 	by: Schema.String,
 	url: UrlString,
 	/** How the figure was reached, shown next to it. */

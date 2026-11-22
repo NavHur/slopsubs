@@ -42,4 +42,19 @@ describe("dataset validation", () => {
 			decode([{ ...mark, startUsedPercent: mark.endUsedPercent }]),
 		).toThrow(/endUsedPercent must exceed startUsedPercent/);
 	});
+
+	it("rejects a reported cap with a blank family key instead of dropping it", () => {
+		const plan = {
+			...plansJson[0],
+			reportedCap: {
+				weeklyCapApiUsdByFamily: { "": 20, valid: 30 },
+				by: "test",
+				url: "https://example.com/",
+				basis: "test",
+			},
+		};
+		expect(() => Schema.decodeUnknownSync(Plans)([plan])).toThrow(
+			/length of at least 1/,
+		);
+	});
 });

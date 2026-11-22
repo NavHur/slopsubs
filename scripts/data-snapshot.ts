@@ -68,7 +68,7 @@ function readTexts<E>(read: (file: FileName) => Effect.Effect<string, E>) {
 
 function decodeDataset<S extends Schema.Constraint>(
 	schema: S,
-	path: FileName,
+	path: string,
 	text: string,
 ) {
 	return Effect.gen(function* () {
@@ -83,27 +83,32 @@ function decodeDataset<S extends Schema.Constraint>(
 
 function decodeSnapshot(
 	texts: Texts,
+	label: (file: FileName) => string,
 ): Effect.Effect<DataSnapshot, InvalidJsonFile> {
 	return Effect.gen(function* () {
 		const { benchmarks, aaEvals, frontierCode, chart, plans } =
 			yield* Effect.all({
 				benchmarks: decodeDataset(
 					BenchmarkDataset,
-					GENERATED_FILES.benchmarks,
+					label(GENERATED_FILES.benchmarks),
 					texts.benchmarks,
 				),
 				aaEvals: decodeDataset(
 					AaEvalsDataset,
-					GENERATED_FILES.aaEvals,
+					label(GENERATED_FILES.aaEvals),
 					texts.aaEvals,
 				),
 				frontierCode: decodeDataset(
 					FrontierCodeDataset,
-					GENERATED_FILES.frontierCode,
+					label(GENERATED_FILES.frontierCode),
 					texts.frontierCode,
 				),
-				chart: decodeDataset(ChartData, GENERATED_FILES.chart, texts.chart),
-				plans: decodeDataset(Plans, GENERATED_FILES.plans, texts.plans),
+				chart: decodeDataset(
+					ChartData,
+					label(GENERATED_FILES.chart),
+					texts.chart,
+				),
+				plans: decodeDataset(Plans, label(GENERATED_FILES.plans), texts.plans),
 			});
 		return {
 			benchmarks: benchmarks.data,
@@ -113,7 +118,7 @@ function decodeSnapshot(
 			plans: plans.data,
 			samples: yield* decodeJsonFile(
 				LimitSamples,
-				"samples.json",
+				label("samples.json"),
 				texts.samples,
 			),
 			raw: {
@@ -138,9 +143,19 @@ export function changesSince(ref: string) {
 			],
 			{ concurrency: 2 },
 		);
-		const before = yield* decodeSnapshot(base);
-		const after = yield* decodeSnapshot(current);
-		return { changes: summarizeDataChanges(before, after), base };
+		return { changes: yield* compareTexts(ref, base, current), base };
+	});
+}
+
+/** Decode errors name `ref:path` for the base copy and the path for current. */
+export function compareTexts(ref: string, base: Texts, current: Texts) {
+	return Effect.gen(function* () {
+		const before = yield* decodeSnapshot(
+			base,
+			(file) => `${ref}:${DATA_DIR}${file}`,
+		);
+		const after = yield* decodeSnapshot(current, (file) => DATA_DIR + file);
+		return summarizeDataChanges(before, after);
 	});
 }
 
