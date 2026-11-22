@@ -1,4 +1,5 @@
-import { readFile, writeFile } from "node:fs/promises";
+import type { Dirent } from "node:fs";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { Context, Data, Effect, Layer, Schema } from "effect";
 
 export class FileReadError extends Data.TaggedError("FileReadError")<{
@@ -32,6 +33,9 @@ export class TextFiles extends Context.Service<
 	TextFiles,
 	{
 		readonly read: (path: string | URL) => Effect.Effect<string, FileReadError>;
+		readonly list: (
+			path: string | URL,
+		) => Effect.Effect<Dirent[], FileReadError>;
 		readonly write: (
 			path: string | URL,
 			text: string,
@@ -42,6 +46,11 @@ export class TextFiles extends Context.Service<
 		read: (path) =>
 			Effect.tryPromise({
 				try: (signal) => readFile(path, { encoding: "utf8", signal }),
+				catch: (cause) => new FileReadError({ path: String(path), cause }),
+			}),
+		list: (path) =>
+			Effect.tryPromise({
+				try: () => readdir(path, { withFileTypes: true }),
 				catch: (cause) => new FileReadError({ path: String(path), cause }),
 			}),
 		write: (path, text) =>

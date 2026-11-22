@@ -1,5 +1,10 @@
+import { Data } from "effect";
 import { type AaEvalId, chartScore } from "./eval-units.ts";
 import type { AaEvalRow, BenchmarkPoint, FrontierCodeRow } from "./model";
+
+export class LeaderboardDataError extends Data.TaggedError(
+	"LeaderboardDataError",
+)<{ message: string }> {}
 
 /**
  * FrontierCode rows as chart points, named, labelled and priced from the
@@ -14,8 +19,14 @@ export function frontierCodePoints(
 	return rows.map((row) => {
 		const model = modelOf.get(row.family);
 		const effort = effortOf.get(row.effort);
-		if (!model) throw new Error(`No catalog model for ${row.family}`);
-		if (!effort) throw new Error(`No catalog label for effort ${row.effort}`);
+		if (!model)
+			throw new LeaderboardDataError({
+				message: `No catalog model for ${row.family}`,
+			});
+		if (!effort)
+			throw new LeaderboardDataError({
+				message: `No catalog label for effort ${row.effort}`,
+			});
 		return {
 			...model,
 			id: `${row.family}@${row.effort}`,
@@ -49,7 +60,10 @@ export function evalPoints(
 		.map((row) => {
 			const id = `${row.family}@${row.effort}`;
 			const model = modelOf.get(id);
-			if (!model) throw new Error(`No catalog model for ${id}`);
+			if (!model)
+				throw new LeaderboardDataError({
+					message: `No catalog model for ${id}`,
+				});
 			return {
 				...model,
 				id,
