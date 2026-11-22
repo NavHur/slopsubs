@@ -6,6 +6,7 @@ import { FetchHttpClient } from "effect/http";
 import { EFFORTS } from "../src/domain/enums.ts";
 import { FrontierCodeDataset } from "../src/domain/model.ts";
 import { roundedOrNull } from "../src/domain/rounding.ts";
+import { NonNegative } from "../src/domain/wire-schemas.ts";
 import { loadCatalogByFamily } from "./catalog-by-family.ts";
 import { TextFiles } from "./effects/files.ts";
 import { getText } from "./effects/http.ts";
@@ -25,7 +26,7 @@ const Result = Schema.Struct({
 	correct: Schema.Finite,
 	new_score: Schema.Finite,
 	tokens: Schema.NullOr(Schema.Finite),
-	cost: Schema.NullOr(Schema.Finite.check(Schema.isGreaterThanOrEqualTo(0))),
+	cost: Schema.NullOr(NonNegative),
 });
 
 const Leaderboard = Schema.Struct({
