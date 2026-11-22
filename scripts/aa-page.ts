@@ -37,7 +37,7 @@ const HEADERS = { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)" };
 function loadPages(
 	urls: readonly string[],
 	paths: readonly string[],
-	rejectRedirects: boolean,
+	fetchOptions: { rejectRedirects?: boolean } = {},
 ) {
 	return Effect.gen(function* () {
 		const files = yield* TextFiles;
@@ -47,11 +47,7 @@ function loadPages(
 			});
 		return yield* Effect.forEach(
 			urls,
-			(url) =>
-				getText(url, {
-					headers: HEADERS,
-					rejectRedirects,
-				}),
+			(url) => getText(url, { headers: HEADERS, ...fetchOptions }),
 			{ concurrency: PARALLEL_FETCHES },
 		);
 	});
@@ -65,7 +61,6 @@ export function loadAaPages(
 	return loadPages(
 		slugs.map((slug) => MODEL_PAGE + slug),
 		paths,
-		false,
 	);
 }
 
@@ -75,7 +70,7 @@ export function loadAaEvalPages(paths: readonly string[]) {
 	return loadPages(
 		[...pages].map((page) => EVAL_PAGE + page),
 		paths,
-		true,
+		{ rejectRedirects: true },
 	);
 }
 

@@ -125,14 +125,13 @@ const main = Effect.gen(function* () {
 				"Update the bundle, or pass --allow-missing-cost to publish them as " +
 				'"No cost data".',
 		});
-	const output = {
+	const output = yield* Schema.decodeUnknownEffect(BenchmarkDataset)({
 		fetchedAt: new Date(yield* Clock.currentTimeMillis).toISOString(),
 		source:
 			"Artificial Analysis website (scores, prices, releases, cost, tokens and time per task); Slopalytics (catalog, and figures AA's site lacks)",
 		frontier,
 		models: merged.models,
-	};
-	yield* Schema.decodeUnknownEffect(BenchmarkDataset)(output);
+	});
 	yield* files.write(OUTPUT, `${JSON.stringify(output, null, 2)}\n`);
 	console.log(
 		`Wrote ${merged.models.length} benchmark points, ${Object.keys(frontier).length} frontier families, from ${pages.length} AA model pages`,
