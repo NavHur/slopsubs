@@ -117,7 +117,7 @@ export function priceWindow(
 		byFamily[family] = (byFamily[family] ?? 0) + usd;
 	}
 	return {
-		// SAFETY: not validated here; measure.ts brands every sample with LimitSamples.parse.
+		// SAFETY: not validated here; measure.ts brands every sample with the LimitSamples schema.
 		plan: start.plan as LimitSample["plan"],
 		from: start.at,
 		to: end.at,

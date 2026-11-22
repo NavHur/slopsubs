@@ -1,3 +1,4 @@
+import { Schema } from "effect";
 // Imports AA's per-eval Intelligence Index scores and task figures into
 // src/data/aa-evals.json; a figure AA stops publishing keeps its prior value.
 
@@ -21,7 +22,7 @@ const OUTPUT = new URL("src/data/aa-evals.json", ROOT);
 async function readPriorRows(): Promise<AaEvalRow[]> {
 	try {
 		const text = await readFile(OUTPUT, "utf8");
-		return AaEvalsDataset.parse(JSON.parse(text)).rows;
+		return Schema.decodeUnknownSync(AaEvalsDataset)(JSON.parse(text)).rows;
 	} catch (cause) {
 		const missing =
 			cause instanceof Error && "code" in cause && cause.code === "ENOENT";
@@ -74,7 +75,7 @@ async function main() {
 	});
 	logSummary(rows, skips);
 	logCarry(carry);
-	const output = AaEvalsDataset.parse({
+	const output = Schema.decodeUnknownSync(AaEvalsDataset)({
 		fetchedAt: new Date().toISOString(),
 		source: "Artificial Analysis website (model and eval page flight payloads)",
 		evals: [...AA_EVAL_IDS],

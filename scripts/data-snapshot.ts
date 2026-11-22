@@ -1,3 +1,4 @@
+import { Schema } from "effect";
 // Reads the generated data files from the working tree or a git ref, and
 // compares them, for the refresh scripts.
 
@@ -60,12 +61,14 @@ function parse(texts: Texts): DataSnapshot {
 		plans: json("plans.json"),
 	};
 	return {
-		benchmarks: BenchmarkDataset.parse(raw.benchmarks),
-		aaEvals: AaEvalsDataset.parse(raw.aaEvals),
-		frontierCode: FrontierCodeDataset.parse(raw.frontierCode),
-		chart: ChartData.parse(raw.chart),
-		plans: Plans.parse(raw.plans),
-		samples: LimitSamples.parse(json("samples.json")),
+		benchmarks: Schema.decodeUnknownSync(BenchmarkDataset)(raw.benchmarks),
+		aaEvals: Schema.decodeUnknownSync(AaEvalsDataset)(raw.aaEvals),
+		frontierCode: Schema.decodeUnknownSync(FrontierCodeDataset)(
+			raw.frontierCode,
+		),
+		chart: Schema.decodeUnknownSync(ChartData)(raw.chart),
+		plans: Schema.decodeUnknownSync(Plans)(raw.plans),
+		samples: Schema.decodeUnknownSync(LimitSamples)(json("samples.json")),
 		raw,
 	};
 }

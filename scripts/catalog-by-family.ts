@@ -1,3 +1,4 @@
+import { Schema } from "effect";
 // Reads the imported catalog, shared by the importers that file rows under it.
 
 import { readFile } from "node:fs/promises";
@@ -7,7 +8,7 @@ import { BenchmarkDataset, type BenchmarkPoint } from "../src/domain/model.ts";
 export async function loadCatalogByFamily(
 	root: URL,
 ): Promise<Map<string, BenchmarkPoint[]>> {
-	const catalog = BenchmarkDataset.parse(
+	const catalog = Schema.decodeUnknownSync(BenchmarkDataset)(
 		JSON.parse(
 			await readFile(new URL("src/data/benchmarks.json", root), "utf8"),
 		),
