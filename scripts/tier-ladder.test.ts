@@ -53,8 +53,8 @@ describe("ladderCap", () => {
 	});
 
 	it("has no cap for a ladder with no known tier, so the plan is unmeasured", () => {
-		const pro = { ladder: "google-ai", times: 1 };
-		expect(ladderCap(ladders, pro, "Pro", ["gemini-4-argon"])).toBeNull();
+		const go = { ladder: "minimax-m", times: 1 };
+		expect(ladderCap(ladders, go, "Go", ["minimax-m3-1-flash"])).toBeNull();
 	});
 
 	it("has no cap for a plan on no ladder", () => {

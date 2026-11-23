@@ -56,42 +56,52 @@ const KNOWN_TIERS: Partial<Record<Ladder, KnownTier>> = {
 
 // Theo (t3.gg), "OpenAI is getting desperate", 2026-11-02, 5:08: "on the $500
 // plan, you now get around $10.5,000 of usage. And on the $200 plan... 4.3K".
-const THEO = "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s";
+const THEO = {
+	by: "Theo",
+	url: "https://www.youtube.com/watch?v=Hq2c7pww1Ds&t=308s",
+};
+// mypriors' plan builder, read 2026-11-23: each Google AI tier's own multiple.
+const MYPRIORS = { by: "mypriors", url: "https://mypriors.com/builder" };
 const WEEKS_PER_MONTH = 52 / 12;
-const CODEX_PRO_MULTIPLIER = 21;
-/** Pro 100, 200 and 500 give 10x, 20x and 50x Plus's usage, so a Pro dollar
- * buys twice what a Plus dollar does. */
-const CODEX_PLUS_MULTIPLIER = CODEX_PRO_MULTIPLIER / 2;
+const CODEX_PRO_MULTIPLE = 21;
+
+/** Who reported a plan's multiple: the API-priced dollars a month each
+ * subscription dollar buys, on every model the plan serves. */
+type ReportedMultiple = { by: string; url: string; multiple: number };
 
 /**
- * API-priced dollars a month per subscription dollar: Theo's 21x on every
- * Codex Pro tier (2026-11-02), with Plus at half.
+ * Theo's 21x on every Codex Pro tier (2026-11-02), with Plus at half: Pro 100,
+ * 200 and 500 give 10x, 20x and 50x Plus's usage, so a Pro dollar buys twice
+ * what a Plus dollar does.
  */
-const CODEX_MULTIPLIERS: Record<string, number> = {
-	"chatgpt-plus": CODEX_PLUS_MULTIPLIER,
-	"chatgpt-pro-100": CODEX_PRO_MULTIPLIER,
-	"chatgpt-pro-200": CODEX_PRO_MULTIPLIER,
-	"chatgpt-pro-500": CODEX_PRO_MULTIPLIER,
+const REPORTED_MULTIPLES: Record<string, ReportedMultiple> = {
+	"chatgpt-plus": { ...THEO, multiple: CODEX_PRO_MULTIPLE / 2 },
+	"chatgpt-pro-100": { ...THEO, multiple: CODEX_PRO_MULTIPLE },
+	"chatgpt-pro-200": { ...THEO, multiple: CODEX_PRO_MULTIPLE },
+	"chatgpt-pro-500": { ...THEO, multiple: CODEX_PRO_MULTIPLE },
+	"google-ai-pro": { ...MYPRIORS, multiple: 23 },
+	"google-ai-ultra-5x": { ...MYPRIORS, multiple: 24 },
+	"google-ai-ultra-20x": { ...MYPRIORS, multiple: 49 },
 };
 
-/** Theo's Codex weekly cap for each of the plan's models, or null for a plan
- * he did not report. */
-function codexCap(
+/** The plan's weekly cap from a reported multiple of its price, the same on
+ * each of its models, or null for a plan nobody reported a multiple for. */
+function multipleCap(
 	planId: string,
 	monthlyPriceUsd: number,
 	families: readonly string[],
 ): ReportedCap | null {
-	const multiplier = CODEX_MULTIPLIERS[planId];
-	if (multiplier === undefined) return null;
-	const monthlyApiUsd = monthlyPriceUsd * multiplier;
+	const reported = REPORTED_MULTIPLES[planId];
+	if (reported === undefined) return null;
+	const monthlyApiUsd = monthlyPriceUsd * reported.multiple;
 	const weekly = monthlyApiUsd / WEEKS_PER_MONTH;
 	return {
 		weeklyCapApiUsdByFamily: Object.fromEntries(
 			families.map((family) => [family, weekly]),
 		),
-		by: "Theo",
-		url: THEO,
-		basis: `Theo: ${multiplier}x the price, $${monthlyApiUsd.toLocaleString("en-US")} a month of API-priced inference`,
+		by: reported.by,
+		url: reported.url,
+		basis: `${reported.by}: ${reported.multiple}x the price, $${Math.round(monthlyApiUsd).toLocaleString("en-US")} a month of API-priced inference`,
 	};
 }
 
@@ -289,7 +299,7 @@ function planRows(
 				confidence: p.confidence,
 				sourceUrl: p.sources[0].url,
 				reportedCap:
-					codexCap(p.planId, p.monthlyPriceUsd, families) ??
+					multipleCap(p.planId, p.monthlyPriceUsd, families) ??
 					creditCap(p, families, rates) ??
 					ladderCap(KNOWN_TIERS, entry.tier, label, families),
 				publishedAllowance: allowance,

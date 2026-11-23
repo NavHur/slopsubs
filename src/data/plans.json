@@ -342,7 +342,17 @@
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
     "sourceUrl": "https://gemini.google/subscriptions/",
-    "reportedCap": null,
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "gemini-4-neon": 106.10076923076923,
+        "gemini-4-argon": 106.10076923076923,
+        "gemini-4-hydrogen": 106.10076923076923,
+        "gemini-3-8-flash": 106.10076923076923
+      },
+      "by": "mypriors",
+      "url": "https://mypriors.com/builder",
+      "basis": "mypriors: 23x the price, $460 a month of API-priced inference"
+    },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
@@ -374,7 +384,18 @@
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
     "sourceUrl": "https://gemini.google/subscriptions/",
-    "reportedCap": null,
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "gemini-4-carbon": 553.7907692307692,
+        "gemini-4-neon": 553.7907692307692,
+        "gemini-4-argon": 553.7907692307692,
+        "gemini-4-hydrogen": 553.7907692307692,
+        "gemini-3-8-flash": 553.7907692307692
+      },
+      "by": "mypriors",
+      "url": "https://mypriors.com/builder",
+      "basis": "mypriors: 24x the price, $2,400 a month of API-priced inference"
+    },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
@@ -406,7 +427,18 @@
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
     "sourceUrl": "https://gemini.google/subscriptions/",
-    "reportedCap": null,
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "gemini-4-carbon": 2261.4253846153847,
+        "gemini-4-neon": 2261.4253846153847,
+        "gemini-4-argon": 2261.4253846153847,
+        "gemini-4-hydrogen": 2261.4253846153847,
+        "gemini-3-8-flash": 2261.4253846153847
+      },
+      "by": "mypriors",
+      "url": "https://mypriors.com/builder",
+      "basis": "mypriors: 49x the price, $9,800 a month of API-priced inference"
+    },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},

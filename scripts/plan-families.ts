@@ -169,7 +169,6 @@ const GOOGLE_PRO = [
 	"gemini-3-8-flash",
 ];
 const GOOGLE_ULTRA = ["gemini-4-carbon", ...GOOGLE_PRO];
-const googleTier = (times: number): Tier => ({ ladder: "google-ai", times });
 const KIMI_PLUS = ["kimi-k3", "kimi-k3-1-pro"];
 /** Pro and up add K2.7 Code HighSpeed. */
 const KIMI = {
@@ -256,19 +255,10 @@ export const PLAN_FAMILIES: Record<string, PlanEntry> = {
 	"zai-glm-coding-lite": { ...ZAI, shortLabel: "GLM Coding Lite" },
 	"zai-glm-coding-pro": { ...ZAI, shortLabel: "GLM Coding Pro" },
 	"zai-glm-coding-max": { ...ZAI, shortLabel: "GLM Coding Max" },
-	// Rate-window plans that publish only multiples between their tiers, so
-	// they ship unmeasured until one tier's cap is known.
-	"google-ai-pro": { ...GOOGLE, families: GOOGLE_PRO, tier: googleTier(1) },
-	"google-ai-ultra-5x": {
-		...GOOGLE,
-		families: GOOGLE_ULTRA,
-		tier: googleTier(5),
-	},
-	"google-ai-ultra-20x": {
-		...GOOGLE,
-		families: GOOGLE_ULTRA,
-		tier: googleTier(20),
-	},
+	// Each tier's cap comes from its own reported multiple (build-plans.ts).
+	"google-ai-pro": { ...GOOGLE, families: GOOGLE_PRO },
+	"google-ai-ultra-5x": { ...GOOGLE, families: GOOGLE_ULTRA },
+	"google-ai-ultra-20x": { ...GOOGLE, families: GOOGLE_ULTRA },
 	// Kimi's tier multiples are secondary only, so its plans carry none.
 	"kimi-plus": { ...KIMI, shortLabel: "Kimi Plus", families: KIMI_PLUS },
 	"kimi-pro": KIMI,
