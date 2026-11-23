@@ -13,11 +13,6 @@ import { NonNegative } from "./wire-schemas";
 
 const COST_DECIMALS = 5;
 
-/** Website release slugs the catalog files under another family. */
-const FAMILY_ALIASES: Record<string, string> = {
-	"qwen3-8-max-0902": "qwen3-8-max",
-};
-
 const CHUNK_MARKER = "__next_f.push([1,";
 
 const Score = Schema.optional(Schema.NullOr(Schema.Finite));
@@ -269,8 +264,6 @@ type Resolution = {
 	skips: Skips;
 };
 
-const catalogFamily = (r: EvalRow) => FAMILY_ALIASES[r.family] ?? r.family;
-
 /** The family's one default model, when the website lists it at one effort. */
 function soleDefault(
 	candidates: BenchmarkPoint[],
@@ -285,7 +278,7 @@ function soleDefault(
 /** The row filed under the catalog's family and effort, or null if skipped. */
 function resolveRow(r: EvalRow, resolution: Resolution): ResolvedRow | null {
 	const { byFamily, skips } = resolution;
-	const family = catalogFamily(r);
+	const family = r.family;
 	const candidates = byFamily.get(family);
 	if (!candidates) {
 		skips.families.add(r.family);
@@ -306,7 +299,7 @@ function resolveRow(r: EvalRow, resolution: Resolution): ResolvedRow | null {
 function siteEffortsOf(raw: EvalRow[]): Map<string, Set<string | null>> {
 	const efforts = new Map<string, Set<string | null>>();
 	for (const r of raw) {
-		const family = catalogFamily(r);
+		const family = r.family;
 		efforts.set(family, (efforts.get(family) ?? new Set()).add(r.effort));
 	}
 	return efforts;

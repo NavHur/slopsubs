@@ -14,8 +14,8 @@ const EVAL_PAGE = "https://artificialanalysis.ai/evaluations/";
 const PARALLEL_FETCHES = 4;
 
 /** The page slug for each family: its shortest catalog id (AA's bare model
- * slug, which the page URL takes; `qwen3-8-max-0902` lives at
- * `/models/qwen3-8-max`), or the family id when the catalog has none yet. */
+ * slug, which the page URL takes; `gemini-4-neon-high` lives at
+ * `/models/gemini-4-neon`), or the family id when the catalog has none yet. */
 export function aaPageSlugs(
 	families: Iterable<string>,
 	catalog: readonly { id: string; family: string }[],
