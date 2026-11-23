@@ -108,7 +108,7 @@ you move on.
 ### AA model page
 
 `https://artificialanalysis.ai/models/<slug>`, where the slug is the family's
-shortest catalog `id` (`qwen3-8-max-0902` lives at `/models/qwen3-8-max`).
+shortest catalog `id` (`gemini-4-neon-high` lives at `/models/gemini-4-neon`).
 The page embeds full records only for its own release's variants, AA's nine
 default chart models and about twenty related ones, which is why every covered
 family needs its own page. Records sit in the Next.js flight payload
@@ -155,9 +155,6 @@ family needs its own page. Records sit in the Next.js flight payload
 Match a record to our rows:
 
 - `slug` is our `benchmarks.json` `id`, and `release` is our `family`.
-  `qwen3-8-max-0902` is the exception: AA's release slug, which
-  `aa-evals.json` files under `qwen3-8-max` (`FAMILY_ALIASES` in
-  `src/domain/aa-evals.ts`).
 - `effort` is `effort.slug` (`low` … `max`); `none` means the model does not
   reason. A null effort is a reasoning model with no named effort, which our
   rows file under `default` when that is the family's only reasoning row.
@@ -188,7 +185,7 @@ The catalog is a literal in the site's JS bundle, not JSON. On
 Fields are JS object syntax with template-string values (`` id:`glm-5-3` ``,
 `open:!0` for true). `intelligence`, `cost`, `tokens` and `time` are the
 names `benchmarks.json` calls `score`, `costPerTaskUsd`, `tokensPerTask` and
-`secondsPerTask`. The frontier block starts at `{"gpt-6-astra":{tier:`.
+`secondsPerTask`. The frontier block is the first literal opening `{"<family>":{tier:`.
 slopalytics refreshes from AA itself and lags it (its `fetchedAt` read
 2026-11-10 on 2026-11-17), so where the two disagree, AA wins.
 
