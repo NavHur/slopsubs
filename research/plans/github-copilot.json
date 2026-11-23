@@ -13,7 +13,7 @@
       "OpenCode"
     ],
     "models": [
-      "All plans: Claude Haiku 4.5/5.5, Sonnet 5/5.5, Gemini 3.8 Flash, Gemini 4 Hydrogen, GPT-5.3-Codex, GPT-5.6 Luna/Terra, GPT-6 Luna, GPT-6.1 Terra, Grok 4.5/4.6/4.7, Kimi K3, MAI-Code-1.1-Flash (plans docs, 2026-11-15). Pro has no Opus, Fable, Gemini 4 Argon/Carbon, GPT-6 Astra or the Sol models."
+      "All plans: Claude Haiku 4.5/5.5, Sonnet 5/5.5, Gemini 3.8 Flash, Gemini 4 Hydrogen, GPT-5.3-Codex, GPT-5.6 Luna/Terra, GPT-6 Luna, GPT-6.1 Terra, Grok 4.5/4.6/4.7, Kimi K3, MAI-Code-1.1-Flash (plans docs, 2026-11-23). Pro has no Opus, Fable, Gemini 4 Argon/Carbon/Neon, GPT-6 Astra or the Sol models."
     ],
     "limits": "\"Every plan includes a monthly allowance: 1 AI credit = $0.01 USD.\" Pro: Base 1,000 + flex 500 = 1,500 credits/month ($15). \"Flex allotments may change over time.\" \"Code completions and next edit suggestions don't use credits.\"",
     "allowanceKind": "credit",
@@ -63,7 +63,7 @@
       "OpenCode"
     ],
     "models": [
-      "Everything on Pro plus Claude Opus 4.8/5/5.5, Fable 5/5.1/5.2, Gemini 4 Argon and Carbon, GPT-5.4 nano, GPT-5.6 Sol, GPT-6 Astra, GPT-6 Sol and GPT-6.1 Sol (plans docs, 2026-11-15)."
+      "Everything on Pro plus Claude Opus 4.8/5/5.5, Fable 5/5.1/5.2, Gemini 4 Argon, Carbon and Neon, GPT-5.4 nano, GPT-5.6 Sol, GPT-6 Astra, GPT-6 Sol and GPT-6.1 Sol (plans docs, 2026-11-23)."
     ],
     "limits": "Base 3,900 + flex 3,100 = 7,000 AI credits/month ($70). \"1 AI credit = $0.01 USD.\" \"Flex allotments may change over time.\"",
     "allowanceKind": "credit",
@@ -109,7 +109,7 @@
       "OpenCode"
     ],
     "models": [
-      "Everything on Pro plus Claude Opus 4.8/5/5.5, Fable 5/5.1/5.2, Gemini 4 Argon and Carbon, GPT-5.4 nano, GPT-5.6 Sol, GPT-6 Astra, GPT-6 Sol and GPT-6.1 Sol (plans docs, 2026-11-15)."
+      "Everything on Pro plus Claude Opus 4.8/5/5.5, Fable 5/5.1/5.2, Gemini 4 Argon, Carbon and Neon, GPT-5.4 nano, GPT-5.6 Sol, GPT-6 Astra, GPT-6 Sol and GPT-6.1 Sol (plans docs, 2026-11-23)."
     ],
     "limits": "Base 10,000 + flex 10,000 = 20,000 AI credits/month ($200). \"built for heavy Copilot usage, including sustained agent-driven workflows\".",
     "allowanceKind": "credit",

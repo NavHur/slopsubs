@@ -33,7 +33,7 @@ export const OPENCODE_GO_USD: Record<string, [go: number, goPlus: number]> = {
 	"gpt-5-6-luna": [15, 60],
 	"qwen3-7-plus": [60, 180],
 	"qwen3-8-max": [15, 60],
-	// Raised on the Console Go page (opencode.ai/console/go, 2026-11-17).
+	// Raised on the Console Go page (opencode.ai/console/go, rechecked 2026-11-23).
 	"glm-5-3": [200, 400],
 	"glm-5-2": [60, 180],
 	"glm-5-3-flash": [60, 180],
@@ -80,6 +80,7 @@ const COPILOT_PRO = [
 	"gpt-6-luna",
 	"gpt-5-6-luna",
 	"gemini-3-8-flash",
+	"gemini-4-hydrogen",
 	"grok-4-7",
 	"kimi-k3",
 ];
@@ -90,6 +91,7 @@ const COPILOT_PREMIUM = [
 	"gpt-6-1-sol",
 	"gemini-4-argon",
 	"gemini-4-carbon",
+	"gemini-4-neon",
 	...COPILOT_PRO,
 ];
 const OLLAMA_CLOUD = [
@@ -133,7 +135,7 @@ const WARP_MODELS = [
 	"glm-5-3-flash",
 	"kimi-k3",
 	"minimax-m3",
-	"qwen3-8-max-0902",
+	"qwen3-8-max",
 ];
 
 const CLAUDE_CODE = { lab: "anthropic", vendor: "Claude Code" };
@@ -157,12 +159,16 @@ const ZAI = {
 	vendor: "GLM Coding Plan",
 	families: ["glm-5-3", "glm-5-3-flash"],
 };
-/** Google AI Pro, and Ultra at "5x" and "20x higher usage limits vs. AI Pro". */
-const GOOGLE = {
-	lab: "google",
-	vendor: "Antigravity",
-	families: ["gemini-4-argon", "gemini-3-8-flash"],
-};
+/** Google AI Pro, and Ultra at "5x" and "20x higher usage limits vs. AI Pro".
+ * Ultra adds Carbon (antigravity.google/docs/models, 2026-11-23). */
+const GOOGLE = { lab: "google", vendor: "Antigravity" };
+const GOOGLE_PRO = [
+	"gemini-4-neon",
+	"gemini-4-argon",
+	"gemini-4-hydrogen",
+	"gemini-3-8-flash",
+];
+const GOOGLE_ULTRA = ["gemini-4-carbon", ...GOOGLE_PRO];
 const googleTier = (times: number): Tier => ({ ladder: "google-ai", times });
 const KIMI_PLUS = ["kimi-k3", "kimi-k3-1-pro"];
 /** Pro and up add K2.7 Code HighSpeed. */
@@ -252,9 +258,17 @@ export const PLAN_FAMILIES: Record<string, PlanEntry> = {
 	"zai-glm-coding-max": { ...ZAI, shortLabel: "GLM Coding Max" },
 	// Rate-window plans that publish only multiples between their tiers, so
 	// they ship unmeasured until one tier's cap is known.
-	"google-ai-pro": { ...GOOGLE, tier: googleTier(1) },
-	"google-ai-ultra-5x": { ...GOOGLE, tier: googleTier(5) },
-	"google-ai-ultra-20x": { ...GOOGLE, tier: googleTier(20) },
+	"google-ai-pro": { ...GOOGLE, families: GOOGLE_PRO, tier: googleTier(1) },
+	"google-ai-ultra-5x": {
+		...GOOGLE,
+		families: GOOGLE_ULTRA,
+		tier: googleTier(5),
+	},
+	"google-ai-ultra-20x": {
+		...GOOGLE,
+		families: GOOGLE_ULTRA,
+		tier: googleTier(20),
+	},
 	// Kimi's tier multiples are secondary only, so its plans carry none.
 	"kimi-plus": { ...KIMI, shortLabel: "Kimi Plus", families: KIMI_PLUS },
 	"kimi-pro": KIMI,
