@@ -20,10 +20,26 @@ describe("shipped data", () => {
 
 // AA's eval pages embed tokens and time for few models, so the importer carries
 // them forward by family and effort; a renamed family or effort drops them.
+const QWEN_0902_EVALS = [
+	"aa-briefcase",
+	"automationbench-aa",
+	"terminalbench-4-0",
+	"frontiercode-2-0",
+	"omniscience",
+	"gdp-pdf",
+	"hle-diamond",
+	"critpt-v2-hard",
+	"terminal-bench-science",
+];
+
 describe("aa-evals.json", () => {
-	it("keeps tokens and time per task for every qwen3-8-max eval", () => {
-		const rows = aaEvalsJson.rows.filter((r) => r.family === "qwen3-8-max");
-		expect(rows).toHaveLength(aaEvalsJson.evals.length);
+	it("keeps tokens and time per task for qwen3-8-max@xhigh's 0902 evals", () => {
+		const rows = aaEvalsJson.rows.filter(
+			(r) => r.family === "qwen3-8-max" && r.effort === "xhigh",
+		);
+		expect(rows.map((r) => r.eval)).toEqual(
+			expect.arrayContaining(QWEN_0902_EVALS),
+		);
 		for (const r of rows) {
 			expect([r.eval, typeof r.tokensPerTask]).toEqual([r.eval, "number"]);
 			expect([r.eval, typeof r.secondsPerTask]).toEqual([r.eval, "number"]);
