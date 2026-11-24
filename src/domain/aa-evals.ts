@@ -278,10 +278,10 @@ function soleDefault(
 /** The row filed under the catalog's family and effort, or null if skipped. */
 function resolveRow(r: EvalRow, resolution: Resolution): ResolvedRow | null {
 	const { byFamily, skips } = resolution;
-	const family = r.family;
+	const { family } = r;
 	const candidates = byFamily.get(family);
 	if (!candidates) {
-		skips.families.add(r.family);
+		skips.families.add(family);
 		return null;
 	}
 	const exact = pickModel(candidates, r.effort, family);
@@ -299,8 +299,7 @@ function resolveRow(r: EvalRow, resolution: Resolution): ResolvedRow | null {
 function siteEffortsOf(raw: EvalRow[]): Map<string, Set<string | null>> {
 	const efforts = new Map<string, Set<string | null>>();
 	for (const r of raw) {
-		const family = r.family;
-		efforts.set(family, (efforts.get(family) ?? new Set()).add(r.effort));
+		efforts.set(r.family, (efforts.get(r.family) ?? new Set()).add(r.effort));
 	}
 	return efforts;
 }
