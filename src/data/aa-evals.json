@@ -11350,8 +11350,8 @@
       "eval": "aa-briefcase",
       "score": 1601.7,
       "costPerTaskUsd": 19.57686,
-      "tokensPerTask": null,
-      "secondsPerTask": null
+      "tokensPerTask": 334097,
+      "secondsPerTask": 7107.5
     },
     {
       "family": "qwen3-8-max",
@@ -11359,8 +11359,8 @@
       "eval": "automationbench-aa",
       "score": 0.561905381087678,
       "costPerTaskUsd": 0.39824,
-      "tokensPerTask": null,
-      "secondsPerTask": null
+      "tokensPerTask": 21920,
+      "secondsPerTask": 466.3
     },
     {
       "family": "qwen3-8-max",
@@ -11368,8 +11368,8 @@
       "eval": "terminalbench-4-0",
       "score": 0.388888888888889,
       "costPerTaskUsd": 18.67607,
-      "tokensPerTask": null,
-      "secondsPerTask": null
+      "tokensPerTask": 292512,
+      "secondsPerTask": 6222.9
     },
     {
       "family": "qwen3-8-max",
@@ -11377,8 +11377,8 @@
       "eval": "frontiercode-2-0",
       "score": 0.234232323232323,
       "costPerTaskUsd": 6.71135,
-      "tokensPerTask": null,
-      "secondsPerTask": null
+      "tokensPerTask": 122043,
+      "secondsPerTask": 2596.3
     },
     {
       "family": "qwen3-8-max",
@@ -11386,8 +11386,8 @@
       "eval": "omniscience",
       "score": 10.466666666666667,
       "costPerTaskUsd": 0.00834,
-      "tokensPerTask": null,
-      "secondsPerTask": null
+      "tokensPerTask": 1347,
+      "secondsPerTask": 28.6
     },
     {
       "family": "qwen3-8-max",
@@ -11395,8 +11395,8 @@
       "eval": "gdp-pdf",
       "score": 0.228,
       "costPerTaskUsd": 0.33311,
-      "tokensPerTask": null,
-      "secondsPerTask": null
+      "tokensPerTask": 11279,
+      "secondsPerTask": 240
     },
     {
       "family": "qwen3-8-max",
@@ -11404,8 +11404,8 @@
       "eval": "hle-diamond",
       "score": 0.24,
       "costPerTaskUsd": 0.20676,
-      "tokensPerTask": null,
-      "secondsPerTask": null
+      "tokensPerTask": 34278,
+      "secondsPerTask": 729.2
     },
     {
       "family": "qwen3-8-max",
@@ -11413,8 +11413,8 @@
       "eval": "critpt-v2-hard",
       "score": 0.295,
       "costPerTaskUsd": 1.75714,
-      "tokensPerTask": null,
-      "secondsPerTask": null
+      "tokensPerTask": 129613,
+      "secondsPerTask": 2757.4
     },
     {
       "family": "qwen3-8-max",
@@ -11422,8 +11422,8 @@
       "eval": "terminal-bench-science",
       "score": 0.119047619047619,
       "costPerTaskUsd": 26.52564,
-      "tokensPerTask": null,
-      "secondsPerTask": null
+      "tokensPerTask": 365805,
+      "secondsPerTask": 7782.1
     }
   ]
 }
