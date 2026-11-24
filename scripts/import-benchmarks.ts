@@ -15,43 +15,13 @@ import {
 import { BenchmarkDataset, Frontier } from "../src/domain/model.ts";
 import { aaPageSlugs, loadAaPages, readAaPayload } from "./aa-page.ts";
 import { parseArgs } from "./benchmark-args.ts";
-import { BundleLayoutError, extract } from "./bundle-literal.ts";
+import { extract } from "./bundle-literal.ts";
 import { TextFiles } from "./effects/files.ts";
 import { getText } from "./effects/http.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
 
 const SITE = "https://slopalytics.com";
 const OUTPUT = new URL("../src/data/benchmarks.json", import.meta.url);
-
-/**
- * Frontier families slopalytics still names by a predecessor, keyed by that
- * predecessor. The successor takes its tier, colour and place in the order.
- * ceiling: a stopgap until slopalytics' frontier names the successor; the
- * import then fails here, and the entry should be deleted.
- */
-const FRONTIER_SUCCESSORS: Record<string, string> = {
-	"gpt-6-astra": "gpt-6-2-astra",
-	"gpt-6-1-sol": "gpt-6-2-sol",
-};
-
-function withSuccessors(frontier: Frontier) {
-	return Effect.gen(function* () {
-		for (const [predecessor, successor] of Object.entries(
-			FRONTIER_SUCCESSORS,
-		)) {
-			if (!(predecessor in frontier) || successor in frontier)
-				return yield* new BundleLayoutError({
-					message: `Slopalytics' frontier has moved past ${predecessor}; delete FRONTIER_SUCCESSORS["${predecessor}"].`,
-				});
-		}
-		return Object.fromEntries(
-			Object.entries(frontier).map(([family, entry]) => [
-				FRONTIER_SUCCESSORS[family] ?? family,
-				entry,
-			]),
-		);
-	});
-}
 
 class MissingIndexBundle extends Data.TaggedError("MissingIndexBundle")<{}> {
 	override get message() {
@@ -91,10 +61,10 @@ const main = Effect.gen(function* () {
 	const dataset = yield* Schema.decodeUnknownEffect(SlopalyticsDataset)(
 		yield* extract(bundle, /=\{fetchedAt:/),
 	);
-	const rawFrontier = yield* Schema.decodeUnknownEffect(Frontier)(
-		yield* extract(bundle, /=\{"gpt-6-astra":\{tier:/),
+	// The frontier is the first family-keyed literal of tiers, whichever model leads it.
+	const frontier = yield* Schema.decodeUnknownEffect(Frontier)(
+		yield* extract(bundle, /=\{"[\w.-]+":\{tier:/),
 	);
-	const frontier = yield* withSuccessors(rawFrontier);
 	const slopa = dataset.models.map(slopaPoint);
 	const coveredFamilies = new Set(
 		Object.values(PLAN_FAMILIES).flatMap((plan) => plan.families),

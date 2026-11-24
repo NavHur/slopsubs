@@ -1,6 +1,8 @@
 import { Schema } from "effect";
 import { describe, expect, it } from "vite-plus/test";
+import { AA_EVAL_IDS } from "#/domain/enums";
 import { ChartData, LimitSamples, Plans } from "#/domain/model";
+import aaEvalsJson from "./aa-evals.json";
 import chartJson from "./chart-benchmarks.json";
 import plansJson from "./plans.json";
 import samplesJson from "./samples.json";
@@ -14,6 +16,23 @@ describe("shipped data", () => {
 		["samples.json", LimitSamples, samplesJson],
 	] as const)("%s is what its schema outputs", (_file, schema, json) => {
 		expect(Schema.decodeUnknownSync(schema)(json)).toEqual(json);
+	});
+});
+
+// AA's eval pages embed tokens and time for few models, so the importer carries
+// them forward by family and effort; a renamed family or effort drops them.
+describe("aa-evals.json", () => {
+	it("keeps tokens and time per task for qwen3-8-max@xhigh's AA evals", () => {
+		const rows = aaEvalsJson.rows.filter(
+			(r) => r.family === "qwen3-8-max" && r.effort === "xhigh",
+		);
+		expect(rows.map((r) => r.eval)).toEqual(
+			expect.arrayContaining([...AA_EVAL_IDS]),
+		);
+		for (const r of rows) {
+			expect([r.eval, typeof r.tokensPerTask]).toEqual([r.eval, "number"]);
+			expect([r.eval, typeof r.secondsPerTask]).toEqual([r.eval, "number"]);
+		}
 	});
 });
 

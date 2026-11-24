@@ -135,6 +135,7 @@
       "gpt-6-luna",
       "gpt-5-6-luna",
       "gemini-3-8-flash",
+      "gemini-4-hydrogen",
       "grok-4-7",
       "kimi-k3"
     ],
@@ -153,6 +154,7 @@
         "gpt-6-luna": 15,
         "gpt-5-6-luna": 15.000000000000002,
         "gemini-3-8-flash": 15,
+        "gemini-4-hydrogen": 15,
         "grok-4-7": 15,
         "kimi-k3": 15
       },
@@ -184,12 +186,14 @@
       "gpt-6-1-sol",
       "gemini-4-argon",
       "gemini-4-carbon",
+      "gemini-4-neon",
       "claude-sonnet-5-5",
       "claude-haiku-5-5",
       "gpt-6-1-terra",
       "gpt-6-luna",
       "gpt-5-6-luna",
       "gemini-3-8-flash",
+      "gemini-4-hydrogen",
       "grok-4-7",
       "kimi-k3"
     ],
@@ -208,12 +212,14 @@
         "gpt-6-1-sol": 70,
         "gemini-4-argon": 140,
         "gemini-4-carbon": 140,
+        "gemini-4-neon": 70,
         "claude-sonnet-5-5": 70,
         "claude-haiku-5-5": 70,
         "gpt-6-1-terra": 70,
         "gpt-6-luna": 70,
         "gpt-5-6-luna": 70,
         "gemini-3-8-flash": 70,
+        "gemini-4-hydrogen": 70,
         "grok-4-7": 70,
         "kimi-k3": 70
       },
@@ -256,12 +262,14 @@
       "gpt-6-1-sol",
       "gemini-4-argon",
       "gemini-4-carbon",
+      "gemini-4-neon",
       "claude-sonnet-5-5",
       "claude-haiku-5-5",
       "gpt-6-1-terra",
       "gpt-6-luna",
       "gpt-5-6-luna",
       "gemini-3-8-flash",
+      "gemini-4-hydrogen",
       "grok-4-7",
       "kimi-k3"
     ],
@@ -280,12 +288,14 @@
         "gpt-6-1-sol": 200,
         "gemini-4-argon": 400,
         "gemini-4-carbon": 400,
+        "gemini-4-neon": 200,
         "claude-sonnet-5-5": 200,
         "claude-haiku-5-5": 200,
         "gpt-6-1-terra": 200,
         "gpt-6-luna": 200,
         "gpt-5-6-luna": 200,
         "gemini-3-8-flash": 200,
+        "gemini-4-hydrogen": 200,
         "grok-4-7": 200,
         "kimi-k3": 200
       },
@@ -321,8 +331,12 @@
       "AI Studio"
     ],
     "families": [
+      "gemini-4-neon",
       "gemini-4-argon",
-      "gemini-3-8-flash"
+      "gemini-4-hydrogen",
+      "gemini-3-8-flash",
+      "claude-sonnet-5-5",
+      "claude-opus-5-5"
     ],
     "limits": "\"Get 4x higher usage access than Free\"; Antigravity: \"Entry rate limits to agent model in Google Antigravity\"; Antigravity docs: \"A high, generous quota, refreshed every five hours until the weekly limit is reached\" / \"A higher weekly rate limit\"; overage via purchased AI credits \"consumed at standard Gemini Enterprise consumption pricing\". No numeric quota published.",
     "allowanceKind": "rate-window",
@@ -330,7 +344,19 @@
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
     "sourceUrl": "https://gemini.google/subscriptions/",
-    "reportedCap": null,
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "gemini-4-neon": 106.10076923076923,
+        "gemini-4-argon": 106.10076923076923,
+        "gemini-4-hydrogen": 106.10076923076923,
+        "gemini-3-8-flash": 106.10076923076923,
+        "claude-sonnet-5-5": 106.10076923076923,
+        "claude-opus-5-5": 106.10076923076923
+      },
+      "by": "mypriors",
+      "url": "https://mypriors.com/builder",
+      "basis": "mypriors: 23x the price, $460 a month of API-priced inference"
+    },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
@@ -350,8 +376,13 @@
       "AI Studio"
     ],
     "families": [
+      "gemini-4-carbon",
+      "gemini-4-neon",
       "gemini-4-argon",
-      "gemini-3-8-flash"
+      "gemini-4-hydrogen",
+      "gemini-3-8-flash",
+      "claude-sonnet-5-5",
+      "claude-opus-5-5"
     ],
     "limits": "\"$99.99 / month: 5x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 5x: Higher rate limits to agent model in Google Antigravity\"; docs: \"The highest, most generous quota, refreshed every five hours\" / \"The highest weekly rate limits\" / \"Access to third-party models\".",
     "allowanceKind": "rate-window",
@@ -359,7 +390,20 @@
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
     "sourceUrl": "https://gemini.google/subscriptions/",
-    "reportedCap": null,
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "gemini-4-carbon": 553.7907692307692,
+        "gemini-4-neon": 553.7907692307692,
+        "gemini-4-argon": 553.7907692307692,
+        "gemini-4-hydrogen": 553.7907692307692,
+        "gemini-3-8-flash": 553.7907692307692,
+        "claude-sonnet-5-5": 553.7907692307692,
+        "claude-opus-5-5": 553.7907692307692
+      },
+      "by": "mypriors",
+      "url": "https://mypriors.com/builder",
+      "basis": "mypriors: 24x the price, $2,400 a month of API-priced inference"
+    },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
@@ -379,8 +423,13 @@
       "AI Studio"
     ],
     "families": [
+      "gemini-4-carbon",
+      "gemini-4-neon",
       "gemini-4-argon",
-      "gemini-3-8-flash"
+      "gemini-4-hydrogen",
+      "gemini-3-8-flash",
+      "claude-sonnet-5-5",
+      "claude-opus-5-5"
     ],
     "limits": "\"$199.99 / month: 20x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 20x: Highest rate limits to agent model in Google Antigravity\"; refreshed every five hours up to weekly limit.",
     "allowanceKind": "rate-window",
@@ -388,7 +437,20 @@
     "thirdPartyHarnessAllowed": false,
     "confidence": "primary",
     "sourceUrl": "https://gemini.google/subscriptions/",
-    "reportedCap": null,
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "gemini-4-carbon": 2261.4253846153847,
+        "gemini-4-neon": 2261.4253846153847,
+        "gemini-4-argon": 2261.4253846153847,
+        "gemini-4-hydrogen": 2261.4253846153847,
+        "gemini-3-8-flash": 2261.4253846153847,
+        "claude-sonnet-5-5": 2261.4253846153847,
+        "claude-opus-5-5": 2261.4253846153847
+      },
+      "by": "mypriors",
+      "url": "https://mypriors.com/builder",
+      "basis": "mypriors: 49x the price, $9,800 a month of API-priced inference"
+    },
     "publishedAllowance": null,
     "weeklyShareByFamily": {},
     "maxEffortByFamily": {},
@@ -1241,7 +1303,7 @@
         "gpt-5-6-luna": 15,
         "qwen3-7-plus": 60,
         "qwen3-8-max": 15,
-        "glm-5-3": 500,
+        "glm-5-3": 200,
         "glm-5-2": 60,
         "glm-5-3-flash": 60,
         "longcat-2-0": 148.5714285714286,
@@ -1263,11 +1325,6 @@
       "muse-spark-1-2": "xhigh"
     },
     "promotionByFamily": {
-      "glm-5-3": {
-        "summary": "Go raises GLM-5.3 to $500 of monthly usage, from $200",
-        "endsOn": "2026-11-22",
-        "url": "https://opencode.ai/console/go"
-      },
       "gemini-4-argon": {
         "summary": "Go bills Gemini 4 Argon at 50% off, doubling its usage",
         "endsOn": "2026-11-30",
@@ -1336,7 +1393,7 @@
         "gpt-5-6-luna": 60,
         "qwen3-7-plus": 180,
         "qwen3-8-max": 60,
-        "glm-5-3": 1000,
+        "glm-5-3": 400,
         "glm-5-2": 180,
         "glm-5-3-flash": 180,
         "longcat-2-0": 594.2857142857144,
@@ -1358,11 +1415,6 @@
       "muse-spark-1-2": "xhigh"
     },
     "promotionByFamily": {
-      "glm-5-3": {
-        "summary": "Go Plus raises GLM-5.3 to $1,000 of monthly usage, from $400",
-        "endsOn": "2026-11-22",
-        "url": "https://opencode.ai/console/go"
-      },
       "gemini-4-argon": {
         "summary": "Go bills Gemini 4 Argon at 50% off, doubling its usage",
         "endsOn": "2026-11-30",
@@ -1398,7 +1450,7 @@
       "glm-5-3-flash",
       "kimi-k3",
       "minimax-m3",
-      "qwen3-8-max-0902"
+      "qwen3-8-max"
     ],
     "limits": "\"$20 of agent usage included each month at API rates\".",
     "allowanceKind": "credit",
@@ -1425,7 +1477,7 @@
         "glm-5-3-flash": 20,
         "kimi-k3": 20,
         "minimax-m3": 20,
-        "qwen3-8-max-0902": 20
+        "qwen3-8-max": 20
       },
       "url": "https://www.warp.dev/pricing",
       "basis": "$20 of agent usage a month at API rates, for $20"
@@ -1462,7 +1514,7 @@
       "glm-5-3-flash",
       "kimi-k3",
       "minimax-m3",
-      "qwen3-8-max-0902"
+      "qwen3-8-max"
     ],
     "limits": "\"$200 of agent usage included each month (10× Build)\".",
     "allowanceKind": "credit",
@@ -1489,7 +1541,7 @@
         "glm-5-3-flash": 200,
         "kimi-k3": 200,
         "minimax-m3": 200,
-        "qwen3-8-max-0902": 200
+        "qwen3-8-max": 200
       },
       "url": "https://www.warp.dev/pricing",
       "basis": "$200 of agent usage a month at API rates, for $200"

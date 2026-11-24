@@ -13,9 +13,11 @@
       "AI Studio"
     ],
     "models": [
+      "Gemini 4 Neon",
       "Gemini 4 Argon",
-      "Gemini 3.1 Pro",
-      "Gemini 3.8 Flash"
+      "Gemini 4 Hydrogen",
+      "Gemini 3.8 Flash",
+      "Claude Sonnet 5.5 and Opus 5.5 (thinking), non-trial subscriptions only"
     ],
     "limits": "\"Get 4x higher usage access than Free\"; Antigravity: \"Entry rate limits to agent model in Google Antigravity\"; Antigravity docs: \"A high, generous quota, refreshed every five hours until the weekly limit is reached\" / \"A higher weekly rate limit\"; overage via purchased AI credits \"consumed at standard Gemini Enterprise consumption pricing\". No numeric quota published.",
     "allowanceKind": "rate-window",
@@ -24,11 +26,15 @@
     "sources": [
       {
         "url": "https://gemini.google/subscriptions/",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-23"
+      },
+      {
+        "url": "https://antigravity.google/docs/models",
+        "accessed": "2026-11-23"
       },
       {
         "url": "https://antigravity.google/docs/plans",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-23"
       },
       {
         "url": "https://geminicli.com/docs/resources/quota-and-pricing/",
@@ -40,7 +46,7 @@
       }
     ],
     "confidence": "primary",
-    "notes": "Price is primary (gemini.google). Gemini CLI: banner says 'Unpaid tier and Google One users: Gemini CLI was replaced by Antigravity CLI on June 18th, 2026', but the body of the same page still lists the old quota of 1,500 requests/day for AI Pro (stale). thirdPartyHarnessAllowed=false is based on secondary reports: from Feb 2026, Pro/Ultra accounts were suspended for routing Antigravity OAuth through OpenCode/OpenClaw. No official ToS clause was quoted. Antigravity docs list BYOK as unsupported. Annual price not verified. Includes $10/mo Google Cloud credits."
+    "notes": "Price is primary (gemini.google). Gemini CLI: banner says 'Unpaid tier and Google One users: Gemini CLI was replaced by Antigravity CLI on June 18th, 2026', but the body of the same page still lists the old quota of 1,500 requests/day for AI Pro (stale). thirdPartyHarnessAllowed=false is based on secondary reports: from Feb 2026, Pro/Ultra accounts were suspended for routing Antigravity OAuth through OpenCode/OpenClaw. No official ToS clause was quoted. Antigravity docs list BYOK as unsupported. Annual price not verified. Includes $10/mo Google Cloud credits. Models per plan from Antigravity's model table (2026-11-23): Pro gets Neon, Argon, Hydrogen and 3.8 Flash; Carbon is Ultra-only. Gemini 3.1 Pro is Enterprise-only in Antigravity. Google AI Plus ($4.99) shares Free's Antigravity column (3.8 Flash only), so it is not charted."
   },
   {
     "vendor": "Google",
@@ -56,10 +62,13 @@
       "AI Studio"
     ],
     "models": [
+      "Gemini 4 Carbon",
+      "Gemini 4 Neon",
       "Gemini 4 Argon",
-      "Gemini 3.1 Pro",
+      "Gemini 4 Hydrogen",
       "Gemini 3.8 Flash",
-      "third-party Model Garden models in Antigravity (e.g. Claude Sonnet)"
+      "Claude Sonnet 5.5 and Opus 5.5 (thinking)",
+      "third-party Model Garden models in Antigravity"
     ],
     "limits": "\"$99.99 / month: 5x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 5x: Higher rate limits to agent model in Google Antigravity\"; docs: \"The highest, most generous quota, refreshed every five hours\" / \"The highest weekly rate limits\" / \"Access to third-party models\".",
     "allowanceKind": "rate-window",
@@ -68,7 +77,11 @@
     "sources": [
       {
         "url": "https://gemini.google/subscriptions/",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-23"
+      },
+      {
+        "url": "https://antigravity.google/docs/models",
+        "accessed": "2026-11-23"
       },
       {
         "url": "https://support.google.com/googleone/answer/16286513?hl=en",
@@ -76,11 +89,11 @@
       },
       {
         "url": "https://antigravity.google/docs/plans",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-23"
       }
     ],
     "confidence": "primary",
-    "notes": "Google One help: 'you get 5x or 20x usage quota in Gemini and Google Antigravity compared to the Google AI Pro plan'; 'Each product has its own AI usage limits.' Secondary sources say Ultra 5x launched 2026-05-19. Includes $40/mo Cloud credits (stated for Ultra). Third-party harness: same OAuth-ban caveat as Pro."
+    "notes": "Google One help: 'you get 5x or 20x usage quota in Gemini and Google Antigravity compared to the Google AI Pro plan'; 'Each product has its own AI usage limits.' Secondary sources say Ultra 5x launched 2026-05-19. Includes $40/mo Cloud credits (stated for Ultra). Third-party harness: same OAuth-ban caveat as Pro. Models per plan from Antigravity's model table (2026-11-23): Pro gets Neon, Argon, Hydrogen and 3.8 Flash; Carbon is Ultra-only. Gemini 3.1 Pro is Enterprise-only in Antigravity. Google AI Plus ($4.99) shares Free's Antigravity column (3.8 Flash only), so it is not charted."
   },
   {
     "vendor": "Google",
@@ -96,10 +109,13 @@
       "AI Studio"
     ],
     "models": [
+      "Gemini 4 Carbon",
+      "Gemini 4 Neon",
       "Gemini 4 Argon",
-      "Gemini 3.1 Pro",
+      "Gemini 4 Hydrogen",
       "Gemini 3.8 Flash",
-      "third-party Model Garden models in Antigravity (e.g. Claude Sonnet)"
+      "Claude Sonnet 5.5 and Opus 5.5 (thinking)",
+      "third-party Model Garden models in Antigravity"
     ],
     "limits": "\"$199.99 / month: 20x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 20x: Highest rate limits to agent model in Google Antigravity\"; refreshed every five hours up to weekly limit.",
     "allowanceKind": "rate-window",
@@ -108,7 +124,11 @@
     "sources": [
       {
         "url": "https://gemini.google/subscriptions/",
-        "accessed": "2026-10-31"
+        "accessed": "2026-11-23"
+      },
+      {
+        "url": "https://antigravity.google/docs/models",
+        "accessed": "2026-11-23"
       },
       {
         "url": "https://support.google.com/googleone/answer/16286513?hl=en",
@@ -116,6 +136,6 @@
       }
     ],
     "confidence": "primary",
-    "notes": "Secondary sources say the price dropped from $249.99 to $199.99 on 2026-05-19. Gemini CLI's stale table says 2,000 req/day for Ultra. Same third-party caveat as Pro."
+    "notes": "Secondary sources say the price dropped from $249.99 to $199.99 on 2026-05-19. Gemini CLI's stale table says 2,000 req/day for Ultra. Same third-party caveat as Pro. Models per plan from Antigravity's model table (2026-11-23): Pro gets Neon, Argon, Hydrogen and 3.8 Flash; Carbon is Ultra-only. Gemini 3.1 Pro is Enterprise-only in Antigravity. Google AI Plus ($4.99) shares Free's Antigravity column (3.8 Flash only), so it is not charted."
   }
 ]

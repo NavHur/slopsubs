@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-22T14:37:13.085Z",
+  "fetchedAt": "2026-11-23T21:19:08.782Z",
   "source": "Cognition's FrontierCode 2.0",
   "rows": [
     {
@@ -360,6 +360,62 @@
       "tokensPerTask": 127641
     },
     {
+      "family": "gemini-4-hydrogen",
+      "effort": "low",
+      "score": 10.52,
+      "costPerTaskUsd": 0.353,
+      "tokensPerTask": 14953
+    },
+    {
+      "family": "gemini-4-hydrogen",
+      "effort": "medium",
+      "score": 28.21,
+      "costPerTaskUsd": 0.901,
+      "tokensPerTask": 37841
+    },
+    {
+      "family": "gemini-4-hydrogen",
+      "effort": "high",
+      "score": 38.23,
+      "costPerTaskUsd": 2.404,
+      "tokensPerTask": 85996
+    },
+    {
+      "family": "gemini-4-hydrogen",
+      "effort": "xhigh",
+      "score": 38.87,
+      "costPerTaskUsd": 4.953,
+      "tokensPerTask": 153739
+    },
+    {
+      "family": "gemini-4-neon",
+      "effort": "low",
+      "score": 27.41,
+      "costPerTaskUsd": 0.959,
+      "tokensPerTask": 21049
+    },
+    {
+      "family": "gemini-4-neon",
+      "effort": "medium",
+      "score": 38.16,
+      "costPerTaskUsd": 2.174,
+      "tokensPerTask": 45888
+    },
+    {
+      "family": "gemini-4-neon",
+      "effort": "high",
+      "score": 46.24,
+      "costPerTaskUsd": 4.382,
+      "tokensPerTask": 85592
+    },
+    {
+      "family": "gemini-4-neon",
+      "effort": "xhigh",
+      "score": 44.83,
+      "costPerTaskUsd": 7.666,
+      "tokensPerTask": 127992
+    },
+    {
       "family": "grok-4-7",
       "effort": "low",
       "score": 21.06,
@@ -610,6 +666,48 @@
       "score": 6.46,
       "costPerTaskUsd": 9.157,
       "tokensPerTask": 44615
+    },
+    {
+      "family": "inkling-2-small",
+      "effort": "none",
+      "score": 17.43,
+      "costPerTaskUsd": 0.439,
+      "tokensPerTask": 62628
+    },
+    {
+      "family": "inkling-2-small",
+      "effort": "low",
+      "score": 15.57,
+      "costPerTaskUsd": 0.286,
+      "tokensPerTask": 36894
+    },
+    {
+      "family": "inkling-2-small",
+      "effort": "medium",
+      "score": 19.13,
+      "costPerTaskUsd": 0.417,
+      "tokensPerTask": 59165
+    },
+    {
+      "family": "inkling-2-small",
+      "effort": "high",
+      "score": 22.27,
+      "costPerTaskUsd": 0.562,
+      "tokensPerTask": 89707
+    },
+    {
+      "family": "inkling-2-small",
+      "effort": "xhigh",
+      "score": 20.68,
+      "costPerTaskUsd": 0.615,
+      "tokensPerTask": 100243
+    },
+    {
+      "family": "inkling-2-small",
+      "effort": "max",
+      "score": 22.57,
+      "costPerTaskUsd": 0.584,
+      "tokensPerTask": 95400
     }
   ]
 }

@@ -39,7 +39,7 @@ describe("verdictHeadline", () => {
 	it("does the same for the default models at a tighter budget", () => {
 		const { result } = answer({ amount: 500, budget: 50 });
 		expect(verdictHeadline(result)).toMatch(
-			/^No plan within your \$50 budget covers this week\. .+ does, at \$\d+ a month\.$/,
+			/^No plan within your \$50 budget covers this week\. .+ does, at \$\d+(\.\d+)? a month\.$/,
 		);
 	});
 
