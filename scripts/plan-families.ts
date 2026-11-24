@@ -167,6 +167,8 @@ const GOOGLE_PRO = [
 	"gemini-4-argon",
 	"gemini-4-hydrogen",
 	"gemini-3-8-flash",
+	"claude-sonnet-5-5",
+	"claude-opus-5-5",
 ];
 const GOOGLE_ULTRA = ["gemini-4-carbon", ...GOOGLE_PRO];
 const KIMI_PLUS = ["kimi-k3", "kimi-k3-1-pro"];

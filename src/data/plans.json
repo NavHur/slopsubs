@@ -334,7 +334,9 @@
       "gemini-4-neon",
       "gemini-4-argon",
       "gemini-4-hydrogen",
-      "gemini-3-8-flash"
+      "gemini-3-8-flash",
+      "claude-sonnet-5-5",
+      "claude-opus-5-5"
     ],
     "limits": "\"Get 4x higher usage access than Free\"; Antigravity: \"Entry rate limits to agent model in Google Antigravity\"; Antigravity docs: \"A high, generous quota, refreshed every five hours until the weekly limit is reached\" / \"A higher weekly rate limit\"; overage via purchased AI credits \"consumed at standard Gemini Enterprise consumption pricing\". No numeric quota published.",
     "allowanceKind": "rate-window",
@@ -347,7 +349,9 @@
         "gemini-4-neon": 106.10076923076923,
         "gemini-4-argon": 106.10076923076923,
         "gemini-4-hydrogen": 106.10076923076923,
-        "gemini-3-8-flash": 106.10076923076923
+        "gemini-3-8-flash": 106.10076923076923,
+        "claude-sonnet-5-5": 106.10076923076923,
+        "claude-opus-5-5": 106.10076923076923
       },
       "by": "mypriors",
       "url": "https://mypriors.com/builder",
@@ -376,7 +380,9 @@
       "gemini-4-neon",
       "gemini-4-argon",
       "gemini-4-hydrogen",
-      "gemini-3-8-flash"
+      "gemini-3-8-flash",
+      "claude-sonnet-5-5",
+      "claude-opus-5-5"
     ],
     "limits": "\"$99.99 / month: 5x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 5x: Higher rate limits to agent model in Google Antigravity\"; docs: \"The highest, most generous quota, refreshed every five hours\" / \"The highest weekly rate limits\" / \"Access to third-party models\".",
     "allowanceKind": "rate-window",
@@ -390,7 +396,9 @@
         "gemini-4-neon": 553.7907692307692,
         "gemini-4-argon": 553.7907692307692,
         "gemini-4-hydrogen": 553.7907692307692,
-        "gemini-3-8-flash": 553.7907692307692
+        "gemini-3-8-flash": 553.7907692307692,
+        "claude-sonnet-5-5": 553.7907692307692,
+        "claude-opus-5-5": 553.7907692307692
       },
       "by": "mypriors",
       "url": "https://mypriors.com/builder",
@@ -419,7 +427,9 @@
       "gemini-4-neon",
       "gemini-4-argon",
       "gemini-4-hydrogen",
-      "gemini-3-8-flash"
+      "gemini-3-8-flash",
+      "claude-sonnet-5-5",
+      "claude-opus-5-5"
     ],
     "limits": "\"$199.99 / month: 20x higher usage limits vs. AI Pro\"; Antigravity: \"Ultra 20x: Highest rate limits to agent model in Google Antigravity\"; refreshed every five hours up to weekly limit.",
     "allowanceKind": "rate-window",
@@ -433,7 +443,9 @@
         "gemini-4-neon": 2261.4253846153847,
         "gemini-4-argon": 2261.4253846153847,
         "gemini-4-hydrogen": 2261.4253846153847,
-        "gemini-3-8-flash": 2261.4253846153847
+        "gemini-3-8-flash": 2261.4253846153847,
+        "claude-sonnet-5-5": 2261.4253846153847,
+        "claude-opus-5-5": 2261.4253846153847
       },
       "by": "mypriors",
       "url": "https://mypriors.com/builder",
