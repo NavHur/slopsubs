@@ -20,8 +20,8 @@ export const GO_PRICING: GoPricing = {
 		"mimo-v2-5-0424": [0.14, 0.28],
 		hy3: [0.14, 0.58],
 	},
-	// After endsOn build-plans refuses to run: confirm the new allowance on the
-	// Console Go page (browser-only), delete the promo, update OPENCODE_GO_USD.
+	// After endsOn build-plans refuses to run: delete the promo, then recheck token
+	// prices (price) or the Console Go allowance and OPENCODE_GO_USD (allowance).
 	promos: {
 		"gemini-4-argon": {
 			kind: "price",
