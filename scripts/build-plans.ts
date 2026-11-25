@@ -1,7 +1,7 @@
 // Builds src/data/plans.json from research/plans/, and the trimmed
 // chart-benchmarks.json from the imported leaderboards.
 
-import { Clock, Data, Effect, Schema } from "effect";
+import { Clock, Effect, Schema } from "effect";
 import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import type { AaEvalId } from "../src/domain/eval-units.ts";
 import {
@@ -21,7 +21,7 @@ import {
 	type PublishedAllowance,
 	type ReportedCap,
 } from "../src/domain/model.ts";
-import { UrlString } from "../src/domain/wire-schemas.ts";
+import { IsoDate, UrlString } from "../src/domain/wire-schemas.ts";
 import { CLAUDE_ULTRA } from "./claude-caps.ts";
 import { creditAllowance, creditPromotions } from "./credit-plans.ts";
 import { CREDIT_PLANS } from "./credit-vendors.ts";
@@ -31,6 +31,7 @@ import { GO_PRICING, OPENCODE_DOCS } from "./go-pricing.ts";
 import type { TokenRates } from "./list-price.ts";
 import { MUSE_EVERYDAY } from "./muse-caps.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
+import { checkOffers, PlanDataError } from "./plan-offers.ts";
 import { type KnownTier, type Ladder, ladderCap } from "./tier-ladder.ts";
 import { WEEKLY_CREDIT_PLANS, weeklyCreditCap } from "./weekly-credit-caps.ts";
 
@@ -141,13 +142,12 @@ const ResearchPlan = Schema.Struct({
 		Schema.Struct({ url: UrlString, accessed: Schema.String }),
 	),
 	confidence: Schema.Literals(["primary", "secondary", "unverified"]),
+	/** Research only: the last day a limited-time offer sells. The build fails
+	 * after it, so a plan that stopped selling cannot ship. */
+	offerEndsOn: Schema.optionalKey(IsoDate),
 });
 
 type ResearchPlan = typeof ResearchPlan.Type;
-
-class PlanDataError extends Data.TaggedError("PlanDataError")<{
-	message: string;
-}> {}
 
 /** Every researched plan, from one file per vendor, in file-name order. */
 const readResearch = Effect.gen(function* () {
@@ -412,6 +412,7 @@ const main = Effect.gen(function* () {
 		.toISOString()
 		.slice(0, 10);
 	yield* checkPlanData(() => checkPromotions(plans, today));
+	yield* checkPlanData(() => checkOffers(research, today));
 	const chart = yield* Schema.decodeUnknownEffect(ChartData)(
 		yield* checkPlanData(() =>
 			chartData({ plans, dataset, frontierCode, aaEvals }),

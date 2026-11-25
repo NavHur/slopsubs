@@ -144,6 +144,7 @@
         "accessed": "2026-11-25"
       }
     ],
+    "offerEndsOn": "2026-12-01",
     "confidence": "secondary",
     "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). The same Google AI Pro subscription and usage as google-ai-pro: the user reports $99 for a year as a very limited Black Friday-only offer. The usage cap is Pro's, not a multiple of this price."
   },
