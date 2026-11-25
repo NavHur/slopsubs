@@ -1,6 +1,7 @@
 import type { FamilyId, Plan, Promotion } from "#/domain/model";
 import type { CapBasis } from "#/domain/recommend";
 import { formatDay, formatUsd } from "#/lib/format";
+import { UnverifiedPrice } from "../UnverifiedPrice";
 
 const LINK =
 	"underline decoration-dotted underline-offset-2 hover:text-fg max-lg:inline-flex max-lg:min-h-11 max-lg:items-center";
@@ -36,16 +37,9 @@ export function PlanRow({
 			<p className="col-span-2 flex flex-wrap items-baseline gap-x-2 @3xl:col-span-1">
 				<span className="font-medium">{plan.label}</span>
 				<span className="text-[13px] text-muted tabular-nums">
-					<span
-						title={
-							plan.confidence === "primary"
-								? undefined
-								: `Price from ${plan.confidence} sources`
-						}
-					>
+					<UnverifiedPrice plan={plan}>
 						{formatUsd(plan.monthlyPriceUsd)}
-						{plan.confidence === "primary" ? "" : "*"}
-					</span>{" "}
+					</UnverifiedPrice>{" "}
 					a month
 				</span>
 			</p>
