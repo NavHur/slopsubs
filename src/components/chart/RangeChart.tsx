@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { type ReactNode, useState } from "react";
 import type { FamilyId } from "#/domain/model";
 import type { EffortValue } from "#/domain/ranges";
@@ -125,14 +126,14 @@ function Axis({
 			className="grid items-end border-b border-line pb-1 text-[11px] text-subtle"
 			style={{ gridTemplateColumns: layout.columns, columnGap: COLUMN_GAP_PX }}
 		>
-			<span className={layout.compact ? "col-span-2" : ""}>
+			<span className={cn(layout.compact && "col-span-2")}>
 				{units.axisLabel}
 			</span>
 			<svg
 				width={layout.trackWidth}
 				height={16}
 				aria-hidden="true"
-				className={`block overflow-visible ${layout.compact ? "col-span-2" : ""}`}
+				className={cn("block overflow-visible", layout.compact && "col-span-2")}
 			>
 				{ticks.map((tick) => (
 					<text
@@ -204,7 +205,11 @@ function Row({
 				onActive={onActive}
 			/>
 			<span
-				className={`whitespace-nowrap text-right tabular-nums ${shown ? "text-fg" : "text-muted"} ${layout.compact ? "col-start-2 row-start-1" : ""}`}
+				className={cn(
+					"whitespace-nowrap text-right tabular-nums",
+					shown ? "text-fg" : "text-muted",
+					layout.compact && "col-start-2 row-start-1",
+				)}
 			>
 				{value}
 			</span>
@@ -239,7 +244,10 @@ function Track({
 			// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- an SVG root cannot be a fieldset; role=img would hide the dots inside
 			role="group"
 			aria-label={`${row.label}${row.note ? `, ${row.note}` : ""}`}
-			className={`block overflow-visible ${layout.compact ? "col-span-full" : ""}`}
+			className={cn(
+				"block overflow-visible",
+				layout.compact && "col-span-full",
+			)}
 		>
 			{ticks.map((tick) => (
 				<line

@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { useLayoutEffect, useRef, useState } from "react";
 import type { Promotion } from "#/domain/model";
 import type { Pricing, ValuePoint } from "#/domain/value";
@@ -110,7 +111,11 @@ export function PointTooltip({
 	return (
 		<div
 			ref={ref}
-			className={`${pinned ? "" : "pointer-events-none"} absolute z-10 ${selected ? "w-[28rem]" : "w-64"} max-w-[calc(100%-16px)] rounded-md border border-line bg-panel px-3 pt-1.5 pb-2.5 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]`}
+			className={cn(
+				!pinned && "pointer-events-none",
+				"absolute z-10 max-w-[calc(100%-16px)] rounded-md border border-line bg-panel px-3 pt-1.5 pb-2.5 text-[12px] leading-5 shadow-[0_8px_24px_rgb(0_0_0/0.35)]",
+				selected ? "w-[28rem]" : "w-64",
+			)}
 			style={placement ?? { left: 0, top: 0, visibility: "hidden" }}
 		>
 			<PointHeader point={point} pinned={pinned} onClose={onClose} />

@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { type RefObject, useEffect, useId, useRef, useState } from "react";
 import { toggleTheme } from "#/lib/theme";
 
@@ -28,7 +29,7 @@ export function ThemeToggle() {
 			aria-label="Toggle light and dark theme"
 			title="Toggle theme"
 			onClick={toggleTheme}
-			className={`${HEADER_BUTTON} w-11`}
+			className={cn(HEADER_BUTTON, "w-11")}
 		>
 			<Icon>
 				<circle cx="12" cy="12" r="4" />
@@ -69,7 +70,7 @@ export function DownloadPngButton({
 			type="button"
 			disabled={disabled || status === "busy"}
 			onClick={download}
-			className={`${HEADER_BUTTON} grid-flow-col gap-2 px-2 text-[13px]`}
+			className={cn(HEADER_BUTTON, "grid-flow-col gap-2 px-2 text-[13px]")}
 		>
 			<Icon>
 				<path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
@@ -145,7 +146,7 @@ export function ChartSettingsMenu({
 				aria-expanded={open}
 				aria-controls={panelId}
 				onClick={() => setOpen(!open)}
-				className={`${HEADER_BUTTON} w-11`}
+				className={cn(HEADER_BUTTON, "w-11")}
 			>
 				<Icon>
 					<circle cx="5" cy="12" r="1" />

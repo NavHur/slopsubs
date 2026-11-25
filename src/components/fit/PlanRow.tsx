@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import type { FamilyId, Plan, Promotion } from "#/domain/model";
 import type { CapBasis } from "#/domain/recommend";
 import { formatDay, formatUsd } from "#/lib/format";
@@ -65,7 +66,10 @@ function ShareBar({
 		<div className="col-span-2 flex items-center gap-3 @3xl:col-span-1">
 			<div aria-hidden="true" className="h-1 flex-1 rounded-full bg-line">
 				<div
-					className={`h-full rounded-full ${lead ? "bg-accent" : "bg-subtle"}`}
+					className={cn(
+						"h-full rounded-full",
+						lead ? "bg-accent" : "bg-subtle",
+					)}
 					style={{ width }}
 				/>
 			</div>

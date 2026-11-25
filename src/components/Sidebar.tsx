@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { samples } from "#/data";
 import type { FamilyId, Plan, PlanId } from "#/domain/model";
@@ -448,7 +449,10 @@ function FamilyRow({
 				aria-pressed={on}
 				title={unscoredNote ? `${title} · ${unscoredNote}` : title}
 				onClick={() => onToggle(family)}
-				className={`flex w-full items-center gap-2 py-1 text-left text-[13px] hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[15px] ${unscoredNote ? "text-subtle" : "text-muted"}`}
+				className={cn(
+					"flex w-full items-center gap-2 py-1 text-left text-[13px] hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[15px]",
+					unscoredNote ? "text-subtle" : "text-muted",
+				)}
 			>
 				<ProviderLogo lab={familyLabId(family)} />
 				<span className="mr-auto">

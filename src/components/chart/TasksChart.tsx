@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import type { PlanTasks, TaskRow } from "#/domain/ranges";
 import { unsampledNote, type WeeklyAllowance } from "#/domain/value";
 import { familyName } from "#/lib/families";
@@ -106,7 +107,10 @@ export function CapBasisKey({
 }) {
 	return (
 		<div
-			className={`flex flex-wrap items-center gap-x-4 text-[12px] text-muted ${className}`}
+			className={cn(
+				"flex flex-wrap items-center gap-x-4 text-[12px] text-muted",
+				className,
+			)}
 		>
 			<KeyDot hollow={false} label={solidLabel} />
 			<KeyDot hollow label="Estimated cap" />

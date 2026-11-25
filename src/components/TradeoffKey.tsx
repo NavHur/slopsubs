@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { PricingKey } from "#/components/chart/PricingKey";
 import type { Angles } from "#/components/chart/projection";
 import type { PricingId, PricingStyle } from "#/components/chart/series";
@@ -22,7 +23,7 @@ export function TradeoffKey({
 }) {
 	const worth = tradeoffFrontier(points).size;
 	return (
-		<p className={`text-[13px] text-muted ${className}`}>
+		<p className={cn("text-[13px] text-muted", className)}>
 			{`${worth} of ${points.length} options worth weighing, drawn filled. Hollow ones have another option no worse on cost, time and score, and better on one.`}
 		</p>
 	);

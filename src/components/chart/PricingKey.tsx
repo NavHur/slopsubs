@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { markerPath } from "./geometry";
 import { API_DASH, type PricingStyle } from "./series";
 
@@ -64,7 +65,10 @@ export function PricingKey({
 	return (
 		<ul
 			aria-label="Line styles"
-			className={`flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-muted ${className}`}
+			className={cn(
+				"flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-muted",
+				className,
+			)}
 		>
 			{pricings.map((pricing) => (
 				<li key={pricing.id} className="flex items-center gap-1.5">

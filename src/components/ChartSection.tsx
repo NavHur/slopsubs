@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import type { ReactNode } from "react";
 import { DownloadPngButton } from "./HeaderActions";
 
@@ -28,7 +29,10 @@ export function ChartSection({
 		<section
 			id={id}
 			aria-labelledby={titleId}
-			className={`flex scroll-mt-24 flex-col sm:scroll-mt-12 border-line px-4 pt-5 pb-6 not-first:border-t sm:px-7 ${className}`}
+			className={cn(
+				"flex scroll-mt-24 flex-col sm:scroll-mt-12 border-line px-4 pt-5 pb-6 not-first:border-t sm:px-7",
+				className,
+			)}
 		>
 			<div className="mb-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
 				<h2
