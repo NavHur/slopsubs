@@ -12,6 +12,6 @@ export function checkOffers(
 	for (const { planId, offerEndsOn } of research)
 		if (offerEndsOn !== undefined && offerEndsOn < today)
 			throw new PlanDataError({
-				message: `${planId}: the offer ended on ${offerEndsOn}; delete the plan and rebuild the plans.`,
+				message: `${planId}: the offer ended on ${offerEndsOn}; delete the plan and its id in plan-families.ts, build-plans.ts and tests, then rebuild.`,
 			});
 }

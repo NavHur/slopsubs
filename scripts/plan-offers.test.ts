@@ -9,7 +9,7 @@ const blackFriday = {
 describe("checkOffers", () => {
 	it("refuses a plan whose offer ended", () => {
 		expect(() => checkOffers([blackFriday], "2026-12-02")).toThrow(
-			"google-ai-pro-annual: the offer ended on 2026-12-01; delete the plan and rebuild the plans.",
+			"google-ai-pro-annual: the offer ended on 2026-12-01; delete the plan and its id in plan-families.ts, build-plans.ts and tests, then rebuild.",
 		);
 	});
 

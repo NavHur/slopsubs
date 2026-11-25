@@ -236,6 +236,7 @@ Run these before committing, patched or not:
 | `HTTP 403`/`429`/5xx, any other non-200 from `/evaluations/<page>` but a 404 or 3xx, timeouts | AA or Cognition is blocking or down. | Rerun once; if it repeats, hand-patch from the browser (for `import-aa-evals`, keep `aa-evals.json` as `main` has it) and open an issue. |
 | `build-plans`: `No catalog model for <family>@<effort>` | An `aa-evals.json` row names a point `benchmarks.json` lacks, e.g. `import-benchmarks` dropped a variant after `import-aa-evals` failed and left `main`'s file. | Rerun `import-aa-evals` if it can now run. If it still fails, delete that point's rows (`family`, `effort`) from `aa-evals.json` and name them in the PR's **Stale data** section, then rerun `build-plans`. |
 | `build-plans`: promotion ended | A plan's promotion is past its end date. | Code change: open an issue, and stop before pushing. |
+| `build-plans`: `<planId>: the offer ended on <date>` | A research plan's `offerEndsOn` has passed. | Code change: delete the plan from `research/plans/` and its id from `plan-families.ts`, `REPORTED_MULTIPLES` in `build-plans.ts`, and its tests; open an issue, and stop before pushing. |
 
 Anything else that only a code change can fix: hand-patch what you can, open
 an issue with the error, and still ship the PR with the stale rows listed.
