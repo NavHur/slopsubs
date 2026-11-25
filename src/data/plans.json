@@ -473,7 +473,7 @@
       "claude-sonnet-5-5",
       "claude-opus-5-5"
     ],
-    "limits": "Same Google AI Pro usage ($99 billed yearly, 99/12 a month); see google-ai-pro for the quoted limits.",
+    "limits": "Same Google AI Pro usage ($99 billed yearly, $8.25 a month); see google-ai-pro for the quoted limits.",
     "allowanceKind": "rate-window",
     "includedApiCreditUsd": 0,
     "thirdPartyHarnessAllowed": false,

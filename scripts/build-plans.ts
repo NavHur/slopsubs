@@ -65,8 +65,8 @@ const MYPRIORS = { by: "mypriors", url: "https://mypriors.com/builder" };
 const WEEKS_PER_MONTH = 52 / 12;
 const CODEX_PRO_MULTIPLE = 21;
 
-/** Who reported a plan's multiple: the API-priced dollars a month each
- * subscription dollar buys, on every model the plan serves. */
+/** Who reported a plan's multiple: the API-priced dollars a month each dollar
+ * of its price (or of `listPriceUsd`) buys, on every model the plan serves. */
 type ReportedMultiple = {
 	by: string;
 	url: string;
@@ -101,8 +101,8 @@ const REPORTED_MULTIPLES: Record<string, ReportedMultiple> = {
 	"google-ai-ultra-20x": { ...MYPRIORS, multiple: 49 },
 };
 
-/** The plan's weekly cap from a reported multiple of its price, the same on
- * each of its models, or null for a plan nobody reported a multiple for. */
+/** The plan's weekly cap from a reported multiple of its price (or of its
+ * `listPriceUsd`), the same on each model, or null with no reported multiple. */
 function multipleCap(
 	planId: string,
 	monthlyPriceUsd: number,

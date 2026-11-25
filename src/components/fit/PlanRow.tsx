@@ -36,7 +36,17 @@ export function PlanRow({
 			<p className="col-span-2 flex flex-wrap items-baseline gap-x-2 @3xl:col-span-1">
 				<span className="font-medium">{plan.label}</span>
 				<span className="text-[13px] text-muted tabular-nums">
-					{formatUsd(plan.monthlyPriceUsd)} a month
+					<span
+						title={
+							plan.confidence === "primary"
+								? undefined
+								: `Price from ${plan.confidence} sources`
+						}
+					>
+						{formatUsd(plan.monthlyPriceUsd)}
+						{plan.confidence === "primary" ? "" : "*"}
+					</span>{" "}
+					a month
 				</span>
 			</p>
 			<ShareBar share={share} label={shareLabel} lead={lead} />

@@ -40,7 +40,7 @@ The data is in `plans/`, one JSON file per vendor. Each row has a source URL, an
 
 ## Unverified or open items
 
-- No annual price could be verified for ChatGPT, Google or Copilot. chatgpt.com/pricing and help.openai.com return 403 to scripted fetches; the help center was read through the r.jina.ai reader.
+- No annual price could be verified for ChatGPT or Copilot, and Google's $99 a year is user-reported and unverified (secondary). chatgpt.com/pricing and help.openai.com return 403 to scripted fetches; the help center was read through the r.jina.ai reader.
 - **Google AI Pro deals (user-reported, 2026-11-25):** Pro at $4.99 and $9.99 a month, and $99 a year ($8.25 a month). gemini.google/subscriptions shows none of them, only a Black Friday "save up to 50%" banner, so their length and eligibility are unknown. They carry Pro's usage, not a multiple of their own price: `listPriceUsd` in `REPORTED_MULTIPLES` holds the cap at 23x $19.99. Confirm the offers and delete the plans if they end.
 - **xAI:** standalone SuperGrok prices are secondary only, since x.ai and grok.com were not fetchable.
 - **Volcengine and Tencent:** China-only, CNY prices converted at about 7.1 CNY/USD. Promo pricing dominates. Tencent is unverified.
