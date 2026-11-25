@@ -79,7 +79,7 @@
       }
     ],
     "confidence": "secondary",
-    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). Same Pro plan and usage as google-ai-pro at a promotional price; the usage cap is Pro's, not a multiple of this price. Promo length and eligibility unknown."
+    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). The same Google AI Pro subscription and usage as google-ai-pro, not Google AI Plus (also $4.99): the user reports $4.99 a month as a current student discount, and as a Black Friday offer to a limited set of customers for 3 months before $19.99. The usage cap is Pro's, not a multiple of this price."
   },
   {
     "vendor": "Google",
@@ -112,12 +112,12 @@
       }
     ],
     "confidence": "secondary",
-    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). Same Pro plan and usage as google-ai-pro at a promotional price; the usage cap is Pro's, not a multiple of this price. Promo length and eligibility unknown."
+    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). The same Google AI Pro subscription and usage as google-ai-pro: the user reports $9.99 as a one-month trial price for existing Google users. The usage cap is Pro's, not a multiple of this price."
   },
   {
     "vendor": "Google",
     "planId": "google-ai-pro-annual",
-    "label": "Google AI Pro (annual)",
+    "label": "Google AI Pro ($99 a year)",
     "monthlyPriceUsd": 8.25,
     "annualMonthlyPriceUsd": null,
     "harnesses": [
@@ -145,7 +145,7 @@
       }
     ],
     "confidence": "secondary",
-    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). Same Pro plan and usage as google-ai-pro on yearly billing; the usage cap is Pro's, not a multiple of this price. Annual billing is not a promotion; whether the $99 price holds past the first year is unknown."
+    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). The same Google AI Pro subscription and usage as google-ai-pro: the user reports $99 for a year as a very limited Black Friday-only offer. The usage cap is Pro's, not a multiple of this price."
   },
   {
     "vendor": "Google",
