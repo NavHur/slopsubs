@@ -99,7 +99,7 @@
       "Gemini 4 Argon",
       "Gemini 4 Hydrogen",
       "Gemini 3.8 Flash",
-      "Claude Sonnet 5.5 and Opus 5.5 (thinking), non-trial subscriptions only"
+      "Claude Sonnet 5.5 and Opus 5.5 (thinking)"
     ],
     "limits": "Same Google AI Pro usage (promo price); see google-ai-pro for the quoted limits.",
     "allowanceKind": "rate-window",
@@ -112,7 +112,7 @@
       }
     ],
     "confidence": "secondary",
-    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). The same Google AI Pro subscription and usage as google-ai-pro: the user reports $9.99 as a one-month trial price for existing Google users. The usage cap is Pro's, not a multiple of this price."
+    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). The same Google AI Pro subscription and usage as google-ai-pro: the user reports $9.99 as a discounted first month for existing Google users, not a trial. The usage cap is Pro's, not a multiple of this price."
   },
   {
     "vendor": "Google",
