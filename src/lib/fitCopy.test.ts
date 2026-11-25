@@ -44,17 +44,17 @@ describe("verdictHeadline", () => {
 	});
 
 	it("says paying per token is cheaper when it beats the over-budget plan and fits the budget", () => {
-		const { result } = answer({ unit: "apiUsd", amount: 1, budget: 5 });
+		const { result } = answer({ unit: "apiUsd", amount: 0.9, budget: 4 });
 		expect(result.fits).toEqual([]);
 		expect(verdictHeadline(result)).toBe(
-			"Paying per token is cheaper: about $4.33 a month, within your $5 budget.",
+			"Paying per token is cheaper: about $3.9 a month, within your $4 budget.",
 		);
 	});
 
 	it("says so when paying per token beats the plans but still tops the budget", () => {
-		const { result } = answer({ unit: "apiUsd", amount: 1.5, budget: 5 });
+		const { result } = answer({ unit: "apiUsd", amount: 1, budget: 4 });
 		expect(verdictHeadline(result)).toBe(
-			"Paying per token is cheaper: about $6.5 a month, though that is over your $5 budget.",
+			"Paying per token is cheaper: about $4.33 a month, though that is over your $4 budget.",
 		);
 	});
 
@@ -96,10 +96,10 @@ describe("the verdict and the baseline", () => {
 		},
 	);
 
-	it("quotes Claude Pro's crossing for the default week", () => {
+	it("quotes the cheapest plan's crossing for the default week", () => {
 		const { inputs, result } = answer({ unit: "tasks", amount: 1 });
 		expect(baselineLine(result, inputs, BENCHMARK)).toBe(
-			"A plan starts to pay off above about 1.3 Intelligence Index tasks a week.",
+			"Paying per token would cost about $15.01 a month; it would win if your usage fell to about 0.33 Intelligence Index tasks a week.",
 		);
 	});
 });

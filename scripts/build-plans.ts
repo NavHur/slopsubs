@@ -67,7 +67,21 @@ const CODEX_PRO_MULTIPLE = 21;
 
 /** Who reported a plan's multiple: the API-priced dollars a month each
  * subscription dollar buys, on every model the plan serves. */
-type ReportedMultiple = { by: string; url: string; multiple: number };
+type ReportedMultiple = {
+	by: string;
+	url: string;
+	multiple: number;
+	/** The list price the multiple is of, for a plan sold below it: the same
+	 * plan at a deal price has the same usage, not a multiple of its own. */
+	listPriceUsd?: number;
+};
+
+const GOOGLE_PRO_LIST_PRICE_USD = 19.99;
+const GOOGLE_PRO_MULTIPLE = { ...MYPRIORS, multiple: 23 };
+const GOOGLE_PRO_DEAL = {
+	...GOOGLE_PRO_MULTIPLE,
+	listPriceUsd: GOOGLE_PRO_LIST_PRICE_USD,
+};
 
 /**
  * Theo's 21x on every Codex Pro tier (2026-11-02), with Plus at half: Pro 100,
@@ -79,7 +93,10 @@ const REPORTED_MULTIPLES: Record<string, ReportedMultiple> = {
 	"chatgpt-pro-100": { ...THEO, multiple: CODEX_PRO_MULTIPLE },
 	"chatgpt-pro-200": { ...THEO, multiple: CODEX_PRO_MULTIPLE },
 	"chatgpt-pro-500": { ...THEO, multiple: CODEX_PRO_MULTIPLE },
-	"google-ai-pro": { ...MYPRIORS, multiple: 23 },
+	"google-ai-pro": GOOGLE_PRO_MULTIPLE,
+	"google-ai-pro-deal-4-99": GOOGLE_PRO_DEAL,
+	"google-ai-pro-deal-9-99": GOOGLE_PRO_DEAL,
+	"google-ai-pro-annual": GOOGLE_PRO_DEAL,
 	"google-ai-ultra-5x": { ...MYPRIORS, multiple: 24 },
 	"google-ai-ultra-20x": { ...MYPRIORS, multiple: 49 },
 };
@@ -93,7 +110,8 @@ function multipleCap(
 ): ReportedCap | null {
 	const reported = REPORTED_MULTIPLES[planId];
 	if (reported === undefined) return null;
-	const monthlyApiUsd = monthlyPriceUsd * reported.multiple;
+	const pricedAtUsd = reported.listPriceUsd ?? monthlyPriceUsd;
+	const monthlyApiUsd = pricedAtUsd * reported.multiple;
 	const weekly = monthlyApiUsd / WEEKS_PER_MONTH;
 	return {
 		weeklyCapApiUsdByFamily: Object.fromEntries(
@@ -101,7 +119,7 @@ function multipleCap(
 		),
 		by: reported.by,
 		url: reported.url,
-		basis: `${reported.by}: ${reported.multiple}x the price, $${Math.round(monthlyApiUsd).toLocaleString("en-US")} a month of API-priced inference`,
+		basis: `${reported.by}: ${reported.multiple}x the ${reported.listPriceUsd === undefined ? "price" : `$${reported.listPriceUsd} list price`}, $${Math.round(monthlyApiUsd).toLocaleString("en-US")} a month of API-priced inference`,
 	};
 }
 

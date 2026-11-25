@@ -259,6 +259,10 @@ export const PLAN_FAMILIES: Record<string, PlanEntry> = {
 	"zai-glm-coding-max": { ...ZAI, shortLabel: "GLM Coding Max" },
 	// Each tier's cap comes from its own reported multiple (build-plans.ts).
 	"google-ai-pro": { ...GOOGLE, families: GOOGLE_PRO },
+	// The same Pro plan at promotional prices, so the same usage.
+	"google-ai-pro-deal-4-99": { ...GOOGLE, families: GOOGLE_PRO },
+	"google-ai-pro-deal-9-99": { ...GOOGLE, families: GOOGLE_PRO },
+	"google-ai-pro-annual": { ...GOOGLE, families: GOOGLE_PRO },
 	"google-ai-ultra-5x": { ...GOOGLE, families: GOOGLE_ULTRA },
 	"google-ai-ultra-20x": { ...GOOGLE, families: GOOGLE_ULTRA },
 	// Kimi's tier multiples are secondary only, so its plans carry none.

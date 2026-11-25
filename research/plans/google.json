@@ -50,6 +50,105 @@
   },
   {
     "vendor": "Google",
+    "planId": "google-ai-pro-deal-4-99",
+    "label": "Google AI Pro ($4.99 deal)",
+    "monthlyPriceUsd": 4.99,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "models": [
+      "Gemini 4 Neon",
+      "Gemini 4 Argon",
+      "Gemini 4 Hydrogen",
+      "Gemini 3.8 Flash",
+      "Claude Sonnet 5.5 and Opus 5.5 (thinking), non-trial subscriptions only"
+    ],
+    "limits": "Same Google AI Pro usage (promo price); see google-ai-pro for the quoted limits.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://gemini.google/subscriptions/",
+        "accessed": "2026-11-25"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). Same Pro plan and usage as google-ai-pro at a promotional price; the usage cap is Pro's, not a multiple of this price. Promo length and eligibility unknown."
+  },
+  {
+    "vendor": "Google",
+    "planId": "google-ai-pro-deal-9-99",
+    "label": "Google AI Pro ($9.99 deal)",
+    "monthlyPriceUsd": 9.99,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "models": [
+      "Gemini 4 Neon",
+      "Gemini 4 Argon",
+      "Gemini 4 Hydrogen",
+      "Gemini 3.8 Flash",
+      "Claude Sonnet 5.5 and Opus 5.5 (thinking), non-trial subscriptions only"
+    ],
+    "limits": "Same Google AI Pro usage (promo price); see google-ai-pro for the quoted limits.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://gemini.google/subscriptions/",
+        "accessed": "2026-11-25"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). Same Pro plan and usage as google-ai-pro at a promotional price; the usage cap is Pro's, not a multiple of this price. Promo length and eligibility unknown."
+  },
+  {
+    "vendor": "Google",
+    "planId": "google-ai-pro-annual",
+    "label": "Google AI Pro (annual)",
+    "monthlyPriceUsd": 8.25,
+    "annualMonthlyPriceUsd": null,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "models": [
+      "Gemini 4 Neon",
+      "Gemini 4 Argon",
+      "Gemini 4 Hydrogen",
+      "Gemini 3.8 Flash",
+      "Claude Sonnet 5.5 and Opus 5.5 (thinking), non-trial subscriptions only"
+    ],
+    "limits": "Same Google AI Pro usage ($99 billed yearly, 99/12 a month); see google-ai-pro for the quoted limits.",
+    "allowanceKind": "rate-window",
+    "availability": "on-sale",
+    "thirdPartyHarnessAllowed": false,
+    "sources": [
+      {
+        "url": "https://gemini.google/subscriptions/",
+        "accessed": "2026-11-25"
+      }
+    ],
+    "confidence": "secondary",
+    "notes": "Price reported by the user on 2026-11-25, not found on gemini.google/subscriptions, which showed only a Black Friday banner ('Save up to 50% on select Google AI plans'). Same Pro plan and usage as google-ai-pro at a promotional price; the usage cap is Pro's, not a multiple of this price. Promo length and eligibility unknown."
+  },
+  {
+    "vendor": "Google",
     "planId": "google-ai-ultra-5x",
     "label": "Google AI Ultra (5x)",
     "monthlyPriceUsd": 99.99,

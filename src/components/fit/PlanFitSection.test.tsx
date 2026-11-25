@@ -66,7 +66,7 @@ describe("PlanFitSection", () => {
 	});
 
 	it("says when paying per token is cheaper", () => {
-		expect(text({ amount: 2 })).toContain("Paying per token is cheaper");
+		expect(text({ amount: 1 })).toContain("Paying per token is cheaper");
 	});
 
 	it("respects Fable's half share on Claude Max", () => {
