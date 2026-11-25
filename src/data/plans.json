@@ -363,6 +363,141 @@
     "promotionByFamily": {}
   },
   {
+    "id": "google-ai-pro-deal-4-99",
+    "vendor": "Antigravity",
+    "lab": "google",
+    "label": "Google AI Pro ($4.99 deal)",
+    "monthlyPriceUsd": 4.99,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "families": [
+      "gemini-4-neon",
+      "gemini-4-argon",
+      "gemini-4-hydrogen",
+      "gemini-3-8-flash",
+      "claude-sonnet-5-5",
+      "claude-opus-5-5"
+    ],
+    "limits": "Same Google AI Pro usage (promo price); see google-ai-pro for the quoted limits.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": false,
+    "confidence": "secondary",
+    "sourceUrl": "https://gemini.google/subscriptions/",
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "gemini-4-neon": 106.10076923076923,
+        "gemini-4-argon": 106.10076923076923,
+        "gemini-4-hydrogen": 106.10076923076923,
+        "gemini-3-8-flash": 106.10076923076923,
+        "claude-sonnet-5-5": 106.10076923076923,
+        "claude-opus-5-5": 106.10076923076923
+      },
+      "by": "mypriors",
+      "url": "https://mypriors.com/builder",
+      "basis": "mypriors: 23x the $19.99 list price, $460 a month of API-priced inference"
+    },
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "google-ai-pro-deal-9-99",
+    "vendor": "Antigravity",
+    "lab": "google",
+    "label": "Google AI Pro ($9.99 deal)",
+    "monthlyPriceUsd": 9.99,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "families": [
+      "gemini-4-neon",
+      "gemini-4-argon",
+      "gemini-4-hydrogen",
+      "gemini-3-8-flash",
+      "claude-sonnet-5-5",
+      "claude-opus-5-5"
+    ],
+    "limits": "Same Google AI Pro usage (promo price); see google-ai-pro for the quoted limits.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": false,
+    "confidence": "secondary",
+    "sourceUrl": "https://gemini.google/subscriptions/",
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "gemini-4-neon": 106.10076923076923,
+        "gemini-4-argon": 106.10076923076923,
+        "gemini-4-hydrogen": 106.10076923076923,
+        "gemini-3-8-flash": 106.10076923076923,
+        "claude-sonnet-5-5": 106.10076923076923,
+        "claude-opus-5-5": 106.10076923076923
+      },
+      "by": "mypriors",
+      "url": "https://mypriors.com/builder",
+      "basis": "mypriors: 23x the $19.99 list price, $460 a month of API-priced inference"
+    },
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
+    "id": "google-ai-pro-annual",
+    "vendor": "Antigravity",
+    "lab": "google",
+    "label": "Google AI Pro ($99 a year)",
+    "monthlyPriceUsd": 8.25,
+    "harnesses": [
+      "Antigravity (IDE/app)",
+      "Antigravity CLI",
+      "Jules",
+      "Android Studio agent",
+      "AI Studio"
+    ],
+    "families": [
+      "gemini-4-neon",
+      "gemini-4-argon",
+      "gemini-4-hydrogen",
+      "gemini-3-8-flash",
+      "claude-sonnet-5-5",
+      "claude-opus-5-5"
+    ],
+    "limits": "Same Google AI Pro usage ($99 billed yearly, $8.25 a month); see google-ai-pro for the quoted limits.",
+    "allowanceKind": "rate-window",
+    "includedApiCreditUsd": 0,
+    "thirdPartyHarnessAllowed": false,
+    "confidence": "secondary",
+    "sourceUrl": "https://gemini.google/subscriptions/",
+    "reportedCap": {
+      "weeklyCapApiUsdByFamily": {
+        "gemini-4-neon": 106.10076923076923,
+        "gemini-4-argon": 106.10076923076923,
+        "gemini-4-hydrogen": 106.10076923076923,
+        "gemini-3-8-flash": 106.10076923076923,
+        "claude-sonnet-5-5": 106.10076923076923,
+        "claude-opus-5-5": 106.10076923076923
+      },
+      "by": "mypriors",
+      "url": "https://mypriors.com/builder",
+      "basis": "mypriors: 23x the $19.99 list price, $460 a month of API-priced inference"
+    },
+    "publishedAllowance": null,
+    "weeklyShareByFamily": {},
+    "maxEffortByFamily": {},
+    "promotionByFamily": {}
+  },
+  {
     "id": "google-ai-ultra-5x",
     "vendor": "Antigravity",
     "lab": "google",

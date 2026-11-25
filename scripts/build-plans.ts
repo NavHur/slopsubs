@@ -1,7 +1,7 @@
 // Builds src/data/plans.json from research/plans/, and the trimmed
 // chart-benchmarks.json from the imported leaderboards.
 
-import { Clock, Data, Effect, Schema } from "effect";
+import { Clock, Effect, Schema } from "effect";
 import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import type { AaEvalId } from "../src/domain/eval-units.ts";
 import {
@@ -21,7 +21,7 @@ import {
 	type PublishedAllowance,
 	type ReportedCap,
 } from "../src/domain/model.ts";
-import { UrlString } from "../src/domain/wire-schemas.ts";
+import { IsoDate, UrlString } from "../src/domain/wire-schemas.ts";
 import { CLAUDE_ULTRA } from "./claude-caps.ts";
 import { creditAllowance, creditPromotions } from "./credit-plans.ts";
 import { CREDIT_PLANS } from "./credit-vendors.ts";
@@ -31,6 +31,7 @@ import { GO_PRICING, OPENCODE_DOCS } from "./go-pricing.ts";
 import type { TokenRates } from "./list-price.ts";
 import { MUSE_EVERYDAY } from "./muse-caps.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
+import { checkOffers, PlanDataError } from "./plan-offers.ts";
 import { type KnownTier, type Ladder, ladderCap } from "./tier-ladder.ts";
 import { WEEKLY_CREDIT_PLANS, weeklyCreditCap } from "./weekly-credit-caps.ts";
 
@@ -65,9 +66,23 @@ const MYPRIORS = { by: "mypriors", url: "https://mypriors.com/builder" };
 const WEEKS_PER_MONTH = 52 / 12;
 const CODEX_PRO_MULTIPLE = 21;
 
-/** Who reported a plan's multiple: the API-priced dollars a month each
- * subscription dollar buys, on every model the plan serves. */
-type ReportedMultiple = { by: string; url: string; multiple: number };
+/** Who reported a plan's multiple: the API-priced dollars a month each dollar
+ * of its price (or of `listPriceUsd`) buys, on every model the plan serves. */
+type ReportedMultiple = {
+	by: string;
+	url: string;
+	multiple: number;
+	/** The list price the multiple is of, for a plan sold below it: the same
+	 * plan at a deal price has the same usage, not a multiple of its own. */
+	listPriceUsd?: number;
+};
+
+const GOOGLE_PRO_LIST_PRICE_USD = 19.99;
+const GOOGLE_PRO_MULTIPLE = { ...MYPRIORS, multiple: 23 };
+const GOOGLE_PRO_DEAL = {
+	...GOOGLE_PRO_MULTIPLE,
+	listPriceUsd: GOOGLE_PRO_LIST_PRICE_USD,
+};
 
 /**
  * Theo's 21x on every Codex Pro tier (2026-11-02), with Plus at half: Pro 100,
@@ -79,13 +94,16 @@ const REPORTED_MULTIPLES: Record<string, ReportedMultiple> = {
 	"chatgpt-pro-100": { ...THEO, multiple: CODEX_PRO_MULTIPLE },
 	"chatgpt-pro-200": { ...THEO, multiple: CODEX_PRO_MULTIPLE },
 	"chatgpt-pro-500": { ...THEO, multiple: CODEX_PRO_MULTIPLE },
-	"google-ai-pro": { ...MYPRIORS, multiple: 23 },
+	"google-ai-pro": GOOGLE_PRO_MULTIPLE,
+	"google-ai-pro-deal-4-99": GOOGLE_PRO_DEAL,
+	"google-ai-pro-deal-9-99": GOOGLE_PRO_DEAL,
+	"google-ai-pro-annual": GOOGLE_PRO_DEAL,
 	"google-ai-ultra-5x": { ...MYPRIORS, multiple: 24 },
 	"google-ai-ultra-20x": { ...MYPRIORS, multiple: 49 },
 };
 
-/** The plan's weekly cap from a reported multiple of its price, the same on
- * each of its models, or null for a plan nobody reported a multiple for. */
+/** The plan's weekly cap from a reported multiple of its price (or of its
+ * `listPriceUsd`), the same on each model, or null with no reported multiple. */
 function multipleCap(
 	planId: string,
 	monthlyPriceUsd: number,
@@ -93,7 +111,8 @@ function multipleCap(
 ): ReportedCap | null {
 	const reported = REPORTED_MULTIPLES[planId];
 	if (reported === undefined) return null;
-	const monthlyApiUsd = monthlyPriceUsd * reported.multiple;
+	const pricedAtUsd = reported.listPriceUsd ?? monthlyPriceUsd;
+	const monthlyApiUsd = pricedAtUsd * reported.multiple;
 	const weekly = monthlyApiUsd / WEEKS_PER_MONTH;
 	return {
 		weeklyCapApiUsdByFamily: Object.fromEntries(
@@ -101,7 +120,7 @@ function multipleCap(
 		),
 		by: reported.by,
 		url: reported.url,
-		basis: `${reported.by}: ${reported.multiple}x the price, $${Math.round(monthlyApiUsd).toLocaleString("en-US")} a month of API-priced inference`,
+		basis: `${reported.by}: ${reported.multiple}x the ${reported.listPriceUsd === undefined ? "price" : `$${reported.listPriceUsd} list price`}, $${Math.round(monthlyApiUsd).toLocaleString("en-US")} a month of API-priced inference`,
 	};
 }
 
@@ -123,13 +142,12 @@ const ResearchPlan = Schema.Struct({
 		Schema.Struct({ url: UrlString, accessed: Schema.String }),
 	),
 	confidence: Schema.Literals(["primary", "secondary", "unverified"]),
+	/** Research only: the last day a limited-time offer sells. The build fails
+	 * after it, so a plan that stopped selling cannot ship. */
+	offerEndsOn: Schema.optionalKey(IsoDate),
 });
 
 type ResearchPlan = typeof ResearchPlan.Type;
-
-class PlanDataError extends Data.TaggedError("PlanDataError")<{
-	message: string;
-}> {}
 
 /** Every researched plan, from one file per vendor, in file-name order. */
 const readResearch = Effect.gen(function* () {
@@ -394,6 +412,7 @@ const main = Effect.gen(function* () {
 		.toISOString()
 		.slice(0, 10);
 	yield* checkPlanData(() => checkPromotions(plans, today));
+	yield* checkPlanData(() => checkOffers(research, today));
 	const chart = yield* Schema.decodeUnknownEffect(ChartData)(
 		yield* checkPlanData(() =>
 			chartData({ plans, dataset, frontierCode, aaEvals }),

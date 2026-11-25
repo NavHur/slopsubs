@@ -70,6 +70,18 @@ describe("PlanRow", () => {
 		expect(html(promoted, [opus])).not.toContain("Promo");
 	});
 
+	it("marks a price from secondary sources with an asterisk and says so", () => {
+		const row = html(plan({ confidence: "secondary" }), [argon]);
+		expect(row).toContain('title="Price from secondary sources"');
+		expect(row).toContain("$20*");
+	});
+
+	it("leaves a primary-sourced price unmarked", () => {
+		const row = html(plan(), [argon]);
+		expect(row).not.toContain("Price from");
+		expect(row).not.toContain("*");
+	});
+
 	it("stays quiet for a plan with no promotion", () => {
 		const row = html(plan(), [argon]);
 		expect(row).not.toContain("Promo");
