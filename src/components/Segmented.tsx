@@ -1,3 +1,4 @@
+import { cn } from "cn";
 export function Segmented<T extends string>({
 	label,
 	options,
@@ -15,7 +16,7 @@ export function Segmented<T extends string>({
 	return (
 		<fieldset
 			aria-label={label}
-			className={`flex items-center gap-x-4 ${wrap ? "flex-wrap" : ""}`}
+			className={cn("flex items-center gap-x-4", wrap && "flex-wrap")}
 		>
 			{options.map((option) => (
 				<button
@@ -59,7 +60,7 @@ export function Chip({
 	label,
 	on,
 	onClick,
-	className = "",
+	className,
 }: {
 	label: string;
 	on: boolean;
@@ -71,7 +72,10 @@ export function Chip({
 			type="button"
 			aria-pressed={on}
 			onClick={onClick}
-			className={`text-[12px] text-subtle hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[14px] ${className}`}
+			className={cn(
+				"text-[12px] text-subtle hover:text-fg aria-pressed:text-fg max-lg:min-h-11 max-lg:text-[14px]",
+				className,
+			)}
 		>
 			{label}
 		</button>

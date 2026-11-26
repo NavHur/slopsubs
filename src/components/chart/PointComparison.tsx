@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import type { ValuePoint } from "#/domain/value";
 import type { BenchmarkView } from "#/lib/benchmarks";
 import { familyColor, familyName } from "#/lib/families";
@@ -193,7 +194,11 @@ function ChangeChip({ change }: { change: Change }) {
 	const { text, tone } = change;
 	return (
 		<span
-			className={`rounded px-1 py-px text-[11px] leading-tight font-medium whitespace-nowrap ${TONE_CLASS[tone]} ${CHIP_BACKGROUND[tone]}`}
+			className={cn(
+				"rounded px-1 py-px text-[11px] leading-tight font-medium whitespace-nowrap",
+				TONE_CLASS[tone],
+				CHIP_BACKGROUND[tone],
+			)}
 		>
 			{text}
 		</span>

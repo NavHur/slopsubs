@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import { type FitSearch, fitInputs } from "#/lib/fit";
 import {
@@ -72,7 +73,7 @@ export function QuizQuestion({
 			<fieldset
 				key={index}
 				ref={fieldsetRef}
-				className={`flex flex-col ${QUESTION_HEIGHT} ${stepped ? STEP_IN : ""}`}
+				className={cn("flex flex-col", QUESTION_HEIGHT, stepped && STEP_IN)}
 			>
 				<legend
 					ref={legendRef}
@@ -134,7 +135,10 @@ function QuizProgress({ index }: { index: number }) {
 				{QUIZ_STEPS.map((step, i) => (
 					<span
 						key={step}
-						className={`h-0.5 w-5 rounded-full transition-colors ${i <= index ? "bg-fg/70" : "bg-grid"}`}
+						className={cn(
+							"h-0.5 w-5 rounded-full transition-colors",
+							i <= index ? "bg-fg/70" : "bg-grid",
+						)}
 					/>
 				))}
 			</span>

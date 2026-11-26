@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { useMemo } from "react";
 import type { TimedPoint } from "#/domain/tradeoffs";
 import type { BenchmarkView } from "#/lib/benchmarks";
@@ -81,7 +82,10 @@ export function TradeoffChart({
 				// oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- the chart turns with the arrow keys, so it takes focus
 				tabIndex={0}
 				{...camera.handlers}
-				className={`block touch-pan-y select-none outline-none focus-visible:outline-1 focus-visible:outline-line ${camera.dragging ? "cursor-grabbing" : "cursor-grab"}`}
+				className={cn(
+					"block touch-pan-y select-none outline-none focus-visible:outline-1 focus-visible:outline-line",
+					camera.dragging ? "cursor-grabbing" : "cursor-grab",
+				)}
 			>
 				<SceneFrame scene={scene} view={view} />
 				<EffortLines steps={scene.efforts} pricings={pricings} lit={lit} />

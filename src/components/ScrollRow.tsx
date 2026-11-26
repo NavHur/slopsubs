@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import {
 	type ReactNode,
 	type RefObject,
@@ -234,7 +235,10 @@ function EdgeArrow({
 			onClick={() => {
 				if (rowRef.current) scrollRowPage(rowRef.current, arrow.direction);
 			}}
-			className={`absolute top-1/2 ${arrow.inset} hidden size-7 -translate-y-1/2 place-items-center rounded-full border border-line bg-bg text-muted transition-colors hover:text-fg pointer-fine:grid`}
+			className={cn(
+				"absolute top-1/2 hidden size-7 -translate-y-1/2 place-items-center rounded-full border border-line bg-bg text-muted transition-colors hover:text-fg pointer-fine:grid",
+				arrow.inset,
+			)}
 		>
 			<svg
 				aria-hidden="true"
@@ -263,8 +267,8 @@ function EdgeArrow({
  */
 export function ScrollRow({
 	selectedKey,
-	className = "",
-	rowClassName = "",
+	className,
+	rowClassName,
 	children,
 }: {
 	selectedKey: string;
@@ -280,10 +284,13 @@ export function ScrollRow({
 
 	const mask = fadeMask(overflow);
 	return (
-		<div ref={frameRef} className={`relative flex min-w-0 ${className}`}>
+		<div ref={frameRef} className={cn("relative flex min-w-0", className)}>
 			<div
 				ref={ref}
-				className={`relative min-w-0 overflow-x-auto [scrollbar-width:none] ${rowClassName}`}
+				className={cn(
+					"relative min-w-0 overflow-x-auto [scrollbar-width:none]",
+					rowClassName,
+				)}
 				style={{ maskImage: mask, WebkitMaskImage: mask }}
 			>
 				{children}

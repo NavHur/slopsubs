@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import { type ReactNode, useState } from "react";
 import { type FieldEntry, parseEntry } from "#/lib/fitQuiz";
 
@@ -55,7 +56,7 @@ export function NumberField({
 	errorId,
 	onChange,
 	placeholder,
-	className = "",
+	className,
 }: {
 	id?: string;
 	value: number | null;
@@ -82,7 +83,10 @@ export function NumberField({
 				setText(e.target.value);
 				onChange(parseEntry(e.target.value, e.target.validity.badInput));
 			}}
-			className={`rounded-sm border border-line bg-panel px-2 py-1 text-fg tabular-nums aria-invalid:border-worse max-lg:min-h-11 ${className}`}
+			className={cn(
+				"rounded-sm border border-line bg-panel px-2 py-1 text-fg tabular-nums aria-invalid:border-worse max-lg:min-h-11",
+				className,
+			)}
 		/>
 	);
 }
