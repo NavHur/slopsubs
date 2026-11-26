@@ -16,7 +16,7 @@ export type Plotted = {
 /** How many options survive, and what the faded ones mean. */
 export function TradeoffKey({
 	points,
-	className = "",
+	className,
 }: {
 	points: readonly TimedPoint[];
 	className?: string;

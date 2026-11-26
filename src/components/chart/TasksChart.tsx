@@ -99,7 +99,7 @@ export function TasksChart({ plans }: { plans: readonly PlanTasks[] }) {
 /** Tells hollow dots, which rest on estimated caps, from solid ones. */
 export function CapBasisKey({
 	solidLabel = "Published or measured cap",
-	className = "",
+	className,
 }: {
 	/** What a solid dot rests on. */
 	solidLabel?: string;

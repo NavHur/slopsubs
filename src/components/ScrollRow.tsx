@@ -267,8 +267,8 @@ function EdgeArrow({
  */
 export function ScrollRow({
 	selectedKey,
-	className = "",
-	rowClassName = "",
+	className,
+	rowClassName,
 	children,
 }: {
 	selectedKey: string;

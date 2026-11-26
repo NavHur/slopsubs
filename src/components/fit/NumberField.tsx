@@ -56,7 +56,7 @@ export function NumberField({
 	errorId,
 	onChange,
 	placeholder,
-	className = "",
+	className,
 }: {
 	id?: string;
 	value: number | null;

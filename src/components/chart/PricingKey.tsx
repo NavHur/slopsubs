@@ -56,7 +56,7 @@ export function SwatchSpace() {
  */
 export function PricingKey({
 	pricings,
-	className = "",
+	className,
 }: {
 	pricings: readonly PricingStyle[];
 	className?: string;

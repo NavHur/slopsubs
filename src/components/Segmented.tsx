@@ -60,7 +60,7 @@ export function Chip({
 	label,
 	on,
 	onClick,
-	className = "",
+	className,
 }: {
 	label: string;
 	on: boolean;

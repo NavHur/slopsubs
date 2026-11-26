@@ -13,7 +13,7 @@ export function ChartSection({
 	controls,
 	canExport,
 	onExport,
-	className = "",
+	className,
 	children,
 }: {
 	id: string;

@@ -126,7 +126,7 @@ function Axis({
 			className="grid items-end border-b border-line pb-1 text-[11px] text-subtle"
 			style={{ gridTemplateColumns: layout.columns, columnGap: COLUMN_GAP_PX }}
 		>
-			<span className={cn(layout.compact && "col-span-2")}>
+			<span className={layout.compact ? "col-span-2" : ""}>
 				{units.axisLabel}
 			</span>
 			<svg
