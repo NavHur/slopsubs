@@ -57,6 +57,13 @@ describe("cn", () => {
 		);
 		expect(cn("border-line", "border-t")).toBe("border-line border-t");
 		expect(cn("text-muted", "text-[13px]")).toBe("text-muted text-[13px]");
+		expect(cn("focus-visible:outline-1 focus-visible:outline-line")).toBe(
+			"focus-visible:outline-1 focus-visible:outline-line",
+		);
+		expect(cn("border-line", "not-first:border-t", "lg:border-l")).toBe(
+			"border-line not-first:border-t lg:border-l",
+		);
+		expect(cn("grid", "grid-flow-col")).toBe("grid grid-flow-col");
 	});
 
 	it("keeps the theme font beside a weight", () => {
