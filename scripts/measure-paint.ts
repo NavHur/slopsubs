@@ -1,13 +1,20 @@
-import { Effect } from "effect";
 // Measures paint, layout shift, font arrival, and the benchmark picker's reveal
 // on the built site. Build first; see README.md, "Paint Metrics".
 
 import { parseArgs } from "node:util";
-import { type Browser, chromium, type Page } from "playwright-core";
+import { Effect, Schema } from "effect";
+import { type Browser, type Page } from "playwright-core";
 import { BENCHMARK_IDS } from "../src/domain/enums.ts";
+import { commandOptions } from "./effects/arguments.ts";
+import {
+	browserOperation,
+	browserRead,
+	BrowserCheckError,
+	launchBrowser,
+	siteOrigin,
+} from "./effects/browser.ts";
 import { median, requirePainted } from "./paint-stats.ts";
 import { readPickerClearance } from "./picker-clearance.ts";
-import { originOf, serveSite } from "./serve-site.ts";
 
 const PHONE = { width: 390, height: 844 };
 type Throttle = {
@@ -34,20 +41,14 @@ const THROTTLES: Record<string, Throttle> = {
 		cpuSlowdown: 1,
 	},
 };
-const { values: args } = parseArgs({
-	options: {
-		runs: { type: "string", default: "5" },
-		throttle: { type: "string", default: "mobile" },
-	},
+const Options = Schema.Struct({
+	runs: Schema.NumberFromString.check(
+		Schema.isInt(),
+		Schema.isGreaterThan(0),
+		Schema.isLessThanOrEqualTo(Number.MAX_SAFE_INTEGER),
+	),
+	throttle: Schema.Literals(["mobile", "desktop"]),
 });
-const runs = Number(args.runs);
-if (!Number.isSafeInteger(runs) || runs < 1) {
-	throw new Error("--runs takes a positive whole number");
-}
-const throttle = THROTTLES[args.throttle];
-if (!throttle) {
-	throw new Error(`--throttle takes ${Object.keys(THROTTLES).join(" or ")}`);
-}
 
 /** DNS, TCP, and TLS before the first request to a new origin. Chromium's
  * throttle adds latency per request only, which would make a third-party
@@ -90,53 +91,84 @@ function observePaint() {
 
 /** Holds the first requests to each origin other than the site's for a
  * connection setup; later requests reuse the connection. */
-async function chargeConnectionSetup(page: Page, siteOrigin: string) {
+const chargeConnectionSetup = Effect.fnUntraced(function* (
+	page: Page,
+	siteOrigin: string,
+	throttle: Throttle,
+) {
 	const setupMs = CONNECT_RTTS * throttle.latencyMs;
 	const connections = new Map<string, Promise<void>>();
-	await page.route(
-		(url) => url.origin !== siteOrigin,
-		async (route) => {
-			const { origin } = new URL(route.request().url());
-			let connected = connections.get(origin);
-			if (!connected) {
-				connected = new Promise((resolve) => setTimeout(resolve, setupMs));
-				connections.set(origin, connected);
-			}
-			await connected;
-			await route.continue();
-		},
+	yield* browserOperation("route", () =>
+		page.route(
+			(url) => url.origin !== siteOrigin,
+			async (route) => {
+				const { origin } = new URL(route.request().url());
+				let connected = connections.get(origin);
+				if (!connected) {
+					connected = new Promise((resolve) => setTimeout(resolve, setupMs));
+					connections.set(origin, connected);
+				}
+				await connected;
+				await route.continue();
+			},
+		),
 	);
-}
+});
 
-async function throttledPage(browser: Browser, url: string): Promise<Page> {
-	const context = await browser.newContext({
-		viewport: PHONE,
-		colorScheme: "light",
-	});
-	const page = await context.newPage();
-	const cdp = await context.newCDPSession(page);
-	await cdp.send("Network.emulateNetworkConditions", {
-		offline: false,
-		latency: throttle.latencyMs,
-		downloadThroughput: throttle.downloadBytesPerSec,
-		uploadThroughput: throttle.uploadBytesPerSec,
-	});
-	await cdp.send("Emulation.setCPUThrottlingRate", {
-		rate: throttle.cpuSlowdown,
-	});
-	await chargeConnectionSetup(page, new URL(url).origin);
-	await page.addInitScript(observePaint);
+const throttledPage = Effect.fnUntraced(function* (
+	browser: Browser,
+	url: string,
+	throttle: Throttle,
+) {
+	const context = yield* Effect.acquireRelease(
+		browserOperation("Open paint context", () =>
+			browser.newContext({ viewport: PHONE, colorScheme: "light" }),
+		),
+		(context) =>
+			browserOperation("Close paint context", () => context.close()).pipe(
+				Effect.orDie,
+			),
+	);
+	const page = yield* browserOperation("newPage", () => context.newPage());
+	const cdp = yield* browserOperation("newCDPSession", () =>
+		context.newCDPSession(page),
+	);
+	yield* browserOperation("send", () =>
+		cdp.send("Network.emulateNetworkConditions", {
+			offline: false,
+			latency: throttle.latencyMs,
+			downloadThroughput: throttle.downloadBytesPerSec,
+			uploadThroughput: throttle.uploadBytesPerSec,
+		}),
+	);
+	yield* browserOperation("send", () =>
+		cdp.send("Emulation.setCPUThrottlingRate", {
+			rate: throttle.cpuSlowdown,
+		}),
+	);
+	yield* chargeConnectionSetup(page, new URL(url).origin, throttle);
+	yield* browserOperation("addInitScript", () =>
+		page.addInitScript(observePaint),
+	);
 	return page;
-}
+});
 
-async function loadSettled(page: Page, url: string): Promise<void> {
-	const response = await page.goto(url, { waitUntil: "networkidle" });
+const loadSettled = Effect.fnUntraced(function* (page: Page, url: string) {
+	const response = yield* browserOperation("goto", () =>
+		page.goto(url, { waitUntil: "networkidle" }),
+	);
 	if (!response?.ok()) {
-		throw new Error(`${url} answered ${response?.status()}: build first`);
+		return yield* new BrowserCheckError({
+			message: `${url} answered ${response?.status()}: build first`,
+		});
 	}
-	await page.evaluate(() => document.fonts.ready);
-	await page.waitForTimeout(SETTLE_MS);
-}
+	yield* browserOperation("evaluate", () =>
+		page.evaluate(() => document.fonts.ready),
+	);
+	yield* browserOperation("waitForTimeout", () =>
+		page.waitForTimeout(SETTLE_MS),
+	);
+});
 
 /** When each web font finished arriving, in epoch ms; `requestfinished`
  * reports it directly. */
@@ -150,12 +182,24 @@ function recordFontArrivals(page: Page): number[] {
 	return arrivals;
 }
 
-async function samplePaint(browser: Browser, url: string) {
-	const page = await throttledPage(browser, url);
+const PaintMetrics = Schema.Struct({
+	firstPaintMs: Schema.Number,
+	fcpMs: Schema.Number,
+	lcpMs: Schema.Number,
+	cls: Schema.Finite,
+	timeOrigin: Schema.Finite,
+});
+
+const samplePaint = Effect.fnUntraced(function* (
+	browser: Browser,
+	url: string,
+	throttle: Throttle,
+) {
+	const page = yield* throttledPage(browser, url, throttle);
 	const fontArrivals = recordFontArrivals(page);
-	try {
-		await loadSettled(page, url);
-		const sample = await page.evaluate(() => {
+	yield* loadSettled(page, url);
+	const sample = yield* browserRead(PaintMetrics, "Read paint metrics", () =>
+		page.evaluate(() => {
 			const { cls, lcp } = (
 				window as unknown as { __paint: { cls: number; lcp: number } }
 			).__paint;
@@ -168,64 +212,76 @@ async function samplePaint(browser: Browser, url: string) {
 				cls,
 				timeOrigin: performance.timeOrigin,
 			};
+		}),
+	);
+	if (fontArrivals.length === 0) {
+		return yield* new BrowserCheckError({
+			message: `${url} requested no web font (woff2) to time`,
 		});
-		if (fontArrivals.length === 0) {
-			throw new Error(`${url} requested no web font (woff2) to time`);
-		}
-		requirePainted(url, sample);
-		const { timeOrigin, ...paint } = sample;
-		return {
-			...paint,
-			fontsDoneMs: Math.max(...fontArrivals) - timeOrigin,
-		} satisfies PaintSample;
-	} finally {
-		await page.context().close();
 	}
-}
+	yield* requirePainted(url, sample);
+	const { timeOrigin, ...paint } = sample;
+	return {
+		...paint,
+		fontsDoneMs: Math.max(...fontArrivals) - timeOrigin,
+	} satisfies PaintSample;
+}, Effect.scoped);
 
 /** Holds every font request until `release` runs. */
-async function holdFonts(page: Page): Promise<() => void> {
+const holdFonts = Effect.fnUntraced(function* (page: Page) {
 	let release = () => {};
 	const gate = new Promise<void>((resolve) => {
 		release = resolve;
 	});
-	await page.route("**/*.woff2", async (route) => {
-		await gate;
-		await route.continue();
-	});
+	yield* browserOperation("route", () =>
+		page.route("**/*.woff2", async (route) => {
+			await gate;
+			await route.continue();
+		}),
+	);
 	return release;
-}
+});
 
 /** Waits until the linked view has rendered and been shown, which is after
  * ScrollRow revealed its benchmark, with the fonts still held. */
-async function waitForFallbackReveal(page: Page): Promise<void> {
-	await page.waitForFunction((picker) => {
-		const pressed = document.querySelector(`${picker} [aria-pressed=true]`);
-		const shown = !("viewPending" in document.documentElement.dataset);
-		return pressed && shown && document.fonts.status === "loading";
-	}, PICKER);
-}
+const waitForFallbackReveal = Effect.fnUntraced(function* (page: Page) {
+	yield* browserOperation("waitForFunction", () =>
+		page.waitForFunction((picker) => {
+			const pressed = document.querySelector(`${picker} [aria-pressed=true]`);
+			const shown = !("viewPending" in document.documentElement.dataset);
+			return pressed && shown && document.fonts.status === "loading";
+		}, PICKER),
+	);
+});
 
 /** Loads the view with its fonts held until the reveal has run in the
  * fallback face, then lets them arrive and measures. */
-async function pickerClearance(browser: Browser, url: string) {
-	const page = await throttledPage(browser, url);
-	try {
-		const release = await holdFonts(page);
-		await page.goto(url, { waitUntil: "domcontentloaded" });
-		await waitForFallbackReveal(page);
-		release();
-		await page.evaluate(() => document.fonts.ready);
-		await page.waitForTimeout(SETTLE_MS);
-		return await page.evaluate(readPickerClearance, {
+const pickerClearance = Effect.fnUntraced(function* (
+	browser: Browser,
+	url: string,
+	throttle: Throttle,
+) {
+	const page = yield* throttledPage(browser, url, throttle);
+	const release = yield* holdFonts(page);
+	yield* browserOperation("goto", () =>
+		page.goto(url, { waitUntil: "domcontentloaded" }),
+	);
+	yield* waitForFallbackReveal(page);
+	release();
+	yield* browserOperation("evaluate", () =>
+		page.evaluate(() => document.fonts.ready),
+	);
+	yield* browserOperation("waitForTimeout", () =>
+		page.waitForTimeout(SETTLE_MS),
+	);
+	return yield* browserRead(Schema.Finite, "Read picker clearance", () =>
+		page.evaluate(readPickerClearance, {
 			picker: PICKER,
 			fadePx: FADE_PX,
 			slackPx: EDGE_SLACK_PX,
-		});
-	} finally {
-		await page.context().close();
-	}
-}
+		}),
+	);
+}, Effect.scoped);
 
 function summarize(samples: PaintSample[]) {
 	const keys = Object.keys(samples[0]) as (keyof PaintSample)[];
@@ -245,20 +301,35 @@ function summarize(samples: PaintSample[]) {
 	);
 }
 
-const server = await Effect.runPromise(serveSite);
-const browser = await chromium.launch();
-try {
-	const origin = Effect.runSync(originOf(server));
+const main = Effect.gen(function* () {
+	const args = yield* commandOptions(
+		Options,
+		() =>
+			parseArgs({
+				options: {
+					runs: { type: "string", default: "5" },
+					throttle: { type: "string", default: "mobile" },
+				},
+			}).values,
+	);
+	const runs = args.runs;
+	const throttle = THROTTLES[args.throttle];
+	const origin = yield* siteOrigin();
+	const browser = yield* launchBrowser();
 	const samples: PaintSample[] = [];
 	for (let run = 0; run < runs; run++) {
-		samples.push(await samplePaint(browser, origin));
+		samples.push(yield* samplePaint(browser, origin, throttle));
 	}
 	console.log(`Paint over ${runs} cold loads of /, ${args.throttle} throttle:`);
 	console.table(summarize(samples));
 
 	const clearance: Record<string, number> = {};
 	for (const id of BENCHMARK_IDS) {
-		const px = await pickerClearance(browser, `${origin}?benchmark=${id}`);
+		const px = yield* pickerClearance(
+			browser,
+			`${origin}?benchmark=${id}`,
+			throttle,
+		);
 		clearance[id] = Math.round(px * 10) / 10;
 	}
 	console.log("Selected benchmark's clearance from a fade, px:");
@@ -267,9 +338,9 @@ try {
 		([, px]) => px < -CLEARANCE_TOLERANCE_PX,
 	);
 	if (hidden.length > 0) {
-		throw new Error(`Faded or hidden: ${hidden.map(([id]) => id).join(", ")}`);
+		return yield* new BrowserCheckError({
+			message: `Faded or hidden: ${hidden.map(([id]) => id).join(", ")}`,
+		});
 	}
-} finally {
-	await browser.close();
-	server.close();
-}
+});
+await Effect.runPromise(Effect.scoped(main));
