@@ -2,8 +2,13 @@
 // on the built site. Build first; see README.md, "Paint Metrics".
 
 import { parseArgs } from "node:util";
-import { Effect, Schema } from "effect";
-import { type Browser, type Page } from "playwright-core";
+import { Deferred, Effect, Schema } from "effect";
+import {
+	type Browser,
+	type Page,
+	type Request,
+	type Route,
+} from "playwright-core";
 import { BENCHMARK_IDS } from "../src/domain/enums.ts";
 import { commandOptions } from "./effects/arguments.ts";
 import {
@@ -11,6 +16,7 @@ import {
 	browserRead,
 	BrowserCheckError,
 	launchBrowser,
+	routeRequests,
 	siteOrigin,
 } from "./effects/browser.ts";
 import { median, requirePainted } from "./paint-stats.ts";
@@ -89,29 +95,34 @@ function observePaint() {
 	}).observe({ type: "largest-contentful-paint", buffered: true });
 }
 
+const continueRoute = (route: Route) =>
+	browserOperation("Continue request", () => route.continue());
+
 /** Holds the first requests to each origin other than the site's for a
- * connection setup; later requests reuse the connection. */
+ * connection setup; later requests reuse the connection. Fails if a held
+ * request cannot continue. */
 const chargeConnectionSetup = Effect.fnUntraced(function* (
 	page: Page,
 	siteOrigin: string,
 	throttle: Throttle,
 ) {
 	const setupMs = CONNECT_RTTS * throttle.latencyMs;
-	const connections = new Map<string, Promise<void>>();
-	yield* browserOperation("route", () =>
-		page.route(
-			(url) => url.origin !== siteOrigin,
-			async (route) => {
-				const { origin } = new URL(route.request().url());
-				let connected = connections.get(origin);
-				if (!connected) {
-					connected = new Promise((resolve) => setTimeout(resolve, setupMs));
-					connections.set(origin, connected);
-				}
-				await connected;
-				await route.continue();
-			},
-		),
+	const connections = new Map<string, Deferred.Deferred<void>>();
+	const awaitConnection = Effect.fnUntraced(function* (origin: string) {
+		const known = connections.get(origin);
+		if (known) return yield* Deferred.await(known);
+		const connected = yield* Deferred.make<void>();
+		connections.set(origin, connected);
+		yield* Effect.sleep(setupMs);
+		yield* Deferred.succeed(connected, undefined);
+	});
+	return yield* routeRequests(
+		page,
+		(url) => url.origin !== siteOrigin,
+		(route) =>
+			awaitConnection(new URL(route.request().url()).origin).pipe(
+				Effect.andThen(continueRoute(route)),
+			),
 	);
 });
 
@@ -146,11 +157,15 @@ const throttledPage = Effect.fnUntraced(function* (
 			rate: throttle.cpuSlowdown,
 		}),
 	);
-	yield* chargeConnectionSetup(page, new URL(url).origin, throttle);
+	const setupFailed = yield* chargeConnectionSetup(
+		page,
+		new URL(url).origin,
+		throttle,
+	);
 	yield* browserOperation("addInitScript", () =>
 		page.addInitScript(observePaint),
 	);
-	return page;
+	return { page, setupFailed };
 });
 
 const loadSettled = Effect.fnUntraced(function* (page: Page, url: string) {
@@ -170,17 +185,25 @@ const loadSettled = Effect.fnUntraced(function* (page: Page, url: string) {
 	);
 });
 
-/** When each web font finished arriving, in epoch ms; `requestfinished`
- * reports it directly. */
-function recordFontArrivals(page: Page): number[] {
-	const arrivals: number[] = [];
+/** The web font requests that finished, in arrival order. */
+function recordFontRequests(page: Page): Request[] {
+	const fonts: Request[] = [];
 	page.on("requestfinished", (request) => {
-		if (request.resourceType() !== "font") return;
-		const timing = request.timing();
-		arrivals.push(timing.startTime + timing.responseEnd);
+		if (request.resourceType() === "font") fonts.push(request);
 	});
-	return arrivals;
+	return fonts;
 }
+
+const FontTiming = Schema.Struct({
+	startTime: Schema.Finite,
+	responseEnd: Schema.Finite,
+});
+
+/** When the font finished arriving, in epoch ms. */
+const fontArrival = (request: Request) =>
+	browserRead(FontTiming, "Read font timing", async () =>
+		request.timing(),
+	).pipe(Effect.map((timing) => timing.startTime + timing.responseEnd));
 
 const PaintMetrics = Schema.Struct({
 	firstPaintMs: Schema.Number,
@@ -190,13 +213,11 @@ const PaintMetrics = Schema.Struct({
 	timeOrigin: Schema.Finite,
 });
 
-const samplePaint = Effect.fnUntraced(function* (
-	browser: Browser,
+const measurePaint = Effect.fnUntraced(function* (
+	page: Page,
 	url: string,
-	throttle: Throttle,
+	fonts: Request[],
 ) {
-	const page = yield* throttledPage(browser, url, throttle);
-	const fontArrivals = recordFontArrivals(page);
 	yield* loadSettled(page, url);
 	const sample = yield* browserRead(PaintMetrics, "Read paint metrics", () =>
 		page.evaluate(() => {
@@ -214,32 +235,38 @@ const samplePaint = Effect.fnUntraced(function* (
 			};
 		}),
 	);
-	if (fontArrivals.length === 0) {
+	if (fonts.length === 0) {
 		return yield* new BrowserCheckError({
 			message: `${url} requested no web font (woff2) to time`,
 		});
 	}
 	yield* requirePainted(url, sample);
+	const arrivals = yield* Effect.forEach(fonts, fontArrival);
 	const { timeOrigin, ...paint } = sample;
 	return {
 		...paint,
-		fontsDoneMs: Math.max(...fontArrivals) - timeOrigin,
+		fontsDoneMs: Math.max(...arrivals) - timeOrigin,
 	} satisfies PaintSample;
+});
+
+const samplePaint = Effect.fnUntraced(function* (
+	browser: Browser,
+	url: string,
+	throttle: Throttle,
+) {
+	const { page, setupFailed } = yield* throttledPage(browser, url, throttle);
+	const fonts = recordFontRequests(page);
+	return yield* Effect.raceFirst(measurePaint(page, url, fonts), setupFailed);
 }, Effect.scoped);
 
-/** Holds every font request until `release` runs. */
+/** Holds every font request until `release` runs; `fontsFailed` fails if a
+ * held request cannot continue. */
 const holdFonts = Effect.fnUntraced(function* (page: Page) {
-	let release = () => {};
-	const gate = new Promise<void>((resolve) => {
-		release = resolve;
-	});
-	yield* browserOperation("route", () =>
-		page.route("**/*.woff2", async (route) => {
-			await gate;
-			await route.continue();
-		}),
+	const gate = yield* Deferred.make<void>();
+	const fontsFailed = yield* routeRequests(page, "**/*.woff2", (route) =>
+		Deferred.await(gate).pipe(Effect.andThen(continueRoute(route))),
 	);
-	return release;
+	return { release: Deferred.succeed(gate, undefined), fontsFailed };
 });
 
 /** Waits until the linked view has rendered and been shown, which is after
@@ -254,20 +281,8 @@ const waitForFallbackReveal = Effect.fnUntraced(function* (page: Page) {
 	);
 });
 
-/** Loads the view with its fonts held until the reveal has run in the
- * fallback face, then lets them arrive and measures. */
-const pickerClearance = Effect.fnUntraced(function* (
-	browser: Browser,
-	url: string,
-	throttle: Throttle,
-) {
-	const page = yield* throttledPage(browser, url, throttle);
-	const release = yield* holdFonts(page);
-	yield* browserOperation("goto", () =>
-		page.goto(url, { waitUntil: "domcontentloaded" }),
-	);
-	yield* waitForFallbackReveal(page);
-	release();
+/** Lets the fonts arrive, then measures. */
+const measureClearance = Effect.fnUntraced(function* (page: Page) {
 	yield* browserOperation("evaluate", () =>
 		page.evaluate(() => document.fonts.ready),
 	);
@@ -281,6 +296,26 @@ const pickerClearance = Effect.fnUntraced(function* (
 			slackPx: EDGE_SLACK_PX,
 		}),
 	);
+});
+
+/** Loads the view with its fonts held until the reveal has run in the
+ * fallback face, then lets them arrive and measures. */
+const pickerClearance = Effect.fnUntraced(function* (
+	browser: Browser,
+	url: string,
+	throttle: Throttle,
+) {
+	const { page, setupFailed } = yield* throttledPage(browser, url, throttle);
+	const { release, fontsFailed } = yield* holdFonts(page);
+	const measured = Effect.gen(function* () {
+		yield* browserOperation("goto", () =>
+			page.goto(url, { waitUntil: "domcontentloaded" }),
+		);
+		yield* waitForFallbackReveal(page);
+		yield* release;
+		return yield* measureClearance(page);
+	}).pipe(Effect.ensuring(release));
+	return yield* Effect.raceAllFirst([measured, setupFailed, fontsFailed]);
 }, Effect.scoped);
 
 function summarize(samples: PaintSample[]) {

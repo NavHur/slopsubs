@@ -2,13 +2,14 @@
 // a view left hidden, or one shown before slow scripts run. See README.md.
 
 import { Effect, Schema } from "effect";
-import { type Browser } from "playwright-core";
+import { type Browser, type Page } from "playwright-core";
 import {
 	browserOperation,
 	browserRead,
 	openBrowserPage,
 	BrowserCheckError,
 	launchBrowser,
+	routeRequests,
 	siteOrigin,
 } from "./effects/browser.ts";
 
@@ -103,33 +104,38 @@ const checkLink = Effect.fnUntraced(function* (
 /** Longer than the 2 s the CSS fallback once waited, shorter than its 10 s. */
 const SLOW_BUNDLE_MS = 3000;
 
-/** Holds the app's scripts back; whether the view stayed hidden meanwhile. */
-const staysHiddenWhileSlow = Effect.fnUntraced(function* (
-	browser: Browser,
-	url: string,
-) {
-	const page = yield* openBrowserPage(browser, { viewport: VIEWPORTS[1] });
-	yield* browserOperation("route", () =>
-		page.route("**/*.js", async (route) => {
-			await new Promise((resolve) => setTimeout(resolve, SLOW_BUNDLE_MS));
-			await route.continue();
-		}),
-	);
+const readVisibility = Effect.fnUntraced(function* (page: Page, url: string) {
 	yield* browserOperation("goto", () =>
 		page.goto(url, { waitUntil: "commit" }),
 	);
 	yield* browserOperation("waitForTimeout", () =>
 		page.waitForTimeout(SLOW_BUNDLE_MS - 500),
 	);
-	const visibility = yield* browserRead(
-		Schema.String,
-		"Read view visibility",
-		() =>
-			page.evaluate(
-				() =>
-					getComputedStyle(document.querySelector("[data-view-dependent]")!)
-						.visibility,
+	return yield* browserRead(Schema.String, "Read view visibility", () =>
+		page.evaluate(
+			() =>
+				getComputedStyle(document.querySelector("[data-view-dependent]")!)
+					.visibility,
+		),
+	);
+});
+
+/** Holds the app's scripts back; whether the view stayed hidden meanwhile. */
+const staysHiddenWhileSlow = Effect.fnUntraced(function* (
+	browser: Browser,
+	url: string,
+) {
+	const page = yield* openBrowserPage(browser, { viewport: VIEWPORTS[1] });
+	const routeFailed = yield* routeRequests(page, "**/*.js", (route) =>
+		Effect.sleep(SLOW_BUNDLE_MS).pipe(
+			Effect.andThen(
+				browserOperation("Continue request", () => route.continue()),
 			),
+		),
+	);
+	const visibility = yield* Effect.raceFirst(
+		readVisibility(page, url),
+		routeFailed,
 	);
 
 	return visibility === "hidden";
