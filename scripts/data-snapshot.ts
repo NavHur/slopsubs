@@ -72,18 +72,18 @@ function readTexts<E>(read: (file: FileName) => Effect.Effect<string, E>) {
 	);
 }
 
-const renameSuperseded = (id: string) =>
+const successorId = (id: string) =>
 	id === SUPERSEDED_AA_EVAL.id ? SUPERSEDED_AA_EVAL.successor : id;
 
 /** `value` with every string, and object key, that is the superseded eval id
  * renamed to its successor. */
 function renameSupersededEval(value: unknown): unknown {
-	if (typeof value === "string") return renameSuperseded(value);
+	if (typeof value === "string") return successorId(value);
 	if (Array.isArray(value)) return value.map(renameSupersededEval);
 	if (typeof value !== "object" || value === null) return value;
 	return Object.fromEntries(
 		Object.entries(value).map(([key, item]) => [
-			renameSuperseded(key),
+			successorId(key),
 			renameSupersededEval(item),
 		]),
 	);
