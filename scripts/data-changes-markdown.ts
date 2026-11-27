@@ -1,3 +1,4 @@
+import { Data, Effect } from "effect";
 // Renders a refresh's change set as the body of the standing refresh PR.
 
 import type {
@@ -36,20 +37,29 @@ function signed(before: number, after: number): string {
 	return `${tenths > 0 ? "+" : "−"}${(Math.abs(tenths) / 10).toFixed(1)}`;
 }
 
-function scoreMove(s: ScoreChange, format: (score: number) => string): string {
+export class ScoreChangeError extends Data.TaggedError("ScoreChangeError")<{
+	message: string;
+}> {}
+
+const scoreMove = Effect.fnUntraced(function* (
+	s: ScoreChange,
+	format: (score: number) => string,
+) {
 	const { before, after } = s;
 	if (before !== null && after !== null) {
 		return `${format(before)} → ${format(after)} (${signed(before, after)})`;
 	}
 	if (after !== null) return `new, ${format(after)}`;
 	if (before !== null) return `${format(before)}, no longer scored`;
-	throw new Error(`Score change without a score: ${s.family}@${s.effortLabel}`);
-}
+	return yield* new ScoreChangeError({
+		message: `Score change without a score: ${s.family}@${s.effortLabel}`,
+	});
+});
 
-function scoreLine(s: ScoreChange): string {
+const scoreLine = Effect.fnUntraced(function* (s: ScoreChange) {
 	const view = BENCHMARK_VIEWS[s.benchmark];
-	return `- ${view.tabLabel}: ${s.name} (${s.effortLabel}) ${scoreMove(s, view.formatScore)}`;
-}
+	return `- ${view.tabLabel}: ${s.name} (${s.effortLabel}) ${yield* scoreMove(s, view.formatScore)}`;
+});
 
 type Formatter = (value: number) => string;
 
@@ -113,11 +123,13 @@ function fileList(files: readonly string[]): string {
 }
 
 /** The PR body: plan values first, since those are what people buy on. */
-export function renderDataChanges(changes: DataChanges): string {
+export const renderDataChanges = Effect.fnUntraced(function* (
+	changes: DataChanges,
+) {
 	const lines = [
 		...section("Plan value multiples", changes.planValues.map(valueLine)),
 		...section("List prices", changes.prices.map(priceLine)),
-		...section("Scores", changes.scores.map(scoreLine)),
+		...section("Scores", yield* Effect.forEach(changes.scores, scoreLine)),
 		...section(
 			"Models added to the catalog",
 			changes.familiesAdded.map(familyLine),
@@ -136,4 +148,4 @@ export function renderDataChanges(changes: DataChanges): string {
 	const unlisted =
 		!lines.length && changes.changedFiles.length ? [UNLISTED_CHANGES, ""] : [];
 	return [...lines, ...unlisted, changed + refetched].join("\n");
-}
+});

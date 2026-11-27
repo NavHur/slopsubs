@@ -1,7 +1,8 @@
+import { Commands } from "./effects/commands.ts";
 // Prints what the working tree's generated data changed since a git ref.
 // Usage and the "No data changed." last line: README.md, "Benchmark Data".
 
-import { Effect, Schema } from "effect";
+import { Effect, Layer, Schema } from "effect";
 import { renderDataChanges } from "./data-changes-markdown.ts";
 import { changesSince } from "./data-snapshot.ts";
 import { InvalidCommandArguments } from "./effects/arguments.ts";
@@ -29,10 +30,12 @@ const main = Effect.gen(function* () {
 		),
 	);
 	const { changes } = yield* changesSince(ref);
-	const summary = renderDataChanges(changes);
+	const summary = yield* renderDataChanges(changes);
 	const files = yield* TextFiles;
 	if (path) yield* files.write(path, `${summary}\n`);
 	console.log(summary);
 });
 
-await Effect.runPromise(main.pipe(Effect.provide(TextFiles.layer)));
+await Effect.runPromise(
+	main.pipe(Effect.provide(Layer.mergeAll(TextFiles.layer, Commands.layer))),
+);

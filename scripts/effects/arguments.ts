@@ -23,3 +23,14 @@ export const FlagValue = Schema.NonEmptyString.check(
 		(value) => !value.startsWith("--") || "Expected an option value",
 	),
 );
+
+export function commandOptions<S extends Schema.Constraint>(
+	schema: S,
+	parse: () => unknown,
+) {
+	return Effect.try({
+		try: parse,
+		catch: (cause) =>
+			new InvalidCommandArguments({ message: String(cause), cause }),
+	}).pipe(Effect.flatMap(Schema.decodeUnknownEffect(schema)));
+}

@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import type {
 	DataChanges,
@@ -5,7 +6,11 @@ import type {
 	ValueChange,
 } from "../src/domain/data-changes.ts";
 import type { FamilyId, PlanId } from "../src/domain/model.ts";
-import { renderDataChanges } from "./data-changes-markdown.ts";
+import { renderDataChanges as renderDataChangesEffect } from "./data-changes-markdown.ts";
+
+const renderDataChanges = (
+	...args: Parameters<typeof renderDataChangesEffect>
+) => Effect.runSync(renderDataChangesEffect(...args));
 
 const astra = "gpt-6-astra" as FamilyId;
 
