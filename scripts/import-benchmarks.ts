@@ -40,7 +40,9 @@ function loadBundle(path: string | undefined) {
 	});
 }
 
-function logCatalogNotes(merged: ReturnType<typeof mergeCatalog>) {
+function logCatalogNotes(
+	merged: Effect.Success<ReturnType<typeof mergeCatalog>>,
+) {
 	if (merged.unlisted.length)
 		console.log(
 			`Left out ${merged.unlisted.length} catalog models AA no longer lists and no plan covers: ${merged.unlisted.join(", ")}`,
@@ -78,17 +80,10 @@ const main = Effect.gen(function* () {
 			flightFromHtml(page).pipe(Effect.flatMap(readAaSite)),
 		),
 	);
-	const merged = yield* Effect.try({
-		try: () =>
-			mergeCatalog(aa.models, slopa, {
-				coveredFamilies,
-				siteCosts: aa.costs,
-				allowScoreDrift: args.allowScoreDrift,
-			}),
-		catch: (cause) => {
-			if (cause instanceof CatalogMismatch) return cause;
-			throw cause;
-		},
+	const merged = yield* mergeCatalog(aa.models, slopa, {
+		coveredFamilies,
+		siteCosts: aa.costs,
+		allowScoreDrift: args.allowScoreDrift,
 	});
 	if (merged.missingCost.length && !args.allowMissingCost)
 		return yield* new CatalogMismatch({

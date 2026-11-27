@@ -1,4 +1,4 @@
-import { Data, Schema } from "effect";
+import { Data, Effect, Schema } from "effect";
 import type { AaModel, TaskCost } from "./aa-site";
 import { EFFORTS } from "./enums";
 import type { Effort } from "./model";
@@ -124,17 +124,17 @@ type MergedCatalog = {
 
 type EffortLabel = { label: string; order: number };
 
-/** Throws when the two sources disagree on a point's Intelligence Index,
+/** Fails when the two sources disagree on a point's Intelligence Index,
  * unless the gap is one AA says it caused by a regrade. */
-function checkScore(
+const checkScore = Effect.fnUntraced(function* (
 	point: SlopaPoint,
 	aaScore: number | null,
 	warnings: string[],
 	allowScoreDrift: boolean,
-): void {
+) {
 	if (point.score === null) return;
 	if (aaScore === null)
-		throw new CatalogMismatch({
+		return yield* new CatalogMismatch({
 			message: `${point.id}: slopalytics scores ${point.score}, AA has no index`,
 		});
 	const drift = Math.abs(aaScore - point.score);
@@ -145,10 +145,10 @@ function checkScore(
 		);
 		return;
 	}
-	throw new CatalogMismatch({
+	return yield* new CatalogMismatch({
 		message: `${point.id}: AA index ${aaScore}, slopalytics ${point.score}`,
 	});
-}
+});
 
 /** One warning per price AA and slopalytics disagree on. */
 function priceWarnings(point: SlopaPoint, aa: AaModel): string[] {
@@ -177,15 +177,15 @@ function siteCostFill(point: SlopaPoint, siteCost: TaskCost | undefined) {
 
 /** A slopalytics point carrying AA's score, prices and release date, and
  * AA's own cost, tokens and time when its site has them. */
-function mergePoint(
+const mergePoint = Effect.fnUntraced(function* (
 	point: SlopaPoint,
 	aa: AaModel,
 	siteCosts: ReadonlyMap<string, TaskCost>,
 	warnings: string[],
 	allowScoreDrift: boolean,
-): SlopaPoint {
+) {
 	const aaScore = aa.intelligenceIndex;
-	checkScore(point, aaScore, warnings, allowScoreDrift);
+	yield* checkScore(point, aaScore, warnings, allowScoreDrift);
 	warnings.push(...priceWarnings(point, aa));
 	return {
 		...point,
@@ -195,7 +195,7 @@ function mergePoint(
 		inputPricePerMTokUsd: aa.price1mInputTokens,
 		outputPricePerMTokUsd: aa.price1mOutputTokens,
 	};
-}
+});
 
 /** Whether a plan covers the family this slug is, or is a variant of. */
 function inCoveredFamily(slug: string, covered: ReadonlySet<string>): boolean {
@@ -205,15 +205,15 @@ function inCoveredFamily(slug: string, covered: ReadonlySet<string>): boolean {
 }
 
 /** An AA-only model as a point, with AA's own cost when it has one. */
-function aaOnlyPoint(
+const aaOnlyPoint = Effect.fnUntraced(function* (
 	aa: AaModel,
 	derived: { family: string; effort: Effort },
 	effortOf: ReadonlyMap<Effort, EffortLabel>,
 	siteCost: TaskCost | undefined,
-): SlopaPoint {
+) {
 	const effort = effortOf.get(derived.effort);
 	if (!effort)
-		throw new CatalogMismatch({
+		return yield* new CatalogMismatch({
 			message: `No effort label for ${aa.slug}'s ${derived.effort}`,
 		});
 	const name = displayName(aa.name);
@@ -238,53 +238,55 @@ function aaOnlyPoint(
 		inputPricePerMTokUsd: aa.price1mInputTokens,
 		outputPricePerMTokUsd: aa.price1mOutputTokens,
 	};
-}
+});
 
 /**
  * The point for an AA-only model, or null when no plan covers its family.
  * A covered family's model with no readable effort stops the import.
  */
-function aaOnlyModel(
+const aaOnlyModel = Effect.fnUntraced(function* (
 	aa: AaModel,
 	{ coveredFamilies, siteCosts }: MergeOptions,
 	effortOf: ReadonlyMap<Effort, EffortLabel>,
-): SlopaPoint | null {
+) {
 	const derived = deriveModel(aa);
 	if (!derived) {
 		if (inCoveredFamily(aa.slug, coveredFamilies))
-			throw new CatalogMismatch({
+			return yield* new CatalogMismatch({
 				message: `AA's ${aa.slug} (${aa.name}) is in a family a plan covers, but cannot read an effort from its name`,
 			});
 		return null;
 	}
 	return coveredFamilies.has(derived.family)
-		? aaOnlyPoint(aa, derived, effortOf, siteCosts.get(aa.slug))
+		? yield* aaOnlyPoint(aa, derived, effortOf, siteCosts.get(aa.slug))
 		: null;
-}
+});
 
 /** The catalog points AA lists, merged, and the uncovered ones it does not.
  * A covered point AA does not list stops the merge. */
-function mergeListed(
+const mergeListed = Effect.fnUntraced(function* (
 	aaModels: readonly AaModel[],
 	slopaPoints: readonly SlopaPoint[],
 	{ coveredFamilies, siteCosts, allowScoreDrift = false }: MergeOptions,
 	warnings: string[],
-): { models: SlopaPoint[]; unlisted: string[] } {
+) {
 	const aaById = new Map(aaModels.map((model) => [model.slug, model]));
 	const models: SlopaPoint[] = [];
 	const unlisted: string[] = [];
 	for (const point of slopaPoints) {
 		const aa = aaById.get(point.id);
 		if (aa)
-			models.push(mergePoint(point, aa, siteCosts, warnings, allowScoreDrift));
+			models.push(
+				yield* mergePoint(point, aa, siteCosts, warnings, allowScoreDrift),
+			);
 		else if (coveredFamilies.has(point.family))
-			throw new CatalogMismatch({
+			return yield* new CatalogMismatch({
 				message: `AA has no model for ${point.id} (${point.name})`,
 			});
 		else unlisted.push(point.id);
 	}
 	return { models, unlisted };
-}
+});
 
 /**
  * Artificial Analysis wins on scores, prices, release dates, and the cost,
@@ -295,15 +297,15 @@ function mergeListed(
  * a promo can explain the gap. A catalog point AA does not list stops the
  * merge when a plan covers its family, and is left out otherwise.
  */
-export function mergeCatalog(
+export const mergeCatalog = Effect.fnUntraced(function* (
 	aaModels: readonly AaModel[],
 	slopaPoints: readonly SlopaPoint[],
 	options: MergeOptions,
-): MergedCatalog {
+) {
 	const warnings: string[] = [];
 	const missingCost: string[] = [];
 	const skipped: string[] = [];
-	const { models, unlisted } = mergeListed(
+	const { models, unlisted } = yield* mergeListed(
 		aaModels,
 		slopaPoints,
 		options,
@@ -318,7 +320,7 @@ export function mergeCatalog(
 	);
 	const known = new Set(slopaPoints.map((point) => point.id));
 	for (const aa of aaModels.filter((model) => !known.has(model.slug))) {
-		const added = aaOnlyModel(aa, options, effortOf);
+		const added = yield* aaOnlyModel(aa, options, effortOf);
 		if (!added) {
 			skipped.push(aa.slug);
 			continue;
@@ -327,5 +329,11 @@ export function mergeCatalog(
 		if (added.costPerTaskUsd === null) missingCost.push(aa.slug);
 	}
 
-	return { models, warnings, missingCost, skipped, unlisted };
-}
+	return {
+		models,
+		warnings,
+		missingCost,
+		skipped,
+		unlisted,
+	} satisfies MergedCatalog;
+});
