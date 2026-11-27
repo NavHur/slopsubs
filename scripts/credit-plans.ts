@@ -1,10 +1,10 @@
-import { Effect } from "effect";
-import { PlanDataError } from "./plan-offers.ts";
 // Credit plans: a fixed amount of usage a month at the vendor's own token
 // rates, which build-plans values at list price as a published allowance.
 
+import { Effect } from "effect";
 import type { Promotion, PublishedAllowance } from "../src/domain/model.ts";
 import { listPriced, type ListRates, type TokenRates } from "./list-price.ts";
+import { PlanDataError } from "./plan-offers.ts";
 
 /** A limited-time discount on one model's rates, counted while it runs. */
 type CreditPromo = { rates: TokenRates; promotion: Promotion };

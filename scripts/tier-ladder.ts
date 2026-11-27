@@ -1,9 +1,9 @@
-import { Effect } from "effect";
-import { PlanDataError } from "./plan-offers.ts";
 // Scales one known tier's cap to its sibling tiers by the vendor's own
 // multiples, such as Claude Max's "5x Pro" against Ultra's "10x Pro".
 
+import { Effect } from "effect";
 import type { ReportedCap } from "../src/domain/model.ts";
+import { PlanDataError } from "./plan-offers.ts";
 
 /** A vendor's family of tiers priced as multiples of one base tier. */
 export type Ladder = "claude" | "minimax-m" | "muse-code" | "x-subscription";

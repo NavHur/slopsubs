@@ -1,4 +1,3 @@
-import { Commands } from "./effects/commands.ts";
 // Runs the four data imports, then reports what changed since --base.
 // Flags and behavior: README.md, "Benchmark Data".
 
@@ -7,6 +6,7 @@ import { hasDataChanges } from "../src/domain/data-changes.ts";
 import { renderDataChanges } from "./data-changes-markdown.ts";
 import { changesSince, restore } from "./data-snapshot.ts";
 import { decodeArgument, FlagValue } from "./effects/arguments.ts";
+import { Commands } from "./effects/commands.ts";
 import { TextFiles } from "./effects/files.ts";
 
 type Args = {

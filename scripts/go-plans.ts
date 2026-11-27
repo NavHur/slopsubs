@@ -1,10 +1,10 @@
-import { Effect } from "effect";
-import { PlanDataError } from "./plan-offers.ts";
 // OpenCode Go's monthly usage, which build-plans values at list price as a
 // published allowance, and the promotions that allowance counts.
 
+import { Effect } from "effect";
 import type { Promotion } from "../src/domain/model.ts";
 import { listPriced, type ListRates, type TokenRates } from "./list-price.ts";
+import { PlanDataError } from "./plan-offers.ts";
 
 /** Go is tier 0 and Go Plus tier 1, the order of a family's usage pair. */
 export type GoTier = 0 | 1;

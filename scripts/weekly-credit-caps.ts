@@ -1,10 +1,10 @@
-import { Effect } from "effect";
-import { PlanDataError } from "./plan-offers.ts";
 // Plans that bill each model in vendor credits against a weekly quota: the
 // quota at the model's credit rates, priced at list, is the estimated cap.
 
+import { Effect } from "effect";
 import type { ReportedCap } from "../src/domain/model.ts";
 import { listPriced, type ListRates, type TokenRates } from "./list-price.ts";
+import { PlanDataError } from "./plan-offers.ts";
 
 export type WeeklyCreditPlan = {
 	weeklyCredits: number;

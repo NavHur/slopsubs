@@ -1,6 +1,6 @@
-import { Data, Effect } from "effect";
 // Renders a refresh's change set as the body of the standing refresh PR.
 
+import { Data, Effect } from "effect";
 import type {
 	DataChanges,
 	FamilyChange,

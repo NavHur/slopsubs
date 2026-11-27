@@ -1,4 +1,3 @@
-import { Commands } from "./effects/commands.ts";
 // Reads the generated data files from the working tree or a git ref, and
 // compares them, for the refresh scripts.
 
@@ -17,6 +16,7 @@ import {
 	LimitSamples,
 	Plans,
 } from "../src/domain/model.ts";
+import { Commands } from "./effects/commands.ts";
 import {
 	decodeFileValue,
 	decodeJsonFile,

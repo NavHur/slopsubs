@@ -1,4 +1,3 @@
-import { Commands } from "./effects/commands.ts";
 // Prints what the working tree's generated data changed since a git ref.
 // Usage and the "No data changed." last line: README.md, "Benchmark Data".
 
@@ -6,6 +5,7 @@ import { Effect, Layer, Schema } from "effect";
 import { renderDataChanges } from "./data-changes-markdown.ts";
 import { changesSince } from "./data-snapshot.ts";
 import { InvalidCommandArguments } from "./effects/arguments.ts";
+import { Commands } from "./effects/commands.ts";
 import { TextFiles } from "./effects/files.ts";
 
 const Args = Schema.Union([
