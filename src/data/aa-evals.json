@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-24T14:35:54.263Z",
+  "fetchedAt": "2026-11-27T14:37:05.232Z",
   "source": "Artificial Analysis website (model and eval page flight payloads)",
   "evals": [
     "aa-briefcase",
@@ -17,10 +17,10 @@
       "family": "claude-fable-5-2",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1782.84,
+      "score": 1782.66,
       "costPerTaskUsd": 59.35153,
       "tokensPerTask": 550380,
-      "secondsPerTask": 4942.1
+      "secondsPerTask": 4870.2
     },
     {
       "family": "claude-fable-5-2",
@@ -29,16 +29,16 @@
       "score": 0.7642233832611831,
       "costPerTaskUsd": 4.44832,
       "tokensPerTask": 68932,
-      "secondsPerTask": 619
+      "secondsPerTask": 610
     },
     {
       "family": "claude-fable-5-2",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.595959595959596,
+      "score": 0.616161616161616,
       "costPerTaskUsd": 31.58977,
       "tokensPerTask": 376804,
-      "secondsPerTask": 3383.5
+      "secondsPerTask": 3334.3
     },
     {
       "family": "claude-fable-5-2",
@@ -47,7 +47,7 @@
       "score": 0.487597222222222,
       "costPerTaskUsd": 43.37407,
       "tokensPerTask": 419818,
-      "secondsPerTask": 3769.7
+      "secondsPerTask": 3714.9
     },
     {
       "family": "claude-fable-5-2",
@@ -56,7 +56,7 @@
       "score": 66.76666666666667,
       "costPerTaskUsd": 0.21898,
       "tokensPerTask": 5440,
-      "secondsPerTask": 48.8
+      "secondsPerTask": 48.1
     },
     {
       "family": "claude-fable-5-2",
@@ -65,7 +65,7 @@
       "score": 0.242,
       "costPerTaskUsd": 2.5179,
       "tokensPerTask": 27840,
-      "secondsPerTask": 250
+      "secondsPerTask": 246.4
     },
     {
       "family": "claude-fable-5-2",
@@ -74,7 +74,7 @@
       "score": 0.802,
       "costPerTaskUsd": 1.73388,
       "tokensPerTask": 43214,
-      "secondsPerTask": 388
+      "secondsPerTask": 382.4
     },
     {
       "family": "claude-fable-5-2",
@@ -83,7 +83,7 @@
       "score": 0.765,
       "costPerTaskUsd": 6.35304,
       "tokensPerTask": 123348,
-      "secondsPerTask": 1107.6
+      "secondsPerTask": 1091.5
     },
     {
       "family": "claude-fable-5-2",
@@ -92,7 +92,7 @@
       "score": 0.733333333333333,
       "costPerTaskUsd": 45.20593,
       "tokensPerTask": 455033,
-      "secondsPerTask": 4085.9
+      "secondsPerTask": 4026.5
     },
     {
       "family": "claude-fable-5-2",
@@ -197,7 +197,7 @@
       "family": "claude-fable-5-2",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.595959595959596,
+      "score": 0.601010101010101,
       "costPerTaskUsd": 13.46879,
       "tokensPerTask": 157872,
       "secondsPerTask": 1709
@@ -278,7 +278,7 @@
       "family": "claude-fable-5-2",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.55050505050505,
+      "score": 0.545454545454545,
       "costPerTaskUsd": 5.25101,
       "tokensPerTask": 63173,
       "secondsPerTask": 727.9
@@ -422,10 +422,10 @@
       "family": "gpt-6-2-astra",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1642.5,
+      "score": 1642.32,
       "costPerTaskUsd": 5.48896,
       "tokensPerTask": 50733,
-      "secondsPerTask": 1040.2
+      "secondsPerTask": 1202.2
     },
     {
       "family": "gpt-6-2-astra",
@@ -434,16 +434,16 @@
       "score": 0.7724838304241671,
       "costPerTaskUsd": 0.9484,
       "tokensPerTask": 10551,
-      "secondsPerTask": 216.3
+      "secondsPerTask": 250
     },
     {
       "family": "gpt-6-2-astra",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.641414141414141,
+      "score": 0.646464646464647,
       "costPerTaskUsd": 4.658,
       "tokensPerTask": 55921,
-      "secondsPerTask": 1146.5
+      "secondsPerTask": 1325.1
     },
     {
       "family": "gpt-6-2-astra",
@@ -452,7 +452,7 @@
       "score": 0.453801767676768,
       "costPerTaskUsd": 5.86566,
       "tokensPerTask": 48881,
-      "secondsPerTask": 1002.2
+      "secondsPerTask": 1158.3
     },
     {
       "family": "gpt-6-2-astra",
@@ -461,7 +461,7 @@
       "score": 50,
       "costPerTaskUsd": 0.25566,
       "tokensPerTask": 6367,
-      "secondsPerTask": 130.5
+      "secondsPerTask": 150.9
     },
     {
       "family": "gpt-6-2-astra",
@@ -470,7 +470,7 @@
       "score": 0.298,
       "costPerTaskUsd": 1.67159,
       "tokensPerTask": 9521,
-      "secondsPerTask": 195.2
+      "secondsPerTask": 225.6
     },
     {
       "family": "gpt-6-2-astra",
@@ -479,7 +479,7 @@
       "score": 0.722,
       "costPerTaskUsd": 0.65673,
       "tokensPerTask": 16289,
-      "secondsPerTask": 334
+      "secondsPerTask": 386
     },
     {
       "family": "gpt-6-2-astra",
@@ -488,7 +488,7 @@
       "score": 0.715,
       "costPerTaskUsd": 1.27556,
       "tokensPerTask": 25881,
-      "secondsPerTask": 530.6
+      "secondsPerTask": 613.3
     },
     {
       "family": "gpt-6-2-astra",
@@ -497,13 +497,13 @@
       "score": 0.780952380952381,
       "costPerTaskUsd": 9.77557,
       "tokensPerTask": 95464,
-      "secondsPerTask": 1957.3
+      "secondsPerTask": 2262.1
     },
     {
       "family": "gpt-6-2-astra",
       "effort": "xhigh",
       "eval": "aa-briefcase",
-      "score": 1593.48,
+      "score": 1593.3,
       "costPerTaskUsd": 3.54233,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -521,7 +521,7 @@
       "family": "gpt-6-2-astra",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.641414141414141,
+      "score": 0.661616161616162,
       "costPerTaskUsd": 2.88079,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -584,10 +584,10 @@
       "family": "gemini-4-neon",
       "effort": "xhigh",
       "eval": "aa-briefcase",
-      "score": 1698.62,
+      "score": 1698.35,
       "costPerTaskUsd": 6.69133,
       "tokensPerTask": 168681,
-      "secondsPerTask": 1923.9
+      "secondsPerTask": 1982
     },
     {
       "family": "gemini-4-neon",
@@ -596,16 +596,16 @@
       "score": 0.7933804374911678,
       "costPerTaskUsd": 1.4492,
       "tokensPerTask": 49507,
-      "secondsPerTask": 564.7
+      "secondsPerTask": 581.7
     },
     {
       "family": "gemini-4-neon",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.636363636363636,
+      "score": 0.651515151515151,
       "costPerTaskUsd": 6.69652,
       "tokensPerTask": 167131,
-      "secondsPerTask": 1906.2
+      "secondsPerTask": 1963.8
     },
     {
       "family": "gemini-4-neon",
@@ -614,7 +614,7 @@
       "score": 0.444105303030303,
       "costPerTaskUsd": 8.64813,
       "tokensPerTask": 136984,
-      "secondsPerTask": 1562.4
+      "secondsPerTask": 1609.6
     },
     {
       "family": "gemini-4-neon",
@@ -623,7 +623,7 @@
       "score": 54.766666666666666,
       "costPerTaskUsd": 0.39458,
       "tokensPerTask": 24577,
-      "secondsPerTask": 280.3
+      "secondsPerTask": 288.8
     },
     {
       "family": "gemini-4-neon",
@@ -632,7 +632,7 @@
       "score": 0.28,
       "costPerTaskUsd": 0.87498,
       "tokensPerTask": 35134,
-      "secondsPerTask": 400.7
+      "secondsPerTask": 412.8
     },
     {
       "family": "gemini-4-neon",
@@ -641,7 +641,7 @@
       "score": 0.713,
       "costPerTaskUsd": 1.94657,
       "tokensPerTask": 101012,
-      "secondsPerTask": 1152.1
+      "secondsPerTask": 1186.9
     },
     {
       "family": "gemini-4-neon",
@@ -650,7 +650,7 @@
       "score": 0.605,
       "costPerTaskUsd": 3.46489,
       "tokensPerTask": 153391,
-      "secondsPerTask": 1749.5
+      "secondsPerTask": 1802.4
     },
     {
       "family": "gemini-4-neon",
@@ -659,13 +659,13 @@
       "score": 0.7,
       "costPerTaskUsd": 18.38483,
       "tokensPerTask": 304727,
-      "secondsPerTask": 3475.6
+      "secondsPerTask": 3580.6
     },
     {
       "family": "gpt-6-2-astra",
       "effort": "high",
       "eval": "aa-briefcase",
-      "score": 1569.59,
+      "score": 1569.41,
       "costPerTaskUsd": 2.79202,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -683,7 +683,7 @@
       "family": "gpt-6-2-astra",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.601010101010101,
+      "score": 0.621212121212121,
       "costPerTaskUsd": 2.49937,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -749,7 +749,7 @@
       "score": 1610.63,
       "costPerTaskUsd": 8.16128,
       "tokensPerTask": 137925,
-      "secondsPerTask": 2310.8
+      "secondsPerTask": 2735
     },
     {
       "family": "gemini-4-carbon",
@@ -758,16 +758,16 @@
       "score": 0.7781660572624064,
       "costPerTaskUsd": 1.88951,
       "tokensPerTask": 52006,
-      "secondsPerTask": 871.3
+      "secondsPerTask": 1031.2
     },
     {
       "family": "gemini-4-carbon",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.651515151515151,
+      "score": 0.661616161616162,
       "costPerTaskUsd": 10.05298,
       "tokensPerTask": 160695,
-      "secondsPerTask": 2692.3
+      "secondsPerTask": 3186.5
     },
     {
       "family": "gemini-4-carbon",
@@ -776,7 +776,7 @@
       "score": 0.405606060606061,
       "costPerTaskUsd": 12.01823,
       "tokensPerTask": 127768,
-      "secondsPerTask": 2140.6
+      "secondsPerTask": 2533.6
     },
     {
       "family": "gemini-4-carbon",
@@ -785,7 +785,7 @@
       "score": 53.5,
       "costPerTaskUsd": 0.24631,
       "tokensPerTask": 11900,
-      "secondsPerTask": 199.4
+      "secondsPerTask": 236
     },
     {
       "family": "gemini-4-carbon",
@@ -794,7 +794,7 @@
       "score": 0.284,
       "costPerTaskUsd": 0.84705,
       "tokensPerTask": 23384,
-      "secondsPerTask": 391.8
+      "secondsPerTask": 463.7
     },
     {
       "family": "gemini-4-carbon",
@@ -803,7 +803,7 @@
       "score": 0.691,
       "costPerTaskUsd": 1.6276,
       "tokensPerTask": 67974,
-      "secondsPerTask": 1138.8
+      "secondsPerTask": 1347.9
     },
     {
       "family": "gemini-4-carbon",
@@ -812,7 +812,7 @@
       "score": 0.69,
       "costPerTaskUsd": 3.90705,
       "tokensPerTask": 130898,
-      "secondsPerTask": 2193.1
+      "secondsPerTask": 2595.6
     },
     {
       "family": "gemini-4-carbon",
@@ -821,7 +821,7 @@
       "score": 0.647619047619048,
       "costPerTaskUsd": 19.97387,
       "tokensPerTask": 276017,
-      "secondsPerTask": 4624.4
+      "secondsPerTask": 5473.2
     },
     {
       "family": "gemini-4-neon",
@@ -845,7 +845,7 @@
       "family": "gemini-4-neon",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.616161616161616,
+      "score": 0.636363636363636,
       "costPerTaskUsd": 4.91971,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -908,10 +908,10 @@
       "family": "claude-opus-5-5",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1797.22,
+      "score": 1797.05,
       "costPerTaskUsd": 21.04597,
       "tokensPerTask": 338099,
-      "secondsPerTask": 2904.6
+      "secondsPerTask": 2883.8
     },
     {
       "family": "claude-opus-5-5",
@@ -920,25 +920,25 @@
       "score": 0.6953868128636069,
       "costPerTaskUsd": 1.42876,
       "tokensPerTask": 41105,
-      "secondsPerTask": 353.1
+      "secondsPerTask": 350.6
     },
     {
       "family": "claude-opus-5-5",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.595959595959596,
+      "score": 0.590909090909091,
       "costPerTaskUsd": 13.10928,
       "tokensPerTask": 252948,
-      "secondsPerTask": 2173.1
+      "secondsPerTask": 2157.5
     },
     {
       "family": "claude-opus-5-5",
       "effort": "max",
       "eval": "frontiercode-2-0",
-      "score": 0.464359595959596,
+      "score": 0.468989141414141,
       "costPerTaskUsd": 13.45516,
       "tokensPerTask": 199997,
-      "secondsPerTask": 1718.2
+      "secondsPerTask": 1705.9
     },
     {
       "family": "claude-opus-5-5",
@@ -947,7 +947,7 @@
       "score": 48.13333333333333,
       "costPerTaskUsd": 0.18738,
       "tokensPerTask": 9329,
-      "secondsPerTask": 80.1
+      "secondsPerTask": 79.6
     },
     {
       "family": "claude-opus-5-5",
@@ -956,7 +956,7 @@
       "score": 0.262,
       "costPerTaskUsd": 1.55234,
       "tokensPerTask": 42319,
-      "secondsPerTask": 363.6
+      "secondsPerTask": 361
     },
     {
       "family": "claude-opus-5-5",
@@ -965,7 +965,7 @@
       "score": 0.679,
       "costPerTaskUsd": 1.19831,
       "tokensPerTask": 59682,
-      "secondsPerTask": 512.7
+      "secondsPerTask": 509.1
     },
     {
       "family": "claude-opus-5-5",
@@ -974,7 +974,7 @@
       "score": 0.68,
       "costPerTaskUsd": 2.57671,
       "tokensPerTask": 97157,
-      "secondsPerTask": 834.7
+      "secondsPerTask": 828.7
     },
     {
       "family": "claude-opus-5-5",
@@ -983,7 +983,7 @@
       "score": 0.59047619047619,
       "costPerTaskUsd": 19.97098,
       "tokensPerTask": 306993,
-      "secondsPerTask": 2637.4
+      "secondsPerTask": 2618.5
     },
     {
       "family": "gemini-4-carbon",
@@ -1007,7 +1007,7 @@
       "family": "gemini-4-carbon",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.606060606060606,
+      "score": 0.616161616161616,
       "costPerTaskUsd": 8.82036,
       "tokensPerTask": 143003,
       "secondsPerTask": 1972.1
@@ -1097,7 +1097,7 @@
       "family": "claude-opus-5-5",
       "effort": "xhigh",
       "eval": "frontiercode-2-0",
-      "score": 0.437547474747475,
+      "score": 0.442261111111111,
       "costPerTaskUsd": 6.49391,
       "tokensPerTask": 101768,
       "secondsPerTask": 960.5
@@ -1151,10 +1151,10 @@
       "family": "gpt-6-2-sol",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1611.82,
+      "score": 1611.55,
       "costPerTaskUsd": 1.56554,
       "tokensPerTask": 58767,
-      "secondsPerTask": 886.7
+      "secondsPerTask": 994.2
     },
     {
       "family": "gpt-6-2-sol",
@@ -1163,7 +1163,7 @@
       "score": 0.7127833267998683,
       "costPerTaskUsd": 0.27068,
       "tokensPerTask": 11636,
-      "secondsPerTask": 175.6
+      "secondsPerTask": 196.9
     },
     {
       "family": "gpt-6-2-sol",
@@ -1172,7 +1172,7 @@
       "score": 0.601010101010101,
       "costPerTaskUsd": 1.29354,
       "tokensPerTask": 54725,
-      "secondsPerTask": 825.7
+      "secondsPerTask": 925.8
     },
     {
       "family": "gpt-6-2-sol",
@@ -1181,7 +1181,7 @@
       "score": 0.443797727272727,
       "costPerTaskUsd": 1.29775,
       "tokensPerTask": 40543,
-      "secondsPerTask": 611.7
+      "secondsPerTask": 685.9
     },
     {
       "family": "gpt-6-2-sol",
@@ -1190,7 +1190,7 @@
       "score": 40.36666666666667,
       "costPerTaskUsd": 0.05284,
       "tokensPerTask": 5259,
-      "secondsPerTask": 79.3
+      "secondsPerTask": 89
     },
     {
       "family": "gpt-6-2-sol",
@@ -1199,7 +1199,7 @@
       "score": 0.3,
       "costPerTaskUsd": 0.3964,
       "tokensPerTask": 7371,
-      "secondsPerTask": 111.2
+      "secondsPerTask": 124.7
     },
     {
       "family": "gpt-6-2-sol",
@@ -1208,7 +1208,7 @@
       "score": 0.64,
       "costPerTaskUsd": 0.14888,
       "tokensPerTask": 14759,
-      "secondsPerTask": 222.7
+      "secondsPerTask": 249.7
     },
     {
       "family": "gpt-6-2-sol",
@@ -1217,7 +1217,7 @@
       "score": 0.625,
       "costPerTaskUsd": 0.31372,
       "tokensPerTask": 24351,
-      "secondsPerTask": 367.4
+      "secondsPerTask": 412
     },
     {
       "family": "gpt-6-2-sol",
@@ -1226,13 +1226,13 @@
       "score": 0.676190476190476,
       "costPerTaskUsd": 2.45328,
       "tokensPerTask": 95609,
-      "secondsPerTask": 1442.5
+      "secondsPerTask": 1617.5
     },
     {
       "family": "gpt-6-2-astra",
       "effort": "medium",
       "eval": "aa-briefcase",
-      "score": 1406.63,
+      "score": 1406.49,
       "costPerTaskUsd": 1.26247,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -1250,7 +1250,7 @@
       "family": "gpt-6-2-astra",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.585858585858586,
+      "score": 0.590909090909091,
       "costPerTaskUsd": 1.7549,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -1313,7 +1313,7 @@
       "family": "gpt-6-2-sol",
       "effort": "xhigh",
       "eval": "aa-briefcase",
-      "score": 1578.7,
+      "score": 1578.52,
       "costPerTaskUsd": 1.00819,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -1331,7 +1331,7 @@
       "family": "gpt-6-2-sol",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.560606060606061,
+      "score": 0.55050505050505,
       "costPerTaskUsd": 0.93389,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -1391,87 +1391,6 @@
       "secondsPerTask": null
     },
     {
-      "family": "gpt-6-2-sol",
-      "effort": "high",
-      "eval": "aa-briefcase",
-      "score": 1540.95,
-      "costPerTaskUsd": 0.79306,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "gpt-6-2-sol",
-      "effort": "high",
-      "eval": "automationbench-aa",
-      "score": 0.6985330673395808,
-      "costPerTaskUsd": 0.2091,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "gpt-6-2-sol",
-      "effort": "high",
-      "eval": "terminalbench-4-1",
-      "score": 0.585858585858586,
-      "costPerTaskUsd": 0.77057,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "gpt-6-2-sol",
-      "effort": "high",
-      "eval": "frontiercode-2-0",
-      "score": 0.40224898989899,
-      "costPerTaskUsd": 0.65792,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "gpt-6-2-sol",
-      "effort": "high",
-      "eval": "omniscience",
-      "score": 38.3,
-      "costPerTaskUsd": 0.00662,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "gpt-6-2-sol",
-      "effort": "high",
-      "eval": "gdp-pdf",
-      "score": 0.288,
-      "costPerTaskUsd": 0.34114,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "gpt-6-2-sol",
-      "effort": "high",
-      "eval": "hle-diamond",
-      "score": 0.583,
-      "costPerTaskUsd": 0.04219,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "gpt-6-2-sol",
-      "effort": "high",
-      "eval": "critpt-v2-hard",
-      "score": 0.615,
-      "costPerTaskUsd": 0.14477,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "gpt-6-2-sol",
-      "effort": "high",
-      "eval": "terminal-bench-science",
-      "score": 0.676190476190476,
-      "costPerTaskUsd": 1.47827,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
       "family": "gemini-4-neon",
       "effort": "medium",
       "eval": "aa-briefcase",
@@ -1493,7 +1412,7 @@
       "family": "gemini-4-neon",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.545454545454545,
+      "score": 0.55050505050505,
       "costPerTaskUsd": 2.92415,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -1553,13 +1472,94 @@
       "secondsPerTask": null
     },
     {
+      "family": "gpt-6-2-sol",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 1540.77,
+      "costPerTaskUsd": 0.79306,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.6985330673395808,
+      "costPerTaskUsd": 0.2091,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "high",
+      "eval": "terminalbench-4-1",
+      "score": 0.580808080808081,
+      "costPerTaskUsd": 0.77057,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.40224898989899,
+      "costPerTaskUsd": 0.65792,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": 38.3,
+      "costPerTaskUsd": 0.00662,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.288,
+      "costPerTaskUsd": 0.34114,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.583,
+      "costPerTaskUsd": 0.04219,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.615,
+      "costPerTaskUsd": 0.14477,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gpt-6-2-sol",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0.676190476190476,
+      "costPerTaskUsd": 1.47827,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
       "family": "claude-sonnet-5-5",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1812.63,
+      "score": 1812.45,
       "costPerTaskUsd": 20.47391,
       "tokensPerTask": 625176,
-      "secondsPerTask": 4089.1
+      "secondsPerTask": 4069.6
     },
     {
       "family": "claude-sonnet-5-5",
@@ -1568,25 +1568,25 @@
       "score": 0.7176882128193995,
       "costPerTaskUsd": 1.03244,
       "tokensPerTask": 60911,
-      "secondsPerTask": 398.4
+      "secondsPerTask": 396.5
     },
     {
       "family": "claude-sonnet-5-5",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.636363636363636,
+      "score": 0.651515151515151,
       "costPerTaskUsd": 12.64644,
       "tokensPerTask": 382429,
-      "secondsPerTask": 2501.4
+      "secondsPerTask": 2489.4
     },
     {
       "family": "claude-sonnet-5-5",
       "effort": "max",
       "eval": "frontiercode-2-0",
-      "score": 0.416993434343434,
+      "score": 0.419350252525253,
       "costPerTaskUsd": 11.55752,
       "tokensPerTask": 315985,
-      "secondsPerTask": 2066.8
+      "secondsPerTask": 2056.9
     },
     {
       "family": "claude-sonnet-5-5",
@@ -1595,7 +1595,7 @@
       "score": 30.466666666666665,
       "costPerTaskUsd": 0.15182,
       "tokensPerTask": 15148,
-      "secondsPerTask": 99.1
+      "secondsPerTask": 98.6
     },
     {
       "family": "claude-sonnet-5-5",
@@ -1604,7 +1604,7 @@
       "score": 0.258,
       "costPerTaskUsd": 0.79433,
       "tokensPerTask": 44189,
-      "secondsPerTask": 289
+      "secondsPerTask": 287.6
     },
     {
       "family": "claude-sonnet-5-5",
@@ -1613,7 +1613,7 @@
       "score": 0.533,
       "costPerTaskUsd": 0.80372,
       "tokensPerTask": 80244,
-      "secondsPerTask": 524.9
+      "secondsPerTask": 522.3
     },
     {
       "family": "claude-sonnet-5-5",
@@ -1622,7 +1622,7 @@
       "score": 0.59,
       "costPerTaskUsd": 1.92674,
       "tokensPerTask": 140930,
-      "secondsPerTask": 921.8
+      "secondsPerTask": 917.4
     },
     {
       "family": "claude-sonnet-5-5",
@@ -1631,7 +1631,7 @@
       "score": 0.533333333333333,
       "costPerTaskUsd": 23.76071,
       "tokensPerTask": 508836,
-      "secondsPerTask": 3328.1
+      "secondsPerTask": 3312.3
     },
     {
       "family": "gemini-4-carbon",
@@ -1655,7 +1655,7 @@
       "family": "gemini-4-carbon",
       "effort": "low",
       "eval": "terminalbench-4-1",
-      "score": 0.626262626262626,
+      "score": 0.621212121212121,
       "costPerTaskUsd": 8.56628,
       "tokensPerTask": 138545,
       "secondsPerTask": 2155.7
@@ -1718,10 +1718,10 @@
       "family": "gemini-4-hydrogen",
       "effort": "xhigh",
       "eval": "aa-briefcase",
-      "score": 1568.02,
+      "score": 1567.75,
       "costPerTaskUsd": 3.18822,
       "tokensPerTask": 155636,
-      "secondsPerTask": 981.3
+      "secondsPerTask": 881.7
     },
     {
       "family": "gemini-4-hydrogen",
@@ -1730,16 +1730,16 @@
       "score": 0.7614416852922641,
       "costPerTaskUsd": 0.71616,
       "tokensPerTask": 52597,
-      "secondsPerTask": 331.6
+      "secondsPerTask": 298
     },
     {
       "family": "gemini-4-hydrogen",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.535353535353535,
+      "score": 0.55050505050505,
       "costPerTaskUsd": 3.65717,
       "tokensPerTask": 187067,
-      "secondsPerTask": 1179.5
+      "secondsPerTask": 1059.7
     },
     {
       "family": "gemini-4-hydrogen",
@@ -1748,7 +1748,7 @@
       "score": 0.389591919191919,
       "costPerTaskUsd": 4.46516,
       "tokensPerTask": 155994,
-      "secondsPerTask": 983.6
+      "secondsPerTask": 883.7
     },
     {
       "family": "gemini-4-hydrogen",
@@ -1757,7 +1757,7 @@
       "score": 46.266666666666666,
       "costPerTaskUsd": 0.1675,
       "tokensPerTask": 21078,
-      "secondsPerTask": 132.9
+      "secondsPerTask": 119.4
     },
     {
       "family": "gemini-4-hydrogen",
@@ -1766,7 +1766,7 @@
       "score": 0.276,
       "costPerTaskUsd": 0.43681,
       "tokensPerTask": 36022,
-      "secondsPerTask": 227.1
+      "secondsPerTask": 204.1
     },
     {
       "family": "gemini-4-hydrogen",
@@ -1775,7 +1775,7 @@
       "score": 0.588,
       "costPerTaskUsd": 1.29132,
       "tokensPerTask": 124096,
-      "secondsPerTask": 782.5
+      "secondsPerTask": 703
     },
     {
       "family": "gemini-4-hydrogen",
@@ -1784,7 +1784,7 @@
       "score": 0.66,
       "costPerTaskUsd": 1.89947,
       "tokensPerTask": 176976,
-      "secondsPerTask": 1115.9
+      "secondsPerTask": 1002.6
     },
     {
       "family": "gemini-4-hydrogen",
@@ -1793,13 +1793,13 @@
       "score": 0.495238095238095,
       "costPerTaskUsd": 8.29721,
       "tokensPerTask": 341698,
-      "secondsPerTask": 2154.5
+      "secondsPerTask": 1935.7
     },
     {
       "family": "gpt-6-2-sol",
       "effort": "medium",
       "eval": "aa-briefcase",
-      "score": 1494.14,
+      "score": 1493.96,
       "costPerTaskUsd": 0.52476,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -1817,7 +1817,7 @@
       "family": "gpt-6-2-sol",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.560606060606061,
+      "score": 0.535353535353535,
       "costPerTaskUsd": 0.67749,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -1898,7 +1898,7 @@
       "family": "claude-opus-5-5",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.565656565656566,
+      "score": 0.560606060606061,
       "costPerTaskUsd": 5.11891,
       "tokensPerTask": 100178,
       "secondsPerTask": 955.2
@@ -1961,10 +1961,10 @@
       "family": "gpt-6-1-terra",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1399.26,
+      "score": 1398.9,
       "costPerTaskUsd": 0.80778,
       "tokensPerTask": 61442,
-      "secondsPerTask": 870.2
+      "secondsPerTask": 975.2
     },
     {
       "family": "gpt-6-1-terra",
@@ -1973,25 +1973,25 @@
       "score": 0.6016762327257726,
       "costPerTaskUsd": 0.18529,
       "tokensPerTask": 16470,
-      "secondsPerTask": 233.3
+      "secondsPerTask": 261.4
     },
     {
       "family": "gpt-6-1-terra",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.555555555555556,
+      "score": 0.565656565656566,
       "costPerTaskUsd": 1.48531,
       "tokensPerTask": 101430,
-      "secondsPerTask": 1436.5
+      "secondsPerTask": 1609.9
     },
     {
       "family": "gpt-6-1-terra",
       "effort": "max",
       "eval": "frontiercode-2-0",
-      "score": 0.423200505050505,
+      "score": 0.42075101010101,
       "costPerTaskUsd": 1.29251,
       "tokensPerTask": 68142,
-      "secondsPerTask": 965.1
+      "secondsPerTask": 1081.6
     },
     {
       "family": "gpt-6-1-terra",
@@ -2000,7 +2000,7 @@
       "score": 29.566666666666666,
       "costPerTaskUsd": 0.04251,
       "tokensPerTask": 8478,
-      "secondsPerTask": 120.1
+      "secondsPerTask": 134.6
     },
     {
       "family": "gpt-6-1-terra",
@@ -2009,7 +2009,7 @@
       "score": 0.286,
       "costPerTaskUsd": 0.23518,
       "tokensPerTask": 14767,
-      "secondsPerTask": 209.1
+      "secondsPerTask": 234.4
     },
     {
       "family": "gpt-6-1-terra",
@@ -2018,7 +2018,7 @@
       "score": 0.473,
       "costPerTaskUsd": 0.1465,
       "tokensPerTask": 29171,
-      "secondsPerTask": 413.1
+      "secondsPerTask": 463
     },
     {
       "family": "gpt-6-1-terra",
@@ -2027,7 +2027,7 @@
       "score": 0.68,
       "costPerTaskUsd": 0.25052,
       "tokensPerTask": 38380,
-      "secondsPerTask": 543.6
+      "secondsPerTask": 609.2
     },
     {
       "family": "gpt-6-1-terra",
@@ -2036,7 +2036,7 @@
       "score": 0.576190476190476,
       "costPerTaskUsd": 2.86953,
       "tokensPerTask": 138092,
-      "secondsPerTask": 1955.8
+      "secondsPerTask": 2191.8
     },
     {
       "family": "gemini-4-hydrogen",
@@ -2060,7 +2060,7 @@
       "family": "gemini-4-hydrogen",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.54040404040404,
+      "score": 0.560606060606061,
       "costPerTaskUsd": 2.79866,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -2123,37 +2123,37 @@
       "family": "gemini-4-argon",
       "effort": "high",
       "eval": "aa-briefcase",
-      "score": 1483.71,
-      "costPerTaskUsd": 11.6555,
+      "score": 1483.54,
+      "costPerTaskUsd": 8.487,
       "tokensPerTask": 142374,
-      "secondsPerTask": 1719.7
+      "secondsPerTask": 1830.3
     },
     {
       "family": "gemini-4-argon",
       "effort": "high",
       "eval": "automationbench-aa",
       "score": 0.7751346945899195,
-      "costPerTaskUsd": 1.21731,
+      "costPerTaskUsd": 1.0977,
       "tokensPerTask": 32595,
-      "secondsPerTask": 393.7
+      "secondsPerTask": 419
     },
     {
       "family": "gemini-4-argon",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.570707070707071,
-      "costPerTaskUsd": 13.56028,
+      "score": 0.580808080808081,
+      "costPerTaskUsd": 9.6337,
       "tokensPerTask": 165330,
-      "secondsPerTask": 1997
+      "secondsPerTask": 2125.4
     },
     {
       "family": "gemini-4-argon",
       "effort": "high",
       "eval": "frontiercode-2-0",
       "score": 0.257076262626263,
-      "costPerTaskUsd": 18.73697,
+      "costPerTaskUsd": 12.75702,
       "tokensPerTask": 156345,
-      "secondsPerTask": 1888.5
+      "secondsPerTask": 2009.9
     },
     {
       "family": "gemini-4-argon",
@@ -2162,7 +2162,7 @@
       "score": 46.1,
       "costPerTaskUsd": 0.01822,
       "tokensPerTask": 883,
-      "secondsPerTask": 10.7
+      "secondsPerTask": 11.4
     },
     {
       "family": "gemini-4-argon",
@@ -2171,7 +2171,7 @@
       "score": 0.218,
       "costPerTaskUsd": 0.51866,
       "tokensPerTask": 8432,
-      "secondsPerTask": 101.9
+      "secondsPerTask": 108.4
     },
     {
       "family": "gemini-4-argon",
@@ -2180,25 +2180,25 @@
       "score": 0.567,
       "costPerTaskUsd": 0.48356,
       "tokensPerTask": 20698,
-      "secondsPerTask": 250
+      "secondsPerTask": 266.1
     },
     {
       "family": "gemini-4-argon",
       "effort": "high",
       "eval": "critpt-v2-hard",
       "score": 0.525,
-      "costPerTaskUsd": 2.34876,
+      "costPerTaskUsd": 2.09366,
       "tokensPerTask": 71508,
-      "secondsPerTask": 863.8
+      "secondsPerTask": 919.3
     },
     {
       "family": "gemini-4-argon",
       "effort": "high",
       "eval": "terminal-bench-science",
       "score": 0.528571428571429,
-      "costPerTaskUsd": 24.39298,
+      "costPerTaskUsd": 17.13602,
       "tokensPerTask": 290818,
-      "secondsPerTask": 3512.8
+      "secondsPerTask": 3738.7
     },
     {
       "family": "claude-sonnet-5-5",
@@ -2222,7 +2222,7 @@
       "family": "claude-sonnet-5-5",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.570707070707071,
+      "score": 0.565656565656566,
       "costPerTaskUsd": 6.07843,
       "tokensPerTask": 192064,
       "secondsPerTask": 1434.9
@@ -2285,10 +2285,10 @@
       "family": "claude-haiku-5-5",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1571.08,
+      "score": 1570.9,
       "costPerTaskUsd": 0.67486,
       "tokensPerTask": 425446,
-      "secondsPerTask": 1644.7
+      "secondsPerTask": 1647.4
     },
     {
       "family": "claude-haiku-5-5",
@@ -2297,16 +2297,16 @@
       "score": 0.35411015132783624,
       "costPerTaskUsd": 0.04232,
       "tokensPerTask": 51001,
-      "secondsPerTask": 197.2
+      "secondsPerTask": 197.5
     },
     {
       "family": "claude-haiku-5-5",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.328282828282828,
+      "score": 0.333333333333333,
       "costPerTaskUsd": 0.65188,
       "tokensPerTask": 346826,
-      "secondsPerTask": 1340.7
+      "secondsPerTask": 1343
     },
     {
       "family": "claude-haiku-5-5",
@@ -2315,7 +2315,7 @@
       "score": 0.349325505050505,
       "costPerTaskUsd": 0.4605,
       "tokensPerTask": 254933,
-      "secondsPerTask": 985.5
+      "secondsPerTask": 987.2
     },
     {
       "family": "claude-haiku-5-5",
@@ -2333,7 +2333,7 @@
       "score": 0.208,
       "costPerTaskUsd": 0.05269,
       "tokensPerTask": 70228,
-      "secondsPerTask": 271.5
+      "secondsPerTask": 271.9
     },
     {
       "family": "claude-haiku-5-5",
@@ -2342,7 +2342,7 @@
       "score": 0.296,
       "costPerTaskUsd": 0.04673,
       "tokensPerTask": 93329,
-      "secondsPerTask": 360.8
+      "secondsPerTask": 361.4
     },
     {
       "family": "claude-haiku-5-5",
@@ -2351,7 +2351,7 @@
       "score": 0.435,
       "costPerTaskUsd": 0.10132,
       "tokensPerTask": 147938,
-      "secondsPerTask": 571.9
+      "secondsPerTask": 572.9
     },
     {
       "family": "claude-haiku-5-5",
@@ -2360,7 +2360,7 @@
       "score": 0.2,
       "costPerTaskUsd": 1.03371,
       "tokensPerTask": 381597,
-      "secondsPerTask": 1475.2
+      "secondsPerTask": 1477.6
     },
     {
       "family": "claude-haiku-5-5",
@@ -2384,7 +2384,7 @@
       "family": "claude-haiku-5-5",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.292929292929293,
+      "score": 0.287878787878788,
       "costPerTaskUsd": 0.46029,
       "tokensPerTask": 231801,
       "secondsPerTask": 994
@@ -2465,7 +2465,7 @@
       "family": "claude-haiku-5-5",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.217171717171717,
+      "score": 0.227272727272727,
       "costPerTaskUsd": 0.33148,
       "tokensPerTask": 166080,
       "secondsPerTask": 732.8
@@ -2690,10 +2690,10 @@
       "family": "muse-ember",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1519.1,
+      "score": 1518.87,
       "costPerTaskUsd": 0.13474,
       "tokensPerTask": 90524,
-      "secondsPerTask": 215.3
+      "secondsPerTask": 245.7
     },
     {
       "family": "muse-ember",
@@ -2702,25 +2702,25 @@
       "score": 0.6807901586086508,
       "costPerTaskUsd": 0.01781,
       "tokensPerTask": 19467,
-      "secondsPerTask": 46.3
+      "secondsPerTask": 52.8
     },
     {
       "family": "muse-ember",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.409090909090909,
+      "score": 0.419191919191919,
       "costPerTaskUsd": 0.26582,
       "tokensPerTask": 147897,
-      "secondsPerTask": 351.7
+      "secondsPerTask": 401.4
     },
     {
       "family": "muse-ember",
       "effort": "max",
       "eval": "frontiercode-2-0",
-      "score": 0.271696212121212,
+      "score": 0.26967601010101,
       "costPerTaskUsd": 0.09612,
       "tokensPerTask": 54150,
-      "secondsPerTask": 128.8
+      "secondsPerTask": 147
     },
     {
       "family": "muse-ember",
@@ -2729,7 +2729,7 @@
       "score": 7.366666666666666,
       "costPerTaskUsd": 0.00146,
       "tokensPerTask": 2896,
-      "secondsPerTask": 6.9
+      "secondsPerTask": 7.9
     },
     {
       "family": "muse-ember",
@@ -2738,7 +2738,7 @@
       "score": 0.228,
       "costPerTaskUsd": 0.01727,
       "tokensPerTask": 9515,
-      "secondsPerTask": 22.6
+      "secondsPerTask": 25.8
     },
     {
       "family": "muse-ember",
@@ -2747,7 +2747,7 @@
       "score": 0.251,
       "costPerTaskUsd": 0.02437,
       "tokensPerTask": 48623,
-      "secondsPerTask": 115.6
+      "secondsPerTask": 132
     },
     {
       "family": "muse-ember",
@@ -2756,7 +2756,7 @@
       "score": 0.39,
       "costPerTaskUsd": 0.05382,
       "tokensPerTask": 80701,
-      "secondsPerTask": 191.9
+      "secondsPerTask": 219
     },
     {
       "family": "muse-ember",
@@ -2765,7 +2765,7 @@
       "score": 0.2,
       "costPerTaskUsd": 0.43288,
       "tokensPerTask": 221167,
-      "secondsPerTask": 526
+      "secondsPerTask": 600.2
     },
     {
       "family": "muse-ember",
@@ -2789,7 +2789,7 @@
       "family": "muse-ember",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.353535353535354,
+      "score": 0.358585858585859,
       "costPerTaskUsd": 0.22196,
       "tokensPerTask": 132081,
       "secondsPerTask": null
@@ -2855,7 +2855,7 @@
       "score": 1570.42,
       "costPerTaskUsd": 0.67829,
       "tokensPerTask": 201620,
-      "secondsPerTask": 1205.6
+      "secondsPerTask": 1124.2
     },
     {
       "family": "deepseek-v4-1-flash-1017",
@@ -2864,25 +2864,25 @@
       "score": 0.6664095364949257,
       "costPerTaskUsd": 0.17391,
       "tokensPerTask": 63396,
-      "secondsPerTask": 379.1
+      "secondsPerTask": 353.5
     },
     {
       "family": "deepseek-v4-1-flash-1017",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.338383838383838,
+      "score": 0.323232323232323,
       "costPerTaskUsd": 0.88008,
       "tokensPerTask": 218213,
-      "secondsPerTask": 1304.8
+      "secondsPerTask": 1216.8
     },
     {
       "family": "deepseek-v4-1-flash-1017",
       "effort": "max",
       "eval": "frontiercode-2-0",
-      "score": 0.284711616161616,
+      "score": 0.282448484848485,
       "costPerTaskUsd": 0.51885,
       "tokensPerTask": 116102,
-      "secondsPerTask": 694.2
+      "secondsPerTask": 647.4
     },
     {
       "family": "deepseek-v4-1-flash-1017",
@@ -2891,7 +2891,7 @@
       "score": 0.9,
       "costPerTaskUsd": 0.00181,
       "tokensPerTask": 1472,
-      "secondsPerTask": 8.8
+      "secondsPerTask": 8.2
     },
     {
       "family": "deepseek-v4-1-flash-1017",
@@ -2900,7 +2900,7 @@
       "score": 0.172,
       "costPerTaskUsd": 0.04234,
       "tokensPerTask": 16372,
-      "secondsPerTask": 97.9
+      "secondsPerTask": 91.3
     },
     {
       "family": "deepseek-v4-1-flash-1017",
@@ -2909,7 +2909,7 @@
       "score": 0.253,
       "costPerTaskUsd": 0.06169,
       "tokensPerTask": 51306,
-      "secondsPerTask": 306.8
+      "secondsPerTask": 286.1
     },
     {
       "family": "deepseek-v4-1-flash-1017",
@@ -2918,7 +2918,7 @@
       "score": 0.25,
       "costPerTaskUsd": 0.20003,
       "tokensPerTask": 119220,
-      "secondsPerTask": 712.9
+      "secondsPerTask": 664.8
     },
     {
       "family": "deepseek-v4-1-flash-1017",
@@ -2927,7 +2927,7 @@
       "score": 0.128571428571429,
       "costPerTaskUsd": 1.98181,
       "tokensPerTask": 321469,
-      "secondsPerTask": 1922.3
+      "secondsPerTask": 1792.5
     },
     {
       "family": "inkling-2-small",
@@ -2936,7 +2936,7 @@
       "score": 1526.86,
       "costPerTaskUsd": 1.02263,
       "tokensPerTask": 162347,
-      "secondsPerTask": 1574.5
+      "secondsPerTask": 1560.7
     },
     {
       "family": "inkling-2-small",
@@ -2945,16 +2945,16 @@
       "score": 0.45621320178972646,
       "costPerTaskUsd": 0.0581,
       "tokensPerTask": 18917,
-      "secondsPerTask": 183.5
+      "secondsPerTask": 181.9
     },
     {
       "family": "inkling-2-small",
       "effort": "default",
       "eval": "terminalbench-4-1",
-      "score": 0.131313131313131,
+      "score": 0.136363636363636,
       "costPerTaskUsd": 2.47665,
       "tokensPerTask": 289846,
-      "secondsPerTask": 2811
+      "secondsPerTask": 2786.4
     },
     {
       "family": "inkling-2-small",
@@ -2963,7 +2963,7 @@
       "score": 0.25352601010101,
       "costPerTaskUsd": 1.26312,
       "tokensPerTask": 131668,
-      "secondsPerTask": 1277
+      "secondsPerTask": 1265.8
     },
     {
       "family": "inkling-2-small",
@@ -2972,7 +2972,7 @@
       "score": 16.1,
       "costPerTaskUsd": 0.0013,
       "tokensPerTask": 1256,
-      "secondsPerTask": 12.2
+      "secondsPerTask": 12.1
     },
     {
       "family": "inkling-2-small",
@@ -2981,7 +2981,7 @@
       "score": 0.252,
       "costPerTaskUsd": 0.05694,
       "tokensPerTask": 23984,
-      "secondsPerTask": 232.6
+      "secondsPerTask": 230.6
     },
     {
       "family": "inkling-2-small",
@@ -2990,7 +2990,7 @@
       "score": 0.287,
       "costPerTaskUsd": 0.05337,
       "tokensPerTask": 53221,
-      "secondsPerTask": 516.2
+      "secondsPerTask": 511.6
     },
     {
       "family": "inkling-2-small",
@@ -2999,7 +2999,7 @@
       "score": 0.35,
       "costPerTaskUsd": 0.24873,
       "tokensPerTask": 135740,
-      "secondsPerTask": 1316.4
+      "secondsPerTask": 1304.9
     },
     {
       "family": "inkling-2-small",
@@ -3008,16 +3008,16 @@
       "score": 0.0571428571428571,
       "costPerTaskUsd": 3.6783,
       "tokensPerTask": 369744,
-      "secondsPerTask": 3585.9
+      "secondsPerTask": 3554.5
     },
     {
       "family": "mimo-v2-6-pro",
       "effort": "default",
       "eval": "aa-briefcase",
-      "score": 1511,
+      "score": 1510.73,
       "costPerTaskUsd": 0.38018,
       "tokensPerTask": 163892,
-      "secondsPerTask": 4008.1
+      "secondsPerTask": 3797.9
     },
     {
       "family": "mimo-v2-6-pro",
@@ -3026,16 +3026,16 @@
       "score": 0.5862340943419085,
       "costPerTaskUsd": 0.04226,
       "tokensPerTask": 21142,
-      "secondsPerTask": 517
+      "secondsPerTask": 489.9
     },
     {
       "family": "mimo-v2-6-pro",
       "effort": "default",
       "eval": "terminalbench-4-1",
-      "score": 0.348484848484849,
+      "score": 0.353535353535354,
       "costPerTaskUsd": 0.43805,
       "tokensPerTask": 184486,
-      "secondsPerTask": 4511.8
+      "secondsPerTask": 4275.1
     },
     {
       "family": "mimo-v2-6-pro",
@@ -3044,7 +3044,7 @@
       "score": 0.239701262626263,
       "costPerTaskUsd": 0.25659,
       "tokensPerTask": 116458,
-      "secondsPerTask": 2848.1
+      "secondsPerTask": 2698.7
     },
     {
       "family": "mimo-v2-6-pro",
@@ -3053,7 +3053,7 @@
       "score": -4.466666666666667,
       "costPerTaskUsd": 0.00556,
       "tokensPerTask": 6324,
-      "secondsPerTask": 154.7
+      "secondsPerTask": 146.5
     },
     {
       "family": "mimo-v2-6-pro",
@@ -3062,7 +3062,7 @@
       "score": 0.192,
       "costPerTaskUsd": 0.02402,
       "tokensPerTask": 9264,
-      "secondsPerTask": 226.6
+      "secondsPerTask": 214.7
     },
     {
       "family": "mimo-v2-6-pro",
@@ -3071,7 +3071,7 @@
       "score": 0.152,
       "costPerTaskUsd": 0.02576,
       "tokensPerTask": 29353,
-      "secondsPerTask": 717.9
+      "secondsPerTask": 680.2
     },
     {
       "family": "mimo-v2-6-pro",
@@ -3080,7 +3080,7 @@
       "score": 0.34,
       "costPerTaskUsd": 0.1652,
       "tokensPerTask": 116292,
-      "secondsPerTask": 2844
+      "secondsPerTask": 2694.8
     },
     {
       "family": "mimo-v2-6-pro",
@@ -3089,13 +3089,13 @@
       "score": 0.0571428571428571,
       "costPerTaskUsd": 0.63078,
       "tokensPerTask": 290259,
-      "secondsPerTask": 7098.5
+      "secondsPerTask": 6726.2
     },
     {
       "family": "ling-3-1-flash",
       "effort": "default",
       "eval": "aa-briefcase",
-      "score": 1516.49,
+      "score": 1516.32,
       "costPerTaskUsd": 3.87962,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -3113,7 +3113,7 @@
       "family": "ling-3-1-flash",
       "effort": "default",
       "eval": "terminalbench-4-1",
-      "score": 0.328282828282828,
+      "score": 0.333333333333333,
       "costPerTaskUsd": 6.59139,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -3122,7 +3122,7 @@
       "family": "ling-3-1-flash",
       "effort": "default",
       "eval": "frontiercode-2-0",
-      "score": 0.170090151515151,
+      "score": 0.172362878787879,
       "costPerTaskUsd": 2.35544,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -3176,7 +3176,7 @@
       "family": "minimax-m3-1-flash",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1475.19,
+      "score": 1475.01,
       "costPerTaskUsd": 0.52861,
       "tokensPerTask": 154874,
       "secondsPerTask": 968.4
@@ -3204,7 +3204,7 @@
       "effort": "max",
       "eval": "frontiercode-2-0",
       "score": 0.208218181818182,
-      "costPerTaskUsd": 0.47026,
+      "costPerTaskUsd": 0.47734,
       "tokensPerTask": 129154,
       "secondsPerTask": 807.6
     },
@@ -3275,7 +3275,7 @@
       "family": "deepseek-v4-1-flash-1017",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.287878787878788,
+      "score": 0.297979797979798,
       "costPerTaskUsd": 0.78297,
       "tokensPerTask": 182975,
       "secondsPerTask": 1243.7
@@ -3338,7 +3338,7 @@
       "family": "qwen3-8-flash-next",
       "effort": "default",
       "eval": "aa-briefcase",
-      "score": 1568.2,
+      "score": 1567.94,
       "costPerTaskUsd": 1.6047,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -3356,8 +3356,8 @@
       "family": "qwen3-8-flash-next",
       "effort": "default",
       "eval": "terminalbench-4-1",
-      "score": 0.252525252525253,
-      "costPerTaskUsd": 0.87796,
+      "score": 0.242424242424242,
+      "costPerTaskUsd": 0.89969,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -3419,10 +3419,10 @@
       "family": "gpt-6-luna",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1335.39,
+      "score": 1335.06,
       "costPerTaskUsd": 0.16999,
       "tokensPerTask": 110019,
-      "secondsPerTask": 956.1
+      "secondsPerTask": 848.8
     },
     {
       "family": "gpt-6-luna",
@@ -3431,7 +3431,7 @@
       "score": 0.5316814034483175,
       "costPerTaskUsd": 0.0364,
       "tokensPerTask": 34034,
-      "secondsPerTask": 295.8
+      "secondsPerTask": 262.6
     },
     {
       "family": "gpt-6-luna",
@@ -3440,7 +3440,7 @@
       "score": 0.126262626262626,
       "costPerTaskUsd": 0.23621,
       "tokensPerTask": 140974,
-      "secondsPerTask": 1225.1
+      "secondsPerTask": 1087.6
     },
     {
       "family": "gpt-6-luna",
@@ -3449,7 +3449,7 @@
       "score": 0.251747727272727,
       "costPerTaskUsd": 0.17592,
       "tokensPerTask": 69839,
-      "secondsPerTask": 606.9
+      "secondsPerTask": 538.8
     },
     {
       "family": "gpt-6-luna",
@@ -3458,7 +3458,7 @@
       "score": -8.266666666666667,
       "costPerTaskUsd": 0.00234,
       "tokensPerTask": 4663,
-      "secondsPerTask": 40.5
+      "secondsPerTask": 36
     },
     {
       "family": "gpt-6-luna",
@@ -3467,7 +3467,7 @@
       "score": 0.228,
       "costPerTaskUsd": 0.02855,
       "tokensPerTask": 24831,
-      "secondsPerTask": 215.8
+      "secondsPerTask": 191.6
     },
     {
       "family": "gpt-6-luna",
@@ -3476,7 +3476,7 @@
       "score": 0.222,
       "costPerTaskUsd": 0.01489,
       "tokensPerTask": 29661,
-      "secondsPerTask": 257.8
+      "secondsPerTask": 228.8
     },
     {
       "family": "gpt-6-luna",
@@ -3485,7 +3485,7 @@
       "score": 0.425,
       "costPerTaskUsd": 0.03246,
       "tokensPerTask": 48777,
-      "secondsPerTask": 423.9
+      "secondsPerTask": 376.3
     },
     {
       "family": "gpt-6-luna",
@@ -3494,13 +3494,13 @@
       "score": 0.0857142857142857,
       "costPerTaskUsd": 0.45408,
       "tokensPerTask": 151556,
-      "secondsPerTask": 1317
+      "secondsPerTask": 1169.2
     },
     {
       "family": "glm-5-3-flash",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1448.4,
+      "score": 1448.14,
       "costPerTaskUsd": 0.98399,
       "tokensPerTask": 131965,
       "secondsPerTask": 2648.5
@@ -3527,7 +3527,7 @@
       "family": "glm-5-3-flash",
       "effort": "max",
       "eval": "frontiercode-2-0",
-      "score": 0.176070454545455,
+      "score": 0.172010858585859,
       "costPerTaskUsd": 0.44521,
       "tokensPerTask": 77885,
       "secondsPerTask": 1563.1
@@ -3581,7 +3581,7 @@
       "family": "mimo-v2-6-flash",
       "effort": "default",
       "eval": "aa-briefcase",
-      "score": 1489.51,
+      "score": 1489.33,
       "costPerTaskUsd": 0.15172,
       "tokensPerTask": 161314,
       "secondsPerTask": 4599.5
@@ -3599,7 +3599,7 @@
       "family": "mimo-v2-6-flash",
       "effort": "default",
       "eval": "terminalbench-4-1",
-      "score": 0.227272727272727,
+      "score": 0.237373737373737,
       "costPerTaskUsd": 0.23016,
       "tokensPerTask": 236366,
       "secondsPerTask": 6739.5
@@ -3663,7 +3663,7 @@
       "effort": "default",
       "eval": "aa-briefcase",
       "score": 1495.96,
-      "costPerTaskUsd": 1.33844,
+      "costPerTaskUsd": 1.02219,
       "tokensPerTask": 281175,
       "secondsPerTask": 1336.5
     },
@@ -3672,7 +3672,7 @@
       "effort": "default",
       "eval": "automationbench-aa",
       "score": 0.48822600284971035,
-      "costPerTaskUsd": 0.03904,
+      "costPerTaskUsd": 0.03382,
       "tokensPerTask": 47470,
       "secondsPerTask": 225.6
     },
@@ -3680,8 +3680,8 @@
       "family": "agnes-2-5-pro-theta",
       "effort": "default",
       "eval": "terminalbench-4-1",
-      "score": 0.101010101010101,
-      "costPerTaskUsd": 0.7947,
+      "score": 0.106060606060606,
+      "costPerTaskUsd": 0.62972,
       "tokensPerTask": 452946,
       "secondsPerTask": 2152.9
     },
@@ -3690,7 +3690,7 @@
       "effort": "default",
       "eval": "frontiercode-2-0",
       "score": 0.16554898989899,
-      "costPerTaskUsd": 0.68156,
+      "costPerTaskUsd": 0.54004,
       "tokensPerTask": 393261,
       "secondsPerTask": 1869.2
     },
@@ -3726,7 +3726,7 @@
       "effort": "default",
       "eval": "critpt-v2-hard",
       "score": 0.26,
-      "costPerTaskUsd": 0.13569,
+      "costPerTaskUsd": 0.13003,
       "tokensPerTask": 368706,
       "secondsPerTask": 1752.5
     },
@@ -3735,7 +3735,7 @@
       "effort": "default",
       "eval": "terminal-bench-science",
       "score": 0.0380952380952381,
-      "costPerTaskUsd": 1.16134,
+      "costPerTaskUsd": 0.91334,
       "tokensPerTask": 570329,
       "secondsPerTask": 2710.9
     },
@@ -3842,7 +3842,7 @@
       "family": "gpt-6-luna",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.0454545454545455,
+      "score": 0.0505050505050505,
       "costPerTaskUsd": 0.1204,
       "tokensPerTask": 74239,
       "secondsPerTask": 759.6
@@ -3905,7 +3905,7 @@
       "family": "minimax-m3",
       "effort": "default",
       "eval": "aa-briefcase",
-      "score": 1089.19,
+      "score": 1089.28,
       "costPerTaskUsd": 0.93953,
       "tokensPerTask": 81897,
       "secondsPerTask": 657.6
@@ -3932,8 +3932,8 @@
       "family": "minimax-m3",
       "effort": "default",
       "eval": "frontiercode-2-0",
-      "score": 0.219031313131313,
-      "costPerTaskUsd": 1.2877,
+      "score": 0.230328282828283,
+      "costPerTaskUsd": 1.32682,
       "tokensPerTask": 103221,
       "secondsPerTask": 828.8
     },
@@ -4151,7 +4151,7 @@
       "score": 976.2,
       "costPerTaskUsd": 0.20231,
       "tokensPerTask": 34082,
-      "secondsPerTask": 109.7
+      "secondsPerTask": 87
     },
     {
       "family": "reflection-beam",
@@ -4160,7 +4160,7 @@
       "score": 0.4845786522065588,
       "costPerTaskUsd": 0.09231,
       "tokensPerTask": 23486,
-      "secondsPerTask": 75.6
+      "secondsPerTask": 60
     },
     {
       "family": "reflection-beam",
@@ -4169,16 +4169,16 @@
       "score": 0.0303030303030303,
       "costPerTaskUsd": 0.62543,
       "tokensPerTask": 69385,
-      "secondsPerTask": 223.2
+      "secondsPerTask": 177.2
     },
     {
       "family": "reflection-beam",
       "effort": "default",
       "eval": "frontiercode-2-0",
-      "score": 0.0553143939393939,
+      "score": 0.0508005050505051,
       "costPerTaskUsd": 0.29629,
       "tokensPerTask": 30807,
-      "secondsPerTask": 99.1
+      "secondsPerTask": 78.7
     },
     {
       "family": "reflection-beam",
@@ -4187,7 +4187,7 @@
       "score": 2.3333333333333335,
       "costPerTaskUsd": 0.00161,
       "tokensPerTask": 1289,
-      "secondsPerTask": 4.1
+      "secondsPerTask": 3.3
     },
     {
       "family": "reflection-beam",
@@ -4196,7 +4196,7 @@
       "score": 0.116,
       "costPerTaskUsd": 0.02814,
       "tokensPerTask": 11109,
-      "secondsPerTask": 35.7
+      "secondsPerTask": 28.4
     },
     {
       "family": "reflection-beam",
@@ -4205,7 +4205,7 @@
       "score": 0.128,
       "costPerTaskUsd": 0.01847,
       "tokensPerTask": 15284,
-      "secondsPerTask": 49.2
+      "secondsPerTask": 39
     },
     {
       "family": "reflection-beam",
@@ -4214,7 +4214,7 @@
       "score": 0.265,
       "costPerTaskUsd": 0.08867,
       "tokensPerTask": 43582,
-      "secondsPerTask": 140.2
+      "secondsPerTask": 111.3
     },
     {
       "family": "reflection-beam",
@@ -4223,14 +4223,14 @@
       "score": 0.00476190476190476,
       "costPerTaskUsd": 0.86729,
       "tokensPerTask": 65071,
-      "secondsPerTask": 209.4
+      "secondsPerTask": 166.2
     },
     {
       "family": "solar-pro-4",
       "effort": "default",
       "eval": "aa-briefcase",
       "score": 1093.32,
-      "costPerTaskUsd": 3.77336,
+      "costPerTaskUsd": 4.76259,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -4239,7 +4239,7 @@
       "effort": "default",
       "eval": "automationbench-aa",
       "score": 0.1359339457640078,
-      "costPerTaskUsd": 0.18801,
+      "costPerTaskUsd": 0.26562,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -4248,7 +4248,7 @@
       "effort": "default",
       "eval": "terminalbench-4-1",
       "score": 0,
-      "costPerTaskUsd": 0.88482,
+      "costPerTaskUsd": 1.46272,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -4257,7 +4257,7 @@
       "effort": "default",
       "eval": "frontiercode-2-0",
       "score": 0.0408146464646465,
-      "costPerTaskUsd": 0.89882,
+      "costPerTaskUsd": 1.50049,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -4293,7 +4293,7 @@
       "effort": "default",
       "eval": "critpt-v2-hard",
       "score": 0.18,
-      "costPerTaskUsd": 0.40151,
+      "costPerTaskUsd": 0.47578,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -4302,171 +4302,9 @@
       "effort": "default",
       "eval": "terminal-bench-science",
       "score": 0,
-      "costPerTaskUsd": 0.75512,
+      "costPerTaskUsd": 1.23014,
       "tokensPerTask": null,
       "secondsPerTask": null
-    },
-    {
-      "family": "apodex-1-1",
-      "effort": "default",
-      "eval": "aa-briefcase",
-      "score": 1014.39,
-      "costPerTaskUsd": 1.03802,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "apodex-1-1",
-      "effort": "default",
-      "eval": "automationbench-aa",
-      "score": 0.28197929106327146,
-      "costPerTaskUsd": 0.2265,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "apodex-1-1",
-      "effort": "default",
-      "eval": "terminalbench-4-1",
-      "score": 0,
-      "costPerTaskUsd": 2.04759,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "apodex-1-1",
-      "effort": "default",
-      "eval": "frontiercode-2-0",
-      "score": 0.0693335858585859,
-      "costPerTaskUsd": 0.99356,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "apodex-1-1",
-      "effort": "default",
-      "eval": "omniscience",
-      "score": -27.866666666666667,
-      "costPerTaskUsd": 0.01517,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "apodex-1-1",
-      "effort": "default",
-      "eval": "gdp-pdf",
-      "score": 0.112,
-      "costPerTaskUsd": 0.05389,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "apodex-1-1",
-      "effort": "default",
-      "eval": "hle-diamond",
-      "score": 0.116,
-      "costPerTaskUsd": 0.13981,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "apodex-1-1",
-      "effort": "default",
-      "eval": "critpt-v2-hard",
-      "score": 0.17,
-      "costPerTaskUsd": 0.49209,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "apodex-1-1",
-      "effort": "default",
-      "eval": "terminal-bench-science",
-      "score": 0.00476190476190476,
-      "costPerTaskUsd": 1.16838,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "nemotron-3-5-super-vl",
-      "effort": "high",
-      "eval": "aa-briefcase",
-      "score": 998.76,
-      "costPerTaskUsd": 0.43679,
-      "tokensPerTask": 89426,
-      "secondsPerTask": 253
-    },
-    {
-      "family": "nemotron-3-5-super-vl",
-      "effort": "high",
-      "eval": "automationbench-aa",
-      "score": 0.14818345798643587,
-      "costPerTaskUsd": 0.10544,
-      "tokensPerTask": 31277,
-      "secondsPerTask": 88.5
-    },
-    {
-      "family": "nemotron-3-5-super-vl",
-      "effort": "high",
-      "eval": "terminalbench-4-1",
-      "score": 0,
-      "costPerTaskUsd": 0.68051,
-      "tokensPerTask": 149259,
-      "secondsPerTask": 422.2
-    },
-    {
-      "family": "nemotron-3-5-super-vl",
-      "effort": "high",
-      "eval": "frontiercode-2-0",
-      "score": 0.0610914141414141,
-      "costPerTaskUsd": 1.22439,
-      "tokensPerTask": 93590,
-      "secondsPerTask": 264.7
-    },
-    {
-      "family": "nemotron-3-5-super-vl",
-      "effort": "high",
-      "eval": "omniscience",
-      "score": -2.8666666666666667,
-      "costPerTaskUsd": 0.00184,
-      "tokensPerTask": 3636,
-      "secondsPerTask": 10.3
-    },
-    {
-      "family": "nemotron-3-5-super-vl",
-      "effort": "high",
-      "eval": "gdp-pdf",
-      "score": 0.08,
-      "costPerTaskUsd": 0.01606,
-      "tokensPerTask": 7222,
-      "secondsPerTask": 20.4
-    },
-    {
-      "family": "nemotron-3-5-super-vl",
-      "effort": "high",
-      "eval": "hle-diamond",
-      "score": 0.088,
-      "costPerTaskUsd": 0.02132,
-      "tokensPerTask": 42484,
-      "secondsPerTask": 120.2
-    },
-    {
-      "family": "nemotron-3-5-super-vl",
-      "effort": "high",
-      "eval": "critpt-v2-hard",
-      "score": 0.135,
-      "costPerTaskUsd": 0.11118,
-      "tokensPerTask": 104750,
-      "secondsPerTask": 296.3
-    },
-    {
-      "family": "nemotron-3-5-super-vl",
-      "effort": "high",
-      "eval": "terminal-bench-science",
-      "score": 0,
-      "costPerTaskUsd": 0.96654,
-      "tokensPerTask": 145751,
-      "secondsPerTask": 412.3
     },
     {
       "family": "claude-opus-5-5",
@@ -4490,7 +4328,7 @@
       "family": "claude-opus-5-5",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.525252525252525,
+      "score": 0.53030303030303,
       "costPerTaskUsd": 4.04298,
       "tokensPerTask": 75654,
       "secondsPerTask": 737.8
@@ -4661,7 +4499,7 @@
       "family": "claude-sonnet-5-5",
       "effort": "high",
       "eval": "frontiercode-2-0",
-      "score": 0.257380050505051,
+      "score": 0.255275757575758,
       "costPerTaskUsd": 0.76041,
       "tokensPerTask": 27588,
       "secondsPerTask": 201.9
@@ -4715,7 +4553,7 @@
       "family": "claude-sonnet-5-5",
       "effort": "medium",
       "eval": "aa-briefcase",
-      "score": 1436.11,
+      "score": 1435.93,
       "costPerTaskUsd": 1.39207,
       "tokensPerTask": 71619,
       "secondsPerTask": 515.5
@@ -4733,7 +4571,7 @@
       "family": "claude-sonnet-5-5",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.297979797979798,
+      "score": 0.303030303030303,
       "costPerTaskUsd": 1.57816,
       "tokensPerTask": 51618,
       "secondsPerTask": 371.5
@@ -4814,7 +4652,7 @@
       "family": "claude-sonnet-5-5",
       "effort": "low",
       "eval": "terminalbench-4-1",
-      "score": 0.207070707070707,
+      "score": 0.202020202020202,
       "costPerTaskUsd": 1.28479,
       "tokensPerTask": 40277,
       "secondsPerTask": 298.5
@@ -4877,10 +4715,10 @@
       "family": "kimi-k3-1-pro",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1672.24,
+      "score": 1671.96,
       "costPerTaskUsd": 7.22064,
       "tokensPerTask": 144268,
-      "secondsPerTask": 4277.6
+      "secondsPerTask": 3895.9
     },
     {
       "family": "kimi-k3-1-pro",
@@ -4889,16 +4727,16 @@
       "score": 0.7329771090921112,
       "costPerTaskUsd": 0.82876,
       "tokensPerTask": 36826,
-      "secondsPerTask": 1091.9
+      "secondsPerTask": 994.5
     },
     {
       "family": "kimi-k3-1-pro",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.671717171717172,
+      "score": 0.681818181818182,
       "costPerTaskUsd": 5.26556,
       "tokensPerTask": 115723,
-      "secondsPerTask": 3431.2
+      "secondsPerTask": 3125
     },
     {
       "family": "kimi-k3-1-pro",
@@ -4907,7 +4745,7 @@
       "score": 0.254519444444444,
       "costPerTaskUsd": 2.37936,
       "tokensPerTask": 42487,
-      "secondsPerTask": 1259.7
+      "secondsPerTask": 1147.3
     },
     {
       "family": "kimi-k3-1-pro",
@@ -4916,7 +4754,7 @@
       "score": 29.866666666666667,
       "costPerTaskUsd": 0.04292,
       "tokensPerTask": 4250,
-      "secondsPerTask": 126
+      "secondsPerTask": 114.8
     },
     {
       "family": "kimi-k3-1-pro",
@@ -4925,7 +4763,7 @@
       "score": 0.314,
       "costPerTaskUsd": 0.52184,
       "tokensPerTask": 19104,
-      "secondsPerTask": 566.4
+      "secondsPerTask": 515.9
     },
     {
       "family": "kimi-k3-1-pro",
@@ -4934,7 +4772,7 @@
       "score": 0.373,
       "costPerTaskUsd": 0.36473,
       "tokensPerTask": 36327,
-      "secondsPerTask": 1077.1
+      "secondsPerTask": 981
     },
     {
       "family": "kimi-k3-1-pro",
@@ -4943,7 +4781,7 @@
       "score": 0.495,
       "costPerTaskUsd": 0.70172,
       "tokensPerTask": 47830,
-      "secondsPerTask": 1418.2
+      "secondsPerTask": 1291.6
     },
     {
       "family": "kimi-k3-1-pro",
@@ -4952,7 +4790,7 @@
       "score": 0.342857142857143,
       "costPerTaskUsd": 10.22687,
       "tokensPerTask": 138692,
-      "secondsPerTask": 4112.2
+      "secondsPerTask": 3745.3
     },
     {
       "family": "tencent-hy4",
@@ -4961,7 +4799,7 @@
       "score": 1444.94,
       "costPerTaskUsd": 1.31185,
       "tokensPerTask": 88966,
-      "secondsPerTask": 945.7
+      "secondsPerTask": 906.8
     },
     {
       "family": "tencent-hy4",
@@ -4970,25 +4808,25 @@
       "score": 0.6561018180201071,
       "costPerTaskUsd": 0.25313,
       "tokensPerTask": 36984,
-      "secondsPerTask": 393.2
+      "secondsPerTask": 377
     },
     {
       "family": "tencent-hy4",
       "effort": "default",
       "eval": "terminalbench-4-1",
-      "score": 0.373737373737374,
+      "score": 0.378787878787879,
       "costPerTaskUsd": 1.63697,
       "tokensPerTask": 123352,
-      "secondsPerTask": 1311.3
+      "secondsPerTask": 1257.3
     },
     {
       "family": "tencent-hy4",
       "effort": "default",
       "eval": "frontiercode-2-0",
-      "score": 0.31447601010101,
+      "score": 0.312183838383838,
       "costPerTaskUsd": 1.38567,
       "tokensPerTask": 79659,
-      "secondsPerTask": 846.8
+      "secondsPerTask": 812
     },
     {
       "family": "tencent-hy4",
@@ -4997,7 +4835,7 @@
       "score": 5.4,
       "costPerTaskUsd": 0.04027,
       "tokensPerTask": 16056,
-      "secondsPerTask": 170.7
+      "secondsPerTask": 163.7
     },
     {
       "family": "tencent-hy4",
@@ -5006,7 +4844,7 @@
       "score": 0.216,
       "costPerTaskUsd": 0.17253,
       "tokensPerTask": 24835,
-      "secondsPerTask": 264
+      "secondsPerTask": 253.1
     },
     {
       "family": "tencent-hy4",
@@ -5015,7 +4853,7 @@
       "score": 0.327,
       "costPerTaskUsd": 0.11078,
       "tokensPerTask": 44118,
-      "secondsPerTask": 469
+      "secondsPerTask": 449.7
     },
     {
       "family": "tencent-hy4",
@@ -5024,7 +4862,7 @@
       "score": 0.39,
       "costPerTaskUsd": 0.30763,
       "tokensPerTask": 78566,
-      "secondsPerTask": 835.2
+      "secondsPerTask": 800.8
     },
     {
       "family": "tencent-hy4",
@@ -5033,16 +4871,16 @@
       "score": 0.128571428571429,
       "costPerTaskUsd": 2.62411,
       "tokensPerTask": 151075,
-      "secondsPerTask": 1606
+      "secondsPerTask": 1539.9
     },
     {
       "family": "glm-5-3",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1498.62,
+      "score": 1497.84,
       "costPerTaskUsd": 5.64879,
       "tokensPerTask": 136335,
-      "secondsPerTask": 1912.4
+      "secondsPerTask": 1754.1
     },
     {
       "family": "glm-5-3",
@@ -5051,16 +4889,16 @@
       "score": 0.622028649962642,
       "costPerTaskUsd": 0.46045,
       "tokensPerTask": 27738,
-      "secondsPerTask": 389.1
+      "secondsPerTask": 356.9
     },
     {
       "family": "glm-5-3",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.419191919191919,
+      "score": 0.409090909090909,
       "costPerTaskUsd": 8.0642,
       "tokensPerTask": 194566,
-      "secondsPerTask": 2729.2
+      "secondsPerTask": 2503.3
     },
     {
       "family": "glm-5-3",
@@ -5069,7 +4907,7 @@
       "score": 0.21587095959596,
       "costPerTaskUsd": 6.09815,
       "tokensPerTask": 105897,
-      "secondsPerTask": 1485.4
+      "secondsPerTask": 1362.5
     },
     {
       "family": "glm-5-3",
@@ -5078,7 +4916,7 @@
       "score": 6.033333333333333,
       "costPerTaskUsd": 0.02052,
       "tokensPerTask": 4623,
-      "secondsPerTask": 64.8
+      "secondsPerTask": 59.5
     },
     {
       "family": "glm-5-3",
@@ -5087,7 +4925,7 @@
       "score": 0.112,
       "costPerTaskUsd": 0.17337,
       "tokensPerTask": 28417,
-      "secondsPerTask": 398.6
+      "secondsPerTask": 365.6
     },
     {
       "family": "glm-5-3",
@@ -5096,7 +4934,7 @@
       "score": 0.179,
       "costPerTaskUsd": 0.15781,
       "tokensPerTask": 35781,
-      "secondsPerTask": 501.9
+      "secondsPerTask": 460.4
     },
     {
       "family": "glm-5-3",
@@ -5105,7 +4943,7 @@
       "score": 0.335,
       "costPerTaskUsd": 1.54255,
       "tokensPerTask": 159480,
-      "secondsPerTask": 2237
+      "secondsPerTask": 2051.9
     },
     {
       "family": "glm-5-3",
@@ -5114,14 +4952,14 @@
       "score": 0.0952380952380952,
       "costPerTaskUsd": 14.90665,
       "tokensPerTask": 267785,
-      "secondsPerTask": 3756.2
+      "secondsPerTask": 3445.3
     },
     {
       "family": "step-5-preview",
       "effort": "default",
       "eval": "aa-briefcase",
-      "score": 1421.24,
-      "costPerTaskUsd": 2.37285,
+      "score": 1421.07,
+      "costPerTaskUsd": 3.91068,
       "tokensPerTask": 120429,
       "secondsPerTask": 875.4
     },
@@ -5130,7 +4968,7 @@
       "effort": "default",
       "eval": "automationbench-aa",
       "score": 0.5095659419096288,
-      "costPerTaskUsd": 0.22479,
+      "costPerTaskUsd": 0.29792,
       "tokensPerTask": 29651,
       "secondsPerTask": 215.5
     },
@@ -5138,8 +4976,8 @@
       "family": "step-5-preview",
       "effort": "default",
       "eval": "terminalbench-4-1",
-      "score": 0.333333333333333,
-      "costPerTaskUsd": 5.1754,
+      "score": 0.338383838383838,
+      "costPerTaskUsd": 8.68931,
       "tokensPerTask": 260341,
       "secondsPerTask": 1892.4
     },
@@ -5147,8 +4985,8 @@
       "family": "step-5-preview",
       "effort": "default",
       "eval": "frontiercode-2-0",
-      "score": 0.120010101010101,
-      "costPerTaskUsd": 2.11045,
+      "score": 0.115833585858586,
+      "costPerTaskUsd": 3.58735,
       "tokensPerTask": 80929,
       "secondsPerTask": 588.3
     },
@@ -5184,7 +5022,7 @@
       "effort": "default",
       "eval": "critpt-v2-hard",
       "score": 0.325,
-      "costPerTaskUsd": 0.35841,
+      "costPerTaskUsd": 0.44212,
       "tokensPerTask": 70022,
       "secondsPerTask": 509
     },
@@ -5193,7 +5031,7 @@
       "effort": "default",
       "eval": "terminal-bench-science",
       "score": 0.0238095238095238,
-      "costPerTaskUsd": 7.27898,
+      "costPerTaskUsd": 12.45703,
       "tokensPerTask": 295605,
       "secondsPerTask": 2148.8
     },
@@ -5201,10 +5039,10 @@
       "family": "mistral-large-4",
       "effort": "high",
       "eval": "aa-briefcase",
-      "score": 1347.27,
+      "score": 1346.88,
       "costPerTaskUsd": 1.12447,
       "tokensPerTask": 83357,
-      "secondsPerTask": 1088.5
+      "secondsPerTask": 945.9
     },
     {
       "family": "mistral-large-4",
@@ -5213,7 +5051,7 @@
       "score": 0.5783010541628066,
       "costPerTaskUsd": 0.18149,
       "tokensPerTask": 24150,
-      "secondsPerTask": 315.4
+      "secondsPerTask": 274.1
     },
     {
       "family": "mistral-large-4",
@@ -5222,7 +5060,7 @@
       "score": 0.247474747474747,
       "costPerTaskUsd": 4.59245,
       "tokensPerTask": 171100,
-      "secondsPerTask": 2234.4
+      "secondsPerTask": 1941.6
     },
     {
       "family": "mistral-large-4",
@@ -5231,7 +5069,7 @@
       "score": 0.149581313131313,
       "costPerTaskUsd": 1.09231,
       "tokensPerTask": 45840,
-      "secondsPerTask": 598.6
+      "secondsPerTask": 520.2
     },
     {
       "family": "mistral-large-4",
@@ -5240,7 +5078,7 @@
       "score": 5.133333333333334,
       "costPerTaskUsd": 0.0066,
       "tokensPerTask": 3097,
-      "secondsPerTask": 40.4
+      "secondsPerTask": 35.1
     },
     {
       "family": "mistral-large-4",
@@ -5249,7 +5087,7 @@
       "score": 0.176,
       "costPerTaskUsd": 0.10515,
       "tokensPerTask": 7684,
-      "secondsPerTask": 100.3
+      "secondsPerTask": 87.2
     },
     {
       "family": "mistral-large-4",
@@ -5258,7 +5096,7 @@
       "score": 0.173,
       "costPerTaskUsd": 0.08083,
       "tokensPerTask": 38317,
-      "secondsPerTask": 500.4
+      "secondsPerTask": 434.8
     },
     {
       "family": "mistral-large-4",
@@ -5267,7 +5105,7 @@
       "score": 0.27,
       "costPerTaskUsd": 0.31575,
       "tokensPerTask": 82274,
-      "secondsPerTask": 1074.4
+      "secondsPerTask": 933.6
     },
     {
       "family": "mistral-large-4",
@@ -5276,14 +5114,14 @@
       "score": 0.0428571428571429,
       "costPerTaskUsd": 8.09993,
       "tokensPerTask": 208973,
-      "secondsPerTask": 2729
+      "secondsPerTask": 2371.4
     },
     {
       "family": "muse-spark-open",
       "effort": "xhigh",
       "eval": "aa-briefcase",
-      "score": 1281.11,
-      "costPerTaskUsd": 1.4654,
+      "score": 1280.87,
+      "costPerTaskUsd": 1.31589,
       "tokensPerTask": 74054,
       "secondsPerTask": 384.1
     },
@@ -5292,7 +5130,7 @@
       "effort": "xhigh",
       "eval": "automationbench-aa",
       "score": 0.4970811827313194,
-      "costPerTaskUsd": 0.46275,
+      "costPerTaskUsd": 0.42262,
       "tokensPerTask": 29058,
       "secondsPerTask": 150.7
     },
@@ -5301,7 +5139,7 @@
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
       "score": 0.0808080808080808,
-      "costPerTaskUsd": 4.65697,
+      "costPerTaskUsd": 4.04097,
       "tokensPerTask": 122116,
       "secondsPerTask": 633.4
     },
@@ -5310,7 +5148,7 @@
       "effort": "xhigh",
       "eval": "frontiercode-2-0",
       "score": 0.0760421717171717,
-      "costPerTaskUsd": 3.01178,
+      "costPerTaskUsd": 2.60628,
       "tokensPerTask": 59457,
       "secondsPerTask": 308.4
     },
@@ -5346,7 +5184,7 @@
       "effort": "xhigh",
       "eval": "critpt-v2-hard",
       "score": 0.295,
-      "costPerTaskUsd": 0.50688,
+      "costPerTaskUsd": 0.48541,
       "tokensPerTask": 66798,
       "secondsPerTask": 346.5
     },
@@ -5355,90 +5193,9 @@
       "effort": "xhigh",
       "eval": "terminal-bench-science",
       "score": 0.019047619047619,
-      "costPerTaskUsd": 5.22381,
+      "costPerTaskUsd": 4.53724,
       "tokensPerTask": 150204,
       "secondsPerTask": 779.1
-    },
-    {
-      "family": "mistral-large-4",
-      "effort": "medium",
-      "eval": "aa-briefcase",
-      "score": 1187.28,
-      "costPerTaskUsd": 0.44162,
-      "tokensPerTask": 39669,
-      "secondsPerTask": 385
-    },
-    {
-      "family": "mistral-large-4",
-      "effort": "medium",
-      "eval": "automationbench-aa",
-      "score": 0.5280083768459665,
-      "costPerTaskUsd": 0.12147,
-      "tokensPerTask": 14574,
-      "secondsPerTask": 141.4
-    },
-    {
-      "family": "mistral-large-4",
-      "effort": "medium",
-      "eval": "terminalbench-4-1",
-      "score": 0.232323232323232,
-      "costPerTaskUsd": 2.8864,
-      "tokensPerTask": 115738,
-      "secondsPerTask": 1123.3
-    },
-    {
-      "family": "mistral-large-4",
-      "effort": "medium",
-      "eval": "frontiercode-2-0",
-      "score": 0.133204545454545,
-      "costPerTaskUsd": 1.02114,
-      "tokensPerTask": 46007,
-      "secondsPerTask": 446.5
-    },
-    {
-      "family": "mistral-large-4",
-      "effort": "medium",
-      "eval": "omniscience",
-      "score": 3.2666666666666666,
-      "costPerTaskUsd": 0.00283,
-      "tokensPerTask": 1302,
-      "secondsPerTask": 12.6
-    },
-    {
-      "family": "mistral-large-4",
-      "effort": "medium",
-      "eval": "gdp-pdf",
-      "score": 0.168,
-      "costPerTaskUsd": 0.09933,
-      "tokensPerTask": 4914,
-      "secondsPerTask": 47.7
-    },
-    {
-      "family": "mistral-large-4",
-      "effort": "medium",
-      "eval": "hle-diamond",
-      "score": 0.139,
-      "costPerTaskUsd": 0.06038,
-      "tokensPerTask": 28578,
-      "secondsPerTask": 277.4
-    },
-    {
-      "family": "mistral-large-4",
-      "effort": "medium",
-      "eval": "critpt-v2-hard",
-      "score": 0.225,
-      "costPerTaskUsd": 0.20111,
-      "tokensPerTask": 51577,
-      "secondsPerTask": 500.6
-    },
-    {
-      "family": "mistral-large-4",
-      "effort": "medium",
-      "eval": "terminal-bench-science",
-      "score": 0.0333333333333333,
-      "costPerTaskUsd": 5.77621,
-      "tokensPerTask": 151427,
-      "secondsPerTask": 1469.7
     },
     {
       "family": "glm-5-3",
@@ -5520,6 +5277,87 @@
       "costPerTaskUsd": 3.3193,
       "tokensPerTask": 120450,
       "secondsPerTask": 2247.2
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "medium",
+      "eval": "aa-briefcase",
+      "score": 1187.28,
+      "costPerTaskUsd": 0.44162,
+      "tokensPerTask": 39669,
+      "secondsPerTask": 385
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "medium",
+      "eval": "automationbench-aa",
+      "score": 0.5280083768459665,
+      "costPerTaskUsd": 0.12147,
+      "tokensPerTask": 14574,
+      "secondsPerTask": 141.4
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "medium",
+      "eval": "terminalbench-4-1",
+      "score": 0.227272727272727,
+      "costPerTaskUsd": 2.8864,
+      "tokensPerTask": 115738,
+      "secondsPerTask": 1123.3
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "medium",
+      "eval": "frontiercode-2-0",
+      "score": 0.133204545454545,
+      "costPerTaskUsd": 1.02114,
+      "tokensPerTask": 46007,
+      "secondsPerTask": 446.5
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "medium",
+      "eval": "omniscience",
+      "score": 3.2666666666666666,
+      "costPerTaskUsd": 0.00283,
+      "tokensPerTask": 1302,
+      "secondsPerTask": 12.6
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "medium",
+      "eval": "gdp-pdf",
+      "score": 0.168,
+      "costPerTaskUsd": 0.09933,
+      "tokensPerTask": 4914,
+      "secondsPerTask": 47.7
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "medium",
+      "eval": "hle-diamond",
+      "score": 0.139,
+      "costPerTaskUsd": 0.06038,
+      "tokensPerTask": 28578,
+      "secondsPerTask": 277.4
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "medium",
+      "eval": "critpt-v2-hard",
+      "score": 0.225,
+      "costPerTaskUsd": 0.20111,
+      "tokensPerTask": 51577,
+      "secondsPerTask": 500.6
+    },
+    {
+      "family": "mistral-large-4",
+      "effort": "medium",
+      "eval": "terminal-bench-science",
+      "score": 0.0333333333333333,
+      "costPerTaskUsd": 5.77621,
+      "tokensPerTask": 151427,
+      "secondsPerTask": 1469.7
     },
     {
       "family": "deepseek-v4-pro",
@@ -5687,10 +5525,10 @@
       "family": "k2-horizon-375b-a23b",
       "effort": "high",
       "eval": "aa-briefcase",
-      "score": 1290.67,
+      "score": 1290.42,
       "costPerTaskUsd": 0,
       "tokensPerTask": 107382,
-      "secondsPerTask": 364.4
+      "secondsPerTask": 336.9
     },
     {
       "family": "k2-horizon-375b-a23b",
@@ -5699,7 +5537,7 @@
       "score": 0.3720802754388014,
       "costPerTaskUsd": 0,
       "tokensPerTask": 31381,
-      "secondsPerTask": 106.5
+      "secondsPerTask": 98.5
     },
     {
       "family": "k2-horizon-375b-a23b",
@@ -5708,16 +5546,16 @@
       "score": 0.0151515151515152,
       "costPerTaskUsd": 0,
       "tokensPerTask": 178922,
-      "secondsPerTask": 607.1
+      "secondsPerTask": 561.4
     },
     {
       "family": "k2-horizon-375b-a23b",
       "effort": "high",
       "eval": "frontiercode-2-0",
-      "score": 0.118471464646465,
+      "score": 0.116441666666667,
       "costPerTaskUsd": 0,
-      "tokensPerTask": 81831,
-      "secondsPerTask": 277.7
+      "tokensPerTask": 84898,
+      "secondsPerTask": 266.4
     },
     {
       "family": "k2-horizon-375b-a23b",
@@ -5726,7 +5564,7 @@
       "score": -5,
       "costPerTaskUsd": 0,
       "tokensPerTask": 2360,
-      "secondsPerTask": 8
+      "secondsPerTask": 7.4
     },
     {
       "family": "k2-horizon-375b-a23b",
@@ -5735,7 +5573,7 @@
       "score": 0.074,
       "costPerTaskUsd": 0,
       "tokensPerTask": 8919,
-      "secondsPerTask": 30.3
+      "secondsPerTask": 28
     },
     {
       "family": "k2-horizon-375b-a23b",
@@ -5744,7 +5582,7 @@
       "score": 0.102,
       "costPerTaskUsd": 0,
       "tokensPerTask": 28281,
-      "secondsPerTask": 96
+      "secondsPerTask": 88.7
     },
     {
       "family": "k2-horizon-375b-a23b",
@@ -5753,7 +5591,7 @@
       "score": 0.12,
       "costPerTaskUsd": 0,
       "tokensPerTask": 101613,
-      "secondsPerTask": 344.8
+      "secondsPerTask": 318.8
     },
     {
       "family": "k2-horizon-375b-a23b",
@@ -5762,7 +5600,7 @@
       "score": 0,
       "costPerTaskUsd": 0,
       "tokensPerTask": 13552,
-      "secondsPerTask": 46
+      "secondsPerTask": 42.5
     },
     {
       "family": "deepseek-v4-pro",
@@ -5849,7 +5687,7 @@
       "family": "inkling",
       "effort": "xhigh",
       "eval": "aa-briefcase",
-      "score": 833.4,
+      "score": 833.56,
       "costPerTaskUsd": 1.40226,
       "tokensPerTask": 52231,
       "secondsPerTask": 482.6
@@ -5867,7 +5705,7 @@
       "family": "inkling",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.0101010101010101,
+      "score": 0.0151515151515152,
       "costPerTaskUsd": 2.58206,
       "tokensPerTask": 87669,
       "secondsPerTask": 810
@@ -5930,8 +5768,8 @@
       "family": "nemotron-3-ultra-550b-a55b",
       "effort": "default",
       "eval": "aa-briefcase",
-      "score": 879.26,
-      "costPerTaskUsd": 0.77757,
+      "score": 879.7,
+      "costPerTaskUsd": 0.87048,
       "tokensPerTask": 47525,
       "secondsPerTask": 262.6
     },
@@ -5940,7 +5778,7 @@
       "effort": "default",
       "eval": "automationbench-aa",
       "score": 0.02986349541593992,
-      "costPerTaskUsd": 0.12335,
+      "costPerTaskUsd": 0.13866,
       "tokensPerTask": 5609,
       "secondsPerTask": 31
     },
@@ -5949,7 +5787,7 @@
       "effort": "default",
       "eval": "terminalbench-4-1",
       "score": 0.00505050505050505,
-      "costPerTaskUsd": 1.67827,
+      "costPerTaskUsd": 1.91498,
       "tokensPerTask": 51610,
       "secondsPerTask": 285.2
     },
@@ -5958,7 +5796,7 @@
       "effort": "default",
       "eval": "frontiercode-2-0",
       "score": 0.0109007575757576,
-      "costPerTaskUsd": 4.77861,
+      "costPerTaskUsd": 5.47297,
       "tokensPerTask": 79571,
       "secondsPerTask": 439.7
     },
@@ -5994,7 +5832,7 @@
       "effort": "default",
       "eval": "critpt-v2-hard",
       "score": 0.15,
-      "costPerTaskUsd": 0.32554,
+      "costPerTaskUsd": 0.34583,
       "tokensPerTask": 70245,
       "secondsPerTask": 388.2
     },
@@ -6003,7 +5841,7 @@
       "effort": "default",
       "eval": "terminal-bench-science",
       "score": 0,
-      "costPerTaskUsd": 7.61409,
+      "costPerTaskUsd": 8.74897,
       "tokensPerTask": 114082,
       "secondsPerTask": 630.4
     },
@@ -6089,92 +5927,11 @@
       "secondsPerTask": null
     },
     {
-      "family": "a-x-k2",
-      "effort": "default",
-      "eval": "aa-briefcase",
-      "score": 739.06,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "a-x-k2",
-      "effort": "default",
-      "eval": "automationbench-aa",
-      "score": 0.02479417400536003,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "a-x-k2",
-      "effort": "default",
-      "eval": "terminalbench-4-1",
-      "score": 0,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "a-x-k2",
-      "effort": "default",
-      "eval": "frontiercode-2-0",
-      "score": 0,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "a-x-k2",
-      "effort": "default",
-      "eval": "omniscience",
-      "score": -8.033333333333333,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "a-x-k2",
-      "effort": "default",
-      "eval": "gdp-pdf",
-      "score": 0.064,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "a-x-k2",
-      "effort": "default",
-      "eval": "hle-diamond",
-      "score": 0.087,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "a-x-k2",
-      "effort": "default",
-      "eval": "critpt-v2-hard",
-      "score": 0.075,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "a-x-k2",
-      "effort": "default",
-      "eval": "terminal-bench-science",
-      "score": 0,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
       "family": "gemini-3-8-flash",
       "effort": "high",
       "eval": "aa-briefcase",
-      "score": 1205.19,
-      "costPerTaskUsd": 7.52219,
+      "score": 1205.12,
+      "costPerTaskUsd": 3.11428,
       "tokensPerTask": 154230,
       "secondsPerTask": 1386.4
     },
@@ -6183,7 +5940,7 @@
       "effort": "high",
       "eval": "automationbench-aa",
       "score": 0.5993009432118243,
-      "costPerTaskUsd": 0.90299,
+      "costPerTaskUsd": 0.46516,
       "tokensPerTask": 46281,
       "secondsPerTask": 416
     },
@@ -6191,8 +5948,8 @@
       "family": "gemini-3-8-flash",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.196969696969697,
-      "costPerTaskUsd": 18.14983,
+      "score": 0.181818181818182,
+      "costPerTaskUsd": 6.89455,
       "tokensPerTask": 183674,
       "secondsPerTask": 1651.1
     },
@@ -6201,7 +5958,7 @@
       "effort": "high",
       "eval": "frontiercode-2-0",
       "score": 0.187427777777778,
-      "costPerTaskUsd": 14.9039,
+      "costPerTaskUsd": 5.61165,
       "tokensPerTask": 117987,
       "secondsPerTask": 1060.6
     },
@@ -6237,7 +5994,7 @@
       "effort": "high",
       "eval": "critpt-v2-hard",
       "score": 0.465,
-      "costPerTaskUsd": 1.1535,
+      "costPerTaskUsd": 0.59925,
       "tokensPerTask": 66494,
       "secondsPerTask": 597.7
     },
@@ -6246,7 +6003,7 @@
       "effort": "high",
       "eval": "terminal-bench-science",
       "score": 0.1,
-      "costPerTaskUsd": 16.06178,
+      "costPerTaskUsd": 6.15235,
       "tokensPerTask": 179854,
       "secondsPerTask": 1616.8
     },
@@ -6255,7 +6012,7 @@
       "effort": "medium",
       "eval": "aa-briefcase",
       "score": 1183.63,
-      "costPerTaskUsd": 5.34666,
+      "costPerTaskUsd": 2.40638,
       "tokensPerTask": 128916,
       "secondsPerTask": 1152.5
     },
@@ -6264,7 +6021,7 @@
       "effort": "medium",
       "eval": "automationbench-aa",
       "score": 0.6088997392114149,
-      "costPerTaskUsd": 0.7606,
+      "costPerTaskUsd": 0.40464,
       "tokensPerTask": 37558,
       "secondsPerTask": 335.8
     },
@@ -6273,7 +6030,7 @@
       "effort": "medium",
       "eval": "terminalbench-4-1",
       "score": 0.196969696969697,
-      "costPerTaskUsd": 14.1722,
+      "costPerTaskUsd": 5.79675,
       "tokensPerTask": 157235,
       "secondsPerTask": 1405.7
     },
@@ -6282,7 +6039,7 @@
       "effort": "medium",
       "eval": "frontiercode-2-0",
       "score": 0.164714393939394,
-      "costPerTaskUsd": 11.6103,
+      "costPerTaskUsd": 4.71131,
       "tokensPerTask": 101287,
       "secondsPerTask": 905.5
     },
@@ -6318,7 +6075,7 @@
       "effort": "medium",
       "eval": "critpt-v2-hard",
       "score": 0.45,
-      "costPerTaskUsd": 0.82668,
+      "costPerTaskUsd": 0.45389,
       "tokensPerTask": 50137,
       "secondsPerTask": 448.2
     },
@@ -6327,7 +6084,7 @@
       "effort": "medium",
       "eval": "terminal-bench-science",
       "score": 0.104761904761905,
-      "costPerTaskUsd": 14.46323,
+      "costPerTaskUsd": 5.9055,
       "tokensPerTask": 158472,
       "secondsPerTask": 1416.8
     },
@@ -6353,7 +6110,7 @@
       "family": "gemini-3-8-flash",
       "effort": "low",
       "eval": "terminalbench-4-1",
-      "score": 0.101010101010101,
+      "score": 0.095959595959596,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -6434,7 +6191,7 @@
       "family": "gemini-4-argon",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.55050505050505,
+      "score": 0.560606060606061,
       "costPerTaskUsd": 12.84985,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -6515,7 +6272,7 @@
       "family": "gemini-4-hydrogen",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.292929292929293,
+      "score": 0.282828282828283,
       "costPerTaskUsd": 1.58147,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -6579,7 +6336,7 @@
       "effort": "low",
       "eval": "aa-briefcase",
       "score": 947.53,
-      "costPerTaskUsd": 0.20972,
+      "costPerTaskUsd": 0.23811,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6588,7 +6345,7 @@
       "effort": "low",
       "eval": "automationbench-aa",
       "score": 0.6051428460649884,
-      "costPerTaskUsd": 0.16765,
+      "costPerTaskUsd": 0.18614,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6597,7 +6354,7 @@
       "effort": "low",
       "eval": "terminalbench-4-1",
       "score": 0.0656565656565657,
-      "costPerTaskUsd": 0.52565,
+      "costPerTaskUsd": 0.65929,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6606,7 +6363,7 @@
       "effort": "low",
       "eval": "frontiercode-2-0",
       "score": 0.0928621212121212,
-      "costPerTaskUsd": 0.46669,
+      "costPerTaskUsd": 0.6075,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6642,7 +6399,7 @@
       "effort": "low",
       "eval": "critpt-v2-hard",
       "score": 0.48,
-      "costPerTaskUsd": 0.12248,
+      "costPerTaskUsd": 0.12862,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6651,7 +6408,7 @@
       "effort": "low",
       "eval": "terminal-bench-science",
       "score": 0.0238095238095238,
-      "costPerTaskUsd": 0.71215,
+      "costPerTaskUsd": 0.9446,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6660,7 +6417,7 @@
       "effort": "low",
       "eval": "aa-briefcase",
       "score": 1295.57,
-      "costPerTaskUsd": 0.83314,
+      "costPerTaskUsd": 0.92845,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6669,7 +6426,7 @@
       "effort": "low",
       "eval": "automationbench-aa",
       "score": 0.7599496719970632,
-      "costPerTaskUsd": 0.40742,
+      "costPerTaskUsd": 0.4399,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6678,7 +6435,7 @@
       "effort": "low",
       "eval": "terminalbench-4-1",
       "score": 0.328282828282828,
-      "costPerTaskUsd": 1.28383,
+      "costPerTaskUsd": 1.58131,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6687,7 +6444,7 @@
       "effort": "low",
       "eval": "frontiercode-2-0",
       "score": 0.269490151515151,
-      "costPerTaskUsd": 0.94931,
+      "costPerTaskUsd": 1.16461,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6723,7 +6480,7 @@
       "effort": "low",
       "eval": "critpt-v2-hard",
       "score": 0.62,
-      "costPerTaskUsd": 0.35943,
+      "costPerTaskUsd": 0.37159,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -6732,7 +6489,7 @@
       "effort": "low",
       "eval": "terminal-bench-science",
       "score": 0.271428571428571,
-      "costPerTaskUsd": 1.78552,
+      "costPerTaskUsd": 2.16877,
       "tokensPerTask": null,
       "secondsPerTask": null
     },
@@ -7055,7 +6812,7 @@
       "family": "gpt-6-1-sol",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1556.46,
+      "score": 1556.28,
       "costPerTaskUsd": 2.3126,
       "tokensPerTask": 114994,
       "secondsPerTask": 2053.2
@@ -7073,7 +6830,7 @@
       "family": "gpt-6-1-sol",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.560606060606061,
+      "score": 0.565656565656566,
       "costPerTaskUsd": 1.82276,
       "tokensPerTask": 108185,
       "secondsPerTask": 1931.7
@@ -7154,7 +6911,7 @@
       "family": "gpt-6-1-sol",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.54040404040404,
+      "score": 0.535353535353535,
       "costPerTaskUsd": 1.02595,
       "tokensPerTask": 56902,
       "secondsPerTask": 1046.6
@@ -7235,7 +6992,7 @@
       "family": "gpt-6-1-sol",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.515151515151515,
+      "score": 0.51010101010101,
       "costPerTaskUsd": 0.82818,
       "tokensPerTask": 43650,
       "secondsPerTask": 760.5
@@ -7559,7 +7316,7 @@
       "family": "gpt-6-1-terra",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.419191919191919,
+      "score": 0.429292929292929,
       "costPerTaskUsd": 0.43754,
       "tokensPerTask": 30377,
       "secondsPerTask": 437.6
@@ -7640,7 +7397,7 @@
       "family": "gpt-6-1-terra",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.323232323232323,
+      "score": 0.318181818181818,
       "costPerTaskUsd": 0.27566,
       "tokensPerTask": 19257,
       "secondsPerTask": 275.4
@@ -7802,7 +7559,7 @@
       "family": "gpt-6-1-terra",
       "effort": "none",
       "eval": "terminalbench-4-1",
-      "score": 0.267676767676768,
+      "score": 0.262626262626263,
       "costPerTaskUsd": 0.37877,
       "tokensPerTask": 16600,
       "secondsPerTask": 236.5
@@ -7865,7 +7622,7 @@
       "family": "gpt-6-2-astra",
       "effort": "low",
       "eval": "aa-briefcase",
-      "score": 1038.88,
+      "score": 1039.08,
       "costPerTaskUsd": 0.42001,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -7946,7 +7703,7 @@
       "family": "gpt-6-2-sol",
       "effort": "low",
       "eval": "aa-briefcase",
-      "score": 1228.76,
+      "score": 1228.54,
       "costPerTaskUsd": 0.18065,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -8027,7 +7784,7 @@
       "family": "gpt-6-astra",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1570.53,
+      "score": 1570.35,
       "costPerTaskUsd": 9.50208,
       "tokensPerTask": 68691,
       "secondsPerTask": 1789.1
@@ -8126,7 +7883,7 @@
       "family": "gpt-6-astra",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.595959595959596,
+      "score": 0.601010101010101,
       "costPerTaskUsd": 5.85548,
       "tokensPerTask": 43275,
       "secondsPerTask": 1127
@@ -8207,7 +7964,7 @@
       "family": "gpt-6-astra",
       "effort": "high",
       "eval": "terminalbench-4-1",
-      "score": 0.54040404040404,
+      "score": 0.545454545454545,
       "costPerTaskUsd": 4.04699,
       "tokensPerTask": 30430,
       "secondsPerTask": 777.5
@@ -8273,7 +8030,7 @@
       "score": 1462.35,
       "costPerTaskUsd": 3.93999,
       "tokensPerTask": 26424,
-      "secondsPerTask": 540.9
+      "secondsPerTask": 574.1
     },
     {
       "family": "gpt-6-astra",
@@ -8282,16 +8039,16 @@
       "score": 0.6459498850561176,
       "costPerTaskUsd": 1.17702,
       "tokensPerTask": 7829,
-      "secondsPerTask": 160.3
+      "secondsPerTask": 170.1
     },
     {
       "family": "gpt-6-astra",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.494949494949495,
+      "score": 0.51010101010101,
       "costPerTaskUsd": 4.43011,
       "tokensPerTask": 29667,
-      "secondsPerTask": 607.3
+      "secondsPerTask": 644.6
     },
     {
       "family": "gpt-6-astra",
@@ -8300,7 +8057,7 @@
       "score": 0.365771717171717,
       "costPerTaskUsd": 2.79537,
       "tokensPerTask": 13468,
-      "secondsPerTask": 275.7
+      "secondsPerTask": 292.6
     },
     {
       "family": "gpt-6-astra",
@@ -8309,7 +8066,7 @@
       "score": 41.4,
       "costPerTaskUsd": 0.01094,
       "tokensPerTask": 194,
-      "secondsPerTask": 4
+      "secondsPerTask": 4.2
     },
     {
       "family": "gpt-6-astra",
@@ -8318,7 +8075,7 @@
       "score": 0.304,
       "costPerTaskUsd": 1.71981,
       "tokensPerTask": 1721,
-      "secondsPerTask": 35.2
+      "secondsPerTask": 37.4
     },
     {
       "family": "gpt-6-astra",
@@ -8327,7 +8084,7 @@
       "score": 0.527,
       "costPerTaskUsd": 0.12001,
       "tokensPerTask": 2271,
-      "secondsPerTask": 46.5
+      "secondsPerTask": 49.3
     },
     {
       "family": "gpt-6-astra",
@@ -8336,7 +8093,7 @@
       "score": 0.72,
       "costPerTaskUsd": 0.40671,
       "tokensPerTask": 6266,
-      "secondsPerTask": 128.3
+      "secondsPerTask": 136.1
     },
     {
       "family": "gpt-6-astra",
@@ -8345,7 +8102,7 @@
       "score": 0.533333333333333,
       "costPerTaskUsd": 7.19981,
       "tokensPerTask": 51605,
-      "secondsPerTask": 1056.3
+      "secondsPerTask": 1121.3
     },
     {
       "family": "gpt-6-astra",
@@ -8369,7 +8126,7 @@
       "family": "gpt-6-astra",
       "effort": "low",
       "eval": "terminalbench-4-1",
-      "score": 0.419191919191919,
+      "score": 0.434343434343434,
       "costPerTaskUsd": 2.24856,
       "tokensPerTask": 14876,
       "secondsPerTask": 368.7
@@ -8672,6 +8429,87 @@
       "secondsPerTask": 696.9
     },
     {
+      "family": "nemotron-3-5-super-vl",
+      "effort": "high",
+      "eval": "aa-briefcase",
+      "score": 998.76,
+      "costPerTaskUsd": 0.49105,
+      "tokensPerTask": 89426,
+      "secondsPerTask": 251.5
+    },
+    {
+      "family": "nemotron-3-5-super-vl",
+      "effort": "high",
+      "eval": "automationbench-aa",
+      "score": 0.14818345798643587,
+      "costPerTaskUsd": 0.11726,
+      "tokensPerTask": 31277,
+      "secondsPerTask": 88
+    },
+    {
+      "family": "nemotron-3-5-super-vl",
+      "effort": "high",
+      "eval": "terminalbench-4-1",
+      "score": 0,
+      "costPerTaskUsd": 0.76733,
+      "tokensPerTask": 149259,
+      "secondsPerTask": 419.8
+    },
+    {
+      "family": "nemotron-3-5-super-vl",
+      "effort": "high",
+      "eval": "frontiercode-2-0",
+      "score": 0.0610914141414141,
+      "costPerTaskUsd": 1.39708,
+      "tokensPerTask": 93590,
+      "secondsPerTask": 263.2
+    },
+    {
+      "family": "nemotron-3-5-super-vl",
+      "effort": "high",
+      "eval": "omniscience",
+      "score": -2.8666666666666667,
+      "costPerTaskUsd": 0.00184,
+      "tokensPerTask": 3636,
+      "secondsPerTask": 10.2
+    },
+    {
+      "family": "nemotron-3-5-super-vl",
+      "effort": "high",
+      "eval": "gdp-pdf",
+      "score": 0.08,
+      "costPerTaskUsd": 0.01606,
+      "tokensPerTask": 7222,
+      "secondsPerTask": 20.3
+    },
+    {
+      "family": "nemotron-3-5-super-vl",
+      "effort": "high",
+      "eval": "hle-diamond",
+      "score": 0.088,
+      "costPerTaskUsd": 0.02132,
+      "tokensPerTask": 42484,
+      "secondsPerTask": 119.5
+    },
+    {
+      "family": "nemotron-3-5-super-vl",
+      "effort": "high",
+      "eval": "critpt-v2-hard",
+      "score": 0.135,
+      "costPerTaskUsd": 0.11813,
+      "tokensPerTask": 104750,
+      "secondsPerTask": 294.6
+    },
+    {
+      "family": "nemotron-3-5-super-vl",
+      "effort": "high",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 1.09642,
+      "tokensPerTask": 145751,
+      "secondsPerTask": 409.9
+    },
+    {
       "family": "mistral-medium-3-5",
       "effort": "high",
       "eval": "aa-briefcase",
@@ -8917,15 +8755,6 @@
     {
       "family": "ling-3-0-flash-vl",
       "effort": "default",
-      "eval": "terminalbench-4-1",
-      "score": 0,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "ling-3-0-flash-vl",
-      "effort": "default",
       "eval": "gdp-pdf",
       "score": 0.084,
       "costPerTaskUsd": null,
@@ -9125,7 +8954,7 @@
       "family": "nanbeige4-3-33b",
       "effort": "default",
       "eval": "terminalbench-4-1",
-      "score": 0.297979797979798,
+      "score": 0.292929292929293,
       "costPerTaskUsd": null,
       "tokensPerTask": 313145,
       "secondsPerTask": null
@@ -9191,7 +9020,7 @@
       "score": 1391.36,
       "costPerTaskUsd": 3.24527,
       "tokensPerTask": 142232,
-      "secondsPerTask": 2150.3
+      "secondsPerTask": 2425.2
     },
     {
       "family": "qwen3-8-27b",
@@ -9200,16 +9029,16 @@
       "score": 0.48242443682241926,
       "costPerTaskUsd": 0.27696,
       "tokensPerTask": 32226,
-      "secondsPerTask": 487.2
+      "secondsPerTask": 549.5
     },
     {
       "family": "qwen3-8-27b",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
       "score": 0.0555555555555556,
-      "costPerTaskUsd": 4.56685,
-      "tokensPerTask": 148327,
-      "secondsPerTask": 2242.5
+      "costPerTaskUsd": 4.59426,
+      "tokensPerTask": 150468,
+      "secondsPerTask": 2565.6
     },
     {
       "family": "qwen3-8-27b",
@@ -9218,7 +9047,7 @@
       "score": 0.149142929292929,
       "costPerTaskUsd": 4.47732,
       "tokensPerTask": 110224,
-      "secondsPerTask": 1666.4
+      "secondsPerTask": 1879.4
     },
     {
       "family": "qwen3-8-27b",
@@ -9227,7 +9056,7 @@
       "score": -6.366666666666666,
       "costPerTaskUsd": 0.01047,
       "tokensPerTask": 3462,
-      "secondsPerTask": 52.3
+      "secondsPerTask": 59
     },
     {
       "family": "qwen3-8-27b",
@@ -9236,7 +9065,7 @@
       "score": 0.164,
       "costPerTaskUsd": 0.09627,
       "tokensPerTask": 11223,
-      "secondsPerTask": 169.7
+      "secondsPerTask": 191.4
     },
     {
       "family": "qwen3-8-27b",
@@ -9245,7 +9074,7 @@
       "score": 0.153,
       "costPerTaskUsd": 0.10365,
       "tokensPerTask": 34460,
-      "secondsPerTask": 521
+      "secondsPerTask": 587.6
     },
     {
       "family": "qwen3-8-27b",
@@ -9254,7 +9083,7 @@
       "score": 0.04,
       "costPerTaskUsd": 0.52487,
       "tokensPerTask": 76234,
-      "secondsPerTask": 1152.5
+      "secondsPerTask": 1299.8
     },
     {
       "family": "qwen3-8-27b",
@@ -9263,14 +9092,14 @@
       "score": 0.00476190476190476,
       "costPerTaskUsd": 12.20927,
       "tokensPerTask": 288932,
-      "secondsPerTask": 4368.2
+      "secondsPerTask": 4926.5
     },
     {
       "family": "qwen3-8-27b",
       "effort": "medium",
       "eval": "aa-briefcase",
       "score": 1369.3,
-      "costPerTaskUsd": 3.15112,
+      "costPerTaskUsd": 3.47279,
       "tokensPerTask": 134382,
       "secondsPerTask": 3085.1
     },
@@ -9279,7 +9108,7 @@
       "effort": "medium",
       "eval": "automationbench-aa",
       "score": 0.40252101015938635,
-      "costPerTaskUsd": 0.25187,
+      "costPerTaskUsd": 0.26711,
       "tokensPerTask": 32048,
       "secondsPerTask": 735.7
     },
@@ -9287,8 +9116,8 @@
       "family": "qwen3-8-27b",
       "effort": "medium",
       "eval": "terminalbench-4-1",
-      "score": 0.0505050505050505,
-      "costPerTaskUsd": 6.53338,
+      "score": 0.0555555555555556,
+      "costPerTaskUsd": 8.4996,
       "tokensPerTask": 154605,
       "secondsPerTask": 3549.3
     },
@@ -9296,8 +9125,8 @@
       "family": "qwen3-8-27b",
       "effort": "medium",
       "eval": "frontiercode-2-0",
-      "score": 0.115037626262626,
-      "costPerTaskUsd": 3.68994,
+      "score": 0.112949494949495,
+      "costPerTaskUsd": 4.09257,
       "tokensPerTask": 103542,
       "secondsPerTask": 2377.1
     },
@@ -9333,7 +9162,7 @@
       "effort": "medium",
       "eval": "critpt-v2-hard",
       "score": 0.165,
-      "costPerTaskUsd": 0.75442,
+      "costPerTaskUsd": 0.79633,
       "tokensPerTask": 116694,
       "secondsPerTask": 2679
     },
@@ -9342,7 +9171,7 @@
       "effort": "medium",
       "eval": "terminal-bench-science",
       "score": 0.00952380952380952,
-      "costPerTaskUsd": 2.56837,
+      "costPerTaskUsd": 2.82094,
       "tokensPerTask": 137122,
       "secondsPerTask": 3148
     },
@@ -9674,8 +9503,8 @@
       "family": "qwen3-8-27b",
       "effort": "none",
       "eval": "aa-briefcase",
-      "score": 901.25,
-      "costPerTaskUsd": 8.99473,
+      "score": 901.36,
+      "costPerTaskUsd": 11.05931,
       "tokensPerTask": 81417,
       "secondsPerTask": 2055.6
     },
@@ -9684,7 +9513,7 @@
       "effort": "none",
       "eval": "automationbench-aa",
       "score": 0.12434667722683214,
-      "costPerTaskUsd": 0.24365,
+      "costPerTaskUsd": 0.28799,
       "tokensPerTask": 10302,
       "secondsPerTask": 260.1
     },
@@ -9693,7 +9522,7 @@
       "effort": "none",
       "eval": "terminalbench-4-1",
       "score": 0,
-      "costPerTaskUsd": 9.39167,
+      "costPerTaskUsd": 11.5401,
       "tokensPerTask": 103527,
       "secondsPerTask": 2613.8
     },
@@ -9702,7 +9531,7 @@
       "effort": "none",
       "eval": "frontiercode-2-0",
       "score": 0.0371893939393939,
-      "costPerTaskUsd": 5.52043,
+      "costPerTaskUsd": 6.78397,
       "tokensPerTask": 50593,
       "secondsPerTask": 1277.4
     },
@@ -9738,7 +9567,7 @@
       "effort": "none",
       "eval": "critpt-v2-hard",
       "score": 0.02,
-      "costPerTaskUsd": 0.29146,
+      "costPerTaskUsd": 0.33276,
       "tokensPerTask": 31179,
       "secondsPerTask": 787.2
     },
@@ -9747,7 +9576,7 @@
       "effort": "none",
       "eval": "terminal-bench-science",
       "score": 0,
-      "costPerTaskUsd": 4.07093,
+      "costPerTaskUsd": 4.97357,
       "tokensPerTask": 71122,
       "secondsPerTask": 1795.7
     },
@@ -9755,8 +9584,8 @@
       "family": "muse-glimmer",
       "effort": "high",
       "eval": "aa-briefcase",
-      "score": 479.35,
-      "costPerTaskUsd": 0.08178,
+      "score": 480.2,
+      "costPerTaskUsd": 0.06934,
       "tokensPerTask": 13549,
       "secondsPerTask": 148.7
     },
@@ -9765,7 +9594,7 @@
       "effort": "high",
       "eval": "automationbench-aa",
       "score": 0.06831776269647931,
-      "costPerTaskUsd": 0.09628,
+      "costPerTaskUsd": 0.08146,
       "tokensPerTask": 16470,
       "secondsPerTask": 180.7
     },
@@ -9774,7 +9603,7 @@
       "effort": "high",
       "eval": "terminalbench-4-1",
       "score": 0.00505050505050505,
-      "costPerTaskUsd": 0.31275,
+      "costPerTaskUsd": 0.2614,
       "tokensPerTask": 44264,
       "secondsPerTask": 485.8
     },
@@ -9782,8 +9611,8 @@
       "family": "muse-glimmer",
       "effort": "high",
       "eval": "frontiercode-2-0",
-      "score": 0.0147431818181818,
-      "costPerTaskUsd": 0.49337,
+      "score": 0.0126724747474747,
+      "costPerTaskUsd": 0.41016,
       "tokensPerTask": 43334,
       "secondsPerTask": 475.6
     },
@@ -9792,7 +9621,7 @@
       "effort": "high",
       "eval": "omniscience",
       "score": -32.233333333333334,
-      "costPerTaskUsd": 0.0027,
+      "costPerTaskUsd": 0.00241,
       "tokensPerTask": 1969,
       "secondsPerTask": 21.6
     },
@@ -9801,7 +9630,7 @@
       "effort": "high",
       "eval": "gdp-pdf",
       "score": 0.1,
-      "costPerTaskUsd": 0.02482,
+      "costPerTaskUsd": 0.02268,
       "tokensPerTask": 4924,
       "secondsPerTask": 54
     },
@@ -9810,7 +9639,7 @@
       "effort": "high",
       "eval": "hle-diamond",
       "score": 0.091,
-      "costPerTaskUsd": 0.01027,
+      "costPerTaskUsd": 0.00913,
       "tokensPerTask": 7468,
       "secondsPerTask": 82
     },
@@ -9819,7 +9648,7 @@
       "effort": "high",
       "eval": "critpt-v2-hard",
       "score": 0.07,
-      "costPerTaskUsd": 0.07621,
+      "costPerTaskUsd": 0.06678,
       "tokensPerTask": 36156,
       "secondsPerTask": 396.8
     },
@@ -9828,97 +9657,16 @@
       "effort": "high",
       "eval": "terminal-bench-science",
       "score": 0,
-      "costPerTaskUsd": 0.30369,
+      "costPerTaskUsd": 0.25454,
       "tokensPerTask": 49207,
       "secondsPerTask": 540
-    },
-    {
-      "family": "granite-4-2-30b",
-      "effort": "default",
-      "eval": "aa-briefcase",
-      "score": 397.26,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "granite-4-2-30b",
-      "effort": "default",
-      "eval": "automationbench-aa",
-      "score": 0.015132727566596104,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "granite-4-2-30b",
-      "effort": "default",
-      "eval": "terminalbench-4-1",
-      "score": 0,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "granite-4-2-30b",
-      "effort": "default",
-      "eval": "frontiercode-2-0",
-      "score": 0,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "granite-4-2-30b",
-      "effort": "default",
-      "eval": "omniscience",
-      "score": -12.433333333333334,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "granite-4-2-30b",
-      "effort": "default",
-      "eval": "gdp-pdf",
-      "score": 0.018,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "granite-4-2-30b",
-      "effort": "default",
-      "eval": "hle-diamond",
-      "score": 0.043,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "granite-4-2-30b",
-      "effort": "default",
-      "eval": "critpt-v2-hard",
-      "score": 0.015,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
-    },
-    {
-      "family": "granite-4-2-30b",
-      "effort": "default",
-      "eval": "terminal-bench-science",
-      "score": 0,
-      "costPerTaskUsd": null,
-      "tokensPerTask": null,
-      "secondsPerTask": null
     },
     {
       "family": "nemotron-3-5-lightning",
       "effort": "default",
       "eval": "aa-briefcase",
-      "score": 507.42,
-      "costPerTaskUsd": 0.30707,
+      "score": 508.05,
+      "costPerTaskUsd": 0.23387,
       "tokensPerTask": 80038,
       "secondsPerTask": 334.4
     },
@@ -9927,7 +9675,7 @@
       "effort": "default",
       "eval": "automationbench-aa",
       "score": 0.008410069634719542,
-      "costPerTaskUsd": 0.02756,
+      "costPerTaskUsd": 0.02172,
       "tokensPerTask": 19152,
       "secondsPerTask": 80
     },
@@ -9936,7 +9684,7 @@
       "effort": "default",
       "eval": "terminalbench-4-1",
       "score": 0.00505050505050505,
-      "costPerTaskUsd": 0.34474,
+      "costPerTaskUsd": 0.26092,
       "tokensPerTask": 84950,
       "secondsPerTask": 354.9
     },
@@ -9945,7 +9693,7 @@
       "effort": "default",
       "eval": "frontiercode-2-0",
       "score": 0,
-      "costPerTaskUsd": 1.02441,
+      "costPerTaskUsd": 0.76719,
       "tokensPerTask": 101386,
       "secondsPerTask": 423.6
     },
@@ -9981,7 +9729,7 @@
       "effort": "default",
       "eval": "critpt-v2-hard",
       "score": 0.015,
-      "costPerTaskUsd": 0.07718,
+      "costPerTaskUsd": 0.06431,
       "tokensPerTask": 109385,
       "secondsPerTask": 457
     },
@@ -9990,90 +9738,9 @@
       "effort": "default",
       "eval": "terminal-bench-science",
       "score": 0,
-      "costPerTaskUsd": 0.46978,
+      "costPerTaskUsd": 0.35508,
       "tokensPerTask": 96911,
       "secondsPerTask": 404.9
-    },
-    {
-      "family": "granite-4-2-8b",
-      "effort": "default",
-      "eval": "aa-briefcase",
-      "score": 311.89,
-      "costPerTaskUsd": 0.08842,
-      "tokensPerTask": 96305,
-      "secondsPerTask": 985.9
-    },
-    {
-      "family": "granite-4-2-8b",
-      "effort": "default",
-      "eval": "automationbench-aa",
-      "score": 0.020571262692004582,
-      "costPerTaskUsd": 0.02193,
-      "tokensPerTask": 30725,
-      "secondsPerTask": 314.5
-    },
-    {
-      "family": "granite-4-2-8b",
-      "effort": "default",
-      "eval": "terminalbench-4-1",
-      "score": 0,
-      "costPerTaskUsd": 0.03987,
-      "tokensPerTask": 51162,
-      "secondsPerTask": 523.8
-    },
-    {
-      "family": "granite-4-2-8b",
-      "effort": "default",
-      "eval": "frontiercode-2-0",
-      "score": 0,
-      "costPerTaskUsd": 0.07838,
-      "tokensPerTask": 83095,
-      "secondsPerTask": 850.7
-    },
-    {
-      "family": "granite-4-2-8b",
-      "effort": "default",
-      "eval": "omniscience",
-      "score": -16.666666666666668,
-      "costPerTaskUsd": 0.00112,
-      "tokensPerTask": 4433,
-      "secondsPerTask": 45.4
-    },
-    {
-      "family": "granite-4-2-8b",
-      "effort": "default",
-      "eval": "gdp-pdf",
-      "score": 0.006,
-      "costPerTaskUsd": 0.00297,
-      "tokensPerTask": 7644,
-      "secondsPerTask": 78.3
-    },
-    {
-      "family": "granite-4-2-8b",
-      "effort": "default",
-      "eval": "hle-diamond",
-      "score": 0.04,
-      "costPerTaskUsd": 0.00332,
-      "tokensPerTask": 13206,
-      "secondsPerTask": 135.2
-    },
-    {
-      "family": "granite-4-2-8b",
-      "effort": "default",
-      "eval": "critpt-v2-hard",
-      "score": 0,
-      "costPerTaskUsd": 0.0072,
-      "tokensPerTask": 20007,
-      "secondsPerTask": 204.8
-    },
-    {
-      "family": "granite-4-2-8b",
-      "effort": "default",
-      "eval": "terminal-bench-science",
-      "score": 0,
-      "costPerTaskUsd": 0.05994,
-      "tokensPerTask": 90561,
-      "secondsPerTask": 927.1
     },
     {
       "family": "gemma-4-e4b",
@@ -10160,7 +9827,7 @@
       "family": "gemma-4-31b",
       "effort": "default",
       "eval": "aa-briefcase",
-      "score": 370.99,
+      "score": 371.62,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -10238,6 +9905,87 @@
       "secondsPerTask": null
     },
     {
+      "family": "gemma-4-26b-a4b",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 318.8,
+      "costPerTaskUsd": 0.12383,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemma-4-26b-a4b",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.019430215909597492,
+      "costPerTaskUsd": 0.09378,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemma-4-26b-a4b",
+      "effort": "default",
+      "eval": "terminalbench-4-1",
+      "score": 0,
+      "costPerTaskUsd": 0.26509,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemma-4-26b-a4b",
+      "effort": "default",
+      "eval": "frontiercode-2-0",
+      "score": 0,
+      "costPerTaskUsd": 0.56454,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemma-4-26b-a4b",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -52.03333333333333,
+      "costPerTaskUsd": 0.0008,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemma-4-26b-a4b",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.026,
+      "costPerTaskUsd": 0.0065,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemma-4-26b-a4b",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.062,
+      "costPerTaskUsd": 0.00472,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemma-4-26b-a4b",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.06,
+      "costPerTaskUsd": 0.05658,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "gemma-4-26b-a4b",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": 0.34444,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
       "family": "north-mini-code",
       "effort": "default",
       "eval": "aa-briefcase",
@@ -10259,7 +10007,7 @@
       "family": "north-mini-code",
       "effort": "default",
       "eval": "terminalbench-4-1",
-      "score": 0.00505050505050505,
+      "score": 0,
       "costPerTaskUsd": 0,
       "tokensPerTask": 43982,
       "secondsPerTask": 285.7
@@ -10319,6 +10067,78 @@
       "secondsPerTask": 259.2
     },
     {
+      "family": "granite-4-2-30b",
+      "effort": "default",
+      "eval": "aa-briefcase",
+      "score": 397.26,
+      "costPerTaskUsd": null,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-30b",
+      "effort": "default",
+      "eval": "automationbench-aa",
+      "score": 0.015132727566596104,
+      "costPerTaskUsd": null,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-30b",
+      "effort": "default",
+      "eval": "terminalbench-4-1",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-30b",
+      "effort": "default",
+      "eval": "omniscience",
+      "score": -12.433333333333334,
+      "costPerTaskUsd": null,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-30b",
+      "effort": "default",
+      "eval": "gdp-pdf",
+      "score": 0.018,
+      "costPerTaskUsd": null,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-30b",
+      "effort": "default",
+      "eval": "hle-diamond",
+      "score": 0.043,
+      "costPerTaskUsd": null,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-30b",
+      "effort": "default",
+      "eval": "critpt-v2-hard",
+      "score": 0.015,
+      "costPerTaskUsd": null,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
+      "family": "granite-4-2-30b",
+      "effort": "default",
+      "eval": "terminal-bench-science",
+      "score": 0,
+      "costPerTaskUsd": null,
+      "tokensPerTask": null,
+      "secondsPerTask": null
+    },
+    {
       "family": "qwen3-5-9b",
       "effort": "default",
       "eval": "aa-briefcase",
@@ -10367,10 +10187,10 @@
       "family": "grok-4-7",
       "effort": "xhigh",
       "eval": "aa-briefcase",
-      "score": 1634.17,
+      "score": 1633.9,
       "costPerTaskUsd": 8.02556,
       "tokensPerTask": 161224,
-      "secondsPerTask": 2126.4
+      "secondsPerTask": 2093.7
     },
     {
       "family": "grok-4-7",
@@ -10379,25 +10199,25 @@
       "score": 0.6555835148969458,
       "costPerTaskUsd": 0.95497,
       "tokensPerTask": 31607,
-      "secondsPerTask": 416.9
+      "secondsPerTask": 410.5
     },
     {
       "family": "grok-4-7",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.257575757575758,
+      "score": 0.242424242424242,
       "costPerTaskUsd": 12.42606,
       "tokensPerTask": 158098,
-      "secondsPerTask": 2085.2
+      "secondsPerTask": 2053.1
     },
     {
       "family": "grok-4-7",
       "effort": "xhigh",
       "eval": "frontiercode-2-0",
-      "score": 0.286575505050505,
+      "score": 0.288764141414141,
       "costPerTaskUsd": 13.83494,
       "tokensPerTask": 118103,
-      "secondsPerTask": 1557.7
+      "secondsPerTask": 1533.7
     },
     {
       "family": "grok-4-7",
@@ -10406,7 +10226,7 @@
       "score": 31.233333333333334,
       "costPerTaskUsd": 0.02834,
       "tokensPerTask": 4458,
-      "secondsPerTask": 58.8
+      "secondsPerTask": 57.9
     },
     {
       "family": "grok-4-7",
@@ -10415,7 +10235,7 @@
       "score": 0.2,
       "costPerTaskUsd": 0.32434,
       "tokensPerTask": 17045,
-      "secondsPerTask": 224.8
+      "secondsPerTask": 221.3
     },
     {
       "family": "grok-4-7",
@@ -10424,7 +10244,7 @@
       "score": 0.232,
       "costPerTaskUsd": 0.32951,
       "tokensPerTask": 54306,
-      "secondsPerTask": 716.2
+      "secondsPerTask": 705.2
     },
     {
       "family": "grok-4-7",
@@ -10433,7 +10253,7 @@
       "score": 0.335,
       "costPerTaskUsd": 2.23692,
       "tokensPerTask": 107423,
-      "secondsPerTask": 1416.8
+      "secondsPerTask": 1395
     },
     {
       "family": "grok-4-7",
@@ -10442,7 +10262,7 @@
       "score": 0.114285714285714,
       "costPerTaskUsd": 19.49999,
       "tokensPerTask": 183651,
-      "secondsPerTask": 2422.2
+      "secondsPerTask": 2384.9
     },
     {
       "family": "grok-4-7",
@@ -10475,7 +10295,7 @@
       "family": "grok-4-7",
       "effort": "high",
       "eval": "frontiercode-2-0",
-      "score": 0.277836363636364,
+      "score": 0.275427777777778,
       "costPerTaskUsd": 11.05823,
       "tokensPerTask": 99886,
       "secondsPerTask": 1457.5
@@ -10700,7 +10520,7 @@
       "family": "kimi-k3",
       "effort": "max",
       "eval": "aa-briefcase",
-      "score": 1496.71,
+      "score": 1496.53,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -10979,7 +10799,7 @@
       "family": "muse-spark-1-2",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.0707070707070707,
+      "score": 0.0606060606060606,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -11096,7 +10916,7 @@
       "family": "muse-spark-1-3",
       "effort": "xhigh",
       "eval": "terminalbench-4-1",
-      "score": 0.166666666666667,
+      "score": 0.156565656565657,
       "costPerTaskUsd": null,
       "tokensPerTask": null,
       "secondsPerTask": null
@@ -11144,7 +10964,7 @@
       "score": 1658.65,
       "costPerTaskUsd": 8.68367,
       "tokensPerTask": 111829,
-      "secondsPerTask": 1075.4
+      "secondsPerTask": 1320.6
     },
     {
       "family": "muse-wonder",
@@ -11153,16 +10973,16 @@
       "score": 0.6809455131207758,
       "costPerTaskUsd": 0.71653,
       "tokensPerTask": 18317,
-      "secondsPerTask": 176.1
+      "secondsPerTask": 216.3
     },
     {
       "family": "muse-wonder",
       "effort": "max",
       "eval": "terminalbench-4-1",
-      "score": 0.52020202020202,
+      "score": 0.535353535353535,
       "costPerTaskUsd": 12.2132,
       "tokensPerTask": 167270,
-      "secondsPerTask": 1608.5
+      "secondsPerTask": 1975.3
     },
     {
       "family": "muse-wonder",
@@ -11171,7 +10991,7 @@
       "score": 0.27875303030303,
       "costPerTaskUsd": 5.04207,
       "tokensPerTask": 65384,
-      "secondsPerTask": 628.7
+      "secondsPerTask": 772.1
     },
     {
       "family": "muse-wonder",
@@ -11180,7 +11000,7 @@
       "score": 25.1,
       "costPerTaskUsd": 0.04751,
       "tokensPerTask": 2351,
-      "secondsPerTask": 22.6
+      "secondsPerTask": 27.8
     },
     {
       "family": "muse-wonder",
@@ -11189,7 +11009,7 @@
       "score": 0.306,
       "costPerTaskUsd": 0.72264,
       "tokensPerTask": 11099,
-      "secondsPerTask": 106.7
+      "secondsPerTask": 131.1
     },
     {
       "family": "muse-wonder",
@@ -11198,7 +11018,7 @@
       "score": 0.39,
       "costPerTaskUsd": 0.8418,
       "tokensPerTask": 41978,
-      "secondsPerTask": 403.7
+      "secondsPerTask": 495.7
     },
     {
       "family": "muse-wonder",
@@ -11207,7 +11027,7 @@
       "score": 0.505,
       "costPerTaskUsd": 1.81356,
       "tokensPerTask": 66386,
-      "secondsPerTask": 638.4
+      "secondsPerTask": 784
     },
     {
       "family": "muse-wonder",
@@ -11216,7 +11036,7 @@
       "score": 0.257142857142857,
       "costPerTaskUsd": 22.18155,
       "tokensPerTask": 267295,
-      "secondsPerTask": 2570.4
+      "secondsPerTask": 3156.5
     },
     {
       "family": "muse-wonder",
@@ -11348,7 +11168,7 @@
       "family": "qwen3-8-max",
       "effort": "xhigh",
       "eval": "aa-briefcase",
-      "score": 1601.21,
+      "score": 1601.03,
       "costPerTaskUsd": 19.57686,
       "tokensPerTask": 334097,
       "secondsPerTask": 7107.5
@@ -11375,8 +11195,8 @@
       "family": "qwen3-8-max",
       "effort": "xhigh",
       "eval": "frontiercode-2-0",
-      "score": 0.234232323232323,
-      "costPerTaskUsd": 6.71135,
+      "score": 0.236340909090909,
+      "costPerTaskUsd": 6.74184,
       "tokensPerTask": 122043,
       "secondsPerTask": 2596.3
     },
