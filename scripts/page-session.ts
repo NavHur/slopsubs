@@ -1,6 +1,8 @@
 // Opens the built home page for the profiler and waits for it to settle.
 
+import { Effect } from "effect";
 import type { Browser, Page } from "playwright-core";
+import { browserOperation, openBrowserPage } from "./effects/browser.ts";
 import type { ProbeScript } from "./page-probe.ts";
 
 export const VIEWPORTS = {
@@ -13,32 +15,45 @@ export const VIEWPORTS = {
 export type ViewportName = keyof typeof VIEWPORTS;
 
 /** Two frames and `ms` more, so React commits and the URL catches up. */
-export async function settle(page: Page, ms = 40) {
-	await page.evaluate(
-		() =>
-			new Promise((done) =>
-				requestAnimationFrame(() => requestAnimationFrame(done)),
-			),
+export const settle = Effect.fnUntraced(function* (page: Page, ms = 40) {
+	yield* browserOperation("evaluate", () =>
+		page.evaluate(
+			() =>
+				new Promise((done) =>
+					requestAnimationFrame(() => requestAnimationFrame(done)),
+				),
+		),
 	);
-	await page.waitForTimeout(ms);
-}
+	yield* browserOperation("waitForTimeout", () => page.waitForTimeout(ms));
+});
 
 /** The page at `viewport`, hydrated, with `probe` installed before it loads. */
-export async function openPage(
+export const openPage = Effect.fnUntraced(function* (
 	browser: Browser,
 	origin: string,
 	viewport: ViewportName,
 	probe: ProbeScript,
-): Promise<Page> {
-	const page = await browser.newPage({ viewport: VIEWPORTS[viewport] });
-	await page.addInitScript(probe);
-	await page.goto(origin, { waitUntil: "networkidle" });
-	await page.locator('[aria-current="location"]').waitFor();
-	await settle(page, 500);
+) {
+	const page = yield* openBrowserPage(browser, {
+		viewport: VIEWPORTS[viewport],
+	});
+	yield* browserOperation("addInitScript", () => page.addInitScript(probe));
+	yield* browserOperation("goto", () =>
+		page.goto(origin, { waitUntil: "networkidle" }),
+	);
+	yield* browserOperation("waitFor", () =>
+		page.locator('[aria-current="location"]').waitFor(),
+	);
+	yield* settle(page, 500);
 	return page;
-}
+});
 
 /** The left gutter: over the page, never over a chart point. */
-export function pointAtGutter(page: Page, viewport: ViewportName) {
-	return page.mouse.move(6, VIEWPORTS[viewport].height * 0.6);
-}
+export const pointAtGutter = Effect.fnUntraced(function* (
+	page: Page,
+	viewport: ViewportName,
+) {
+	return yield* browserOperation("pointAtGutter", () =>
+		page.mouse.move(6, VIEWPORTS[viewport].height * 0.6),
+	);
+});

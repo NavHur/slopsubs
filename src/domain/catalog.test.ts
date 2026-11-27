@@ -1,13 +1,17 @@
+import { Effect } from "effect";
 import { Schema } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import type { AaModel, TaskCost } from "./aa-site";
 import {
 	deriveModel,
-	mergeCatalog,
+	mergeCatalog as mergeCatalogEffect,
 	type SlopaPoint,
 	slopaPoint,
 	SlopalyticsDataset,
 } from "./catalog";
+
+const mergeCatalog = (...args: Parameters<typeof mergeCatalogEffect>) =>
+	Effect.runSync(mergeCatalogEffect(...args));
 
 const AA = {
 	releaseDate: "2026-09-22",

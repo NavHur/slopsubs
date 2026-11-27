@@ -22,6 +22,7 @@ import { BENCHMARK_IDS, type BenchmarkId } from "#/domain/enums";
 import { rankedCost, tasksPerWeek } from "#/domain/ranges";
 import { valuePoints } from "#/domain/value";
 import { BENCHMARK_VIEWS } from "#/lib/benchmarks";
+import { exportChartPng } from "#/lib/chart-export";
 import { nothingToRank } from "#/lib/emptyChart";
 import { useRenderedView } from "#/lib/sharedLink";
 import { SCROLL_END_ID, useSectionNav } from "#/lib/useSectionNav";
@@ -162,11 +163,6 @@ function LinkedPlanFit({ benchmark }: { benchmark: BenchmarkId }) {
 	);
 }
 
-/** Loaded on demand so visitors who never export skip the code. */
-async function exporter() {
-	return (await import("#/lib/exportPng")).downloadChartPng;
-}
-
 function ValueView() {
 	// Structural sharing keeps the selection's identity while only `chart` or
 	// `fit` changes, so the charts and sidebar skip those renders.
@@ -198,9 +194,8 @@ function ValueView() {
 	const planTasks = tasksPerWeek(points);
 	const costRows = rankedCost(points);
 
-	const exportValueChart = async () => {
-		const downloadChartPng = await exporter();
-		await downloadChartPng({
+	const exportValueChart = () =>
+		exportChartPng({
 			// Labelled whatever the Labels setting: the image leaves the page,
 			// and colour alone cannot tell its models apart.
 			chart: (
@@ -219,29 +214,24 @@ function ValueView() {
 			title: benchmark.chartTitle,
 			fileName: `slopsubs-effective-cost-${benchmark.id}.png`,
 		});
-	};
 
-	const exportTasksChart = async () => {
-		const downloadChartPng = await exporter();
-		await downloadChartPng({
+	const exportTasksChart = () =>
+		exportChartPng({
 			chart: <TasksChart plans={planTasks} />,
 			legend: <CapBasisKey className="justify-end" />,
 			title: `${benchmark.tabLabel} tasks per week on each plan`,
 			fileName: `slopsubs-tasks-per-week-${benchmark.id}.png`,
 			height: "content",
 		});
-	};
 
-	const exportRankedChart = async () => {
-		const downloadChartPng = await exporter();
-		await downloadChartPng({
+	const exportRankedChart = () =>
+		exportChartPng({
 			chart: <RankedChart rows={costRows} />,
 			legend: <CapBasisKey solidLabel={RANKED_KEY} className="justify-end" />,
 			title: `Effective cost per ${benchmark.tabLabel} task, cheapest first`,
 			fileName: `slopsubs-ranked-cost-${benchmark.id}.png`,
 			height: "content",
 		});
-	};
 
 	return (
 		<div className="flex min-h-dvh flex-col bg-bg text-fg lg:h-dvh">

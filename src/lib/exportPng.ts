@@ -3,6 +3,7 @@ import { createElement, Fragment, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { DEFAULT_HEIGHT } from "#/components/chart/geometry";
 import { DM_SANS, DM_SANS_LATIN_URL } from "#/lib/webFont";
+import { ChartExportError, exportOperation } from "./chart-export";
 import { cachedFontDataUrl, FontAssets } from "./export-font";
 
 /** The chart lays out at this size for export, whatever the screen size, so
@@ -58,7 +59,7 @@ type Rendered = {
  * would not fit: a downloaded image has no side panel to explain the chart's
  * lines. The chart's root marks its laid-out width with `data-chart-width`.
  */
-export async function downloadChartPng({
+export const downloadChartPng = Effect.fnUntraced(function* ({
 	chart,
 	legend,
 	title,
@@ -71,19 +72,19 @@ export async function downloadChartPng({
 	fileName: string;
 	/** Whether the chart fills a box of the default height or sizes itself. */
 	height?: "fill" | "content";
-}): Promise<void> {
-	const [rendered, fontCss] = await Promise.all([
-		renderOffscreen({ chart, legend, title, height }),
-		embeddedFontCss(),
-	]);
-	const blob = await rasterize(rendered, fontCss);
+}) {
+	const [rendered, fontCss] = yield* Effect.all(
+		[renderOffscreen({ chart, legend, title, height }), embeddedFontCss()],
+		{ concurrency: "unbounded" },
+	);
+	const blob = yield* rasterize(rendered, fontCss);
 	const url = URL.createObjectURL(blob);
 	const link = document.createElement("a");
 	link.href = url;
 	link.download = fileName;
 	link.click();
 	setTimeout(() => URL.revokeObjectURL(url), DOWNLOAD_URL_LIFETIME_MS);
-}
+});
 
 /** The title on the left and the legend on the right, which wraps within the
  * width the title leaves instead of running over it. */
@@ -113,7 +114,7 @@ function headerRow(title: string, legend: ReactNode): ReactNode {
 	);
 }
 
-async function renderOffscreen({
+function renderOffscreen({
 	chart,
 	legend,
 	title,
@@ -123,7 +124,39 @@ async function renderOffscreen({
 	legend: ReactNode;
 	title: string;
 	height: "fill" | "content";
-}): Promise<Rendered> {
+}) {
+	return Effect.acquireUseRelease(
+		Effect.sync(createHost),
+		({ host, root }) =>
+			Effect.gen(function* () {
+				root.render(
+					createElement(
+						Fragment,
+						null,
+						headerRow(title, legend),
+						createElement(
+							"div",
+							{
+								className: "flex flex-col",
+								style:
+									height === "fill" ? { height: CHART_SIZE.height } : undefined,
+							},
+							chart,
+						),
+					),
+				);
+				yield* waitForLayout(host);
+				return readRendered(host);
+			}),
+		({ host, root }) =>
+			Effect.sync(() => {
+				root.unmount();
+				host.remove();
+			}),
+	);
+}
+
+function createHost() {
 	const host = document.createElement("div");
 	host.inert = true;
 	host.setAttribute("aria-hidden", "true");
@@ -135,49 +168,37 @@ async function renderOffscreen({
 		width: `${CHART_SIZE.width}px`,
 	});
 	document.body.append(host);
-	const root = createRoot(host);
-	try {
-		root.render(
-			createElement(
-				Fragment,
-				null,
-				headerRow(title, legend),
-				createElement(
-					"div",
-					{
-						className: "flex flex-col",
-						style:
-							height === "fill" ? { height: CHART_SIZE.height } : undefined,
-					},
-					chart,
-				),
-			),
-		);
-		await waitForLayout(host);
-		const origin = host.getBoundingClientRect();
-		return {
-			height: origin.height,
-			layers: outerSvgs(host).map((svg) => ({
-				...boxIn(svg.getBoundingClientRect(), origin),
-				svg: serializeWithStyles(svg),
-			})),
-			texts: htmlTexts(host, origin),
-			background: getComputedStyle(host).backgroundColor,
-		};
-	} finally {
-		root.unmount();
-		host.remove();
-	}
+	return { host, root: createRoot(host) };
 }
 
-async function waitForLayout(host: HTMLElement): Promise<void> {
+function readRendered(host: HTMLElement): Rendered {
+	const origin = host.getBoundingClientRect();
+	return {
+		height: origin.height,
+		layers: outerSvgs(host).map((svg) => ({
+			...boxIn(svg.getBoundingClientRect(), origin),
+			svg: serializeWithStyles(svg),
+		})),
+		texts: htmlTexts(host, origin),
+		background: getComputedStyle(host).backgroundColor,
+	};
+}
+
+const nextFrame = Effect.callback<void>((resume) => {
+	const frame = requestAnimationFrame(() => resume(Effect.void));
+	return Effect.sync(() => cancelAnimationFrame(frame));
+});
+
+const waitForLayout = Effect.fnUntraced(function* (host: HTMLElement) {
 	for (let frame = 0; frame < MAX_LAYOUT_FRAMES; frame++) {
-		await new Promise(requestAnimationFrame);
+		yield* nextFrame;
 		const laidOut = `[data-chart-width="${CHART_SIZE.width}"]`;
 		if (host.querySelector(laidOut)) return;
 	}
-	throw new Error("The chart never laid out at its export size");
-}
+	return yield* new ChartExportError({
+		message: "The chart never laid out at its export size",
+	});
+});
 
 function boxIn(rect: DOMRect, origin: DOMRect): Box {
 	return {
@@ -235,33 +256,42 @@ const fontDataUrl = cachedFontDataUrl(DM_SANS_LATIN_URL).pipe(
 );
 
 /** DM Sans as data URLs: an SVG image cannot fetch the page's web fonts. */
-async function embeddedFontCss(): Promise<string> {
-	const dataUrl = await Effect.runPromise(fontDataUrl);
+const embeddedFontCss = Effect.fnUntraced(function* () {
+	const dataUrl = yield* fontDataUrl;
 	return `@font-face { font-family: "${DM_SANS}"; font-weight: 100 1000; src: url(${dataUrl}) format("woff2"); }`;
-}
+});
 
-async function svgImage(
-	svg: string,
-	fontCss: string,
-): Promise<HTMLImageElement> {
+const svgImage = Effect.fnUntraced(function* (svg: string, fontCss: string) {
 	const withFonts = svg.replace(/^<svg[^>]*>/, (open) => {
 		return `${open}<style>${fontCss}</style>`;
 	});
 	const image = new Image();
 	image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(withFonts)}`;
-	await image.decode();
+	yield* exportOperation("Cannot decode SVG image", () => image.decode());
 	return image;
-}
+});
 
-async function rasterize(
+const rasterize = Effect.fnUntraced(function* (
 	{ height: contentHeight, layers, texts, background }: Rendered,
 	fontCss: string,
-): Promise<Blob> {
+) {
 	const fonts = new Set(texts.map((t) => t.font));
-	const [images] = await Promise.all([
-		Promise.all(layers.map((layer) => svgImage(layer.svg, fontCss))),
-		...[...fonts].map((font) => document.fonts.load(font)),
-	]);
+	const [images] = yield* Effect.all(
+		[
+			Effect.forEach(layers, (layer) => svgImage(layer.svg, fontCss), {
+				concurrency: "unbounded",
+			}),
+			Effect.forEach(
+				fonts,
+				(font) =>
+					exportOperation("Cannot load chart font", () =>
+						document.fonts.load(font),
+					),
+				{ concurrency: "unbounded" },
+			),
+		],
+		{ concurrency: "unbounded" },
+	);
 
 	const width = CHART_SIZE.width + PADDING_PX * 2;
 	const height = Math.ceil(PADDING_PX * 2 + contentHeight);
@@ -269,7 +299,8 @@ async function rasterize(
 	canvas.width = width * PIXEL_RATIO;
 	canvas.height = height * PIXEL_RATIO;
 	const context = canvas.getContext("2d");
-	if (!context) throw new Error("Canvas 2D is unavailable");
+	if (!context)
+		return yield* new ChartExportError({ message: "Canvas 2D is unavailable" });
 	context.scale(PIXEL_RATIO, PIXEL_RATIO);
 	context.fillStyle = background;
 	context.fillRect(0, 0, width, height);
@@ -284,11 +315,15 @@ async function rasterize(
 		context.font = run.font;
 		context.fillText(run.text, run.x, run.y + run.height / 2);
 	}
-	return new Promise((resolve, reject) =>
-		canvas.toBlob(
-			(blob) =>
-				blob ? resolve(blob) : reject(new Error("PNG encoding failed")),
-			"image/png",
-		),
+	return yield* exportOperation(
+		"PNG encoding failed",
+		() =>
+			new Promise<Blob>((resolve, reject) =>
+				canvas.toBlob(
+					(blob) =>
+						blob ? resolve(blob) : reject(new Error("PNG encoding failed")),
+					"image/png",
+				),
+			),
 	);
-}
+});

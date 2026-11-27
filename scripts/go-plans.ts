@@ -1,8 +1,10 @@
 // OpenCode Go's monthly usage, which build-plans values at list price as a
 // published allowance, and the promotions that allowance counts.
 
+import { Effect } from "effect";
 import type { Promotion } from "../src/domain/model.ts";
-import { listPriced, type TokenRates } from "./list-price.ts";
+import { listPriced, type ListRates, type TokenRates } from "./list-price.ts";
+import { PlanDataError } from "./plan-offers.ts";
 
 /** Go is tier 0 and Go Plus tier 1, the order of a family's usage pair. */
 export type GoTier = 0 | 1;
@@ -43,36 +45,41 @@ export type GoPlan = {
 /**
  * A tier's monthly usage in list-priced (API) dollars, and the promotions it
  * counts, for the families the plan lists. A promotion on a family with no
- * regular usage is a data mistake, so it throws.
+ * regular usage is a data mistake, so it fails with PlanDataError.
  */
-export function goPlan(
+export const goPlan = Effect.fnUntraced(function* (
 	pricing: GoPricing,
 	tier: GoTier,
 	families: readonly string[],
-	listRates: (family: string) => TokenRates,
-): GoPlan {
+	listRates: ListRates,
+) {
 	const orphans = Object.keys(pricing.promos).filter(
 		(family) => !(family in pricing.usageUsd),
 	);
 	if (orphans.length)
-		throw new Error(
-			`Go promotions on families with no usage: ${orphans.join(", ")}`,
-		);
+		return yield* new PlanDataError({
+			message: `Go promotions on families with no usage: ${orphans.join(", ")}`,
+		});
 	const listed = families.filter((family) => family in pricing.usageUsd);
 	return {
 		apiUsdPerMonthByFamily: Object.fromEntries(
-			listed.map((family) => [
-				family,
-				listPricedUsd(pricing, family, tier, listRates),
-			]),
+			yield* Effect.forEach(
+				listed,
+				Effect.fnUntraced(function* (family) {
+					return [
+						family,
+						yield* listPricedUsd(pricing, family, tier, listRates),
+					] as const;
+				}),
+			),
 		),
 		promotionByFamily: Object.fromEntries(
 			Object.entries(pricing.promos)
 				.filter(([family]) => listed.includes(family))
 				.map(([family, promo]) => [family, promotionFor(promo, tier)]),
 		),
-	};
-}
+	} satisfies GoPlan;
+});
 
 function promotionFor(promo: GoPromo, tier: GoTier): Promotion {
 	if (promo.kind === "price") return promo.promotion;
@@ -84,12 +91,12 @@ function promotionFor(promo: GoPromo, tier: GoTier): Promotion {
 }
 
 /** Converts a family's Go-priced dollar usage into list-priced (API) dollars. */
-function listPricedUsd(
+const listPricedUsd = Effect.fnUntraced(function* (
 	pricing: GoPricing,
 	family: string,
 	tier: GoTier,
-	listRates: (family: string) => TokenRates,
-): number {
+	listRates: ListRates,
+) {
 	const promo = pricing.promos[family];
 	const goUsd =
 		promo?.kind === "allowance"
@@ -97,5 +104,5 @@ function listPricedUsd(
 			: pricing.usageUsd[family][tier];
 	const goRates =
 		promo?.kind === "price" ? promo.prices : pricing.offListRates[family];
-	return goRates ? listPriced(goUsd, goRates, listRates(family)) : goUsd;
-}
+	return goRates ? listPriced(goUsd, goRates, yield* listRates(family)) : goUsd;
+});

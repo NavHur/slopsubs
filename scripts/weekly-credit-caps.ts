@@ -1,8 +1,10 @@
 // Plans that bill each model in vendor credits against a weekly quota: the
 // quota at the model's credit rates, priced at list, is the estimated cap.
 
+import { Effect } from "effect";
 import type { ReportedCap } from "../src/domain/model.ts";
-import { listPriced, type TokenRates } from "./list-price.ts";
+import { listPriced, type ListRates, type TokenRates } from "./list-price.ts";
+import { PlanDataError } from "./plan-offers.ts";
 
 export type WeeklyCreditPlan = {
 	weeklyCredits: number;
@@ -14,27 +16,33 @@ export type WeeklyCreditPlan = {
 };
 
 /** Each family's weekly cap in list-priced dollars, as an estimate. */
-export function weeklyCreditCap(
+export const weeklyCreditCap = Effect.fnUntraced(function* (
 	plan: WeeklyCreditPlan,
 	families: readonly string[],
-	listRates: (family: string) => TokenRates,
-): ReportedCap {
+	listRates: ListRates,
+) {
 	return {
 		weeklyCapApiUsdByFamily: Object.fromEntries(
-			families.map((family) => {
-				const rates = plan.rates[family];
-				if (!rates) throw new Error(`${family}: no credit rate`);
-				return [
-					family,
-					listPriced(plan.weeklyCredits, rates, listRates(family)),
-				];
-			}),
+			yield* Effect.forEach(
+				families,
+				Effect.fnUntraced(function* (family) {
+					const rates = plan.rates[family];
+					if (!rates)
+						return yield* new PlanDataError({
+							message: `${family}: no credit rate`,
+						});
+					return [
+						family,
+						listPriced(plan.weeklyCredits, rates, yield* listRates(family)),
+					] as const;
+				}),
+			),
 		),
 		by: plan.by,
 		url: plan.url,
 		basis: plan.basis,
-	};
-}
+	} satisfies ReportedCap;
+});
 
 const ZAI_DOCS = "https://docs.z.ai/devpack/overview";
 

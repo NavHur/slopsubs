@@ -1,12 +1,12 @@
 // Runs the four data imports, then reports what changed since --base.
 // Flags and behavior: README.md, "Benchmark Data".
 
-import { spawnSync } from "node:child_process";
-import { Data, Effect, Schema } from "effect";
+import { Data, Effect, Layer, Schema } from "effect";
 import { hasDataChanges } from "../src/domain/data-changes.ts";
 import { renderDataChanges } from "./data-changes-markdown.ts";
 import { changesSince, restore } from "./data-snapshot.ts";
 import { decodeArgument, FlagValue } from "./effects/arguments.ts";
+import { Commands } from "./effects/commands.ts";
 import { TextFiles } from "./effects/files.ts";
 
 type Args = {
@@ -72,7 +72,7 @@ class RefreshStepFailed extends Data.TaggedError("RefreshStepFailed")<{
 	script: string;
 	status: number;
 	signal: NodeJS.Signals | null;
-	cause?: Error;
+	cause?: unknown;
 }> {
 	override get message() {
 		const detail = this.signal ? `, ${this.signal}` : "";
@@ -83,15 +83,20 @@ class RefreshStepFailed extends Data.TaggedError("RefreshStepFailed")<{
 function runStep(script: string, args: string[]) {
 	return Effect.gen(function* () {
 		console.log(`\n▶ ${script} ${args.join(" ")}`.trimEnd());
-		const result = spawnSync("bun", ["run", script, ...args], {
-			stdio: "inherit",
-		});
+		const commands = yield* Commands;
+		const result = yield* commands
+			.inherit("bun", ["run", script, ...args])
+			.pipe(
+				Effect.mapError(
+					(cause) =>
+						new RefreshStepFailed({ script, status: 1, signal: null, cause }),
+				),
+			);
 		if (result.status !== 0)
 			return yield* new RefreshStepFailed({
 				script,
-				status: result.status ?? 1,
+				status: result.status,
 				signal: result.signal,
-				cause: result.error,
 			});
 	});
 }
@@ -104,7 +109,7 @@ const main = Effect.gen(function* () {
 	const { changes, base } = yield* changesSince(args.base);
 	const changed = hasDataChanges(changes);
 	if (!changed) yield* restore(base);
-	const summary = renderDataChanges(changes);
+	const summary = yield* renderDataChanges(changes);
 	const files = yield* TextFiles;
 	if (args.summary) yield* files.write(args.summary, `${summary}\n`);
 	console.log(
@@ -123,6 +128,6 @@ await Effect.runPromise(
 				process.exitCode = error.status;
 			}),
 		),
-		Effect.provide(TextFiles.layer),
+		Effect.provide(Layer.mergeAll(TextFiles.layer, Commands.layer)),
 	),
 );

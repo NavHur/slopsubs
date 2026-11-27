@@ -1,5 +1,7 @@
 import { cn } from "cn";
+import * as Effect from "effect/Effect";
 import { type RefObject, useEffect, useId, useRef, useState } from "react";
+import type { ChartExport } from "#/lib/chart-export";
 import { toggleTheme } from "#/lib/theme";
 
 const HEADER_BUTTON =
@@ -52,18 +54,23 @@ export function DownloadPngButton({
 	onDownload,
 }: {
 	disabled: boolean;
-	onDownload: () => Promise<void>;
+	onDownload: () => ChartExport;
 }) {
 	const [status, setStatus] = useState<ExportStatus>("idle");
-	const download = async () => {
+	const download = () => {
 		setStatus("busy");
-		try {
-			await onDownload();
-			setStatus("idle");
-		} catch (error) {
-			console.error("Chart export failed", error);
-			setStatus("failed");
-		}
+		Effect.runFork(
+			Effect.suspend(onDownload).pipe(
+				Effect.matchCauseEffect({
+					onSuccess: () => Effect.sync(() => setStatus("idle")),
+					onFailure: (cause) =>
+						Effect.sync(() => {
+							console.error("Chart export failed", cause);
+							setStatus("failed");
+						}),
+				}),
+			),
+		);
 	};
 	return (
 		<button

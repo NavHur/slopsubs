@@ -1,8 +1,23 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-import { flightFromHtml, pickModel, readModels, resolveRows } from "./aa-evals";
+import {
+	flightFromHtml as flightFromHtmlEffect,
+	pickModel as pickModelEffect,
+	readModels as readModelsEffect,
+	resolveRows as resolveRowsEffect,
+} from "./aa-evals";
 import { AaImportError } from "./aa-import-error";
 import { pageOf, scoredRecord, type Fixture } from "./aa-test-pages";
 import type { BenchmarkPoint } from "./model";
+
+const flightFromHtml = (...args: Parameters<typeof flightFromHtmlEffect>) =>
+	Effect.runSync(flightFromHtmlEffect(...args));
+const pickModel = (...args: Parameters<typeof pickModelEffect>) =>
+	Effect.runSync(pickModelEffect(...args));
+const readModels = (...args: Parameters<typeof readModelsEffect>) =>
+	Effect.runSync(readModelsEffect(...args));
+const resolveRows = (...args: Parameters<typeof resolveRowsEffect>) =>
+	Effect.runSync(resolveRowsEffect(...args));
 
 const rowsOf = (...pages: Fixture[][]) =>
 	readModels(
@@ -164,6 +179,12 @@ describe("resolveRows", () => {
 
 it("rejects a malformed flight chunk as an AA import error", () => {
 	expect(() => flightFromHtml(String.raw`__next_f.push([1,"\q"])`)).toThrow(
+		AaImportError,
+	);
+});
+
+it("reports malformed HTML in the typed failure channel", () => {
+	expect(Effect.runSync(Effect.flip(flightFromHtmlEffect("")))).toBeInstanceOf(
 		AaImportError,
 	);
 });

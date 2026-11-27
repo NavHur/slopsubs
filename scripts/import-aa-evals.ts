@@ -11,12 +11,7 @@ import {
 import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import { AaEvalsDataset } from "../src/domain/model.ts";
 import { parseArgs, summaryLine } from "./aa-eval-cli.ts";
-import {
-	aaPageSlugs,
-	loadAaEvalPages,
-	loadAaPages,
-	readAaPayload,
-} from "./aa-page.ts";
+import { aaPageSlugs, loadAaEvalPages, loadAaPages } from "./aa-page.ts";
 import { loadCatalogByFamily } from "./catalog-by-family.ts";
 import { readJsonFile, TextFiles } from "./effects/files.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
@@ -75,9 +70,12 @@ const main = Effect.gen(function* () {
 	);
 	const evalPages = yield* loadAaEvalPages(evalHtml);
 	const prior = yield* readPriorRows;
-	const { rows, skips, carry } = yield* readAaPayload(() =>
-		importAaEvals({ modelPages, evalPages, byFamily, prior }),
-	);
+	const { rows, skips, carry } = yield* importAaEvals({
+		modelPages,
+		evalPages,
+		byFamily,
+		prior,
+	});
 	logSummary(rows, skips);
 	logCarry(carry);
 	const output = yield* Schema.decodeUnknownEffect(AaEvalsDataset)({

@@ -2,11 +2,25 @@
 // on the built site. Build first; see README.md, "Paint Metrics".
 
 import { parseArgs } from "node:util";
-import { type Browser, chromium, type Page } from "playwright-core";
+import { Deferred, Effect, Schema } from "effect";
+import {
+	type Browser,
+	type Page,
+	type Request,
+	type Route,
+} from "playwright-core";
 import { BENCHMARK_IDS } from "../src/domain/enums.ts";
+import { commandOptions } from "./effects/arguments.ts";
+import {
+	browserOperation,
+	browserRead,
+	BrowserCheckError,
+	launchBrowser,
+	routeRequests,
+	siteOrigin,
+} from "./effects/browser.ts";
 import { median, requirePainted } from "./paint-stats.ts";
 import { readPickerClearance } from "./picker-clearance.ts";
-import { originOf, serveSite } from "./serve-site.ts";
 
 const PHONE = { width: 390, height: 844 };
 type Throttle = {
@@ -19,7 +33,7 @@ const KBPS = 1024 / 8;
 /** Lighthouse's simulated networks and CPUs.
  * ceiling: Chromium splits bandwidth evenly where HTTP/2 sends CSS before a
  * preloaded font; a WebPageTest run on the deployed site is the upgrade. */
-const THROTTLES: Record<string, Throttle> = {
+const THROTTLES = {
 	mobile: {
 		latencyMs: 150,
 		downloadBytesPerSec: 1638 * KBPS,
@@ -32,21 +46,17 @@ const THROTTLES: Record<string, Throttle> = {
 		uploadBytesPerSec: 10240 * KBPS,
 		cpuSlowdown: 1,
 	},
-};
-const { values: args } = parseArgs({
-	options: {
-		runs: { type: "string", default: "5" },
-		throttle: { type: "string", default: "mobile" },
-	},
+} satisfies Record<string, Throttle>;
+const Options = Schema.Struct({
+	runs: Schema.NumberFromString.check(
+		Schema.isInt(),
+		Schema.isGreaterThan(0),
+		Schema.isLessThanOrEqualTo(Number.MAX_SAFE_INTEGER),
+	),
+	throttle: Schema.Literals(
+		Object.keys(THROTTLES) as (keyof typeof THROTTLES)[],
+	),
 });
-const runs = Number(args.runs);
-if (!Number.isSafeInteger(runs) || runs < 1) {
-	throw new Error("--runs takes a positive whole number");
-}
-const throttle = THROTTLES[args.throttle];
-if (!throttle) {
-	throw new Error(`--throttle takes ${Object.keys(THROTTLES).join(" or ")}`);
-}
 
 /** DNS, TCP, and TLS before the first request to a new origin. Chromium's
  * throttle adds latency per request only, which would make a third-party
@@ -87,74 +97,131 @@ function observePaint() {
 	}).observe({ type: "largest-contentful-paint", buffered: true });
 }
 
-/** Holds the first requests to each origin other than the site's for a
- * connection setup; later requests reuse the connection. */
-async function chargeConnectionSetup(page: Page, siteOrigin: string) {
+const continueRoute = (route: Route) =>
+	browserOperation("Continue request", () => route.continue());
+
+/** Holds each other origin's first request for a connection setup; returns a
+ * watcher that fails if a held request cannot continue: race the work on it. */
+const chargeConnectionSetup = Effect.fnUntraced(function* (
+	page: Page,
+	siteOrigin: string,
+	throttle: Throttle,
+) {
 	const setupMs = CONNECT_RTTS * throttle.latencyMs;
-	const connections = new Map<string, Promise<void>>();
-	await page.route(
+	const connections = new Map<string, Deferred.Deferred<void>>();
+	const awaitConnection = Effect.fnUntraced(function* (origin: string) {
+		const known = connections.get(origin);
+		if (known) return yield* Deferred.await(known);
+		const connected = yield* Deferred.make<void>();
+		connections.set(origin, connected);
+		yield* Effect.sleep(setupMs);
+		yield* Deferred.succeed(connected, undefined);
+	});
+	return yield* routeRequests(
+		page,
 		(url) => url.origin !== siteOrigin,
-		async (route) => {
-			const { origin } = new URL(route.request().url());
-			let connected = connections.get(origin);
-			if (!connected) {
-				connected = new Promise((resolve) => setTimeout(resolve, setupMs));
-				connections.set(origin, connected);
-			}
-			await connected;
-			await route.continue();
-		},
+		(route) =>
+			awaitConnection(new URL(route.request().url()).origin).pipe(
+				Effect.andThen(continueRoute(route)),
+			),
 	);
-}
+});
 
-async function throttledPage(browser: Browser, url: string): Promise<Page> {
-	const context = await browser.newContext({
-		viewport: PHONE,
-		colorScheme: "light",
-	});
-	const page = await context.newPage();
-	const cdp = await context.newCDPSession(page);
-	await cdp.send("Network.emulateNetworkConditions", {
-		offline: false,
-		latency: throttle.latencyMs,
-		downloadThroughput: throttle.downloadBytesPerSec,
-		uploadThroughput: throttle.uploadBytesPerSec,
-	});
-	await cdp.send("Emulation.setCPUThrottlingRate", {
-		rate: throttle.cpuSlowdown,
-	});
-	await chargeConnectionSetup(page, new URL(url).origin);
-	await page.addInitScript(observePaint);
-	return page;
-}
+const throttledPage = Effect.fnUntraced(function* (
+	browser: Browser,
+	url: string,
+	throttle: Throttle,
+) {
+	const context = yield* Effect.acquireRelease(
+		browserOperation("Open paint context", () =>
+			browser.newContext({ viewport: PHONE, colorScheme: "light" }),
+		),
+		(context) =>
+			browserOperation("Close paint context", () => context.close()).pipe(
+				Effect.orDie,
+			),
+	);
+	const page = yield* browserOperation("newPage", () => context.newPage());
+	const cdp = yield* browserOperation("newCDPSession", () =>
+		context.newCDPSession(page),
+	);
+	yield* browserOperation("send", () =>
+		cdp.send("Network.emulateNetworkConditions", {
+			offline: false,
+			latency: throttle.latencyMs,
+			downloadThroughput: throttle.downloadBytesPerSec,
+			uploadThroughput: throttle.uploadBytesPerSec,
+		}),
+	);
+	yield* browserOperation("send", () =>
+		cdp.send("Emulation.setCPUThrottlingRate", {
+			rate: throttle.cpuSlowdown,
+		}),
+	);
+	const setupFailed = yield* chargeConnectionSetup(
+		page,
+		new URL(url).origin,
+		throttle,
+	);
+	yield* browserOperation("addInitScript", () =>
+		page.addInitScript(observePaint),
+	);
+	return { page, setupFailed };
+});
 
-async function loadSettled(page: Page, url: string): Promise<void> {
-	const response = await page.goto(url, { waitUntil: "networkidle" });
+const loadSettled = Effect.fnUntraced(function* (page: Page, url: string) {
+	const response = yield* browserOperation("goto", () =>
+		page.goto(url, { waitUntil: "networkidle" }),
+	);
 	if (!response?.ok()) {
-		throw new Error(`${url} answered ${response?.status()}: build first`);
+		return yield* new BrowserCheckError({
+			message: `${url} answered ${response?.status()}: build first`,
+		});
 	}
-	await page.evaluate(() => document.fonts.ready);
-	await page.waitForTimeout(SETTLE_MS);
-}
+	yield* browserOperation("evaluate", () =>
+		page.evaluate(() => document.fonts.ready),
+	);
+	yield* browserOperation("waitForTimeout", () =>
+		page.waitForTimeout(SETTLE_MS),
+	);
+});
 
-/** When each web font finished arriving, in epoch ms; `requestfinished`
- * reports it directly. */
-function recordFontArrivals(page: Page): number[] {
-	const arrivals: number[] = [];
+/** The web font requests that finished, in arrival order. */
+function recordFontRequests(page: Page): Request[] {
+	const fonts: Request[] = [];
 	page.on("requestfinished", (request) => {
-		if (request.resourceType() !== "font") return;
-		const timing = request.timing();
-		arrivals.push(timing.startTime + timing.responseEnd);
+		if (request.resourceType() === "font") fonts.push(request);
 	});
-	return arrivals;
+	return fonts;
 }
 
-async function samplePaint(browser: Browser, url: string) {
-	const page = await throttledPage(browser, url);
-	const fontArrivals = recordFontArrivals(page);
-	try {
-		await loadSettled(page, url);
-		const sample = await page.evaluate(() => {
+const FontTiming = Schema.Struct({
+	startTime: Schema.Finite,
+	responseEnd: Schema.Finite,
+});
+
+/** When the font finished arriving, in epoch ms. */
+const fontArrival = (request: Request) =>
+	browserRead(FontTiming, "Read font timing", async () =>
+		request.timing(),
+	).pipe(Effect.map((timing) => timing.startTime + timing.responseEnd));
+
+const PaintMetrics = Schema.Struct({
+	firstPaintMs: Schema.Number,
+	fcpMs: Schema.Number,
+	lcpMs: Schema.Number,
+	cls: Schema.Finite,
+	timeOrigin: Schema.Finite,
+});
+
+const measurePaint = Effect.fnUntraced(function* (
+	page: Page,
+	url: string,
+	fonts: Request[],
+) {
+	yield* loadSettled(page, url);
+	const sample = yield* browserRead(PaintMetrics, "Read paint metrics", () =>
+		page.evaluate(() => {
 			const { cls, lcp } = (
 				window as unknown as { __paint: { cls: number; lcp: number } }
 			).__paint;
@@ -167,64 +234,90 @@ async function samplePaint(browser: Browser, url: string) {
 				cls,
 				timeOrigin: performance.timeOrigin,
 			};
+		}),
+	);
+	if (fonts.length === 0) {
+		return yield* new BrowserCheckError({
+			message: `${url} requested no web font (woff2) to time`,
 		});
-		if (fontArrivals.length === 0) {
-			throw new Error(`${url} requested no web font (woff2) to time`);
-		}
-		requirePainted(url, sample);
-		const { timeOrigin, ...paint } = sample;
-		return {
-			...paint,
-			fontsDoneMs: Math.max(...fontArrivals) - timeOrigin,
-		} satisfies PaintSample;
-	} finally {
-		await page.context().close();
 	}
-}
+	yield* requirePainted(url, sample);
+	const arrivals = yield* Effect.forEach(fonts, fontArrival);
+	const { timeOrigin, ...paint } = sample;
+	return {
+		...paint,
+		fontsDoneMs: Math.max(...arrivals) - timeOrigin,
+	} satisfies PaintSample;
+});
 
-/** Holds every font request until `release` runs. */
-async function holdFonts(page: Page): Promise<() => void> {
-	let release = () => {};
-	const gate = new Promise<void>((resolve) => {
-		release = resolve;
-	});
-	await page.route("**/*.woff2", async (route) => {
-		await gate;
-		await route.continue();
-	});
-	return release;
-}
+const samplePaint = Effect.fnUntraced(function* (
+	browser: Browser,
+	url: string,
+	throttle: Throttle,
+) {
+	const { page, setupFailed } = yield* throttledPage(browser, url, throttle);
+	const fonts = recordFontRequests(page);
+	return yield* Effect.raceFirst(measurePaint(page, url, fonts), setupFailed);
+}, Effect.scoped);
+
+/** Holds every font request until `release` runs; `fontsFailed` fails if a
+ * held request cannot continue. */
+const holdFonts = Effect.fnUntraced(function* (page: Page) {
+	const gate = yield* Deferred.make<void>();
+	const fontsFailed = yield* routeRequests(page, "**/*.woff2", (route) =>
+		Deferred.await(gate).pipe(Effect.andThen(continueRoute(route))),
+	);
+	return { release: Deferred.succeed(gate, undefined), fontsFailed };
+});
 
 /** Waits until the linked view has rendered and been shown, which is after
  * ScrollRow revealed its benchmark, with the fonts still held. */
-async function waitForFallbackReveal(page: Page): Promise<void> {
-	await page.waitForFunction((picker) => {
-		const pressed = document.querySelector(`${picker} [aria-pressed=true]`);
-		const shown = !("viewPending" in document.documentElement.dataset);
-		return pressed && shown && document.fonts.status === "loading";
-	}, PICKER);
-}
+const waitForFallbackReveal = Effect.fnUntraced(function* (page: Page) {
+	yield* browserOperation("waitForFunction", () =>
+		page.waitForFunction((picker) => {
+			const pressed = document.querySelector(`${picker} [aria-pressed=true]`);
+			const shown = !("viewPending" in document.documentElement.dataset);
+			return pressed && shown && document.fonts.status === "loading";
+		}, PICKER),
+	);
+});
 
-/** Loads the view with its fonts held until the reveal has run in the
- * fallback face, then lets them arrive and measures. */
-async function pickerClearance(browser: Browser, url: string) {
-	const page = await throttledPage(browser, url);
-	try {
-		const release = await holdFonts(page);
-		await page.goto(url, { waitUntil: "domcontentloaded" });
-		await waitForFallbackReveal(page);
-		release();
-		await page.evaluate(() => document.fonts.ready);
-		await page.waitForTimeout(SETTLE_MS);
-		return await page.evaluate(readPickerClearance, {
+/** Lets the fonts arrive, then measures. */
+const measureClearance = Effect.fnUntraced(function* (page: Page) {
+	yield* browserOperation("evaluate", () =>
+		page.evaluate(() => document.fonts.ready),
+	);
+	yield* browserOperation("waitForTimeout", () =>
+		page.waitForTimeout(SETTLE_MS),
+	);
+	return yield* browserRead(Schema.Finite, "Read picker clearance", () =>
+		page.evaluate(readPickerClearance, {
 			picker: PICKER,
 			fadePx: FADE_PX,
 			slackPx: EDGE_SLACK_PX,
-		});
-	} finally {
-		await page.context().close();
-	}
-}
+		}),
+	);
+});
+
+/** Loads the view with its fonts held until the reveal has run in the
+ * fallback face, then lets them arrive and measures. */
+const pickerClearance = Effect.fnUntraced(function* (
+	browser: Browser,
+	url: string,
+	throttle: Throttle,
+) {
+	const { page, setupFailed } = yield* throttledPage(browser, url, throttle);
+	const { release, fontsFailed } = yield* holdFonts(page);
+	const measured = Effect.gen(function* () {
+		yield* browserOperation("goto", () =>
+			page.goto(url, { waitUntil: "domcontentloaded" }),
+		);
+		yield* waitForFallbackReveal(page);
+		yield* release;
+		return yield* measureClearance(page);
+	}).pipe(Effect.ensuring(release));
+	return yield* Effect.raceAllFirst([measured, setupFailed, fontsFailed]);
+}, Effect.scoped);
 
 function summarize(samples: PaintSample[]) {
 	const keys = Object.keys(samples[0]) as (keyof PaintSample)[];
@@ -244,20 +337,35 @@ function summarize(samples: PaintSample[]) {
 	);
 }
 
-const server = await serveSite();
-const browser = await chromium.launch();
-try {
-	const origin = originOf(server);
+const main = Effect.gen(function* () {
+	const args = yield* commandOptions(
+		Options,
+		() =>
+			parseArgs({
+				options: {
+					runs: { type: "string", default: "5" },
+					throttle: { type: "string", default: "mobile" },
+				},
+			}).values,
+	);
+	const runs = args.runs;
+	const throttle = THROTTLES[args.throttle];
+	const origin = yield* siteOrigin();
+	const browser = yield* launchBrowser();
 	const samples: PaintSample[] = [];
 	for (let run = 0; run < runs; run++) {
-		samples.push(await samplePaint(browser, origin));
+		samples.push(yield* samplePaint(browser, origin, throttle));
 	}
 	console.log(`Paint over ${runs} cold loads of /, ${args.throttle} throttle:`);
 	console.table(summarize(samples));
 
 	const clearance: Record<string, number> = {};
 	for (const id of BENCHMARK_IDS) {
-		const px = await pickerClearance(browser, `${origin}?benchmark=${id}`);
+		const px = yield* pickerClearance(
+			browser,
+			`${origin}?benchmark=${id}`,
+			throttle,
+		);
 		clearance[id] = Math.round(px * 10) / 10;
 	}
 	console.log("Selected benchmark's clearance from a fade, px:");
@@ -266,9 +374,9 @@ try {
 		([, px]) => px < -CLEARANCE_TOLERANCE_PX,
 	);
 	if (hidden.length > 0) {
-		throw new Error(`Faded or hidden: ${hidden.map(([id]) => id).join(", ")}`);
+		return yield* new BrowserCheckError({
+			message: `Faded or hidden: ${hidden.map(([id]) => id).join(", ")}`,
+		});
 	}
-} finally {
-	await browser.close();
-	server.close();
-}
+});
+await Effect.runPromise(Effect.scoped(main));

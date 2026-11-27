@@ -1,5 +1,9 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-import { checkOffers } from "./plan-offers.ts";
+import { checkOffers as checkOffersEffect } from "./plan-offers.ts";
+
+const checkOffers = (...args: Parameters<typeof checkOffersEffect>) =>
+	Effect.runSync(checkOffersEffect(...args));
 
 const blackFriday = {
 	planId: "google-ai-pro-annual",

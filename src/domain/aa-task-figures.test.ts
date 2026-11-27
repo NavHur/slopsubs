@@ -1,6 +1,7 @@
+import { Effect } from "effect";
 import { Schema } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-import { importAaEvals } from "./aa-task-figures";
+import { importAaEvals as importAaEvalsEffect } from "./aa-task-figures";
 import {
 	ALPHA,
 	SONNET,
@@ -9,6 +10,9 @@ import {
 	pageOf,
 } from "./aa-test-pages";
 import type { BenchmarkPoint } from "./model";
+
+const importAaEvals = (...args: Parameters<typeof importAaEvalsEffect>) =>
+	Effect.runSync(importAaEvalsEffect(...args));
 
 const catalogOf = (...families: string[]) =>
 	new Map(

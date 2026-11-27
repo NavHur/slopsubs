@@ -6,6 +6,7 @@ import {
 	type Server,
 	type ServerResponse,
 } from "node:http";
+import { Effect } from "effect";
 import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import { originOf, serveSite } from "./serve-site.ts";
 
@@ -30,8 +31,10 @@ describe("built site server", () => {
 		["/asset.bin", "asset.bin", "application/octet-stream"],
 	])("serves %s", async (path, file, contentType) => {
 		vi.mocked(readFile).mockResolvedValue(Buffer.from("built asset"));
-		server = await serveSite();
-		const response = await fetch(new URL(path, originOf(server)));
+		server = await Effect.runPromise(serveSite);
+		const response = await fetch(
+			new URL(path, Effect.runSync(originOf(server))),
+		);
 		expect(response.status).toBe(200);
 		expect(response.headers.get("content-type")).toBe(contentType);
 		expect(await response.text()).toBe("built asset");
@@ -44,13 +47,15 @@ describe("built site server", () => {
 		vi.mocked(readFile).mockRejectedValue(
 			Object.assign(new Error("missing"), { code }),
 		);
-		server = await serveSite();
-		const response = await fetch(new URL("missing", originOf(server)));
+		server = await Effect.runPromise(serveSite);
+		const response = await fetch(
+			new URL("missing", Effect.runSync(originOf(server))),
+		);
 		expect(response.status).toBe(404);
 		expect(await response.text()).toBe("");
 	});
 	it("rejects a request target outside the local origin before reading files", async () => {
-		server = await serveSite();
+		server = await Effect.runPromise(serveSite);
 		const handle = vi.mocked(createServer).mock.calls[0][0] as RequestListener;
 		const response = { writeHead: vi.fn(), end: vi.fn() };
 		response.writeHead.mockReturnValue(response);
@@ -67,7 +72,7 @@ describe("built site server", () => {
 	it("answers 500 and rethrows any other read failure", async () => {
 		const failure = Object.assign(new Error("denied"), { code: "EACCES" });
 		vi.mocked(readFile).mockRejectedValue(failure);
-		server = await serveSite();
+		server = await Effect.runPromise(serveSite);
 		const handle = vi.mocked(createServer).mock.calls[0][0] as RequestListener;
 		const response = { writeHead: vi.fn(), end: vi.fn() };
 		response.writeHead.mockReturnValue(response);

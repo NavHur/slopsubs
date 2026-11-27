@@ -17,7 +17,11 @@ import { parseArgs } from "node:util";
 import { Clock, Effect, Schema } from "effect";
 import { BenchmarkDataset, LimitSamples } from "../src/domain/model.ts";
 import { Mark, priceWindow, readClaudeMessages } from "./claude-usage.ts";
-import { InvalidCommandArguments } from "./effects/arguments.ts";
+import {
+	commandOptions,
+	decodeArgument,
+	InvalidCommandArguments,
+} from "./effects/arguments.ts";
 import { decodeJsonFile, readJsonFile, TextFiles } from "./effects/files.ts";
 import { MarkArgs } from "./measure-args.ts";
 
@@ -81,15 +85,14 @@ const BuildOptions = Schema.Struct({
 });
 
 function buildOptions(args: string[]) {
-	return Effect.try({
-		try: () =>
+	return commandOptions(
+		BuildOptions,
+		() =>
 			parseArgs({
 				args,
 				options: { "claude-dir": { type: "string", multiple: true } },
 			}).values,
-		catch: (cause) =>
-			new InvalidCommandArguments({ message: String(cause), cause }),
-	}).pipe(Effect.flatMap(Schema.decodeUnknownEffect(BuildOptions)));
+	);
 }
 
 function build(args: string[]) {
@@ -120,16 +123,17 @@ function build(args: string[]) {
 }
 
 const main = Effect.gen(function* () {
-	const [command, ...args] = process.argv.slice(2);
+	const [raw, ...args] = process.argv.slice(2);
+	const command = yield* decodeArgument(
+		Schema.Literals(["mark", "build"]),
+		raw,
+		"usage: measure <mark|build> ...",
+	);
 	switch (command) {
 		case "mark":
 			return yield* mark(args);
 		case "build":
 			return yield* build(args);
-		default:
-			return yield* new InvalidCommandArguments({
-				message: "usage: measure <mark|build> ...",
-			});
 	}
 });
 

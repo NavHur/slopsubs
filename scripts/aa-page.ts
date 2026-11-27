@@ -1,9 +1,8 @@
 // Fetches the AA pages import-benchmarks and import-aa-evals read: one model
 // page per plan-covered family, and one page per eval.
 
-import { Effect, Schema } from "effect";
+import { Effect } from "effect";
 import { AA_EVAL_INDEX } from "../src/domain/aa-eval-index.ts";
-import { AaImportError } from "../src/domain/aa-import-error.ts";
 import { TextFiles } from "./effects/files.ts";
 import { getText } from "./effects/http.ts";
 
@@ -72,16 +71,4 @@ export function loadAaEvalPages(paths: readonly string[]) {
 		paths,
 		{ rejectRedirects: true },
 	);
-}
-
-/** Keep malformed AA input in the error channel and let parser bugs surface. */
-export function readAaPayload<A>(parse: () => A) {
-	return Effect.try({
-		try: parse,
-		catch: (cause) => {
-			if (cause instanceof AaImportError || cause instanceof Schema.SchemaError)
-				return cause;
-			throw cause;
-		},
-	});
 }

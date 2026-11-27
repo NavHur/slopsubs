@@ -1,15 +1,19 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import type { FamilyId } from "../src/domain/model.ts";
 import type { TokenRates } from "./list-price.ts";
 import {
 	WEEKLY_CREDIT_PLANS,
 	type WeeklyCreditPlan,
-	weeklyCreditCap,
+	weeklyCreditCap as weeklyCreditCapEffect,
 } from "./weekly-credit-caps.ts";
+
+const weeklyCreditCap = (...args: Parameters<typeof weeklyCreditCapEffect>) =>
+	Effect.runSync(weeklyCreditCapEffect(...args));
 
 const glm = "glm-5-3" as FamilyId;
 const list: TokenRates = [1.4, 4.4];
-const listRates = () => list;
+const listRates = () => Effect.succeed(list);
 
 describe("weeklyCreditCap", () => {
 	const plan: WeeklyCreditPlan = {

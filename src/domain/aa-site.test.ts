@@ -1,5 +1,14 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-import { joinAaSites, readAaSite } from "./aa-site";
+import {
+	joinAaSites as joinAaSitesEffect,
+	readAaSite as readAaSiteEffect,
+} from "./aa-site";
+
+const joinAaSites = (...args: Parameters<typeof joinAaSitesEffect>) =>
+	Effect.runSync(joinAaSitesEffect(...args));
+const readAaSite = (...args: Parameters<typeof readAaSiteEffect>) =>
+	Effect.runSync(readAaSiteEffect(...args));
 
 /** A model id in the payload's 36-character uuid form. */
 const uuidOf = (index: number) =>

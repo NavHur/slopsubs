@@ -1,8 +1,17 @@
 // Opens shared links against the prerendered build; fails on a hydration error,
 // a view left hidden, or one shown before slow scripts run. See README.md.
 
-import { type Browser, chromium } from "playwright-core";
-import { originOf, serveSite } from "./serve-site.ts";
+import { Effect, Schema } from "effect";
+import { type Browser, type Page } from "playwright-core";
+import {
+	browserOperation,
+	browserRead,
+	openBrowserPage,
+	BrowserCheckError,
+	launchBrowser,
+	routeRequests,
+	siteOrigin,
+} from "./effects/browser.ts";
 
 /** Each link and the benchmark tab it must end on. */
 const LINKS: { search: string; benchmark: string }[] = [
@@ -48,89 +57,139 @@ function recordLayoutShift() {
 	}).observe({ type: "layout-shift", buffered: true });
 }
 
+const LinkState = Schema.Struct({
+	pending: Schema.Boolean,
+	pressed: Schema.UndefinedOr(Schema.NullOr(Schema.String)),
+	layoutShift: Schema.Finite,
+});
+
 /** Opens one link; returns what went wrong on it, if anything. */
-async function checkLink(
+const checkLink = Effect.fnUntraced(function* (
 	browser: Browser,
 	url: string,
 	viewport: (typeof VIEWPORTS)[number],
 	benchmark: string,
-): Promise<{ problems: string[]; layoutShift: number }> {
-	const page = await browser.newPage({ viewport });
+) {
+	const page = yield* openBrowserPage(browser, { viewport });
 	const problems: string[] = [];
 	page.on("console", (message) => {
 		if (message.type() === "error") problems.push(message.text());
 	});
 	page.on("pageerror", (error) => problems.push(String(error)));
-	await page.addInitScript(recordLayoutShift);
-	await page.goto(url, { waitUntil: "networkidle" });
-	await page.waitForTimeout(SETTLE_MS);
-	const state = await page.evaluate(() => ({
-		pending: "viewPending" in document.documentElement.dataset,
-		pressed: document
-			.querySelector('[aria-label="Benchmark that defines a task"]')
-			?.querySelector("[aria-pressed=true]")?.textContent,
-		layoutShift: (window as unknown as { layoutShift: number }).layoutShift,
-	}));
-	await page.close();
+	yield* browserOperation("addInitScript", () =>
+		page.addInitScript(recordLayoutShift),
+	);
+	yield* browserOperation("goto", () =>
+		page.goto(url, { waitUntil: "networkidle" }),
+	);
+	yield* browserOperation("waitForTimeout", () =>
+		page.waitForTimeout(SETTLE_MS),
+	);
+	const state = yield* browserRead(LinkState, "Read link state", () =>
+		page.evaluate(() => ({
+			pending: "viewPending" in document.documentElement.dataset,
+			pressed: document
+				.querySelector('[aria-label="Benchmark that defines a task"]')
+				?.querySelector("[aria-pressed=true]")?.textContent,
+			layoutShift: (window as unknown as { layoutShift: number }).layoutShift,
+		})),
+	);
+
 	if (state.pending) problems.push("the view is still hidden");
 	if (state.pressed !== benchmark)
 		problems.push(`benchmark is ${state.pressed}, not ${benchmark}`);
 	return { problems, layoutShift: state.layoutShift };
-}
+}, Effect.scoped);
 
 /** Longer than the 2 s the CSS fallback once waited, shorter than its 10 s. */
 const SLOW_BUNDLE_MS = 3000;
 
+const readVisibility = Effect.fnUntraced(function* (page: Page, url: string) {
+	yield* browserOperation("goto", () =>
+		page.goto(url, { waitUntil: "commit" }),
+	);
+	yield* browserOperation("waitForTimeout", () =>
+		page.waitForTimeout(SLOW_BUNDLE_MS - 500),
+	);
+	return yield* browserRead(Schema.String, "Read view visibility", () =>
+		page.evaluate(
+			() =>
+				getComputedStyle(document.querySelector("[data-view-dependent]")!)
+					.visibility,
+		),
+	);
+});
+
 /** Holds the app's scripts back; whether the view stayed hidden meanwhile. */
-async function staysHiddenWhileSlow(
+const staysHiddenWhileSlow = Effect.fnUntraced(function* (
 	browser: Browser,
 	url: string,
-): Promise<boolean> {
-	const page = await browser.newPage({ viewport: VIEWPORTS[1] });
-	await page.route("**/*.js", async (route) => {
-		await new Promise((resolve) => setTimeout(resolve, SLOW_BUNDLE_MS));
-		await route.continue();
-	});
-	await page.goto(url, { waitUntil: "commit" });
-	await page.waitForTimeout(SLOW_BUNDLE_MS - 500);
-	const visibility = await page.evaluate(
-		() =>
-			getComputedStyle(document.querySelector("[data-view-dependent]")!)
-				.visibility,
+) {
+	const page = yield* openBrowserPage(browser, { viewport: VIEWPORTS[1] });
+	const routeFailed = yield* routeRequests(page, "**/*.js", (route) =>
+		Effect.sleep(SLOW_BUNDLE_MS).pipe(
+			Effect.andThen(
+				browserOperation("Continue request", () => route.continue()),
+			),
+		),
 	);
-	await page.close();
+	const visibility = yield* Effect.raceFirst(
+		readVisibility(page, url),
+		routeFailed,
+	);
+
 	return visibility === "hidden";
+}, Effect.scoped);
+
+function reportLink(
+	width: number,
+	search: string,
+	result: { problems: string[]; layoutShift: number },
+) {
+	const ok = result.problems.length === 0;
+	const shift = result.layoutShift.toFixed(4);
+	console.log(
+		`${ok ? "ok  " : "FAIL"} ${width}px ${search || "/"} (layout shift ${shift})`,
+	);
+	for (const problem of result.problems) console.log(`     ${problem}`);
+	return ok;
 }
 
-const server = await serveSite();
-const origin = originOf(server);
-const browser = await chromium.launch();
-let failures = 0;
-try {
-	for (const viewport of VIEWPORTS) {
-		for (const { search, benchmark } of LINKS) {
-			const url = new URL(search, origin).href;
-			const result = await checkLink(browser, url, viewport, benchmark);
-			const ok = result.problems.length === 0;
-			if (!ok) failures++;
-			const shift = result.layoutShift.toFixed(4);
-			console.log(
-				`${ok ? "ok  " : "FAIL"} ${viewport.width}px ${search || "/"} (layout shift ${shift})`,
-			);
-			for (const problem of result.problems) console.log(`     ${problem}`);
-		}
+const checkViewport = Effect.fnUntraced(function* (
+	browser: Browser,
+	origin: string,
+	viewport: (typeof VIEWPORTS)[number],
+) {
+	let failures = 0;
+	for (const { search, benchmark } of LINKS) {
+		const result = yield* checkLink(
+			browser,
+			new URL(search, origin).href,
+			viewport,
+			benchmark,
+		);
+		if (!reportLink(viewport.width, search, result)) failures++;
 	}
+	return failures;
+});
+
+const main = Effect.gen(function* () {
+	const origin = yield* siteOrigin();
+	const browser = yield* launchBrowser();
+	let failures = 0;
+	for (const viewport of VIEWPORTS)
+		failures += yield* checkViewport(browser, origin, viewport);
 	const slowUrl = new URL("?benchmark=omniscience", origin).href;
-	const hidden = await staysHiddenWhileSlow(browser, slowUrl);
+	const hidden = yield* staysHiddenWhileSlow(browser, slowUrl);
 	if (!hidden) failures++;
 	console.log(
 		`${hidden ? "ok  " : "FAIL"} slow scripts: the view ${hidden ? "stays hidden" : "showed the default early"}`,
 	);
-} finally {
-	await browser.close();
-	server.close();
-}
-if (failures > 0) {
-	console.error(`${failures} shared link checks failed`);
-	process.exit(1);
-}
+
+	if (failures > 0)
+		return yield* new BrowserCheckError({
+			message: `${failures} shared link checks failed`,
+		});
+});
+
+await Effect.runPromise(Effect.scoped(main));

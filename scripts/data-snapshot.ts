@@ -1,8 +1,6 @@
 // Reads the generated data files from the working tree or a git ref, and
 // compares them, for the refresh scripts.
 
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import { Data, Effect, Schema } from "effect";
 import {
 	type DataSnapshot,
@@ -18,6 +16,7 @@ import {
 	LimitSamples,
 	Plans,
 } from "../src/domain/model.ts";
+import { Commands } from "./effects/commands.ts";
 import {
 	decodeFileValue,
 	decodeJsonFile,
@@ -27,7 +26,6 @@ import {
 
 const ROOT = new URL("..", import.meta.url);
 const DATA_DIR = "src/data/";
-const run = promisify(execFile);
 /** Room for `git show` of the largest generated file, several times over. */
 const GIT_SHOW_MAX_BYTES = 64 * 1024 * 1024;
 
@@ -46,19 +44,19 @@ class GitReadError extends Data.TaggedError("GitReadError")<{
 	}
 }
 
-function readGitFile(ref: string, file: FileName) {
-	return Effect.tryPromise({
-		try: (signal) =>
-			run("git", ["show", "--end-of-options", `${ref}:${DATA_DIR}${file}`], {
-				cwd: ROOT,
-				maxBuffer: GIT_SHOW_MAX_BYTES,
-				signal,
-			}).then(({ stdout }) => stdout),
-		catch: (cause) => new GitReadError({ ref, file, cause }),
-	});
-}
+const readGitFile = Effect.fnUntraced(function* (ref: string, file: FileName) {
+	const commands = yield* Commands;
+	return yield* commands
+		.capture("git", ["show", "--end-of-options", `${ref}:${DATA_DIR}${file}`], {
+			cwd: ROOT,
+			maxBuffer: GIT_SHOW_MAX_BYTES,
+		})
+		.pipe(Effect.mapError((cause) => new GitReadError({ ref, file, cause })));
+});
 
-function readTexts<E>(read: (file: FileName) => Effect.Effect<string, E>) {
+function readTexts<E, R>(
+	read: (file: FileName) => Effect.Effect<string, E, R>,
+) {
 	return Effect.all(
 		{
 			benchmarks: read(GENERATED_FILES.benchmarks),

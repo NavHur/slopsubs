@@ -1,3 +1,4 @@
+import * as Effect from "effect/Effect";
 import { useMemo, useState } from "react";
 import { PricingKey } from "#/components/chart/PricingKey";
 import {
@@ -10,6 +11,7 @@ import { TradeoffChart } from "#/components/chart/TradeoffChart";
 import { type TimedPoint, timedPoints } from "#/domain/tradeoffs";
 import type { ValuePoint } from "#/domain/value";
 import type { BenchmarkView } from "#/lib/benchmarks";
+import { exportChartPng } from "#/lib/chart-export";
 import { nothingToPlot } from "#/lib/emptyChart";
 import { ChartSection } from "./ChartSection";
 import { Segmented } from "./Segmented";
@@ -117,11 +119,8 @@ export function TradeoffSection({
 	const [angles, setAngles] = useState<Angles>(VIEW_PRESETS.perspective);
 	const plotted = plottedFor(pricings, timed);
 
-	const exportChart = async () => {
-		if (!plotted) return;
-		const { downloadChartPng } = await import("#/lib/exportPng");
-		await downloadChartPng(tradeoffPng(plotted, angles, view));
-	};
+	const exportChart = () =>
+		plotted ? exportChartPng(tradeoffPng(plotted, angles, view)) : Effect.void;
 
 	return (
 		<ChartSection

@@ -49,10 +49,9 @@ export const DEFAULT_AMOUNT: Record<FitUnit, number> = {
 	apiUsd: 250,
 	tasks: 50,
 };
-const DEFAULT_FAMILY = "claude-opus-5-5" as FamilyId;
-if (!FIT_FAMILIES.includes(DEFAULT_FAMILY)) {
-	throw new Error(`Default plan-fit model ${DEFAULT_FAMILY} is not on a plan`);
-}
+const DEFAULT_FAMILY = Schema.decodeUnknownSync(Schema.Literals(FIT_FAMILIES))(
+	"claude-opus-5-5",
+);
 
 const Positive = Schema.Finite.check(Schema.isGreaterThan(0));
 

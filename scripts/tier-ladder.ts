@@ -1,7 +1,9 @@
 // Scales one known tier's cap to its sibling tiers by the vendor's own
 // multiples, such as Claude Max's "5x Pro" against Ultra's "10x Pro".
 
+import { Effect } from "effect";
 import type { ReportedCap } from "../src/domain/model.ts";
+import { PlanDataError } from "./plan-offers.ts";
 
 /** A vendor's family of tiers priced as multiples of one base tier. */
 export type Ladder = "claude" | "minimax-m" | "muse-code" | "x-subscription";
@@ -27,45 +29,49 @@ export type KnownTier = {
  * The known tier's per-model caps, scaled to a tier `times` the base tier's
  * usage. Every family must have a known figure, so no model drops silently.
  */
-export function scaledCap(
+export const scaledCap = Effect.fnUntraced(function* (
 	known: KnownTier,
 	tier: { label: string; times: number },
 	families: readonly string[],
-): ReportedCap {
+) {
 	const scale = tier.times / known.times;
 	return {
 		...known.cap,
 		weeklyCapApiUsdByFamily: Object.fromEntries(
-			families.map((family) => {
-				const cap = known.cap.weeklyCapApiUsdByFamily[family];
-				if (cap === undefined)
-					throw new Error(
-						`${tier.label}: no ${known.label} figure for ${family}`,
-					);
-				return [family, cap * scale];
-			}),
+			yield* Effect.forEach(
+				families,
+				Effect.fnUntraced(function* (family) {
+					const cap = known.cap.weeklyCapApiUsdByFamily[family];
+					if (cap === undefined)
+						return yield* new PlanDataError({
+							message: `${tier.label}: no ${known.label} figure for ${family}`,
+						});
+					return [family, cap * scale] as const;
+				}),
+			),
 		),
 		basis:
 			scale === 1
 				? known.cap.basis
 				: `${known.cap.basis}, scaled from ${usage(known, known.base)} to ${usage(tier, known.base)}`,
-	};
-}
+	} satisfies ReportedCap;
+});
 
 /**
  * The plan's cap scaled from its ladder's known tier, or null when the plan is
  * on no ladder or its ladder has no known tier. Other sources may still cap it.
  */
-export function ladderCap<L extends string>(
+export const ladderCap = <L extends string>(
 	knownTiers: Readonly<Partial<Record<L, KnownTier>>>,
 	tier: { ladder: L; times: number } | undefined,
 	label: string,
 	families: readonly string[],
-): ReportedCap | null {
-	const known = tier && knownTiers[tier.ladder];
-	if (!tier || !known) return null;
-	return scaledCap(known, { label, times: tier.times }, families);
-}
+) =>
+	Effect.gen(function* () {
+		const known = tier && knownTiers[tier.ladder];
+		if (!tier || !known) return null;
+		return yield* scaledCap(known, { label, times: tier.times }, families);
+	});
 
 /** "Max's 5x Pro", or just "Pro" for the base tier itself. */
 function usage(tier: { label: string; times: number }, base: string): string {

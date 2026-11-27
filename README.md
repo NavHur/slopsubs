@@ -147,6 +147,23 @@ The site imports three files without parsing them: `plans.json` and
 `src/domain/model.ts`. `src/data/data.test.ts` checks that each is still
 exactly what its schema outputs, so a hand edit fails CI rather than the page.
 
+## Effect boundaries
+
+Fallible domain operations return typed Effect failures. Pure calculations
+stay pure; the CLI and React/DOM boundaries run the resulting effects.
+Scripts decode external data and command arguments with `effect/Schema` and
+use the file, process and browser adapters under `scripts/effects/`.
+Browser, page and offscreen-render lifetimes are scoped so failure closes
+their resources as well as success.
+
+The small theme and pending-view bootstraps run inline before the first paint:
+the theme script uses the same theme literals as its Schema, and the
+pending-view script builds its parameter list from `DRAWN_PARAMS` in
+`src/lib/view.ts`, the source `ViewSearch` decodes. Playwright's serialized callbacks likewise
+cannot import modules from Node; native errors from those callbacks become
+typed failures at the browser adapter. These are intentional framework
+boundaries, not a second error-handling convention for application logic.
+
 ## Brand Images
 
 `public/og.png` (the 1200x630 social card) and `public/apple-touch-icon.png`

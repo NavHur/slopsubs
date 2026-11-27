@@ -1,7 +1,6 @@
 // Serves the prerendered build in dist/client for scripts that drive it in a
 // browser. Build first: `vp build`.
 
-import { readFile } from "node:fs/promises";
 import {
 	createServer,
 	type Server,
@@ -10,7 +9,8 @@ import {
 } from "node:http";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
-import { Context, Data, Effect, Layer, ManagedRuntime, Schema } from "effect";
+import { Data, Effect, ManagedRuntime, Schema } from "effect";
+import { TextFiles } from "./effects/files.ts";
 
 const SITE_DIR = fileURLToPath(new URL("../dist/client", import.meta.url));
 
@@ -54,25 +54,18 @@ class AssetReadFailed extends Data.TaggedError("AssetReadFailed")<{
 	}
 }
 
-class BuiltAssets extends Context.Service<
-	BuiltAssets,
-	{
-		readonly read: (
-			path: string,
-		) => Effect.Effect<Uint8Array, AssetNotFound | AssetReadFailed>;
-	}
->()("slopsubs/BuiltAssets") {
-	static readonly layer = Layer.succeed(this, {
-		read: (path) =>
-			Effect.tryPromise({
-				try: (signal) => readFile(path, { signal }),
-				catch: (cause) =>
-					isMissingFile(cause)
-						? new AssetNotFound({ path })
-						: new AssetReadFailed({ path, cause }),
-			}),
-	});
-}
+const readAsset = Effect.fnUntraced(function* (path: string) {
+	const files = yield* TextFiles;
+	return yield* files
+		.readBytes(path)
+		.pipe(
+			Effect.mapError(({ cause }) =>
+				isMissingFile(cause)
+					? new AssetNotFound({ path })
+					: new AssetReadFailed({ path, cause }),
+			),
+		);
+});
 
 function emptyResponse(response: ServerResponse, status: number) {
 	return Effect.sync(() => {
@@ -91,8 +84,7 @@ function serveAsset(request: IncomingMessage, response: ServerResponse) {
 			SITE_DIR,
 			path.endsWith("/") ? `${path}index.html` : path,
 		);
-		const assets = yield* BuiltAssets;
-		const body = yield* assets.read(file);
+		const body = yield* readAsset(file);
 		response.writeHead(200, {
 			"content-type":
 				CONTENT_TYPES[extname(file)] ?? "application/octet-stream",
@@ -128,27 +120,37 @@ function listen(server: Server) {
 	});
 }
 
-export async function serveSite(): Promise<Server> {
-	const runtime = ManagedRuntime.make(BuiltAssets.layer);
+export const serveSite = Effect.gen(function* () {
+	const runtime = ManagedRuntime.make(TextFiles.layer);
 	const server = createServer((request, response) =>
 		runtime.runPromise(serveAsset(request, response)),
 	);
 	server.once("close", () => {
 		void runtime.dispose();
 	});
-	try {
-		return await runtime.runPromise(listen(server));
-	} catch (cause) {
-		await runtime.dispose();
-		throw cause;
+	return yield* listen(server).pipe(
+		Effect.onError(() => Effect.promise(() => runtime.dispose())),
+	);
+});
+
+class MissingSiteAddress extends Data.TaggedError("MissingSiteAddress")<{}> {
+	override get message() {
+		return "The site server has no TCP address";
 	}
 }
 
 /** The server's origin, with a trailing slash. */
-export function originOf(server: Server): string {
+export const originOf = Effect.fnUntraced(function* (server: Server) {
 	const address = server.address();
 	if (!address || typeof address === "string") {
-		throw new Error("The site server has no TCP address");
+		return yield* new MissingSiteAddress();
 	}
 	return `${BASE_URL}:${address.port}/`;
+});
+
+/** Await the close so the process cannot leave a listener or pending request. */
+export function closeSite(server: Server) {
+	return Effect.callback<void>((resume) => {
+		server.close((error) => resume(error ? Effect.die(error) : Effect.void));
+	});
 }

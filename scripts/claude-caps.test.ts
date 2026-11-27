@@ -1,7 +1,11 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import type { FamilyId } from "../src/domain/model.ts";
 import { CLAUDE_TIMES_PRO, CLAUDE_ULTRA } from "./claude-caps.ts";
-import { scaledCap } from "./tier-ladder.ts";
+import { scaledCap as scaledCapEffect } from "./tier-ladder.ts";
+
+const scaledCap = (...args: Parameters<typeof scaledCapEffect>) =>
+	Effect.runSync(scaledCapEffect(...args));
 
 const DAYS_PER_WEEK = 7;
 const THEO_MONTH_DAYS = 30;

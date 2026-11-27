@@ -1,5 +1,12 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-import { median, requirePainted } from "./paint-stats.ts";
+import {
+	median,
+	requirePainted as requirePaintedEffect,
+} from "./paint-stats.ts";
+
+const requirePainted = (...args: Parameters<typeof requirePaintedEffect>) =>
+	Effect.runSync(requirePaintedEffect(...args));
 
 describe("median", () => {
 	it("takes the middle of an odd count", () => {

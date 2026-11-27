@@ -1,6 +1,7 @@
 // Builds the AA eval rows: scores and cost from model pages, tokens from eval pages,
 // time from tokens over output speed; a figure a page drops is carried forward.
 
+import { Effect } from "effect";
 import {
 	checkTokenWeights,
 	tokensByRecord,
@@ -112,37 +113,45 @@ function carryReport(
 	};
 }
 
-/** Throws when a whole kind of figure is missing from a run: AA has moved its
+/** Fails when a whole kind of figure is missing from a run: AA has moved its
  * pages again, which carrying figures forward must not hide. */
-function checkSomethingFresh(carry: CarryReport): void {
+const checkSomethingFresh = Effect.fnUntraced(function* (carry: CarryReport) {
 	if (!carry.costFresh)
-		throw new AaImportError({
+		return yield* new AaImportError({
 			message: "AA's model pages gave no fresh cost for any row",
 		});
 	if (!carry.figuresFresh)
-		throw new AaImportError({
+		return yield* new AaImportError({
 			message: "AA's eval pages gave no fresh tokens for any row",
 		});
-}
+});
 
-export function importAaEvals(input: ImportInput): ImportResult {
-	const tokens = tokensByRecord(input.evalPages.map(flightFromHtml));
-	const models = readModels(input.modelPages.map(flightFromHtml));
+export const importAaEvals = Effect.fnUntraced(function* (input: ImportInput) {
+	const tokens = yield* tokensByRecord(
+		yield* Effect.forEach(input.evalPages, flightFromHtml),
+	);
+	const models = yield* readModels(
+		yield* Effect.forEach(input.modelPages, flightFromHtml),
+	);
 	for (const model of models) {
 		const counted = tokens.get(model.id);
-		if (counted) checkTokenWeights(model, counted);
+		if (counted) yield* checkTokenWeights(model, counted);
 	}
 	const raw = models.flatMap((model) =>
 		withTokensAndTime(model, tokens.get(model.id)),
 	);
 	if (!raw.length)
-		throw new AaImportError({ message: "No eval rows extracted from website" });
-	const { rows: fresh, skips } = resolveRows(raw, input.byFamily);
+		return yield* new AaImportError({
+			message: "No eval rows extracted from website",
+		});
+	const { rows: fresh, skips } = yield* resolveRows(raw, input.byFamily);
 	if (!fresh.length)
-		throw new AaImportError({ message: "No eval rows matched the catalog" });
+		return yield* new AaImportError({
+			message: "No eval rows matched the catalog",
+		});
 	const prior = new Map(input.prior.map((r) => [rowKey(r), r]));
 	const rows = fresh.map((row) => carryRow(row, prior.get(rowKey(row))));
 	const carry = carryReport(fresh, rows);
-	checkSomethingFresh(carry);
-	return { rows, skips, carry };
-}
+	yield* checkSomethingFresh(carry);
+	return { rows, skips, carry } satisfies ImportResult;
+});

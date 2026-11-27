@@ -1,5 +1,8 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-import { split } from "./scroll-timing.ts";
+import { split as splitEffect } from "./scroll-timing.ts";
+
+const split = (raw: unknown) => Effect.runSync(splitEffect(raw));
 
 const nodes = [{ id: 1, callFrame: { functionName: "work" } }];
 

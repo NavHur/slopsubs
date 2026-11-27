@@ -1,7 +1,9 @@
 // Times a wheel pass on the built page with Chrome's CPU profiler, splitting
 // script time into React's work and layout reads (see README, Profiling).
 
+import { Effect, Schema } from "effect";
 import type { Browser } from "playwright-core";
+import { BrowserCheckError, browserOperation } from "./effects/browser.ts";
 import { uncountedProbe } from "./page-probe.ts";
 import { openPage, pointAtGutter, type ViewportName } from "./page-session.ts";
 
@@ -24,15 +26,18 @@ const BUCKETS = {
 } as const;
 
 /** The parts of a CDP Profiler.Profile the split reads. */
-type Profile = {
-	nodes: {
-		id: number;
-		callFrame: { functionName: string };
-		children?: number[];
-	}[];
-	samples?: number[];
-	timeDeltas?: number[];
-};
+const Profile = Schema.Struct({
+	nodes: Schema.Array(
+		Schema.Struct({
+			id: Schema.Int,
+			callFrame: Schema.Struct({ functionName: Schema.String }),
+			children: Schema.optional(Schema.Array(Schema.Int)),
+		}),
+	),
+	samples: Schema.Array(Schema.Int),
+	timeDeltas: Schema.Array(Schema.Finite),
+});
+type Profile = typeof Profile.Type;
 
 type Split = { script: number } & Record<keyof typeof BUCKETS, number>;
 
@@ -70,18 +75,14 @@ function bucketsIn(stack: readonly string[]) {
 		.map(([bucket]) => bucket);
 }
 
-function profileSamples(profile: Profile) {
-	const { samples, timeDeltas } = profile;
-	if (!samples) throw new Error("Chrome profile has no samples");
-	if (!timeDeltas || timeDeltas.length < samples.length) {
-		throw new Error("Chrome profile has fewer timeDeltas than samples");
-	}
-	return { samples, timeDeltas };
-}
-
 /** Milliseconds of script, and of each bucket, in a profile. */
-export function split(profile: Profile): Split {
-	const { samples, timeDeltas } = profileSamples(profile);
+export const split = Effect.fnUntraced(function* (raw: unknown) {
+	const profile = yield* Schema.decodeUnknownEffect(Profile)(raw);
+	const { samples, timeDeltas } = profile;
+	if (timeDeltas.length < samples.length)
+		return yield* new BrowserCheckError({
+			message: "Chrome profile has fewer timeDeltas than samples",
+		});
 	const stackOf = stacksOf(profile);
 	const totals: Split = { script: 0, react: 0, layoutReads: 0 };
 	samples.forEach((id, i) => {
@@ -93,35 +94,45 @@ export function split(profile: Profile): Split {
 		for (const bucket of bucketsIn(stack)) totals[bucket] += ms;
 	});
 	return totals;
-}
+});
 
 /**
  * Replays a pass's wheel deltas on an unprobed page and profiles it. Steps
  * wait on the clock alone: evaluating script in the page would be profiled.
  */
-async function timedScroll(
+const timedScroll = Effect.fnUntraced(function* (
 	browser: Browser,
 	origin: string,
 	viewport: ViewportName,
 	wheel: readonly number[],
-): Promise<Split> {
-	const page = await openPage(browser, origin, viewport, uncountedProbe);
-	const cdp = await page.context().newCDPSession(page);
-	await cdp.send("Emulation.setCPUThrottlingRate", { rate: CPU_SLOWDOWN });
-	await cdp.send("Profiler.enable");
-	await cdp.send("Profiler.setSamplingInterval", {
-		interval: SAMPLING_INTERVAL_US,
-	});
-	await pointAtGutter(page, viewport);
-	await cdp.send("Profiler.start");
+) {
+	const page = yield* openPage(browser, origin, viewport, uncountedProbe);
+	const cdp = yield* browserOperation("newCDPSession", () =>
+		page.context().newCDPSession(page),
+	);
+	yield* browserOperation("send", () =>
+		cdp.send("Emulation.setCPUThrottlingRate", { rate: CPU_SLOWDOWN }),
+	);
+	yield* browserOperation("send", () => cdp.send("Profiler.enable"));
+	yield* browserOperation("send", () =>
+		cdp.send("Profiler.setSamplingInterval", {
+			interval: SAMPLING_INTERVAL_US,
+		}),
+	);
+	yield* pointAtGutter(page, viewport);
+	yield* browserOperation("send", () => cdp.send("Profiler.start"));
 	for (const delta of wheel) {
-		await page.mouse.wheel(0, delta);
-		await page.waitForTimeout(STEP_MS);
+		yield* browserOperation("wheel", () => page.mouse.wheel(0, delta));
+		yield* browserOperation("waitForTimeout", () =>
+			page.waitForTimeout(STEP_MS),
+		);
 	}
-	const { profile } = await cdp.send("Profiler.stop");
-	await page.close();
-	return split(profile);
-}
+	const { profile } = yield* browserOperation("send", () =>
+		cdp.send("Profiler.stop"),
+	);
+
+	return yield* split(profile);
+}, Effect.scoped);
 
 function median(values: readonly number[]) {
 	const sorted = values.toSorted((a, b) => a - b);
@@ -129,7 +140,7 @@ function median(values: readonly number[]) {
 }
 
 /** Each figure's median over TIMED_RUNS fresh pages, and every run's value. */
-export async function scrollTimings(
+export const scrollTimings = Effect.fnUntraced(function* (
 	browser: Browser,
 	origin: string,
 	viewport: ViewportName,
@@ -137,7 +148,7 @@ export async function scrollTimings(
 ) {
 	const runs: Split[] = [];
 	for (let i = 0; i < TIMED_RUNS; i++) {
-		runs.push(await timedScroll(browser, origin, viewport, wheel));
+		runs.push(yield* timedScroll(browser, origin, viewport, wheel));
 	}
 	// SAFETY: every run is a Split, so its keys are the keys of Split.
 	const names = Object.keys(runs[0]) as (keyof Split)[];
@@ -147,4 +158,4 @@ export async function scrollTimings(
 			return [name, { medianMs: median(values), runsMs: values }];
 		}),
 	);
-}
+});

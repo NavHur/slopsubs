@@ -1,3 +1,5 @@
+import * as Option from "effect/Option";
+import * as Schema from "effect/Schema";
 import { type FitSearch, fitInputs } from "./fit";
 
 /** The quiz's questions, in order. */
@@ -10,13 +12,17 @@ export type FieldEntry =
 	| { kind: "invalid" }
 	| { kind: "number"; value: number };
 
+const decodeAmount = Schema.decodeUnknownOption(
+	Schema.NumberFromString.check(Schema.isFinite(), Schema.isGreaterThan(0)),
+);
+
 /** `badInput` is the browser's word for number-field text with no number in it. */
 export function parseEntry(text: string, badInput = false): FieldEntry {
 	if (badInput) return { kind: "invalid" };
 	if (text.trim() === "") return { kind: "blank" };
-	const value = Number(text);
-	return Number.isFinite(value) && value > 0
-		? { kind: "number", value }
+	const value = decodeAmount(text);
+	return Option.isSome(value)
+		? { kind: "number", value: value.value }
 		: { kind: "invalid" };
 }
 

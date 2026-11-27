@@ -1,3 +1,5 @@
+import { Data, Effect } from "effect";
+import { isArrayNonEmpty } from "effect/Array";
 import { EFFORTS } from "./enums";
 import type { BenchmarkPoint, Effort, FamilyId, Plan } from "./model";
 import { type FamilyNeed, planFit, type PlanFitOutcome } from "./planFit";
@@ -83,7 +85,12 @@ export type Recommendation =
 export type RankedRecommendation = Extract<Recommendation, { kind: "ranked" }>;
 
 /** One way to run the week: an API-priced need per family. */
-type Demand = { family: FamilyId; apiUsdPerWeek: number }[];
+type FamilyDemand = { family: FamilyId; apiUsdPerWeek: number };
+type Demand = [FamilyDemand, ...FamilyDemand[]];
+
+export class EmptyWorkload extends Data.TaggedError("EmptyWorkload")<{
+	message: string;
+}> {}
 
 type Verdict =
 	| (Basis & PlanFitOutcome)
@@ -94,7 +101,7 @@ type Verdict =
  * The plans that cover a visitor's week, cheapest first, beside what the week
  * costs at API prices, and why each other plan can't be recommended.
  */
-export function recommendPlans({
+export const recommendPlans = Effect.fnUntraced(function* ({
 	plans,
 	points,
 	workload,
@@ -102,8 +109,8 @@ export function recommendPlans({
 	plans: readonly SizedPlan[];
 	points: readonly BenchmarkPoint[];
 	workload: Workload;
-}): Recommendation {
-	const priced = demands(workload, points);
+}) {
+	const priced = yield* demands(workload, points);
 	if (priced.kind === "unpriced") return priced;
 	const { options } = priced;
 	const effort = workload.usage.unit === "tasks" ? workload.usage.effort : null;
@@ -145,8 +152,8 @@ export function recommendPlans({
 			.filter((v) => v.kind === "gap")
 			.map(({ plan, family, gap }) => ({ plan, family, gap })),
 		overBudget: overBudget.map((p) => p.plan),
-	};
-}
+	} satisfies Recommendation;
+});
 
 function cheapestFirst(verdicts: readonly Verdict[]): PlanFit[] {
 	return verdicts
@@ -163,10 +170,10 @@ type Priced =
 	| { kind: "unpriced"; families: FamilyId[] };
 
 /** The week's demand per way of running it, or the families left unpriced. */
-function demands(
+const demands = Effect.fnUntraced(function* (
 	{ models, usage }: Workload,
 	points: readonly BenchmarkPoint[],
-): Priced {
+) {
 	const weekly = (family: FamilyId, part: number) => {
 		const price = apiUsdPerUnit(usage, family, points);
 		return price === null
@@ -175,14 +182,14 @@ function demands(
 	};
 	return models.kind === "any"
 		? anyDemands(models.families, weekly)
-		: chosenDemands(models.weights, weekly);
-}
+		: yield* chosenDemands(models.weights, weekly);
+});
 
 type WeeklyNeed = (family: FamilyId, part: number) => Demand[number] | null;
 
 /** Each priced family alone carries the whole week. */
 function anyDemands(families: readonly FamilyId[], weekly: WeeklyNeed): Priced {
-	const options = families.flatMap((family) => {
+	const options = families.flatMap((family): Demand[] => {
 		const need = weekly(family, 1);
 		return need ? [[need]] : [];
 	});
@@ -192,22 +199,26 @@ function anyDemands(families: readonly FamilyId[], weekly: WeeklyNeed): Priced {
 }
 
 /** The chosen families split the week by weight; all must be priced. */
-function chosenDemands(
+const chosenDemands = Effect.fnUntraced(function* (
 	weights: readonly FamilyWeight[],
 	weekly: WeeklyNeed,
-): Priced {
+) {
 	const total = weights.reduce((sum, w) => sum + w.weight, 0);
-	const demand: Demand = [];
+	const demand: FamilyDemand[] = [];
 	const unpriced: FamilyId[] = [];
 	for (const { family, weight } of weights) {
 		const need = weekly(family, weight / total);
 		if (need) demand.push(need);
 		else unpriced.push(family);
 	}
-	return unpriced.length > 0
-		? { kind: "unpriced", families: unpriced }
-		: { kind: "priced", options: [demand] };
-}
+	if (unpriced.length > 0)
+		return { kind: "unpriced", families: unpriced } satisfies Priced;
+	if (!isArrayNonEmpty(demand))
+		return yield* new EmptyWorkload({
+			message: "Choose at least one model for the week",
+		});
+	return { kind: "priced", options: [demand] } satisfies Priced;
+});
 
 function amount(usage: Usage): number {
 	return usage.unit === "tasks" ? usage.tasksPerWeek : usage.apiUsdPerWeek;
@@ -268,26 +279,40 @@ function verdictFor(
 ): Verdict {
 	const gap = demand.map((d) => gapIn(plan, d.family, effort)).find(Boolean);
 	if (gap) return { kind: "gap", ...gap };
-	const needs: FamilyNeed[] = [];
-	for (const { family, apiUsdPerWeek } of demand) {
-		const allowance = weeklyAllowance(plan, capacity, family);
-		if (allowance === null) return { kind: "unsized", plan };
-		needs.push({ family, apiUsdPerWeek: apiUsdPerWeek * scale, allowance });
+	const [first, ...rest] = demand;
+	const allowance = weeklyAllowance(plan, capacity, first.family);
+	if (allowance === null) return { kind: "unsized", plan };
+	const needs: [FamilyNeed, ...FamilyNeed[]] = [
+		{ ...first, apiUsdPerWeek: first.apiUsdPerWeek * scale, allowance },
+	];
+	for (const { family, apiUsdPerWeek } of rest) {
+		const next = weeklyAllowance(plan, capacity, family);
+		if (next === null) return { kind: "unsized", plan };
+		needs.push({
+			family,
+			apiUsdPerWeek: apiUsdPerWeek * scale,
+			allowance: next,
+		});
 	}
 	return {
 		plan,
 		families: demand.map((d) => d.family),
-		basis: leastCertainBasis(plan, needs),
+		basis: leastCertainBasis(needs),
 		...planFit(plan, needs),
 	};
 }
 
-function leastCertainBasis(plan: Plan, needs: readonly FamilyNeed[]): CapBasis {
-	const basis = BASIS_CERTAINTY.find((b) =>
-		needs.some((n) => n.allowance.basis === b),
+function leastCertainBasis([first, ...rest]: [
+	FamilyNeed,
+	...FamilyNeed[],
+]): CapBasis {
+	return rest.reduce(
+		(basis, { allowance }) =>
+			BASIS_CERTAINTY.indexOf(allowance.basis) < BASIS_CERTAINTY.indexOf(basis)
+				? allowance.basis
+				: basis,
+		first.allowance.basis,
 	);
-	if (!basis) throw new Error(`${plan.id}: no cap basis for an empty week`);
-	return basis;
 }
 
 function gapIn(

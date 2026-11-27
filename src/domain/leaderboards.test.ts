@@ -1,11 +1,21 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-import { evalPoints, frontierCodePoints } from "./leaderboards";
+import {
+	evalPoints as evalPointsEffect,
+	frontierCodePoints as frontierCodePointsEffect,
+} from "./leaderboards";
 import type {
 	AaEvalRow,
 	BenchmarkPoint,
 	FamilyId,
 	FrontierCodeRow,
 } from "./model";
+
+const evalPoints = (...args: Parameters<typeof evalPointsEffect>) =>
+	Effect.runSync(evalPointsEffect(...args));
+const frontierCodePoints = (
+	...args: Parameters<typeof frontierCodePointsEffect>
+) => Effect.runSync(frontierCodePointsEffect(...args));
 
 // SAFETY: test ids stand in for branded family ids.
 const OPUS = "claude-opus-5-5" as FamilyId;

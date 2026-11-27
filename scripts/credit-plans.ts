@@ -1,8 +1,10 @@
 // Credit plans: a fixed amount of usage a month at the vendor's own token
 // rates, which build-plans values at list price as a published allowance.
 
+import { Effect } from "effect";
 import type { Promotion, PublishedAllowance } from "../src/domain/model.ts";
-import { listPriced, type TokenRates } from "./list-price.ts";
+import { listPriced, type ListRates, type TokenRates } from "./list-price.ts";
+import { PlanDataError } from "./plan-offers.ts";
 
 /** A limited-time discount on one model's rates, counted while it runs. */
 type CreditPromo = { rates: TokenRates; promotion: Promotion };
@@ -26,39 +28,46 @@ export type CreditPlan = {
 };
 
 /** Each family's monthly allowance in list-priced dollars. */
-export function creditAllowance(
+export const creditAllowance = Effect.fnUntraced(function* (
 	plan: CreditPlan,
 	priceUsd: number,
 	families: readonly string[],
-	listRates: (family: string) => TokenRates,
-): PublishedAllowance {
+	listRates: ListRates,
+) {
 	return {
 		apiUsdPerMonthByFamily: Object.fromEntries(
-			families.map((family) => [
-				family,
-				listPriced(
-					plan.monthlyCredit,
-					vendorRates(plan, family, listRates),
-					listRates(family),
-				),
-			]),
+			yield* Effect.forEach(
+				families,
+				Effect.fnUntraced(function* (family) {
+					return [
+						family,
+						listPriced(
+							plan.monthlyCredit,
+							yield* vendorRates(plan, family, listRates),
+							yield* listRates(family),
+						),
+					] as const;
+				}),
+			),
 		),
 		url: plan.url,
 		basis: plan.basis(priceUsd),
-	};
-}
+	} satisfies PublishedAllowance;
+});
 
-function vendorRates(
+const vendorRates = Effect.fnUntraced(function* (
 	plan: CreditPlan,
 	family: string,
-	listRates: (family: string) => TokenRates,
-): TokenRates {
+	listRates: ListRates,
+) {
 	const rates = plan.promos[family]?.rates ?? plan.rates[family];
 	if (rates) return rates;
 	if (plan.unit === "credits")
-		throw new Error(`${family}: no credit rate for a plan in its own credits`);
-	return listRates(family);
-}
+		return yield* new PlanDataError({
+			message: `${family}: no credit rate for a plan in its own credits`,
+		});
+	return yield* listRates(family);
+});
 
 /** The promotions a credit plan's allowance counts: its families' only. */
 export function creditPromotions(
