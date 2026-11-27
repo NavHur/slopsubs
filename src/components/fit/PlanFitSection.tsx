@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 import { useMemo, useRef, useState } from "react";
 import { leaderboards } from "#/data";
 import type { BenchmarkId } from "#/domain/enums";
@@ -123,11 +124,13 @@ function Answer({
 	const inputs = useMemo(() => fitInputs(fit), [fit]);
 	const result = useMemo(
 		() =>
-			recommendPlans({
-				plans: SIZED_PLANS,
-				points: leaderboards[benchmark].models,
-				workload: fitWorkload(inputs),
-			}),
+			Effect.runSync(
+				recommendPlans({
+					plans: SIZED_PLANS,
+					points: leaderboards[benchmark].models,
+					workload: fitWorkload(inputs),
+				}),
+			),
 		[benchmark, inputs],
 	);
 	return (

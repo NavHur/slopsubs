@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import type { BenchmarkPoint, Effort, FamilyId, Plan, PlanId } from "./model";
 import { recommendPlans, type Workload } from "./recommend";
@@ -93,11 +94,13 @@ function point(family: FamilyId, costPerTaskUsd: number): BenchmarkPoint {
 const POINTS = [point(opus, 2), point(sonnet, 1), point(fable, 5)];
 
 function recommend(plans: readonly Plan[], workload: Workload) {
-	return recommendPlans({
-		plans: plans.map((p) => ({ plan: p, capacity: planCapacity(p, []) })),
-		points: POINTS,
-		workload,
-	});
+	return Effect.runSync(
+		recommendPlans({
+			plans: plans.map((p) => ({ plan: p, capacity: planCapacity(p, []) })),
+			points: POINTS,
+			workload,
+		}),
+	);
 }
 
 function apiUsd(apiUsdPerWeek: number, families: FamilyId[]): Workload {
@@ -384,4 +387,21 @@ describe("recommendPlans", () => {
 		const result = ranked(recommend([max], any));
 		expect(result.fits).toMatchObject([{ families: [opus] }]);
 	});
+});
+
+it("fails with EmptyWorkload for a chosen week with no models", () => {
+	const result = Effect.runSync(
+		Effect.flip(
+			recommendPlans({
+				plans: [],
+				points: POINTS,
+				workload: {
+					models: { kind: "chosen", weights: [] },
+					usage: { unit: "apiUsd", apiUsdPerWeek: 50 },
+					monthlyBudgetUsd: null,
+				},
+			}),
+		),
+	);
+	expect(result._tag).toBe("EmptyWorkload");
 });

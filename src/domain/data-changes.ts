@@ -236,17 +236,15 @@ function valueChanges(
 ): ValueChange[] {
 	const old = valueMultiples(before);
 	const fresh = valueMultiples(after);
-	const keys = new Set([...old.values.keys(), ...fresh.values.keys()]);
+	const values = new Map([...old.values, ...fresh.values]);
 	const names = new Map([
 		...familyNames(before.benchmarks),
 		...familyNames(after.benchmarks),
 	]);
-	return [...keys].flatMap((key) => {
+	return [...values].flatMap(([key, plan]) => {
 		const was = old.multiples.get(key) ?? null;
 		const now = fresh.multiples.get(key) ?? null;
 		if (sameValue(was, now)) return [];
-		const plan = fresh.values.get(key) ?? old.values.get(key);
-		if (!plan) throw new Error(`No plan for value key ${key}`);
 		const name = names.get(plan.family) ?? plan.family;
 		return [{ ...plan, name, before: was, after: now }];
 	});

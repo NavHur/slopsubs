@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import { leaderboards } from "#/data";
 import type { FamilyId } from "#/domain/model";
@@ -19,11 +20,13 @@ const BENCHMARK = "Intelligence Index";
 
 function answer(fit: FitSearch | undefined) {
 	const inputs = fitInputs(fit);
-	const result = recommendPlans({
-		plans: SIZED_PLANS,
-		points: leaderboards.intelligence.models,
-		workload: fitWorkload(inputs),
-	});
+	const result = Effect.runSync(
+		recommendPlans({
+			plans: SIZED_PLANS,
+			points: leaderboards.intelligence.models,
+			workload: fitWorkload(inputs),
+		}),
+	);
 	if (result.kind !== "ranked") throw new Error(`unexpected ${result.kind}`);
 	return { inputs, result };
 }
@@ -258,11 +261,13 @@ describe("a week with reasoning off", () => {
 
 	it("won't price a model with no non-reasoning point", () => {
 		const inputs = fitInputs({ ...week, models: [opus] });
-		const result = recommendPlans({
-			plans: SIZED_PLANS,
-			points: leaderboards.intelligence.models,
-			workload: fitWorkload(inputs),
-		});
+		const result = Effect.runSync(
+			recommendPlans({
+				plans: SIZED_PLANS,
+				points: leaderboards.intelligence.models,
+				workload: fitWorkload(inputs),
+			}),
+		);
 		if (result.kind !== "unpriced") throw new Error(result.kind);
 		expect(unpricedLine(result, inputs, BENCHMARK)).toMatch(
 			/^Intelligence Index has no non-reasoning cost for Opus 5\.5,/,
