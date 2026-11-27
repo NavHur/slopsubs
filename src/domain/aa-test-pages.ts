@@ -1,6 +1,7 @@
 import { AA_EVAL_IDS } from "./enums";
 
-/** Claude Sonnet 5.5 (max) as AA's pages carried it on 2026-11-20. */
+/** Claude Sonnet 5.5 (max), based on AA's 2026-11-20 pages with the
+ * Terminal-Bench keys adapted to 4.1. */
 export const SONNET = {
 	id: "b171d979-5ec1-45de-b8b9-db1ee65e77ec",
 	slug: "claude-sonnet-5-5",
