@@ -1,5 +1,6 @@
 import { cn } from "cn";
 import type { ReactNode } from "react";
+import type { ChartExport } from "#/lib/chart-export";
 import { DownloadPngButton } from "./HeaderActions";
 
 /**
@@ -20,7 +21,7 @@ export function ChartSection({
 	title: string;
 	controls?: ReactNode;
 	canExport: boolean;
-	onExport: () => Promise<void>;
+	onExport: () => ChartExport;
 	className?: string;
 	children: ReactNode;
 }) {
