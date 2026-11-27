@@ -1,6 +1,6 @@
-import { Effect } from "effect";
+import { Effect, Exit, Option } from "effect";
 import { describe, expect, it } from "vite-plus/test";
-import { Commands } from "./commands.ts";
+import { type CommandError, Commands } from "./commands.ts";
 
 const run = <A, E>(effect: Effect.Effect<A, E, Commands>) =>
 	Effect.runPromise(effect.pipe(Effect.provide(Commands.layer)));
@@ -28,6 +28,36 @@ describe("command service", () => {
 				),
 			),
 		).rejects.toMatchObject({ _tag: "CommandError", cause: { code: 7 } });
+	});
+
+	it("fails with CommandError when Node rejects the startup arguments", async () => {
+		// A Die has no error, so this finds only a typed failure.
+		const failureOf = async <A>(
+			effect: Effect.Effect<A, CommandError, Commands>,
+		) =>
+			Option.getOrUndefined(
+				Exit.findErrorOption(
+					await Effect.runPromiseExit(
+						effect.pipe(Effect.provide(Commands.layer)),
+					),
+				),
+			);
+		await expect(
+			failureOf(
+				Effect.flatMap(Commands, (commands) =>
+					commands.capture(process.execPath, [], {
+						cwd: new URL("https://example.invalid/"),
+					}),
+				),
+			),
+		).resolves.toMatchObject({ _tag: "CommandError" });
+		await expect(
+			failureOf(
+				Effect.flatMap(Commands, (commands) =>
+					commands.inherit(process.execPath, ["a\0b"]),
+				),
+			),
+		).resolves.toMatchObject({ _tag: "CommandError" });
 	});
 
 	it("reports an inherited command's exit status", async () => {

@@ -27,31 +27,41 @@ export class Commands extends Context.Service<
 		) => Effect.Effect<CommandExit, CommandError>;
 	}
 >()("slopsubs/Commands") {
+	/** Node validates startup arguments (cwd, args) synchronously and throws;
+	 * those throws are failures like the emitted ones. */
 	static readonly layer = Layer.succeed(this, {
 		capture: (command, args, options) =>
 			Effect.callback((resume, signal) => {
-				execFile(
-					command,
-					args,
-					{ ...options, signal, encoding: "utf8" },
-					(cause, stdout) => {
-						resume(
-							cause
-								? Effect.fail(new CommandError({ command, cause }))
-								: Effect.succeed(stdout),
-						);
-					},
-				);
+				try {
+					execFile(
+						command,
+						args,
+						{ ...options, signal, encoding: "utf8" },
+						(cause, stdout) => {
+							resume(
+								cause
+									? Effect.fail(new CommandError({ command, cause }))
+									: Effect.succeed(stdout),
+							);
+						},
+					);
+				} catch (cause) {
+					resume(Effect.fail(new CommandError({ command, cause })));
+				}
 			}),
 		inherit: (command, args) =>
 			Effect.callback((resume, signal) => {
-				const child = spawn(command, args, { stdio: "inherit", signal });
-				child.once("error", (cause) =>
-					resume(Effect.fail(new CommandError({ command, cause }))),
-				);
-				child.once("exit", (status, signal) =>
-					resume(Effect.succeed({ status: status ?? 1, signal })),
-				);
+				try {
+					const child = spawn(command, args, { stdio: "inherit", signal });
+					child.once("error", (cause) =>
+						resume(Effect.fail(new CommandError({ command, cause }))),
+					);
+					child.once("exit", (status, signal) =>
+						resume(Effect.succeed({ status: status ?? 1, signal })),
+					);
+				} catch (cause) {
+					resume(Effect.fail(new CommandError({ command, cause })));
+				}
 			}),
 	});
 }
