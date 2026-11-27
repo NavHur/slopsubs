@@ -1,7 +1,7 @@
 // Reads per-model Intelligence Index scores and cost out of AA model pages' Next.js
 // flight payloads and files them under the catalog's families and efforts.
 
-import { Schema } from "effect";
+import { Effect, Schema } from "effect";
 import { AA_EVAL_INDEX, isAaEvalId } from "./aa-eval-index";
 import { AaImportError } from "./aa-import-error";
 import { AA_EVAL_IDS } from "./enums";
@@ -58,8 +58,8 @@ const EvalRecord = Schema.Struct({
 	critptAgenticHard: Score,
 	terminalBenchScience: Score,
 });
-const decodeEvalRecord = Schema.decodeUnknownSync(EvalRecord);
-const decodeChunkText = Schema.decodeUnknownSync(
+const decodeEvalRecord = Schema.decodeUnknownEffect(EvalRecord);
+const decodeChunkText = Schema.decodeUnknownEffect(
 	Schema.fromJsonString(Schema.String),
 );
 export type EvalRecord = typeof EvalRecord.Type;
@@ -81,43 +81,40 @@ export type EvalRow = {
 export type ResolvedRow = EvalRow & { effort: Effort };
 
 /** The string literal of the push chunk starting at `marker`, decoded. */
-function decodeChunk(
-	html: string,
-	marker: number,
-): { text: string; next: number } {
+const decodeChunk = Effect.fnUntraced(function* (html: string, marker: number) {
 	const open = marker + CHUNK_MARKER.length;
 	if (html[open] !== '"')
-		throw new AaImportError({
+		return yield* new AaImportError({
 			message: `Flight chunk at offset ${marker} has no string literal`,
 		});
 	const close = stringLiteralEnd(html, open);
-	try {
-		return {
-			text: decodeChunkText(html.slice(open, close + 1)),
-			next: close + 1,
-		};
-	} catch (cause) {
-		if (!(cause instanceof Schema.SchemaError)) throw cause;
-		throw new AaImportError({
-			message: `Flight chunk at offset ${marker} is not a JSON string`,
-			cause,
-		});
-	}
-}
+	const text = yield* decodeChunkText(html.slice(open, close + 1)).pipe(
+		Effect.mapError(
+			(cause) =>
+				new AaImportError({
+					message: `Flight chunk at offset ${marker} is not a JSON string`,
+					cause,
+				}),
+		),
+	);
+	return { text, next: close + 1 };
+});
 
 /** Reconstructs the React Flight string from Next.js push chunks. */
-export function flightFromHtml(html: string): string {
+export const flightFromHtml = Effect.fnUntraced(function* (html: string) {
 	const chunks: string[] = [];
 	let marker = html.indexOf(CHUNK_MARKER);
 	while (marker >= 0) {
-		const chunk = decodeChunk(html, marker);
+		const chunk = yield* decodeChunk(html, marker);
 		chunks.push(chunk.text);
 		marker = html.indexOf(CHUNK_MARKER, chunk.next);
 	}
 	if (!chunks.length)
-		throw new AaImportError({ message: "No flight chunks found in page" });
+		return yield* new AaImportError({
+			message: "No flight chunks found in page",
+		});
 	return chunks.join("");
-}
+});
 
 /** A record's own effort slug: `none` for an effortless model that does not
  * reason; null for one that does, filed under its default or only reasoning variant. */
@@ -130,28 +127,28 @@ function recordEffort(record: EvalRecord): string | null {
  * the total, before the index is taken to have changed. */
 const COST_SUM_TOLERANCE = 1e-4;
 
-/** The eval AA's cost entry is for. Throws on one the importer lacks a weight for. */
-function costedEval(slug: string): AaEvalId {
+/** The eval AA's cost entry is for. Fails on one the importer lacks a weight for. */
+const costedEval = Effect.fnUntraced(function* (slug: string) {
 	if (!isAaEvalId(slug))
-		throw new AaImportError({
+		return yield* new AaImportError({
 			message: `AA's index costs an unknown eval: ${slug}`,
 		});
 	return slug;
-}
+});
 
 /** The record's cost per task for each eval it costs: AA's weighted cost over
- * the eval's weight in the index. Throws when the costs do not add up to the
+ * the eval's weight in the index. Fails when the costs do not add up to the
  * record's index total, cover an eval the importer lacks a weight for, or cover
  * one eval twice. */
-function recordCosts(record: EvalRecord): Map<AaEvalId, number> {
+const recordCosts = Effect.fnUntraced(function* (record: EvalRecord) {
 	const costs = new Map<AaEvalId, number>();
 	const index = record.intelligenceIndexCostPerTask;
 	if (!index) return costs;
 	let weighted = 0;
 	for (const { slug, weightedCostPerTask } of index.evaluations) {
-		const evalId = costedEval(slug);
+		const evalId = yield* costedEval(slug);
 		if (costs.has(evalId))
-			throw new AaImportError({
+			return yield* new AaImportError({
 				message: `AA's index costs ${slug} twice for ${record.slug}`,
 			});
 		weighted += weightedCostPerTask;
@@ -161,18 +158,18 @@ function recordCosts(record: EvalRecord): Map<AaEvalId, number> {
 		Math.abs(weighted - index.cost.total) >
 		index.cost.total * COST_SUM_TOLERANCE
 	)
-		throw new AaImportError({
+		return yield* new AaImportError({
 			message: `The weighted costs for ${record.slug} add up to ${weighted}, but AA's index cost is ${index.cost.total}`,
 		});
 	return costs;
-}
+});
 
 /** One row per eval the record has a score for. */
-function recordRows(record: EvalRecord): EvalRow[] {
+const recordRows = Effect.fnUntraced(function* (record: EvalRecord) {
 	const family = record.release.slug;
 	const effort = recordEffort(record);
-	const costs = recordCosts(record);
-	return AA_EVAL_IDS.flatMap((id) => {
+	const costs = yield* recordCosts(record);
+	return AA_EVAL_IDS.flatMap((id): EvalRow[] => {
 		const score = AA_EVAL_INDEX[id].score(record);
 		if (score === null || score === undefined) return [];
 		return [
@@ -187,7 +184,7 @@ function recordRows(record: EvalRecord): EvalRow[] {
 			},
 		];
 	});
-}
+});
 
 /** A model page's record, read: its eval rows, and the output speed (tokens per
  * second) that turns its tokens per task into time. */
@@ -200,55 +197,62 @@ export type ModelReading = {
 	indexOutputTokens: number | null;
 };
 
-function outputSpeed(record: EvalRecord): number | null {
+const outputSpeed = Effect.fnUntraced(function* (record: EvalRecord) {
 	const tokens = record.intelligenceIndexOutputTokensPerTask?.output;
 	const seconds = record.intelligenceIndexTimePerTask;
 	if (!tokens || !seconds) return null;
 	const speed = tokens / seconds;
 	if (!Number.isFinite(speed) || speed <= 0)
-		throw new AaImportError({
+		return yield* new AaImportError({
 			message: `AA's index output speed for ${record.slug} is not usable`,
 		});
 	return speed;
-}
+});
 
 /**
  * Every model the flight payloads embed, each once. A model several pages
  * embed must read the same on all of them.
  */
-export function readModels(flights: readonly string[]): ModelReading[] {
+export const readModels = Effect.fnUntraced(function* (
+	flights: readonly string[],
+) {
 	const seen = new Map<string, string>();
-	return flights.flatMap(flightRecords).flatMap((record) => {
-		const parsed = decodeEvalRecord(record);
+	const records = (yield* Effect.forEach(flights, flightRecords)).flat();
+	const models: ModelReading[] = [];
+	for (const record of records) {
+		const parsed = yield* decodeEvalRecord(record);
 		const reading: ModelReading = {
 			id: parsed.id,
 			slug: parsed.slug,
-			rows: recordRows(parsed),
-			outputSpeed: outputSpeed(parsed),
+			rows: yield* recordRows(parsed),
+			outputSpeed: yield* outputSpeed(parsed),
 			indexOutputTokens:
 				parsed.intelligenceIndexOutputTokensPerTask?.output ?? null,
 		};
-		if (!firstReading(seen, parsed.slug, JSON.stringify(reading))) return [];
-		return [reading];
-	});
-}
+		if (yield* firstReading(seen, parsed.slug, JSON.stringify(reading)))
+			models.push(reading);
+	}
+	return models;
+});
 
 /** The catalog model a website effort names; null when the catalog lacks it.
  * A null effort is a reasoning model with no named effort. */
-export function pickModel(
+export const pickModel = Effect.fnUntraced(function* (
 	candidates: BenchmarkPoint[],
 	effort: string | null,
 	family: string,
-): BenchmarkPoint | null {
+) {
 	if (effort !== null)
 		return candidates.find((m) => m.effort === effort) ?? null;
 	const [only, ...rest] = candidates;
 	if (!rest.length) return only.effort === "none" ? null : only;
 	const fallback = candidates.find((m) => m.effort === "default");
 	if (!fallback)
-		throw new AaImportError({ message: `Ambiguous null effort for ${family}` });
+		return yield* new AaImportError({
+			message: `Ambiguous null effort for ${family}`,
+		});
 	return fallback;
-}
+});
 
 /** Website rows the import skipped, and efforts it filed under a sole default. */
 export type Skips = {
@@ -276,7 +280,10 @@ function soleDefault(
 }
 
 /** The row filed under the catalog's family and effort, or null if skipped. */
-function resolveRow(r: EvalRow, resolution: Resolution): ResolvedRow | null {
+const resolveRow = Effect.fnUntraced(function* (
+	r: EvalRow,
+	resolution: Resolution,
+) {
 	const { byFamily, skips } = resolution;
 	const { family } = r;
 	const candidates = byFamily.get(family);
@@ -284,7 +291,7 @@ function resolveRow(r: EvalRow, resolution: Resolution): ResolvedRow | null {
 		skips.families.add(family);
 		return null;
 	}
-	const exact = pickModel(candidates, r.effort, family);
+	const exact = yield* pickModel(candidates, r.effort, family);
 	const siteEffortCount = resolution.siteEfforts.get(family)?.size ?? 0;
 	const match = exact ?? soleDefault(candidates, siteEffortCount);
 	if (!match) {
@@ -294,7 +301,7 @@ function resolveRow(r: EvalRow, resolution: Resolution): ResolvedRow | null {
 	}
 	if (!exact) skips.mappedToDefault.add(`${r.family} (${r.effort})`);
 	return { ...r, family, effort: match.effort };
-}
+});
 
 function siteEffortsOf(raw: EvalRow[]): Map<string, Set<string | null>> {
 	const efforts = new Map<string, Set<string | null>>();
@@ -309,7 +316,7 @@ export const rowKey = (r: { family: string; effort: string; eval: string }) =>
 	`${r.family}@${r.effort}@${r.eval}`;
 
 /** Resolves rows against the catalog, failing loud on duplicates. */
-export function resolveRows(
+export const resolveRows = Effect.fnUntraced(function* (
 	raw: EvalRow[],
 	byFamily: Map<string, BenchmarkPoint[]>,
 ) {
@@ -321,12 +328,12 @@ export function resolveRows(
 	const resolution = { byFamily, siteEfforts: siteEffortsOf(raw), skips };
 	const rows = new Map<string, ResolvedRow>();
 	for (const r of raw) {
-		const row = resolveRow(r, resolution);
+		const row = yield* resolveRow(r, resolution);
 		if (!row) continue;
 		const key = rowKey(row);
 		if (rows.has(key))
-			throw new AaImportError({ message: `Two rows for ${key}` });
+			return yield* new AaImportError({ message: `Two rows for ${key}` });
 		rows.set(key, row);
 	}
 	return { rows: [...rows.values()], skips };
-}
+});

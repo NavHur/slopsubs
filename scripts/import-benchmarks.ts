@@ -13,7 +13,7 @@ import {
 	SlopalyticsDataset,
 } from "../src/domain/catalog.ts";
 import { BenchmarkDataset, Frontier } from "../src/domain/model.ts";
-import { aaPageSlugs, loadAaPages, readAaPayload } from "./aa-page.ts";
+import { aaPageSlugs, loadAaPages } from "./aa-page.ts";
 import { parseArgs } from "./benchmark-args.ts";
 import { extract } from "./bundle-literal.ts";
 import { TextFiles } from "./effects/files.ts";
@@ -73,8 +73,10 @@ const main = Effect.gen(function* () {
 		aaPageSlugs(coveredFamilies, slopa),
 		args.html,
 	);
-	const aa = yield* readAaPayload(() =>
-		joinAaSites(pages.map((page) => readAaSite(flightFromHtml(page)))),
+	const aa = yield* joinAaSites(
+		yield* Effect.forEach(pages, (page) =>
+			flightFromHtml(page).pipe(Effect.flatMap(readAaSite)),
+		),
 	);
 	const merged = yield* Effect.try({
 		try: () =>

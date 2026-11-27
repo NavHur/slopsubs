@@ -1,7 +1,7 @@
 // Reads an AA model page's flight payload: each model's score, prices and
 // release date, and the cost, tokens and time per task of those AA has run.
 
-import { Schema } from "effect";
+import { Effect, Schema } from "effect";
 import { AaImportError } from "./aa-import-error";
 import { firstReading, flightRecords } from "./flight";
 import { roundedOrNull } from "./rounding";
@@ -83,38 +83,41 @@ function aaModel(model: SiteModel): AaModel {
 	};
 }
 
-const decodeSiteModel = Schema.decodeUnknownSync(SiteModel);
+const decodeSiteModel = Schema.decodeUnknownEffect(SiteModel);
 
 /**
- * Every model record on the page. Throws when the page has no model records,
+ * Every model record on the page. Fails when the page has no model records,
  * or carries only AA's default chart selection, which a model in it gets
  * instead of every model.
  */
-function pageRecords(flight: string): SiteModel[] {
-	const records = flightRecords(flight).map((record) =>
-		decodeSiteModel(record),
+const pageRecords = Effect.fnUntraced(function* (flight: string) {
+	const records = yield* Effect.forEach(
+		yield* flightRecords(flight),
+		(record) => decodeSiteModel(record),
 	);
 	if (!records.length)
-		throw new AaImportError({ message: "No model records in the page" });
+		return yield* new AaImportError({
+			message: "No model records in the page",
+		});
 	if (records.every((model) => model.chartDefaultSelected))
-		throw new AaImportError({
+		return yield* new AaImportError({
 			message:
 				"The page lists only AA's default chart selection; read a model page outside it",
 		});
 	return records;
-}
+});
 
 /**
- * Every model on the page, and each costed model's task cost. Throws when
+ * Every model on the page, and each costed model's task cost. Fails when
  * the page lists a model twice, or when `pageRecords` rejects the page.
  */
-export function readAaSite(flight: string): AaSite {
-	const records = pageRecords(flight);
+export const readAaSite = Effect.fnUntraced(function* (flight: string) {
+	const records = yield* pageRecords(flight);
 	const costs = new Map<string, TaskCost>();
 	const slugs = new Set<string>();
 	for (const model of records) {
 		if (slugs.has(model.slug))
-			throw new AaImportError({
+			return yield* new AaImportError({
 				message: `The page lists ${model.slug} twice`,
 			});
 		slugs.add(model.slug);
@@ -122,7 +125,7 @@ export function readAaSite(flight: string): AaSite {
 		if (cost) costs.set(model.slug, cost);
 	}
 	return { models: records.map(aaModel), costs };
-}
+});
 
 /** One site's model and cost, compared across pages. */
 const recordKey = (site: AaSite, model: AaModel) =>
@@ -132,17 +135,20 @@ const recordKey = (site: AaSite, model: AaModel) =>
  * Every model on any of the pages, each once. A model several pages embed must
  * read the same on all of them; a mismatch stops the import.
  */
-export function joinAaSites(sites: readonly AaSite[]): AaSite {
+export const joinAaSites = Effect.fnUntraced(function* (
+	sites: readonly AaSite[],
+) {
 	const seen = new Map<string, string>();
 	const joined: AaSite = { models: [], costs: new Map() };
 	const listed = sites.flatMap((site) =>
 		site.models.map((model) => ({ site, model })),
 	);
 	for (const { site, model } of listed) {
-		if (!firstReading(seen, model.slug, recordKey(site, model))) continue;
+		if (!(yield* firstReading(seen, model.slug, recordKey(site, model))))
+			continue;
 		joined.models.push(model);
 		const cost = site.costs.get(model.slug);
 		if (cost) joined.costs.set(model.slug, cost);
 	}
 	return joined;
-}
+});

@@ -1,7 +1,7 @@
 // Reads tokens per task from AA's eval pages, whose embedded model records carry
 // each eval's total token counts, and checks them against the model pages.
 
-import { Schema } from "effect";
+import { Effect, Schema } from "effect";
 import { AA_EVAL_INDEX } from "./aa-eval-index";
 import type { ModelReading } from "./aa-evals";
 import { AaImportError } from "./aa-import-error";
@@ -31,7 +31,7 @@ const EvalPageRecord = Schema.Struct({
 		Schema.NullOr(Schema.Record(Schema.String, Schema.NullishOr(TokenCount))),
 	),
 });
-const decodeEvalPageRecord = Schema.decodeUnknownSync(EvalPageRecord);
+const decodeEvalPageRecord = Schema.decodeUnknownEffect(EvalPageRecord);
 type TokenCounts = (typeof EvalPageRecord.Type)["canonicalEvalTokenCounts"];
 
 /** Tokens per task for one eval; null when the record has no counts for it. */
@@ -65,16 +65,20 @@ function recordTokens(counts: TokenCounts): EvalTokens {
  * Tokens per task for each model the eval pages' flights embed, by record id.
  * A record several pages embed must count the same on all of them.
  */
-export function tokensByRecord(
+export const tokensByRecord = Effect.fnUntraced(function* (
 	evalFlights: readonly string[],
-): Map<string, EvalTokens> {
+) {
 	const seen = new Map<string, string>();
 	const byRecord = new Map<string, EvalTokens>();
-	for (const raw of evalFlights.flatMap(flightRecords)) {
-		const { id, slug, canonicalEvalTokenCounts } = decodeEvalPageRecord(raw);
+	for (const raw of (yield* Effect.forEach(
+		evalFlights,
+		flightRecords,
+	)).flat()) {
+		const { id, slug, canonicalEvalTokenCounts } =
+			yield* decodeEvalPageRecord(raw);
 		const tokens = recordTokens(canonicalEvalTokenCounts);
 		if (
-			firstReading(
+			yield* firstReading(
 				seen,
 				slug,
 				JSON.stringify(rawCounts(canonicalEvalTokenCounts)),
@@ -83,15 +87,15 @@ export function tokensByRecord(
 			byRecord.set(id, tokens);
 	}
 	return byRecord;
-}
+});
 
-/** Throws unless the eval weights and task counts turn the model's token counts
+/** Fails unless the eval weights and task counts turn the model's token counts
  * into the output tokens per task AA's index reports. A model without counts
  * for every eval cannot be checked. */
-export function checkTokenWeights(
+export const checkTokenWeights = Effect.fnUntraced(function* (
 	model: ModelReading,
 	tokens: EvalTokens,
-): void {
+) {
 	if (model.indexOutputTokens === null || tokens.size < AA_EVAL_IDS.length)
 		return;
 	let weighted = 0;
@@ -101,7 +105,7 @@ export function checkTokenWeights(
 		Math.abs(weighted - model.indexOutputTokens) >
 		model.indexOutputTokens * TOKEN_SUM_TOLERANCE
 	)
-		throw new AaImportError({
+		return yield* new AaImportError({
 			message: `The weighted tokens per task for ${model.slug} add up to ${Math.round(weighted)}, but AA's index output tokens are ${Math.round(model.indexOutputTokens)}`,
 		});
-}
+});
