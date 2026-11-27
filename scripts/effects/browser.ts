@@ -45,24 +45,23 @@ export function browserRead<S extends Schema.Constraint>(
 	);
 }
 
-/** Handlers run in the caller's scope, so closing it interrupts them. The
- * returned effect never succeeds and fails with the first handler failure. */
+/** Handlers run in the caller's scope, so closing it interrupts them quietly.
+ * The returned effect never succeeds and fails with the first handler failure. */
 export const routeRequests = Effect.fnUntraced(function* (
 	page: Page,
 	url: Parameters<Page["route"]>[0],
 	handle: (route: Route) => Effect.Effect<void, BrowserOperationError>,
 ) {
 	const failed = yield* Deferred.make<never, BrowserOperationError>();
-	const runHandler = yield* FiberSet.makeRuntimePromise();
+	const runHandler = yield* FiberSet.makeRuntime();
 	yield* browserOperation("route", () =>
-		page.route(url, (route) =>
+		page.route(url, (route) => {
 			runHandler(
 				handle(route).pipe(
-					Effect.catch((error) => Deferred.fail(failed, error)),
-					Effect.asVoid,
+					Effect.catchCause((cause) => Deferred.failCause(failed, cause)),
 				),
-			),
-		),
+			);
+		}),
 	);
 	return Deferred.await(failed);
 });

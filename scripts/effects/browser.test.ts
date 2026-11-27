@@ -37,7 +37,7 @@ describe("browser effects", () => {
 	});
 
 	it("reports a failed route handler to the page's owner", async () => {
-		let handler: (route: Route) => Promise<void> = async () => {};
+		let handler: (route: Route) => unknown = () => {};
 		const page = {
 			route: async (_url: string, run: typeof handler) => {
 				handler = run;
@@ -51,7 +51,7 @@ describe("browser effects", () => {
 			const failed = yield* routeRequests(page, "**/*.js", (route) =>
 				browserOperation("continue", () => route.continue()),
 			);
-			yield* Effect.promise(() => handler(route));
+			handler(route);
 			return yield* failed;
 		});
 		await expect(
@@ -64,7 +64,7 @@ describe("browser effects", () => {
 	});
 
 	it("interrupts a sleeping route handler when its scope closes", async () => {
-		let handler: (route: Route) => Promise<void> = async () => {};
+		let handler: (route: Route) => unknown = () => {};
 		const page = {
 			route: async (_url: string, run: typeof handler) => {
 				handler = run;
@@ -78,7 +78,8 @@ describe("browser effects", () => {
 					Effect.andThen(browserOperation("continue", () => route.continue())),
 				),
 			);
-			void handler(route).catch(() => {});
+			// Playwright awaits the callback; a rejection there goes unhandled.
+			expect(handler(route)).toBeUndefined();
 		});
 		await Effect.runPromise(Effect.scoped(program));
 		await new Promise((resolve) => setTimeout(resolve, 100));
