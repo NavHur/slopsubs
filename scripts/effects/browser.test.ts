@@ -54,11 +54,35 @@ describe("browser effects", () => {
 			yield* Effect.promise(() => handler(route));
 			return yield* failed;
 		});
-		await expect(Effect.runPromise(program)).rejects.toMatchObject({
+		await expect(
+			Effect.runPromise(Effect.scoped(program)),
+		).rejects.toMatchObject({
 			_tag: "BrowserOperationError",
 			operation: "continue",
 			cause,
 		});
+	});
+
+	it("interrupts a sleeping route handler when its scope closes", async () => {
+		let handler: (route: Route) => Promise<void> = async () => {};
+		const page = {
+			route: async (_url: string, run: typeof handler) => {
+				handler = run;
+			},
+		} as unknown as Page;
+		const proceed = vi.fn(async () => {});
+		const route = { continue: proceed } as unknown as Route;
+		const program = Effect.gen(function* () {
+			yield* routeRequests(page, "**/*.js", (route) =>
+				Effect.sleep("30 millis").pipe(
+					Effect.andThen(browserOperation("continue", () => route.continue())),
+				),
+			);
+			void handler(route).catch(() => {});
+		});
+		await Effect.runPromise(Effect.scoped(program));
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		expect(proceed).not.toHaveBeenCalled();
 	});
 
 	it("keeps the browser rejection's cause", async () => {

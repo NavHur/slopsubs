@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { Data, Deferred, Effect, Schema } from "effect";
+import { Data, Deferred, Effect, FiberSet, Schema } from "effect";
 import {
 	chromium,
 	type Browser,
@@ -45,20 +45,18 @@ export function browserRead<S extends Schema.Constraint>(
 	);
 }
 
-/** Playwright calls a route handler outside any fiber, so its failure cannot
- * reach the check that owns the page. The returned effect never succeeds and
- * fails with the first handler failure: race the page's work against it. A
- * request whose handler failed stays unhandled, so that race is also what
- * ends the wait. */
+/** Handlers run in the caller's scope, so closing it interrupts them. The
+ * returned effect never succeeds and fails with the first handler failure. */
 export const routeRequests = Effect.fnUntraced(function* (
 	page: Page,
 	url: Parameters<Page["route"]>[0],
 	handle: (route: Route) => Effect.Effect<void, BrowserOperationError>,
 ) {
 	const failed = yield* Deferred.make<never, BrowserOperationError>();
+	const runHandler = yield* FiberSet.makeRuntimePromise();
 	yield* browserOperation("route", () =>
 		page.route(url, (route) =>
-			Effect.runPromise(
+			runHandler(
 				handle(route).pipe(
 					Effect.catch((error) => Deferred.fail(failed, error)),
 					Effect.asVoid,
