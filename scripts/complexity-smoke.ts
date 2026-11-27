@@ -1,32 +1,33 @@
 // Checks the built page before and after a refactor. Record a baseline first;
 // rerun with --compare against it to check screenshots as well as interactions.
-import assert from "node:assert/strict";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
-import { Effect } from "effect";
-import { chromium, type Locator, type Page } from "playwright-core";
+import { Effect, Schema } from "effect";
+import { type Browser, type Locator, type Page } from "playwright-core";
+import { commandOptions } from "./effects/arguments.ts";
+import {
+	browserOperation,
+	browserRead,
+	checkEqual,
+	checkTrue,
+	checkDeepEqual,
+	openBrowserPage,
+	launchBrowser,
+	siteOrigin,
+} from "./effects/browser.ts";
 import { TextFiles } from "./effects/files.ts";
 import { VIEWPORTS } from "./page-session.ts";
-import { originOf, serveSite } from "./serve-site.ts";
 import { baselineDirectory } from "./smoke-dirs.ts";
 
-// Without --origin the prerendered build is served from dist/client: `vp build` first.
-const { values } = parseArgs({
-	options: {
-		origin: { type: "string" },
-		out: { type: "string", default: "/tmp/slopsubs-smoke" },
-		compare: { type: "string" },
-	},
-});
-const baselineDir = await Effect.runPromise(
-	baselineDirectory(values.out, values.compare).pipe(
-		Effect.provide(TextFiles.layer),
+const Options = Schema.Struct({
+	origin: Schema.optional(
+		Schema.String.check(
+			Schema.makeFilter((url) => URL.canParse(url) || "Expected an origin URL"),
+		),
 	),
-);
-const screenshotResult =
-	baselineDir === undefined ? "screenshots recorded" : "screenshots matched";
-const browser = await chromium.launch({ headless: true });
+	out: Schema.NonEmptyString,
+	compare: Schema.optional(Schema.String),
+});
 const MAX_CHANNEL_DELTA = 1;
 const MAX_CHANGED_CHANNEL_SHARE = 0.0001;
 /** Long enough for the pointer-leave preview to clear before a screenshot. */
@@ -35,75 +36,101 @@ const PREVIEW_CLEAR_MS = 400;
 const SECTION_JUMP_MS = 1100;
 /** The viewport width from which the chart settings menu is shown. */
 const SETTINGS_MENU_MIN_WIDTH = 640;
-await mkdir(values.out, { recursive: true });
 
-async function imageDifference(page: Page, before: Buffer, after: Buffer) {
-	return page.evaluate(
-		async (images) => {
-			async function pixels(image: string) {
-				const blob = await (
-					await fetch(`data:image/png;base64,${image}`)
-				).blob();
-				const bitmap = await createImageBitmap(blob);
-				const canvas = document.createElement("canvas");
-				canvas.width = bitmap.width;
-				canvas.height = bitmap.height;
-				const context = canvas.getContext("2d");
-				if (!context) throw new Error("No screenshot decoding context");
-				context.drawImage(bitmap, 0, 0);
-				return context.getImageData(0, 0, canvas.width, canvas.height).data;
-			}
-			const [a, b] = await Promise.all(images.map(pixels));
-			let maxDelta = 0;
-			let changedChannels = 0;
-			a.forEach((value, i) => {
-				const delta = Math.abs(value - b[i]);
-				maxDelta = Math.max(maxDelta, delta);
-				changedChannels += Number(delta !== 0);
-			});
-			return {
-				sameSize: a.length === b.length,
-				maxDelta,
-				changedChannels,
-				channels: a.length,
-			};
-		},
-		[before.toString("base64"), after.toString("base64")],
+const ImageDifference = Schema.Struct({
+	sameSize: Schema.Boolean,
+	maxDelta: Schema.Finite,
+	changedChannels: Schema.Int,
+	channels: Schema.Int,
+});
+
+const imageDifference = Effect.fnUntraced(function* (
+	page: Page,
+	before: Buffer,
+	after: Buffer,
+) {
+	return yield* browserRead(ImageDifference, "Decode screenshots", () =>
+		page.evaluate(
+			async (images) => {
+				async function pixels(image: string) {
+					const bytes = Uint8Array.from(atob(image), (char) =>
+						char.charCodeAt(0),
+					);
+					const blob = new Blob([bytes], { type: "image/png" });
+					const bitmap = await createImageBitmap(blob);
+					const canvas = document.createElement("canvas");
+					canvas.width = bitmap.width;
+					canvas.height = bitmap.height;
+					const context = canvas.getContext("2d");
+					if (!context) throw new Error("No screenshot decoding context");
+					context.drawImage(bitmap, 0, 0);
+					return context.getImageData(0, 0, canvas.width, canvas.height).data;
+				}
+				const [a, b] = await Promise.all(images.map(pixels));
+				let maxDelta = 0;
+				let changedChannels = 0;
+				a.forEach((value, i) => {
+					const delta = Math.abs(value - b[i]);
+					maxDelta = Math.max(maxDelta, delta);
+					changedChannels += Number(delta !== 0);
+				});
+				return {
+					sameSize: a.length === b.length,
+					maxDelta,
+					changedChannels,
+					channels: a.length,
+				};
+			},
+			[before.toString("base64"), after.toString("base64")],
+		),
 	);
-}
+});
 
-async function capture(page: Page, name: string) {
-	await page.mouse.move(0, 0);
-	await page.waitForTimeout(PREVIEW_CLEAR_MS);
-	const image = await page.screenshot({ animations: "disabled" });
+type CapturePaths = { out: string; baselineDir?: string };
+
+const capture = Effect.fnUntraced(function* (
+	page: Page,
+	name: string,
+	paths: CapturePaths,
+) {
+	const files = yield* TextFiles;
+	yield* browserOperation("move", () => page.mouse.move(0, 0));
+	yield* browserOperation("waitForTimeout", () =>
+		page.waitForTimeout(PREVIEW_CLEAR_MS),
+	);
+	const image = yield* browserOperation("screenshot", () =>
+		page.screenshot({ animations: "disabled" }),
+	);
 	const before =
-		baselineDir === undefined
+		paths.baselineDir === undefined
 			? undefined
-			: await readFile(join(baselineDir, `${name}.png`));
-	await writeFile(join(values.out, `${name}.png`), image);
+			: yield* files.readBytes(join(paths.baselineDir, `${name}.png`));
+	yield* files.write(join(paths.out, `${name}.png`), image);
 	if (before === undefined) return;
-	const difference = await imageDifference(page, before, image);
+	const difference = yield* imageDifference(page, before, image);
 	console.log(name, difference);
-	assert.ok(difference.sameSize, `${name}: screenshot size differs`);
+	yield* checkTrue(difference.sameSize, `${name}: screenshot size differs`);
 	// Chromium's clipped edge fades can differ by one channel level on a few pixels.
-	assert.ok(
+	yield* checkTrue(
 		difference.maxDelta <= MAX_CHANNEL_DELTA,
 		`${name}: rendered pixels differ`,
 	);
-	assert.ok(
+	yield* checkTrue(
 		difference.changedChannels <=
 			difference.channels * MAX_CHANGED_CHANNEL_SHARE,
 		`${name}: too many pixels differ`,
 	);
-}
+});
 
 /** Moves focus off the trigger, so Escape has to bring it back. */
-async function focusInsideMenu(trigger: Locator) {
-	await trigger
-		.locator("xpath=following-sibling::div")
-		.getByRole("button", { name: "Labels", exact: true })
-		.focus();
-}
+const focusInsideMenu = Effect.fnUntraced(function* (trigger: Locator) {
+	yield* browserOperation("focus", () =>
+		trigger
+			.locator("xpath=following-sibling::div")
+			.getByRole("button", { name: "Labels", exact: true })
+			.focus(),
+	);
+});
 
 function settingsTrigger(page: Page) {
 	return page.getByRole("button", { name: "Chart settings", exact: true });
@@ -114,169 +141,235 @@ function detailsCloser(page: Page) {
 }
 
 /** Pins the first point of the cost vs score chart from the keyboard. */
-async function pinFirstPoint(page: Page) {
-	await page.locator('#cost-vs-score svg g[role="button"]').first().focus();
-	await page.keyboard.press("Enter");
-}
+const pinFirstPoint = Effect.fnUntraced(function* (page: Page) {
+	yield* browserOperation("focus", () =>
+		page.locator('#cost-vs-score svg g[role="button"]').first().focus(),
+	);
+	yield* browserOperation("press", () => page.keyboard.press("Enter"));
+});
 
-async function settings(page: Page) {
+const settings = Effect.fnUntraced(function* (page: Page) {
 	const trigger = settingsTrigger(page);
-	await trigger.click();
-	assert.equal(await trigger.getAttribute("aria-expanded"), "true");
-	await focusInsideMenu(trigger);
-	await page.keyboard.press("Escape");
-	assert.equal(await trigger.getAttribute("aria-expanded"), "false");
-	assert.equal(
-		await trigger.evaluate((el) => el === document.activeElement),
+	yield* browserOperation("click", () => trigger.click());
+	yield* checkEqual(
+		yield* browserOperation("getAttribute", () =>
+			trigger.getAttribute("aria-expanded"),
+		),
+		"true",
+	);
+	yield* focusInsideMenu(trigger);
+	yield* browserOperation("press", () => page.keyboard.press("Escape"));
+	yield* checkEqual(
+		yield* browserOperation("getAttribute", () =>
+			trigger.getAttribute("aria-expanded"),
+		),
+		"false",
+	);
+	yield* checkEqual(
+		yield* browserOperation("evaluate", () =>
+			trigger.evaluate((el) => el === document.activeElement),
+		),
 		true,
 	);
-	await trigger.click();
-	await page.getByRole("heading", { level: 1 }).dispatchEvent("pointerdown");
-	assert.equal(await trigger.getAttribute("aria-expanded"), "false");
-	await trigger.click();
-	await page
-		.getByRole("button", { name: "Toggle light and dark theme" })
-		.focus();
-	assert.equal(await trigger.getAttribute("aria-expanded"), "false");
-}
+	yield* browserOperation("click", () => trigger.click());
+	yield* browserOperation("dispatchEvent", () =>
+		page.getByRole("heading", { level: 1 }).dispatchEvent("pointerdown"),
+	);
+	yield* checkEqual(
+		yield* browserOperation("getAttribute", () =>
+			trigger.getAttribute("aria-expanded"),
+		),
+		"false",
+	);
+	yield* browserOperation("click", () => trigger.click());
+	yield* browserOperation("focus", () =>
+		page.getByRole("button", { name: "Toggle light and dark theme" }).focus(),
+	);
+	yield* checkEqual(
+		yield* browserOperation("getAttribute", () =>
+			trigger.getAttribute("aria-expanded"),
+		),
+		"false",
+	);
+});
 
 /** Escape that closes the menu must stop there, leaving a pinned point open. */
-async function menuEscapeKeepsPinnedPoint(page: Page) {
+const menuEscapeKeepsPinnedPoint = Effect.fnUntraced(function* (page: Page) {
 	const details = detailsCloser(page);
-	await pinFirstPoint(page);
-	assert.equal(await details.count(), 1);
+	yield* pinFirstPoint(page);
+	yield* checkEqual(yield* browserOperation("count", () => details.count()), 1);
 	const trigger = settingsTrigger(page);
-	await trigger.click();
-	await focusInsideMenu(trigger);
-	await page.keyboard.press("Escape");
-	assert.equal(await trigger.getAttribute("aria-expanded"), "false");
-	assert.equal(
-		await trigger.evaluate((el) => el === document.activeElement),
+	yield* browserOperation("click", () => trigger.click());
+	yield* focusInsideMenu(trigger);
+	yield* browserOperation("press", () => page.keyboard.press("Escape"));
+	yield* checkEqual(
+		yield* browserOperation("getAttribute", () =>
+			trigger.getAttribute("aria-expanded"),
+		),
+		"false",
+	);
+	yield* checkEqual(
+		yield* browserOperation("evaluate", () =>
+			trigger.evaluate((el) => el === document.activeElement),
+		),
 		true,
 	);
-	assert.equal(await details.count(), 1);
-	await page.keyboard.press("Escape");
-	assert.equal(await details.count(), 0);
-}
+	yield* checkEqual(yield* browserOperation("count", () => details.count()), 1);
+	yield* browserOperation("press", () => page.keyboard.press("Escape"));
+	yield* checkEqual(yield* browserOperation("count", () => details.count()), 0);
+});
 
-async function points(page: Page) {
+const points = Effect.fnUntraced(function* (page: Page) {
 	const details = detailsCloser(page);
-	await pinFirstPoint(page);
-	assert.equal(await details.count(), 1);
-	await page.keyboard.press("Escape");
-	assert.equal(await details.count(), 0);
-}
+	yield* pinFirstPoint(page);
+	yield* checkEqual(yield* browserOperation("count", () => details.count()), 1);
+	yield* browserOperation("press", () => page.keyboard.press("Escape"));
+	yield* checkEqual(yield* browserOperation("count", () => details.count()), 0);
+});
 
-async function navigation(page: Page) {
+const navigation = Effect.fnUntraced(function* (page: Page) {
 	const nav = page.getByRole("navigation", { name: "Charts", exact: true });
-	await nav.getByRole("link", { name: "Tasks per week", exact: true }).click();
-	await page.waitForFunction(
-		() => new URL(location.href).searchParams.get("chart") === "tasks-per-week",
+	yield* browserOperation("click", () =>
+		nav.getByRole("link", { name: "Tasks per week", exact: true }).click(),
 	);
-	await page.waitForTimeout(SECTION_JUMP_MS);
-	assert.equal(
-		await nav.locator('[aria-current="location"]').textContent(),
+	yield* browserOperation("waitForFunction", () =>
+		page.waitForFunction(
+			() =>
+				new URL(location.href).searchParams.get("chart") === "tasks-per-week",
+		),
+	);
+	yield* browserOperation("waitForTimeout", () =>
+		page.waitForTimeout(SECTION_JUMP_MS),
+	);
+	yield* checkEqual(
+		yield* browserOperation("textContent", () =>
+			nav.locator('[aria-current="location"]').textContent(),
+		),
 		"Tasks per week",
 	);
-	await nav.getByRole("link", { name: "Cost vs score", exact: true }).click();
-	await page.waitForTimeout(SECTION_JUMP_MS);
-	assert.equal(
-		await nav.locator('[aria-current="location"]').textContent(),
+	yield* browserOperation("click", () =>
+		nav.getByRole("link", { name: "Cost vs score", exact: true }).click(),
+	);
+	yield* browserOperation("waitForTimeout", () =>
+		page.waitForTimeout(SECTION_JUMP_MS),
+	);
+	yield* checkEqual(
+		yield* browserOperation("textContent", () =>
+			nav.locator('[aria-current="location"]').textContent(),
+		),
 		"Cost vs score",
 	);
-}
+});
 
-async function overflow(page: Page) {
+const overflow = Effect.fnUntraced(function* (page: Page) {
 	const picker = page.locator(
 		'fieldset[aria-label="Benchmark that defines a task"]',
 	);
 	const frame = picker.locator("../..");
-	await picker.locator("..").evaluate((row) => {
-		row.scrollLeft = row.scrollWidth;
-		row.dispatchEvent(new Event("scroll"));
-	});
-	await frame
-		.getByRole("button", { name: "Scroll left", exact: true })
-		.waitFor();
-	assert.equal(
-		await frame
-			.getByRole("button", { name: "Scroll right", exact: true })
-			.count(),
+	yield* browserOperation("evaluate", () =>
+		picker.locator("..").evaluate((row) => {
+			row.scrollLeft = row.scrollWidth;
+			row.dispatchEvent(new Event("scroll"));
+		}),
+	);
+	yield* browserOperation("waitFor", () =>
+		frame.getByRole("button", { name: "Scroll left", exact: true }).waitFor(),
+	);
+	yield* checkEqual(
+		yield* browserOperation("count", () =>
+			frame.getByRole("button", { name: "Scroll right", exact: true }).count(),
+		),
 		0,
 	);
-	await page.evaluate(() =>
-		document.fonts.dispatchEvent(new Event("loadingdone")),
+	yield* browserOperation("evaluate", () =>
+		page.evaluate(() => document.fonts.dispatchEvent(new Event("loadingdone"))),
 	);
-	await frame
-		.getByRole("button", { name: "Scroll right", exact: true })
-		.waitFor();
-	assert.equal(
-		await frame
-			.getByRole("button", { name: "Scroll left", exact: true })
-			.count(),
+	yield* browserOperation("waitFor", () =>
+		frame.getByRole("button", { name: "Scroll right", exact: true }).waitFor(),
+	);
+	yield* checkEqual(
+		yield* browserOperation("count", () =>
+			frame.getByRole("button", { name: "Scroll left", exact: true }).count(),
+		),
 		0,
 	);
-}
+});
 
-async function viewport(
+const viewport = Effect.fnUntraced(function* (
+	browser: Browser,
 	size: { width: number; height: number },
 	origin: string,
+	paths: CapturePaths,
 ) {
 	const { width } = size;
-	const page = await browser.newPage({
+	const page = yield* openBrowserPage(browser, {
 		viewport: size,
 		reducedMotion: "reduce",
 		colorScheme: "dark",
 	});
 	const errors: string[] = [];
 	page.on("pageerror", (error) => errors.push(error.message));
-	await page.goto(origin, { waitUntil: "networkidle" });
-	await page.locator('[aria-current="location"]').waitFor();
-	await page.waitForFunction(() => {
-		const plot = document.querySelector<HTMLElement>(
-			"#cost-vs-score [data-chart-width]",
-		);
-		return (
-			plot !== null &&
-			Math.abs(
-				Number(plot.dataset.chartWidth) - plot.getBoundingClientRect().width,
-			) < 1
-		);
-	});
-	await page.evaluate(() => document.fonts.ready);
-	await capture(page, `${width}-initial`);
-	if (width >= SETTINGS_MENU_MIN_WIDTH) {
-		await settings(page);
-		await menuEscapeKeepsPinnedPoint(page);
-		await settingsTrigger(page).click();
-		await capture(page, `${width}-settings`);
-		await page.keyboard.press("Escape");
-	}
-	await points(page);
-	await overflow(page);
-	await navigation(page);
-	assert.deepEqual(errors, []);
-	await page.close();
-	console.log(
-		`${width}px: point pinning, overflow arrows and section jumps passed, ${screenshotResult} (settings on desktop)`,
+	yield* browserOperation("goto", () =>
+		page.goto(origin, { waitUntil: "networkidle" }),
 	);
-}
+	yield* browserOperation("waitFor", () =>
+		page.locator('[aria-current="location"]').waitFor(),
+	);
+	yield* browserOperation("waitForFunction", () =>
+		page.waitForFunction(() => {
+			const plot = document.querySelector<HTMLElement>(
+				"#cost-vs-score [data-chart-width]",
+			);
+			return (
+				plot !== null &&
+				Math.abs(
+					Number(plot.dataset.chartWidth) - plot.getBoundingClientRect().width,
+				) < 1
+			);
+		}),
+	);
+	yield* browserOperation("evaluate", () =>
+		page.evaluate(() => document.fonts.ready),
+	);
+	yield* capture(page, `${width}-initial`, paths);
+	if (width >= SETTINGS_MENU_MIN_WIDTH) {
+		yield* settings(page);
+		yield* menuEscapeKeepsPinnedPoint(page);
+		yield* browserOperation("click", () => settingsTrigger(page).click());
+		yield* capture(page, `${width}-settings`, paths);
+		yield* browserOperation("press", () => page.keyboard.press("Escape"));
+	}
+	yield* points(page);
+	yield* overflow(page);
+	yield* navigation(page);
+	yield* checkDeepEqual(errors, []);
 
-/** The page to check: the --origin given, or the served build. */
-async function siteToCheck(explicit: string | undefined) {
-	if (explicit) return { origin: explicit, close: () => {} };
-	const server = await Effect.runPromise(serveSite);
-	return {
-		origin: Effect.runSync(originOf(server)),
-		close: () => server.close(),
-	};
-}
+	console.log(
+		`${width}px: point pinning, overflow arrows and section jumps passed, ${paths.baselineDir === undefined ? "screenshots recorded" : "screenshots matched"} (settings on desktop)`,
+	);
+}, Effect.scoped);
 
-const site = await siteToCheck(values.origin);
-try {
-	await viewport(VIEWPORTS.desktop, site.origin);
-	await viewport(VIEWPORTS.phone, site.origin);
-} finally {
-	await browser.close();
-	site.close();
-}
+const main = Effect.gen(function* () {
+	const values = yield* commandOptions(
+		Options,
+		() =>
+			parseArgs({
+				options: {
+					origin: { type: "string" },
+					out: { type: "string", default: "/tmp/slopsubs-smoke" },
+					compare: { type: "string" },
+				},
+			}).values,
+	);
+	const baselineDir = yield* baselineDirectory(values.out, values.compare);
+	const files = yield* TextFiles;
+	yield* files.makeDirectory(values.out);
+	const origin = yield* siteOrigin(values.origin);
+	const browser = yield* launchBrowser({ headless: true });
+	const paths = { out: values.out, baselineDir };
+	yield* viewport(browser, VIEWPORTS.desktop, origin, paths);
+	yield* viewport(browser, VIEWPORTS.phone, origin, paths);
+});
+await Effect.runPromise(
+	Effect.scoped(main).pipe(Effect.provide(TextFiles.layer)),
+);
