@@ -98,9 +98,8 @@ function observePaint() {
 const continueRoute = (route: Route) =>
 	browserOperation("Continue request", () => route.continue());
 
-/** Holds the first requests to each origin other than the site's for a
- * connection setup; later requests reuse the connection. Fails if a held
- * request cannot continue. */
+/** Holds each other origin's first request for a connection setup; returns a
+ * watcher that fails if a held request cannot continue: race the work on it. */
 const chargeConnectionSetup = Effect.fnUntraced(function* (
 	page: Page,
 	siteOrigin: string,
