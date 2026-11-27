@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import plansJson from "../src/data/plans.json";
 import type { FamilyId, Plan, PlanId } from "../src/domain/model.ts";
@@ -8,11 +9,14 @@ import {
 } from "../src/domain/value.ts";
 import {
 	type CreditPlan,
-	creditAllowance,
+	creditAllowance as creditAllowanceEffect,
 	creditPromotions,
 } from "./credit-plans.ts";
 import { CREDIT_PLANS } from "./credit-vendors.ts";
 import type { TokenRates } from "./list-price.ts";
+
+const creditAllowance = (...args: Parameters<typeof creditAllowanceEffect>) =>
+	Effect.runSync(creditAllowanceEffect(...args));
 
 const WEEKS_PER_MONTH = 52 / 12;
 const sonnet = "claude-sonnet-5-5" as FamilyId;
@@ -22,7 +26,7 @@ const LIST: Record<string, TokenRates> = {
 	[sonnet]: [2, 10],
 	[argon]: [4, 20],
 };
-const listRates = (family: string) => LIST[family];
+const listRates = (family: string) => Effect.succeed(LIST[family]);
 
 const copilot: CreditPlan = {
 	monthlyCredit: 15,

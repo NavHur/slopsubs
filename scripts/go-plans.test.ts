@@ -1,13 +1,17 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import type { Promotion } from "../src/domain/model.ts";
-import { type GoPricing, goPlan } from "./go-plans.ts";
+import { type GoPricing, goPlan as goPlanEffect } from "./go-plans.ts";
 import type { TokenRates } from "./list-price.ts";
+
+const goPlan = (...args: Parameters<typeof goPlanEffect>) =>
+	Effect.runSync(goPlanEffect(...args));
 
 const GO = 0;
 const GO_PLUS = 1;
 
 // Every fixture family lists at [2, 10] $/MTok, a 4 $/MTok blend.
-const listRates = (): TokenRates => [2, 10];
+const listRates = () => Effect.succeed([2, 10] as TokenRates);
 
 const halfPrice: Promotion = {
 	summary: "half price",

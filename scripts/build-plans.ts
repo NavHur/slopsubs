@@ -4,11 +4,7 @@
 import { Clock, Effect, Schema } from "effect";
 import { AA_EVAL_IDS } from "../src/domain/enums.ts";
 import type { AaEvalId } from "../src/domain/eval-units.ts";
-import {
-	evalPoints,
-	frontierCodePoints,
-	LeaderboardDataError,
-} from "../src/domain/leaderboards.ts";
+import { evalPoints, frontierCodePoints } from "../src/domain/leaderboards.ts";
 import {
 	AaEvalsDataset,
 	AllowanceKind,
@@ -28,7 +24,7 @@ import { CREDIT_PLANS } from "./credit-vendors.ts";
 import { readJsonFile, TextFiles } from "./effects/files.ts";
 import { type GoTier, goPlan } from "./go-plans.ts";
 import { GO_PRICING, OPENCODE_DOCS } from "./go-pricing.ts";
-import type { TokenRates } from "./list-price.ts";
+import type { ListRates, TokenRates } from "./list-price.ts";
 import { MUSE_EVERYDAY } from "./muse-caps.ts";
 import { PLAN_FAMILIES } from "./plan-families.ts";
 import { checkOffers, PlanDataError } from "./plan-offers.ts";
@@ -165,122 +161,135 @@ const readResearch = Effect.gen(function* () {
 	return rows.flat();
 });
 
-function checkResearch(research: readonly ResearchPlan[]) {
+const checkResearch = Effect.fnUntraced(function* (
+	research: readonly ResearchPlan[],
+) {
 	const missing = Object.keys(PLAN_FAMILIES).filter(
 		(id) => !research.some((p) => p.planId === id),
 	);
 	if (missing.length)
-		throw new PlanDataError({
+		return yield* new PlanDataError({
 			message: `Plans not in research: ${missing.join(", ")}`,
 		});
 	const offSale = research.filter(
 		(p) => p.planId in PLAN_FAMILIES && p.availability !== "on-sale",
 	);
 	if (offSale.length)
-		throw new PlanDataError({
+		return yield* new PlanDataError({
 			message: `Plans no longer on sale can't ship: ${offSale.map((p) => `${p.planId} (${p.availability})`).join(", ")}`,
 		});
-}
-
-type ListRates = (family: string) => TokenRates;
+});
 
 /** The family's list [input, output] $/MTok, from the benchmark catalog. */
-function listRates(
+const listRates = Effect.fnUntraced(function* (
 	models: readonly BenchmarkPoint[],
 	family: string,
-): TokenRates {
+) {
 	const list = models.find(
 		(m) => m.family === family && m.inputPricePerMTokUsd !== null,
 	);
 	if (!list?.inputPricePerMTokUsd || !list.outputPricePerMTokUsd)
-		throw new PlanDataError({
+		return yield* new PlanDataError({
 			message: `${family}: no list price to value its allowance at`,
 		});
-	return [list.inputPricePerMTokUsd, list.outputPricePerMTokUsd];
-}
+	return [
+		list.inputPricePerMTokUsd,
+		list.outputPricePerMTokUsd,
+	] satisfies TokenRates;
+});
 
 /** The vendor's own statement of each model's monthly usage: OpenCode Go's
  * per-model dollars, or a credit plan's credit valued at list price. */
-function publishedAllowance(
+const publishedAllowance = Effect.fnUntraced(function* (
 	planId: string,
 	priceUsd: number,
 	families: readonly string[],
 	listRates: ListRates,
-): PublishedAllowance | null {
+) {
 	const credit = CREDIT_PLANS[planId];
-	if (credit) return creditAllowance(credit, priceUsd, families, listRates);
+	if (credit)
+		return yield* creditAllowance(credit, priceUsd, families, listRates);
 	const tier = GO_TIERS[planId];
 	if (tier === undefined) return null;
 	return {
-		apiUsdPerMonthByFamily: goPlan(GO_PRICING, tier, families, listRates)
-			.apiUsdPerMonthByFamily,
+		apiUsdPerMonthByFamily: (yield* goPlan(
+			GO_PRICING,
+			tier,
+			families,
+			listRates,
+		)).apiUsdPerMonthByFamily,
 		url: OPENCODE_DOCS,
 		basis:
 			"OpenCode's published monthly usage for each model, at list prices, with current promos",
-	};
-}
+	} satisfies PublishedAllowance;
+});
 
 /** A weekly credit quota's estimated cap, for plans billed in credits. */
-function creditCap(
+const creditCap = Effect.fnUntraced(function* (
 	p: ResearchPlan,
 	families: readonly string[],
 	listRates: ListRates,
-): ReportedCap | null {
+) {
 	const plan = WEEKLY_CREDIT_PLANS[p.planId];
 	if (!plan) return null;
-	requireCited(p, plan.url, "weekly credits");
-	return weeklyCreditCap(plan, families, listRates);
-}
+	yield* requireCited(p, plan.url, "weekly credits");
+	return yield* weeklyCreditCap(plan, families, listRates);
+});
 
 /** The limited-time promotions a plan's allowance counts, by family. */
-function promotions(
+const promotions = Effect.fnUntraced(function* (
 	planId: string,
 	families: readonly string[],
 	listRates: ListRates,
-): Record<string, Promotion> {
+) {
 	const credit = CREDIT_PLANS[planId];
 	if (credit) return creditPromotions(credit, families);
 	const tier = GO_TIERS[planId];
-	if (tier === undefined) return {};
-	return goPlan(GO_PRICING, tier, families, listRates).promotionByFamily;
-}
+	if (tier === undefined) return {} as Record<string, Promotion>;
+	return (yield* goPlan(GO_PRICING, tier, families, listRates))
+		.promotionByFamily;
+});
 
 /** A plan has a credit exactly when its research row says credit, and the
  * credit cites a page that row lists. */
-function requireSourcedCredit(
+const requireSourcedCredit = Effect.fnUntraced(function* (
 	p: ResearchPlan,
 	allowance: PublishedAllowance | null,
-): void {
+) {
 	if (p.planId in CREDIT_PLANS && p.allowanceKind !== "credit")
-		throw new PlanDataError({
+		return yield* new PlanDataError({
 			message: `${p.planId}: it has a credit, but its research row says ${p.allowanceKind}`,
 		});
 	if (p.allowanceKind !== "credit") return;
 	if (!allowance)
-		throw new PlanDataError({
+		return yield* new PlanDataError({
 			message: `${p.planId}: a credit plan needs its sourced credit`,
 		});
-	requireCited(p, allowance.url, "credit");
-}
+	yield* requireCited(p, allowance.url, "credit");
+});
 
 /** Refuses a figure whose page the plan's research row does not list. */
-function requireCited(p: ResearchPlan, url: string, figure: string): void {
+const requireCited = Effect.fnUntraced(function* (
+	p: ResearchPlan,
+	url: string,
+	figure: string,
+) {
 	if (!p.sources.some((source) => source.url === url))
-		throw new PlanDataError({
+		return yield* new PlanDataError({
 			message: `${p.planId}: its ${figure} figure cites ${url}, which its research row does not list`,
 		});
-}
+});
 
-function planRows(
+const planRows = Effect.fnUntraced(function* (
 	research: readonly ResearchPlan[],
 	models: readonly BenchmarkPoint[],
 ) {
-	checkResearch(research);
+	yield* checkResearch(research);
 	const benchmarked = new Set<string>(models.map((m) => m.family));
 	const rates: ListRates = (family) => listRates(models, family);
-	return research
-		.filter((p) => p.planId in PLAN_FAMILIES)
-		.map((p) => {
+	return yield* Effect.forEach(
+		research.filter((p) => p.planId in PLAN_FAMILIES),
+		Effect.fnUntraced(function* (p) {
 			const entry = PLAN_FAMILIES[p.planId];
 			const {
 				lab,
@@ -291,17 +300,17 @@ function planRows(
 			} = entry;
 			const unknown = families.filter((f) => !benchmarked.has(f));
 			if (unknown.length)
-				throw new PlanDataError({
+				return yield* new PlanDataError({
 					message: `${p.planId}: unbenchmarked ${unknown.join(", ")}`,
 				});
 			const label = entry.shortLabel ?? p.label;
-			const allowance = publishedAllowance(
+			const allowance = yield* publishedAllowance(
 				p.planId,
 				p.monthlyPriceUsd,
 				families,
 				rates,
 			);
-			requireSourcedCredit(p, allowance);
+			yield* requireSourcedCredit(p, allowance);
 			return {
 				id: p.planId,
 				vendor,
@@ -318,28 +327,32 @@ function planRows(
 				sourceUrl: p.sources[0].url,
 				reportedCap:
 					multipleCap(p.planId, p.monthlyPriceUsd, families) ??
-					creditCap(p, families, rates) ??
-					ladderCap(KNOWN_TIERS, entry.tier, label, families),
+					(yield* creditCap(p, families, rates)) ??
+					(yield* ladderCap(KNOWN_TIERS, entry.tier, label, families)),
 				publishedAllowance: allowance,
 				weeklyShareByFamily,
 				maxEffortByFamily: lab === "opencode" ? OPENCODE_MAX_EFFORT : {},
-				promotionByFamily: promotions(p.planId, families, rates),
+				promotionByFamily: yield* promotions(p.planId, families, rates),
 			};
-		});
-}
+		}),
+	);
+});
 
 /** A plan's value counts its promotions only while they run. */
-function checkPromotions(plans: typeof Plans.Type, today: string) {
+const checkPromotions = Effect.fnUntraced(function* (
+	plans: typeof Plans.Type,
+	today: string,
+) {
 	for (const plan of plans)
 		for (const [family, promotion] of Object.entries(plan.promotionByFamily))
 			if (promotion.endsOn < today)
-				throw new PlanDataError({
+				return yield* new PlanDataError({
 					message: `${plan.id}: the ${family} promotion ended on ${promotion.endsOn}; delete it and rebuild the plans.`,
 				});
-}
+});
 
 // Filter out uncovered rows before resolving them against the catalog.
-function chartData({
+const chartData = Effect.fnUntraced(function* ({
 	plans,
 	dataset,
 	frontierCode,
@@ -354,40 +367,29 @@ function chartData({
 	const covered = new Set<string>(plans.flatMap((p) => p.families));
 	const onPlans = <T extends { family: string }>(points: readonly T[]) =>
 		points.filter((m) => covered.has(m.family));
-	const evalBoard = (evalSlug: AaEvalId) => ({
-		fetchedAt: aaEvals.fetchedAt,
-		models: evalPoints(onPlans(aaEvals.rows), models, evalSlug),
+	const evalBoard = Effect.fnUntraced(function* (evalSlug: AaEvalId) {
+		return {
+			fetchedAt: aaEvals.fetchedAt,
+			models: yield* evalPoints(onPlans(aaEvals.rows), models, evalSlug),
+		};
 	});
 	const evalBoards = Object.fromEntries(
-		AA_EVAL_IDS.map((id) => [id, evalBoard(id)]),
-	) as Record<AaEvalId, ReturnType<typeof evalBoard>>;
+		yield* Effect.forEach(AA_EVAL_IDS, (id) =>
+			evalBoard(id).pipe(Effect.map((board) => [id, board] as const)),
+		),
+	) as Record<AaEvalId, Effect.Success<ReturnType<typeof evalBoard>>>;
 	return {
 		frontier: dataset.frontier,
 		leaderboards: {
 			intelligence: { fetchedAt: dataset.fetchedAt, models: onPlans(models) },
 			frontiercode: {
 				fetchedAt: frontierCode.fetchedAt,
-				models: frontierCodePoints(onPlans(frontierCode.rows), models),
+				models: yield* frontierCodePoints(onPlans(frontierCode.rows), models),
 			},
 			...evalBoards,
 		},
 	};
-}
-
-/** Known input inconsistencies stop the build. Keep unexpected exceptions as defects. */
-function checkPlanData<A>(evaluate: () => A) {
-	return Effect.try({
-		try: evaluate,
-		catch: (cause) => {
-			if (
-				cause instanceof PlanDataError ||
-				cause instanceof LeaderboardDataError
-			)
-				return cause;
-			throw cause;
-		},
-	});
-}
+});
 
 const main = Effect.gen(function* () {
 	const files = yield* TextFiles;
@@ -406,17 +408,15 @@ const main = Effect.gen(function* () {
 	);
 
 	const plans = yield* Schema.decodeUnknownEffect(Plans)(
-		yield* checkPlanData(() => planRows(research, dataset.models)),
+		yield* planRows(research, dataset.models),
 	);
 	const today = new Date(yield* Clock.currentTimeMillis)
 		.toISOString()
 		.slice(0, 10);
-	yield* checkPlanData(() => checkPromotions(plans, today));
-	yield* checkPlanData(() => checkOffers(research, today));
+	yield* checkPromotions(plans, today);
+	yield* checkOffers(research, today);
 	const chart = yield* Schema.decodeUnknownEffect(ChartData)(
-		yield* checkPlanData(() =>
-			chartData({ plans, dataset, frontierCode, aaEvals }),
-		),
+		yield* chartData({ plans, dataset, frontierCode, aaEvals }),
 	);
 
 	yield* files.write(

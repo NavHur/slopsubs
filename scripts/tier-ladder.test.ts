@@ -1,6 +1,17 @@
+import { Effect } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 import type { FamilyId } from "../src/domain/model.ts";
-import { type KnownTier, ladderCap, scaledCap } from "./tier-ladder.ts";
+import {
+	type KnownTier,
+	ladderCap as ladderCapEffect,
+	scaledCap as scaledCapEffect,
+} from "./tier-ladder.ts";
+
+const scaledCap = (...args: Parameters<typeof scaledCapEffect>) =>
+	Effect.runSync(scaledCapEffect(...args));
+const ladderCap = <L extends string>(
+	...args: Parameters<typeof ladderCapEffect<L>>
+) => Effect.runSync(ladderCapEffect(...args));
 
 const grok = "grok-4-7" as FamilyId;
 

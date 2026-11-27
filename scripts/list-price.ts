@@ -1,3 +1,5 @@
+import type { Effect } from "effect";
+import type { PlanDataError } from "./plan-offers.ts";
 // Converts usage billed at a vendor's own token rates into list-priced (API)
 // dollars, the unit every plan's allowance is compared in.
 
@@ -21,3 +23,7 @@ export function listPriced(
 ): number {
 	return (amount / blendedPrice(rates)) * blendedPrice(list);
 }
+
+export type ListRates = (
+	family: string,
+) => Effect.Effect<TokenRates, PlanDataError>;
