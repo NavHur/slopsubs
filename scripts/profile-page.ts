@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 // Profiles the home page's re-renders and scroll cost on the built site; see
 // README, "Profiling The Home Page". Run: node scripts/profile-page.ts
 
@@ -207,10 +208,10 @@ function summarize(name: string, probe: ProbeStats, extra: object = {}) {
 }
 
 const { values } = parseArgs({ options: { out: { type: "string" } } });
-const server = await serveSite();
+const server = await Effect.runPromise(serveSite);
 const browser = await chromium.launch({ args: ["--disable-smooth-scrolling"] });
 try {
-	const origin = originOf(server);
+	const origin = Effect.runSync(originOf(server));
 	const report: Record<string, unknown> = {};
 	for (const viewport of Object.keys(VIEWPORTS) as ViewportName[]) {
 		const counted = await countedScroll(browser, origin, viewport);

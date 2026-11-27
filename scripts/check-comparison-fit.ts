@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 // Pins a point, hovers another, and checks the comparison table fits, against
 // the prerendered build: no figure or change chip breaks over two lines, and
 // the table never spills out of its card. Phones from 360px wide are covered.
@@ -108,12 +109,16 @@ async function checkViewport(
 	return failures;
 }
 
-const server = await serveSite();
+const server = await Effect.runPromise(serveSite);
 const browser = await chromium.launch();
 let failures = 0;
 try {
 	for (const viewport of VIEWPORTS) {
-		failures += await checkViewport(browser, originOf(server), viewport);
+		failures += await checkViewport(
+			browser,
+			Effect.runSync(originOf(server)),
+			viewport,
+		);
 	}
 } finally {
 	await browser.close();

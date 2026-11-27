@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 // Opens shared links against the prerendered build; fails on a hydration error,
 // a view left hidden, or one shown before slow scripts run. See README.md.
 
@@ -102,8 +103,8 @@ async function staysHiddenWhileSlow(
 	return visibility === "hidden";
 }
 
-const server = await serveSite();
-const origin = originOf(server);
+const server = await Effect.runPromise(serveSite);
+const origin = Effect.runSync(originOf(server));
 const browser = await chromium.launch();
 let failures = 0;
 try {

@@ -4,7 +4,9 @@ import assert from "node:assert/strict";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
+import { Effect } from "effect";
 import { chromium, type Locator, type Page } from "playwright-core";
+import { TextFiles } from "./effects/files.ts";
 import { VIEWPORTS } from "./page-session.ts";
 import { originOf, serveSite } from "./serve-site.ts";
 import { baselineDirectory } from "./smoke-dirs.ts";
@@ -17,7 +19,11 @@ const { values } = parseArgs({
 		compare: { type: "string" },
 	},
 });
-const baselineDir = baselineDirectory(values.out, values.compare);
+const baselineDir = await Effect.runPromise(
+	baselineDirectory(values.out, values.compare).pipe(
+		Effect.provide(TextFiles.layer),
+	),
+);
 const screenshotResult =
 	baselineDir === undefined ? "screenshots recorded" : "screenshots matched";
 const browser = await chromium.launch({ headless: true });
@@ -259,8 +265,11 @@ async function viewport(
 /** The page to check: the --origin given, or the served build. */
 async function siteToCheck(explicit: string | undefined) {
 	if (explicit) return { origin: explicit, close: () => {} };
-	const server = await serveSite();
-	return { origin: originOf(server), close: () => server.close() };
+	const server = await Effect.runPromise(serveSite);
+	return {
+		origin: Effect.runSync(originOf(server)),
+		close: () => server.close(),
+	};
 }
 
 const site = await siteToCheck(values.origin);

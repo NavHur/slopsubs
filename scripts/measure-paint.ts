@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 // Measures paint, layout shift, font arrival, and the benchmark picker's reveal
 // on the built site. Build first; see README.md, "Paint Metrics".
 
@@ -244,10 +245,10 @@ function summarize(samples: PaintSample[]) {
 	);
 }
 
-const server = await serveSite();
+const server = await Effect.runPromise(serveSite);
 const browser = await chromium.launch();
 try {
-	const origin = originOf(server);
+	const origin = Effect.runSync(originOf(server));
 	const samples: PaintSample[] = [];
 	for (let run = 0; run < runs; run++) {
 		samples.push(await samplePaint(browser, origin));

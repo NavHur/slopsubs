@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 // Regenerates public/og.png and public/apple-touch-icon.png from dist/client.
 // `bun run render-brand-images` builds it first; see README.md, "Brand Images".
 
@@ -116,10 +117,10 @@ async function renderIcon(browser: Browser): Promise<Buffer> {
 	return png;
 }
 
-const server = await serveSite();
+const server = await Effect.runPromise(serveSite);
 const browser = await chromium.launch();
 try {
-	const origin = originOf(server);
+	const origin = Effect.runSync(originOf(server));
 	const exported = await exportDefaultChart(browser, origin);
 	await writeFile(
 		CARD_PATH,
