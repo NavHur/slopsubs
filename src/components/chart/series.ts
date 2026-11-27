@@ -131,11 +131,11 @@ export function pricingStyles(
 	return new Map(series.map((s) => [s.pricing.id, s.pricing]));
 }
 
-/** How a point's pricing draws, from a map built over every point. */
 export class MissingPricingStyle extends Data.TaggedError(
 	"MissingPricingStyle",
 )<{ message: string }> {}
 
+/** How a point's pricing draws, from a map built over every point. */
 export const styleOf = Effect.fnUntraced(function* (
 	pricings: ReadonlyMap<PricingId, PricingStyle>,
 	pricing: Pricing,

@@ -141,13 +141,6 @@ function sectionScroller<T extends string>(
 	return sections[0] ? scrollerOf(sections[0].el) : null;
 }
 
-/**
- * Keeps `seen` current from IntersectionObserver entries and calls `onChange`
- * after each update. The section observer reads no layout; the end check
- * reads it once per crossing of the scroller's end. The scroller and the
- * line's margin come from the layout at the time, so `isCurrent` says when a
- * resize has moved them.
- */
 export class MissingScrollEnd extends Data.TaggedError("MissingScrollEnd")<{
 	message: string;
 }> {}
@@ -161,6 +154,10 @@ const findEndMarker = Effect.fnUntraced(function* (count: number) {
 	return marker;
 });
 
+/**
+ * Keeps `seen` current from IntersectionObserver entries and calls `onChange`
+ * after each update; `isCurrent` says when a resize has moved the layout.
+ */
 export const observeSections = <T extends string>(
 	ids: readonly T[],
 	onChange: (seen: Sighting<T>) => void,

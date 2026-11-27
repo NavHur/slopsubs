@@ -45,7 +45,7 @@ export type GoPlan = {
 /**
  * A tier's monthly usage in list-priced (API) dollars, and the promotions it
  * counts, for the families the plan lists. A promotion on a family with no
- * regular usage is a data mistake, so it throws.
+ * regular usage is a data mistake, so it fails with PlanDataError.
  */
 export const goPlan = Effect.fnUntraced(function* (
 	pricing: GoPricing,

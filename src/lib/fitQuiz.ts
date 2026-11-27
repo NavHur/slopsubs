@@ -12,11 +12,11 @@ export type FieldEntry =
 	| { kind: "invalid" }
 	| { kind: "number"; value: number };
 
-/** `badInput` is the browser's word for number-field text with no number in it. */
 const decodeAmount = Schema.decodeUnknownOption(
 	Schema.NumberFromString.check(Schema.isFinite(), Schema.isGreaterThan(0)),
 );
 
+/** `badInput` is the browser's word for number-field text with no number in it. */
 export function parseEntry(text: string, badInput = false): FieldEntry {
 	if (badInput) return { kind: "invalid" };
 	if (text.trim() === "") return { kind: "blank" };

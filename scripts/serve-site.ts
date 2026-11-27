@@ -133,13 +133,13 @@ export const serveSite = Effect.gen(function* () {
 	);
 });
 
-/** The server's origin, with a trailing slash. */
 class MissingSiteAddress extends Data.TaggedError("MissingSiteAddress")<{}> {
 	override get message() {
 		return "The site server has no TCP address";
 	}
 }
 
+/** The server's origin, with a trailing slash. */
 export const originOf = Effect.fnUntraced(function* (server: Server) {
 	const address = server.address();
 	if (!address || typeof address === "string") {

@@ -8,8 +8,8 @@ export function median(values: readonly number[]): number {
 	return (sorted[upper - 1] + sorted[upper]) / 2;
 }
 
-/** Throws unless every paint metric was recorded: a missing entry reads as
- * NaN or 0, which would pass for a fast page. */
+/** Fails with BrowserCheckError unless every paint metric was recorded: a
+ * missing entry reads as NaN or 0, which would pass for a fast page. */
 export const requirePainted = Effect.fnUntraced(function* (
 	url: string,
 	metrics: { firstPaintMs: number; fcpMs: number; lcpMs: number },
