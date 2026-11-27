@@ -50,7 +50,7 @@ describe("importAaEvals cost", () => {
 		expect(figuresOf(run().rows)).toEqual({
 			"aa-briefcase": 20.47391,
 			"automationbench-aa": 1.03244,
-			"terminalbench-4-0": 12.64644,
+			"terminalbench-4-1": 12.64644,
 			"frontiercode-2-0": 11.55752,
 			omniscience: 0.15182,
 			"gdp-pdf": 0.79433,

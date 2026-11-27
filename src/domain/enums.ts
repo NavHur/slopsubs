@@ -16,7 +16,7 @@ export const EFFORTS = [
 export const AA_EVAL_IDS = [
 	"aa-briefcase",
 	"automationbench-aa",
-	"terminalbench-4-0",
+	"terminalbench-4-1",
 	"frontiercode-2-0",
 	"omniscience",
 	"gdp-pdf",

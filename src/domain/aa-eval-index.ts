@@ -10,7 +10,7 @@ type ScoreFields = Pick<
 	EvalRecord,
 	| "briefcaseBreakdown"
 	| "automationBenchPartialScore"
-	| "terminalBench40"
+	| "terminalBench41"
 	| "frontierCode20"
 	| "omniscience"
 	| "gdpPdfAllPass"
@@ -49,10 +49,10 @@ export const AA_EVAL_INDEX: Record<AaEvalId, EvalIndexEntry> = {
 		weight: 0.05,
 		tasks: 657,
 	},
-	"terminalbench-4-0": {
-		score: (r) => r.terminalBench40,
-		page: "terminalbench-4-0",
-		tokenKey: "terminalBench40",
+	"terminalbench-4-1": {
+		score: (r) => r.terminalBench41,
+		page: "terminalbench-4-1",
+		tokenKey: "terminalBench41",
 		weight: 0.1,
 		tasks: 66,
 	},

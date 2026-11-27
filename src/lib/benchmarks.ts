@@ -89,10 +89,10 @@ export const BENCHMARK_VIEWS: Record<BenchmarkId, BenchmarkView> = {
 		"AutomationBench",
 		"AutomationBench score",
 	),
-	"terminalbench-4-0": aaEval(
-		"terminalbench-4-0",
-		"Terminal-Bench 4.0",
-		"Terminal-Bench 4.0 score",
+	"terminalbench-4-1": aaEval(
+		"terminalbench-4-1",
+		"Terminal-Bench 4.1",
+		"Terminal-Bench 4.1 score",
 	),
 	"frontiercode-2-0": aaEval(
 		"frontiercode-2-0",

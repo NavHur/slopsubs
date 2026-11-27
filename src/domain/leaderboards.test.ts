@@ -90,7 +90,7 @@ describe("evalPoints", () => {
 		return {
 			family: family as FamilyId,
 			effort: effort as AaEvalRow["effort"],
-			eval: "terminalbench-4-0",
+			eval: "terminalbench-4-1",
 			score: 0.5,
 			costPerTaskUsd: 2,
 			tokensPerTask: 50_000,
@@ -103,7 +103,7 @@ describe("evalPoints", () => {
 		const [point] = evalPoints(
 			[evalRow(OPUS, "max")],
 			CATALOG,
-			"terminalbench-4-0",
+			"terminalbench-4-1",
 		);
 		expect(point).toMatchObject({
 			family: OPUS,
@@ -124,7 +124,7 @@ describe("evalPoints", () => {
 				CATALOG,
 				evalId,
 			)[0].score;
-		expect(score("terminalbench-4-0")).toBe(57.07);
+		expect(score("terminalbench-4-1")).toBe(57.07);
 		expect(score("omniscience")).toBe(0.5707);
 		expect(score("aa-briefcase")).toBe(0.5707);
 	});
@@ -132,7 +132,7 @@ describe("evalPoints", () => {
 	it("refuses a family the catalog doesn't know", () => {
 		const unknown = "swe-2";
 		expect(() =>
-			evalPoints([evalRow(unknown, "max")], CATALOG, "terminalbench-4-0"),
+			evalPoints([evalRow(unknown, "max")], CATALOG, "terminalbench-4-1"),
 		).toThrow(unknown);
 	});
 });
