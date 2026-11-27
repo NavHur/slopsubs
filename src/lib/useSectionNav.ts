@@ -156,7 +156,10 @@ const findEndMarker = Effect.fnUntraced(function* (count: number) {
 
 /**
  * Keeps `seen` current from IntersectionObserver entries and calls `onChange`
- * after each update; `isCurrent` says when a resize has moved the layout.
+ * after each update. The section observer reads no layout; the end check
+ * reads it once per crossing of the scroller's end. The scroller and the
+ * line's margin come from the layout at the time, so `isCurrent` says when a
+ * resize has moved them.
  */
 export const observeSections = <T extends string>(
 	ids: readonly T[],

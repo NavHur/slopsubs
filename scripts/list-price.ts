@@ -1,7 +1,8 @@
-import type { Effect } from "effect";
-import type { PlanDataError } from "./plan-offers.ts";
 // Converts usage billed at a vendor's own token rates into list-priced (API)
 // dollars, the unit every plan's allowance is compared in.
+
+import type { Effect } from "effect";
+import type { PlanDataError } from "./plan-offers.ts";
 
 /** [input, output] per million tokens. */
 export type TokenRates = [input: number, output: number];

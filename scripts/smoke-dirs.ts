@@ -22,7 +22,12 @@ const directoryIdentity = Effect.fnUntraced(function* (dir: string) {
 		);
 });
 
-/** Rejects an empty or identical baseline before any screenshots are written. */
+/**
+ * The directory to compare against, or undefined when recording a baseline.
+ * Fails for an empty path, which would silently skip the comparison, and for
+ * the output directory or a link to it: the new screenshots would replace the
+ * baseline on disk.
+ */
 export const baselineDirectory = Effect.fnUntraced(function* (
 	out: string,
 	compare: string | undefined,

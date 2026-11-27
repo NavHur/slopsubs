@@ -33,7 +33,7 @@ const KBPS = 1024 / 8;
 /** Lighthouse's simulated networks and CPUs.
  * ceiling: Chromium splits bandwidth evenly where HTTP/2 sends CSS before a
  * preloaded font; a WebPageTest run on the deployed site is the upgrade. */
-const THROTTLES: Record<string, Throttle> = {
+const THROTTLES = {
 	mobile: {
 		latencyMs: 150,
 		downloadBytesPerSec: 1638 * KBPS,
@@ -46,14 +46,16 @@ const THROTTLES: Record<string, Throttle> = {
 		uploadBytesPerSec: 10240 * KBPS,
 		cpuSlowdown: 1,
 	},
-};
+} satisfies Record<string, Throttle>;
 const Options = Schema.Struct({
 	runs: Schema.NumberFromString.check(
 		Schema.isInt(),
 		Schema.isGreaterThan(0),
 		Schema.isLessThanOrEqualTo(Number.MAX_SAFE_INTEGER),
 	),
-	throttle: Schema.Literals(["mobile", "desktop"]),
+	throttle: Schema.Literals(
+		Object.keys(THROTTLES) as (keyof typeof THROTTLES)[],
+	),
 });
 
 /** DNS, TCP, and TLS before the first request to a new origin. Chromium's

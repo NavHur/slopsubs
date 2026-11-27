@@ -156,8 +156,10 @@ use the file, process and browser adapters under `scripts/effects/`.
 Browser, page and offscreen-render lifetimes are scoped so failure closes
 their resources as well as success.
 
-The small theme bootstrap runs inline before the first paint, using the same
-theme literals as its Schema. Playwright's serialized callbacks likewise
+The small theme and pending-view bootstraps run inline before the first paint:
+the theme script uses the same theme literals as its Schema, and the
+pending-view script builds its parameter list from `DRAWN_PARAMS` in
+`src/lib/view.ts`, the source `ViewSearch` decodes. Playwright's serialized callbacks likewise
 cannot import modules from Node; native errors from those callbacks become
 typed failures at the browser adapter. These are intentional framework
 boundaries, not a second error-handling convention for application logic.

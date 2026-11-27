@@ -9,7 +9,10 @@ export class StepLimitReached extends Data.TaggedError("StepLimitReached")<{
 	}
 }
 
-/** Runs steps until done holds, or fails when the bounded pass is exhausted. */
+/**
+ * Runs `step` until `done` holds for its result, returning every result. Fails
+ * when `maxSteps` run out first, so a stuck pass is not read as a full one.
+ */
 export function stepUntil<T, E, R>(
 	step: () => Effect.Effect<T, E, R>,
 	done: (result: T) => boolean,
