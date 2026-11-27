@@ -1,10 +1,17 @@
-import { Effect } from "effect";
 // Pins a point, hovers another, and checks the comparison table fits, against
 // the prerendered build: no figure or change chip breaks over two lines, and
 // the table never spills out of its card. Phones from 360px wide are covered.
 
-import { type Browser, chromium, type Page } from "playwright-core";
-import { originOf, serveSite } from "./serve-site.ts";
+import { Effect, Schema } from "effect";
+import { type Browser, type Page } from "playwright-core";
+import {
+	browserOperation,
+	browserRead,
+	openBrowserPage,
+	BrowserCheckError,
+	launchBrowser,
+	siteOrigin,
+} from "./effects/browser.ts";
 
 const VIEWPORTS = [
 	{ width: 360, height: 800 },
@@ -18,28 +25,33 @@ const POINTS =
 const SETTLE_MS = 250;
 
 /** The cost a point's label states: "…, effective cost per task $1.42, …". */
-function costOf(label: string): number {
+const costOf = Effect.fnUntraced(function* (label: string) {
 	const cost = label.match(/cost per task \$([\d.]+)/)?.[1];
-	if (cost === undefined) throw new Error(`no cost in "${label}"`);
-	return Number(cost);
-}
+	if (cost === undefined)
+		return yield* new BrowserCheckError({ message: `no cost in "${label}"` });
+	return yield* Schema.decodeUnknownEffect(
+		Schema.NumberFromString.pipe(Schema.check(Schema.isFinite())),
+	)(cost);
+});
 
 /**
  * Point pairs to compare, as [pinned, hovered] indexes: the cheapest against
  * the priciest both ways, which shows the widest chip, then a spread of others.
  */
-function pairsToCompare(labels: string[]): [number, number][] {
-	const byCost = labels
-		.map((_, i) => i)
-		.sort((a, b) => costOf(labels[a]) - costOf(labels[b]));
+const pairsToCompare = Effect.fnUntraced(function* (labels: readonly string[]) {
+	const costs = yield* Effect.forEach(labels, costOf);
+	const byCost = labels.map((_, i) => i).sort((a, b) => costs[a] - costs[b]);
 	const cheapest = byCost[0];
 	const priciest = byCost[byCost.length - 1];
 	const spread: [number, number][] = [0.1, 0.3, 0.5, 0.7, 0.9].map((share) => {
 		const at = Math.floor(labels.length * share);
 		return [at, (at + Math.floor(labels.length / 3)) % labels.length];
 	});
-	return [[cheapest, priciest], [priciest, cheapest], ...spread];
-}
+	return [[cheapest, priciest], [priciest, cheapest], ...spread] satisfies [
+		number,
+		number,
+	][];
+});
 
 /**
  * What breaks the table's fit in the shown comparison, if anything. It runs
@@ -72,59 +84,76 @@ function fitProblems(): string[] {
 }
 
 /** Pins one point, hovers another, and reports whether their table fits. */
-async function comparisonFits(
+const comparisonFits = Effect.fnUntraced(function* (
 	page: Page,
-	labels: string[],
+	labels: readonly string[],
 	[pinned, hovered]: [number, number],
-): Promise<boolean> {
+) {
 	const points = page.locator(POINTS);
-	await points.nth(pinned).dispatchEvent("click");
-	await points.nth(hovered).dispatchEvent("mouseover");
-	await page.waitForTimeout(SETTLE_MS);
-	const problems = await page.evaluate(fitProblems);
+	yield* browserOperation("dispatchEvent", () =>
+		points.nth(pinned).dispatchEvent("click"),
+	);
+	yield* browserOperation("dispatchEvent", () =>
+		points.nth(hovered).dispatchEvent("mouseover"),
+	);
+	yield* browserOperation("waitForTimeout", () =>
+		page.waitForTimeout(SETTLE_MS),
+	);
+	const problems = yield* browserRead(
+		Schema.Array(Schema.String),
+		"Read fit problems",
+		() => page.evaluate(fitProblems),
+	);
 	const width = page.viewportSize()?.width;
 	const verdict = problems.length === 0 ? "ok  " : "FAIL";
 	console.log(`${verdict} ${width}px ${labels[pinned]} → ${labels[hovered]}`);
 	for (const problem of problems) console.log(`     ${problem}`);
-	await points.nth(hovered).dispatchEvent("mouseout");
-	await page.keyboard.press("Escape");
+	yield* browserOperation("dispatchEvent", () =>
+		points.nth(hovered).dispatchEvent("mouseout"),
+	);
+	yield* browserOperation("press", () => page.keyboard.press("Escape"));
 	return problems.length === 0;
-}
+});
 
-async function checkViewport(
+const checkViewport = Effect.fnUntraced(function* (
 	browser: Browser,
 	origin: string,
 	viewport: (typeof VIEWPORTS)[number],
-): Promise<number> {
-	const page = await browser.newPage({ viewport });
-	await page.goto(origin, { waitUntil: "networkidle" });
-	const labels = await page
-		.locator(POINTS)
-		.evaluateAll((els) => els.map((el) => el.getAttribute("aria-label") ?? ""));
+) {
+	const page = yield* openBrowserPage(browser, { viewport });
+	yield* browserOperation("goto", () =>
+		page.goto(origin, { waitUntil: "networkidle" }),
+	);
+	const labels = yield* browserRead(
+		Schema.NonEmptyArray(Schema.String),
+		"Read point labels",
+		() =>
+			page
+				.locator(POINTS)
+				.evaluateAll((els) =>
+					els.map((el) => el.getAttribute("aria-label") ?? ""),
+				),
+	);
 	let failures = 0;
-	for (const pair of pairsToCompare(labels)) {
-		if (!(await comparisonFits(page, labels, pair))) failures++;
+	for (const pair of yield* pairsToCompare(labels)) {
+		if (!(yield* comparisonFits(page, labels, pair))) failures++;
 	}
-	await page.close();
-	return failures;
-}
 
-const server = await Effect.runPromise(serveSite);
-const browser = await chromium.launch();
-let failures = 0;
-try {
+	return failures;
+}, Effect.scoped);
+
+const main = Effect.gen(function* () {
+	const origin = yield* siteOrigin();
+	const browser = yield* launchBrowser();
+	let failures = 0;
 	for (const viewport of VIEWPORTS) {
-		failures += await checkViewport(
-			browser,
-			Effect.runSync(originOf(server)),
-			viewport,
-		);
+		failures += yield* checkViewport(browser, origin, viewport);
 	}
-} finally {
-	await browser.close();
-	server.close();
-}
-if (failures > 0) {
-	console.error(`${failures} comparisons did not fit`);
-	process.exit(1);
-}
+
+	if (failures > 0)
+		return yield* new BrowserCheckError({
+			message: `${failures} comparisons did not fit`,
+		});
+});
+
+await Effect.runPromise(Effect.scoped(main));
