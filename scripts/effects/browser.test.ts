@@ -1,7 +1,13 @@
 import { Effect, Schema } from "effect";
-import type { Browser } from "playwright-core";
+import type { Browser, Page, Route } from "playwright-core";
 import { describe, expect, it, vi } from "vite-plus/test";
-import { BrowserCheckError, browserRead, openBrowserPage } from "./browser.ts";
+import {
+	BrowserCheckError,
+	browserOperation,
+	browserRead,
+	openBrowserPage,
+	routeRequests,
+} from "./browser.ts";
 
 describe("browser effects", () => {
 	it("releases a page when an interaction fails", async () => {
@@ -24,7 +30,34 @@ describe("browser effects", () => {
 		await expect(
 			Effect.runPromise(browserRead(Schema.Int, "read count", async () => "4")),
 		).rejects.toMatchObject({
-			_tag: "SchemaError",
+			_tag: "BrowserOperationError",
+			operation: "read count",
+			cause: { _tag: "SchemaError" },
+		});
+	});
+
+	it("reports a failed route handler to the page's owner", async () => {
+		let handler: (route: Route) => Promise<void> = async () => {};
+		const page = {
+			route: async (_url: string, run: typeof handler) => {
+				handler = run;
+			},
+		} as unknown as Page;
+		const cause = new Error("target closed");
+		const route = {
+			continue: () => Promise.reject(cause),
+		} as unknown as Route;
+		const program = Effect.gen(function* () {
+			const failed = yield* routeRequests(page, "**/*.js", (route) =>
+				browserOperation("continue", () => route.continue()),
+			);
+			yield* Effect.promise(() => handler(route));
+			return yield* failed;
+		});
+		await expect(Effect.runPromise(program)).rejects.toMatchObject({
+			_tag: "BrowserOperationError",
+			operation: "continue",
+			cause,
 		});
 	});
 

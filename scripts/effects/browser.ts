@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
-import { Data, Effect, Schema } from "effect";
-import { chromium, type Browser, type LaunchOptions } from "playwright-core";
+import { Data, Deferred, Effect, Schema } from "effect";
+import {
+	chromium,
+	type Browser,
+	type LaunchOptions,
+	type Page,
+	type Route,
+} from "playwright-core";
 import { closeSite, originOf, serveSite } from "../serve-site.ts";
 
 export class BrowserOperationError extends Data.TaggedError(
@@ -21,16 +27,47 @@ export function browserOperation<A>(operation: string, run: () => Promise<A>) {
 	});
 }
 
-/** Values serialized out of Chromium cross a wire boundary. */
+/** Values serialized out of Chromium cross a wire boundary. A value that does
+ * not decode fails as the operation, with the SchemaError as its cause. */
 export function browserRead<S extends Schema.Constraint>(
 	schema: S,
 	operation: string,
 	run: () => Promise<unknown>,
 ) {
 	return browserOperation(operation, run).pipe(
-		Effect.flatMap(Schema.decodeUnknownEffect(schema)),
+		Effect.flatMap((value) =>
+			Schema.decodeUnknownEffect(schema)(value).pipe(
+				Effect.mapError(
+					(cause) => new BrowserOperationError({ operation, cause }),
+				),
+			),
+		),
 	);
 }
+
+/** Playwright calls a route handler outside any fiber, so its failure cannot
+ * reach the check that owns the page. The returned effect never succeeds and
+ * fails with the first handler failure: race the page's work against it. A
+ * request whose handler failed stays unhandled, so that race is also what
+ * ends the wait. */
+export const routeRequests = Effect.fnUntraced(function* (
+	page: Page,
+	url: Parameters<Page["route"]>[0],
+	handle: (route: Route) => Effect.Effect<void, BrowserOperationError>,
+) {
+	const failed = yield* Deferred.make<never, BrowserOperationError>();
+	yield* browserOperation("route", () =>
+		page.route(url, (route) =>
+			Effect.runPromise(
+				handle(route).pipe(
+					Effect.catch((error) => Deferred.fail(failed, error)),
+					Effect.asVoid,
+				),
+			),
+		),
+	);
+	return Deferred.await(failed);
+});
 
 export const launchBrowser = (options?: LaunchOptions) =>
 	Effect.acquireRelease(

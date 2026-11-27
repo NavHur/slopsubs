@@ -122,6 +122,22 @@ const capture = Effect.fnUntraced(function* (
 	);
 });
 
+/** Playwright's observations are decoded like any value out of the browser. */
+const menuExpanded = (trigger: Locator) =>
+	browserRead(Schema.NullOr(Schema.String), "Read aria-expanded", () =>
+		trigger.getAttribute("aria-expanded"),
+	);
+const hasFocus = (locator: Locator) =>
+	browserRead(Schema.Boolean, "Read focus", () =>
+		locator.evaluate((el) => el === document.activeElement),
+	);
+const countOf = (locator: Locator) =>
+	browserRead(Schema.Int, "Count elements", () => locator.count());
+const currentSection = (nav: Locator) =>
+	browserRead(Schema.NullOr(Schema.String), "Read current section", () =>
+		nav.locator('[aria-current="location"]').textContent(),
+	);
+
 /** Moves focus off the trigger, so Escape has to bring it back. */
 const focusInsideMenu = Effect.fnUntraced(function* (trigger: Locator) {
 	yield* browserOperation("focus", () =>
@@ -151,80 +167,45 @@ const pinFirstPoint = Effect.fnUntraced(function* (page: Page) {
 const settings = Effect.fnUntraced(function* (page: Page) {
 	const trigger = settingsTrigger(page);
 	yield* browserOperation("click", () => trigger.click());
-	yield* checkEqual(
-		yield* browserOperation("getAttribute", () =>
-			trigger.getAttribute("aria-expanded"),
-		),
-		"true",
-	);
+	yield* checkEqual(yield* menuExpanded(trigger), "true");
 	yield* focusInsideMenu(trigger);
 	yield* browserOperation("press", () => page.keyboard.press("Escape"));
-	yield* checkEqual(
-		yield* browserOperation("getAttribute", () =>
-			trigger.getAttribute("aria-expanded"),
-		),
-		"false",
-	);
-	yield* checkEqual(
-		yield* browserOperation("evaluate", () =>
-			trigger.evaluate((el) => el === document.activeElement),
-		),
-		true,
-	);
+	yield* checkEqual(yield* menuExpanded(trigger), "false");
+	yield* checkEqual(yield* hasFocus(trigger), true);
 	yield* browserOperation("click", () => trigger.click());
 	yield* browserOperation("dispatchEvent", () =>
 		page.getByRole("heading", { level: 1 }).dispatchEvent("pointerdown"),
 	);
-	yield* checkEqual(
-		yield* browserOperation("getAttribute", () =>
-			trigger.getAttribute("aria-expanded"),
-		),
-		"false",
-	);
+	yield* checkEqual(yield* menuExpanded(trigger), "false");
 	yield* browserOperation("click", () => trigger.click());
 	yield* browserOperation("focus", () =>
 		page.getByRole("button", { name: "Toggle light and dark theme" }).focus(),
 	);
-	yield* checkEqual(
-		yield* browserOperation("getAttribute", () =>
-			trigger.getAttribute("aria-expanded"),
-		),
-		"false",
-	);
+	yield* checkEqual(yield* menuExpanded(trigger), "false");
 });
 
 /** Escape that closes the menu must stop there, leaving a pinned point open. */
 const menuEscapeKeepsPinnedPoint = Effect.fnUntraced(function* (page: Page) {
 	const details = detailsCloser(page);
 	yield* pinFirstPoint(page);
-	yield* checkEqual(yield* browserOperation("count", () => details.count()), 1);
+	yield* checkEqual(yield* countOf(details), 1);
 	const trigger = settingsTrigger(page);
 	yield* browserOperation("click", () => trigger.click());
 	yield* focusInsideMenu(trigger);
 	yield* browserOperation("press", () => page.keyboard.press("Escape"));
-	yield* checkEqual(
-		yield* browserOperation("getAttribute", () =>
-			trigger.getAttribute("aria-expanded"),
-		),
-		"false",
-	);
-	yield* checkEqual(
-		yield* browserOperation("evaluate", () =>
-			trigger.evaluate((el) => el === document.activeElement),
-		),
-		true,
-	);
-	yield* checkEqual(yield* browserOperation("count", () => details.count()), 1);
+	yield* checkEqual(yield* menuExpanded(trigger), "false");
+	yield* checkEqual(yield* hasFocus(trigger), true);
+	yield* checkEqual(yield* countOf(details), 1);
 	yield* browserOperation("press", () => page.keyboard.press("Escape"));
-	yield* checkEqual(yield* browserOperation("count", () => details.count()), 0);
+	yield* checkEqual(yield* countOf(details), 0);
 });
 
 const points = Effect.fnUntraced(function* (page: Page) {
 	const details = detailsCloser(page);
 	yield* pinFirstPoint(page);
-	yield* checkEqual(yield* browserOperation("count", () => details.count()), 1);
+	yield* checkEqual(yield* countOf(details), 1);
 	yield* browserOperation("press", () => page.keyboard.press("Escape"));
-	yield* checkEqual(yield* browserOperation("count", () => details.count()), 0);
+	yield* checkEqual(yield* countOf(details), 0);
 });
 
 const navigation = Effect.fnUntraced(function* (page: Page) {
@@ -241,24 +222,14 @@ const navigation = Effect.fnUntraced(function* (page: Page) {
 	yield* browserOperation("waitForTimeout", () =>
 		page.waitForTimeout(SECTION_JUMP_MS),
 	);
-	yield* checkEqual(
-		yield* browserOperation("textContent", () =>
-			nav.locator('[aria-current="location"]').textContent(),
-		),
-		"Tasks per week",
-	);
+	yield* checkEqual(yield* currentSection(nav), "Tasks per week");
 	yield* browserOperation("click", () =>
 		nav.getByRole("link", { name: "Cost vs score", exact: true }).click(),
 	);
 	yield* browserOperation("waitForTimeout", () =>
 		page.waitForTimeout(SECTION_JUMP_MS),
 	);
-	yield* checkEqual(
-		yield* browserOperation("textContent", () =>
-			nav.locator('[aria-current="location"]').textContent(),
-		),
-		"Cost vs score",
-	);
+	yield* checkEqual(yield* currentSection(nav), "Cost vs score");
 });
 
 const overflow = Effect.fnUntraced(function* (page: Page) {
@@ -276,8 +247,8 @@ const overflow = Effect.fnUntraced(function* (page: Page) {
 		frame.getByRole("button", { name: "Scroll left", exact: true }).waitFor(),
 	);
 	yield* checkEqual(
-		yield* browserOperation("count", () =>
-			frame.getByRole("button", { name: "Scroll right", exact: true }).count(),
+		yield* countOf(
+			frame.getByRole("button", { name: "Scroll right", exact: true }),
 		),
 		0,
 	);
@@ -288,8 +259,8 @@ const overflow = Effect.fnUntraced(function* (page: Page) {
 		frame.getByRole("button", { name: "Scroll right", exact: true }).waitFor(),
 	);
 	yield* checkEqual(
-		yield* browserOperation("count", () =>
-			frame.getByRole("button", { name: "Scroll left", exact: true }).count(),
+		yield* countOf(
+			frame.getByRole("button", { name: "Scroll left", exact: true }),
 		),
 		0,
 	);
