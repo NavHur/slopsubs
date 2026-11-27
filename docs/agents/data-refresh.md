@@ -138,7 +138,7 @@ family needs its own page. Records sit in the Next.js flight payload
       evals: {
         "aa-briefcase": r.briefcaseBreakdown?.overall?.elo,
         "automationbench-aa": r.automationBenchPartialScore,
-        "terminalbench-4-0": r.terminalBench40,
+        "terminalbench-4-1": r.terminalBench41,
         "frontiercode-2-0": r.frontierCode20,
         omniscience: r.omniscience,
         "gdp-pdf": r.gdpPdfAllPass,

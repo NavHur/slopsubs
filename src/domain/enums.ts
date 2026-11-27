@@ -16,7 +16,7 @@ export const EFFORTS = [
 export const AA_EVAL_IDS = [
 	"aa-briefcase",
 	"automationbench-aa",
-	"terminalbench-4-0",
+	"terminalbench-4-1",
 	"frontiercode-2-0",
 	"omniscience",
 	"gdp-pdf",
@@ -24,6 +24,12 @@ export const AA_EVAL_IDS = [
 	"critpt-v2-hard",
 	"terminal-bench-science",
 ] as const;
+
+/** AA's index replaced Terminal-Bench 4.0 with 4.1 (same tasks, rescored). */
+export const SUPERSEDED_AA_EVAL = {
+	id: "terminalbench-4-0",
+	successor: "terminalbench-4-1",
+} as const satisfies { id: string; successor: (typeof AA_EVAL_IDS)[number] };
 
 /** The benchmarks the chart can plot, in tab order. */
 export const BENCHMARK_IDS = [

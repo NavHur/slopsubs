@@ -60,6 +60,12 @@ describe("stale or hand-edited links", () => {
 		expect(hiddenReasoning(parsed)).toEqual(["none"]);
 	});
 
+	it("open Terminal-Bench 4.1 when they name the 4.0 it replaced", () => {
+		expect(view({ benchmark: "terminalbench-4-0" }).benchmark).toBe(
+			"terminalbench-4-1",
+		);
+	});
+
 	it("open the default models when every model they name is retired", () => {
 		expect(selectedFamilies(view({ families: ["retired-family"] }))).toEqual(
 			selectedFamilies(view({})),

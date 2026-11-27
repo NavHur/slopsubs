@@ -1,13 +1,14 @@
 import { AA_EVAL_IDS } from "./enums";
 
-/** Claude Sonnet 5.5 (max) as AA's pages carried it on 2026-11-20. */
+/** Claude Sonnet 5.5 (max), based on AA's 2026-11-20 pages with the
+ * Terminal-Bench keys adapted to 4.1. */
 export const SONNET = {
 	id: "b171d979-5ec1-45de-b8b9-db1ee65e77ec",
 	slug: "claude-sonnet-5-5",
 	scores: {
 		briefcaseBreakdown: { overall: { elo: 1815.14 } },
 		automationBenchPartialScore: 0.7176882128193995,
-		terminalBench40: 0.636363636363636,
+		terminalBench41: 0.636363636363636,
 		frontierCode20: 0.416993434343434,
 		omniscience: 30.466666666666665,
 		gdpPdfAllPass: 0.258,
@@ -28,7 +29,7 @@ export const SONNET = {
 	tokenCounts: {
 		briefcase: { answer: 19316127, reasoning: 37574868 },
 		automationBench: { answer: 12194455, reasoning: 27824106 },
-		terminalBench40: { answer: 6131049, reasoning: 19109282 },
+		terminalBench41: { answer: 6131049, reasoning: 19109282 },
 		frontierCode20: { answer: 11727454, reasoning: 29982620 },
 		omniscience: { answer: 216035, reasoning: 45227159 },
 		gdpPdf: { answer: 197628, reasoning: 4221285 },
@@ -123,6 +124,6 @@ export function scoredRecord(
 		release: { slug: release },
 		intelligenceIndex: 30,
 		omniscience: score,
-		terminalBench40: null,
+		terminalBench41: null,
 	};
 }

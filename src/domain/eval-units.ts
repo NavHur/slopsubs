@@ -9,7 +9,7 @@ type EvalUnit = "percent" | "index";
 export const AA_EVAL_UNITS: Record<AaEvalId, EvalUnit> = {
 	"aa-briefcase": "index",
 	"automationbench-aa": "percent",
-	"terminalbench-4-0": "percent",
+	"terminalbench-4-1": "percent",
 	"frontiercode-2-0": "percent",
 	omniscience: "index",
 	"gdp-pdf": "percent",

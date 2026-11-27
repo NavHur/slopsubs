@@ -1,6 +1,7 @@
 import * as Schema from "effect/Schema";
+import * as SchemaTransformation from "effect/SchemaTransformation";
 import { frontier, plans } from "#/data";
-import { BENCHMARK_IDS } from "#/domain/enums";
+import { BENCHMARK_IDS, SUPERSEDED_AA_EVAL } from "#/domain/enums";
 import type { Effort, FamilyId, Frontier, PlanId } from "#/domain/model";
 import { FitSearch } from "./fit";
 import { knownItems, optionalValid, withFallback } from "./search-schema";
@@ -50,13 +51,30 @@ function knownSelection<T extends string>(known: readonly T[]) {
 	);
 }
 
+/** AA's index replaced Terminal-Bench 4.0 with 4.1, so a link to the 4.0
+ * tab opens its successor rather than the default benchmark. */
+const SupersededBenchmark = Schema.Literal(SUPERSEDED_AA_EVAL.id).pipe(
+	Schema.decodeTo(
+		Schema.Literal(SUPERSEDED_AA_EVAL.successor),
+		SchemaTransformation.transform({
+			decode: () => SUPERSEDED_AA_EVAL.successor,
+			encode: () => SUPERSEDED_AA_EVAL.id,
+		}),
+	),
+);
+
+const Benchmark = Schema.Union([
+	Schema.Literals(BENCHMARK_IDS),
+	SupersededBenchmark,
+]);
+
 /**
  * Chart state, kept in the URL so every view is shareable. A value this
  * version does not know (a retired benchmark, a hand-edited link) falls back
  * to its default. The router validates search before passing it to the page.
  */
 const ViewSearch = Schema.Struct({
-	benchmark: withFallback(Schema.Literals(BENCHMARK_IDS), "intelligence"),
+	benchmark: withFallback(Benchmark, "intelligence"),
 	scale: withFallback(Schema.Literals(["log", "linear"]), "log"),
 	pareto: withFallback(Schema.Boolean, false),
 	api: withFallback(Schema.Boolean, true),

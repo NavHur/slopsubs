@@ -16,7 +16,7 @@
 
 **Promotion**: A limited-time offer on one model family in a plan, with a known end date. It either discounts the family's token prices or raises its monthly usage outright. A plan's value counts a promotion while it runs, and a caveat tells the visitor it is temporary. A promotion never ends on its own: once its end date passes, someone confirms the family's new allowance and removes it by hand.
 
-**Eval**: One of the Artificial Analysis benchmarks that make up its Intelligence Index, such as AA-Briefcase or Terminal-Bench 4.0. Each model at one effort gets a score per eval.
+**Eval**: One of the Artificial Analysis benchmarks that make up its Intelligence Index, such as AA-Briefcase or Terminal-Bench 4.1. Each model at one effort gets a score per eval.
 _Avoid_: Benchmark (that word also covers the Intelligence Index itself and FrontierCode)
 
 **Task figures**: The cost, output tokens and time a model at one effort spends on one task of an eval. Cost is in US dollars, and time excludes tool execution.

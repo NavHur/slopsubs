@@ -92,7 +92,7 @@ function snapshot({
 			frontiercode: { fetchedAt, models: [] },
 			"aa-briefcase": board,
 			"automationbench-aa": board,
-			"terminalbench-4-0": board,
+			"terminalbench-4-1": board,
 			"frontiercode-2-0": board,
 			omniscience: board,
 			"gdp-pdf": { fetchedAt, models: gdpPdf },

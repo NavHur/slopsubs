@@ -103,7 +103,7 @@ When AA says it regraded a benchmark, `--allow-score-drift` turns a gap of up
 to 1.5 points into a warning so the refresh can proceed before slopalytics
 catches up. AA's time per task is decode time, excluding TTFT and overhead.
 
-The nine Intelligence Index evals (Terminal-Bench 4.0, FrontierCode 2.0 and
+The nine Intelligence Index evals (Terminal-Bench 4.1, FrontierCode 2.0 and
 seven others) come from the same AA pages. `import-aa-evals` reads each
 model's per-eval scores from its record's named fields, resolved against the
 catalog (unknown families/efforts are skipped with a log; ambiguous ones stop

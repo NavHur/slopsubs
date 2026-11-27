@@ -50,7 +50,7 @@ const EvalRecord = Schema.Struct({
 		),
 	),
 	automationBenchPartialScore: Score,
-	terminalBench40: Score,
+	terminalBench41: Score,
 	frontierCode20: Score,
 	omniscience: Score,
 	gdpPdfAllPass: Score,
