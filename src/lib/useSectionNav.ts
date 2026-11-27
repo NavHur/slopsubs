@@ -1,3 +1,5 @@
+import * as Data from "effect/Data";
+import * as Effect from "effect/Effect";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 
 /** How far down the viewport a section's top must have risen to count as in view. */
@@ -146,57 +148,69 @@ function sectionScroller<T extends string>(
  * line's margin come from the layout at the time, so `isCurrent` says when a
  * resize has moved them.
  */
-export function observeSections<T extends string>(
+export class MissingScrollEnd extends Data.TaggedError("MissingScrollEnd")<{
+	message: string;
+}> {}
+
+const findEndMarker = Effect.fnUntraced(function* (count: number) {
+	const marker = document.getElementById(SCROLL_END_ID);
+	if (count > 0 && !marker)
+		return yield* new MissingScrollEnd({
+			message: `#${SCROLL_END_ID} is not rendered`,
+		});
+	return marker;
+});
+
+export const observeSections = <T extends string>(
 	ids: readonly T[],
 	onChange: (seen: Sighting<T>) => void,
 	seen: Tracked<T> = { reached: new Map(), atEnd: false },
-) {
-	const sections = renderedSections(ids);
-	const endMarker = document.getElementById(SCROLL_END_ID);
-	if (sections.length > 0 && !endMarker) {
-		throw new Error(`#${SCROLL_END_ID} is not rendered`);
-	}
-	const scroller = sectionScroller(sections);
-	const box = lineBoxOf(scroller);
-	const observers = [
-		observeReached(sections, box, seen, onChange),
-		observeEnd(scroller, endMarker, seen, onChange),
-	];
-	return {
-		seen,
-		isCurrent: () => {
-			const now = sectionScroller(sections);
-			return now === scroller && lineBoxOf(now).margin === box.margin;
-		},
-		stop: () => {
-			for (const observer of observers) observer.disconnect();
-		},
-	};
-}
+) =>
+	Effect.gen(function* () {
+		const sections = renderedSections(ids);
+		const endMarker = yield* findEndMarker(sections.length);
+		const scroller = sectionScroller(sections);
+		const box = lineBoxOf(scroller);
+		const observers = [
+			observeReached(sections, box, seen, onChange),
+			observeEnd(scroller, endMarker, seen, onChange),
+		];
+		return {
+			seen,
+			isCurrent: () => {
+				const now = sectionScroller(sections);
+				return now === scroller && lineBoxOf(now).margin === box.margin;
+			},
+			stop: () => {
+				for (const observer of observers) observer.disconnect();
+			},
+		};
+	});
 
 /**
  * `observeSections`, made again whenever a resize moves the scroller (at a
  * breakpoint) or the reading line, keeping what the old observers saw.
  */
-export function observeAcrossResizes<T extends string>(
+export const observeAcrossResizes = <T extends string>(
 	ids: readonly T[],
 	onChange: (seen: Sighting<T>) => void,
-) {
-	let sections = observeSections(ids, onChange);
-	const onResize = () => {
-		if (sections.isCurrent()) return;
-		sections.stop();
-		sections = observeSections(ids, onChange, sections.seen);
-	};
-	window.addEventListener("resize", onResize, { passive: true });
-	return {
-		seen: sections.seen,
-		stop: () => {
-			window.removeEventListener("resize", onResize);
+) =>
+	Effect.gen(function* () {
+		let sections = yield* observeSections(ids, onChange);
+		const onResize = () => {
+			if (sections.isCurrent()) return;
 			sections.stop();
-		},
-	};
-}
+			sections = Effect.runSync(observeSections(ids, onChange, sections.seen));
+		};
+		window.addEventListener("resize", onResize, { passive: true });
+		return {
+			seen: sections.seen,
+			stop: () => {
+				window.removeEventListener("resize", onResize);
+				sections.stop();
+			},
+		};
+	});
 
 /**
  * Calls `onCross` with the section in view whenever it changes, from the
@@ -226,7 +240,7 @@ function watchSectionCrossings<T extends string>(
 		reported = id;
 		onCross(id);
 	};
-	const sections = observeAcrossResizes(ids, report);
+	const sections = Effect.runSync(observeAcrossResizes(ids, report));
 	// Quiet until the reader first scrolls: a tall screen keeps its URL on
 	// load even when a later section starts in view.
 	const onFirstScroll = () => {

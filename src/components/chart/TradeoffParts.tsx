@@ -1,3 +1,4 @@
+import * as Effect from "effect/Effect";
 import type { FamilyId } from "#/domain/model";
 import type { BenchmarkView } from "#/lib/benchmarks";
 import { familyColor, familyName } from "#/lib/families";
@@ -122,7 +123,7 @@ export function EffortLines({
 				<EffortLine
 					key={step.key}
 					step={step}
-					pricing={styleOf(pricings, step.pricing)}
+					pricing={Effect.runSync(styleOf(pricings, step.pricing))}
 					lit={lit}
 				/>
 			))}

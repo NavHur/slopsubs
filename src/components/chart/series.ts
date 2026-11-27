@@ -1,3 +1,5 @@
+import * as Data from "effect/Data";
+import * as Effect from "effect/Effect";
 import type { FamilyId, PlanId } from "#/domain/model";
 import type { Pricing, ValuePoint } from "#/domain/value";
 import { familyColor, familyName } from "#/lib/families";
@@ -130,15 +132,22 @@ export function pricingStyles(
 }
 
 /** How a point's pricing draws, from a map built over every point. */
-export function styleOf(
+export class MissingPricingStyle extends Data.TaggedError(
+	"MissingPricingStyle",
+)<{ message: string }> {}
+
+export const styleOf = Effect.fnUntraced(function* (
 	pricings: ReadonlyMap<PricingId, PricingStyle>,
 	pricing: Pricing,
-): PricingStyle {
+) {
 	const id = pricingIdOf(pricing);
 	const style = pricings.get(id);
-	if (!style) throw new Error(`No style for pricing ${id}`);
+	if (!style)
+		return yield* new MissingPricingStyle({
+			message: `No style for pricing ${id}`,
+		});
 	return style;
-}
+});
 
 /** The model's line end furthest right, where its label's leader line starts. */
 export function modelEnd(model: ModelGroup): ValuePoint {

@@ -1,3 +1,4 @@
+import { Effect } from "effect";
 import {
 	afterEach,
 	beforeEach,
@@ -110,13 +111,13 @@ describe.each<Layout>(["page", "scroller"])(
 	(layout) => {
 		const world = buildWorld(layout);
 		let fake: ReturnType<typeof stubBrowser>;
-		let tracker: ReturnType<typeof observeSections<Id>>;
+		let tracker: Effect.Success<ReturnType<typeof observeSections<Id>>>;
 
 		beforeEach(() => {
 			world.setLayout(layout);
 			world.setScroll(0);
 			fake = stubBrowser(world);
-			tracker = observeSections(ids, () => {});
+			tracker = Effect.runSync(observeSections(ids, () => {}));
 			fake.deliver();
 		});
 
@@ -196,7 +197,7 @@ describe("observeAcrossResizes when the window crosses the scroller breakpoint",
 
 	it("keeps the reading line right after the page stops scrolling in the scroller", () => {
 		const browser = stubBrowser(world);
-		const tracker = observeAcrossResizes(ids, () => {});
+		const tracker = Effect.runSync(observeAcrossResizes(ids, () => {}));
 		stop = tracker.stop;
 		browser.deliver();
 
@@ -217,7 +218,7 @@ describe("observeAcrossResizes when the window crosses the scroller breakpoint",
 	it("does not remake its observers while a resize leaves them current", () => {
 		const browser = stubBrowser(world);
 		world.setLayout("scroller");
-		const tracker = observeAcrossResizes(ids, () => {});
+		const tracker = Effect.runSync(observeAcrossResizes(ids, () => {}));
 		stop = tracker.stop;
 		browser.deliver();
 		const before = vi.fn();
@@ -235,15 +236,18 @@ describe("observeSections without the end marker", () => {
 	it("throws when sections are rendered but the marker is not", () => {
 		stubBrowser(world);
 		world.elements.delete(SCROLL_END_ID);
-		expect(() => observeSections(ids, () => {})).toThrow(
-			`#${SCROLL_END_ID} is not rendered`,
-		);
+		expect(
+			Effect.runSync(Effect.flip(observeSections(ids, () => {}))),
+		).toMatchObject({
+			_tag: "MissingScrollEnd",
+			message: `#${SCROLL_END_ID} is not rendered`,
+		});
 	});
 
 	it("tracks nothing, without throwing, when no section is rendered", () => {
 		stubBrowser(world);
 		world.elements.clear();
-		const tracker = observeSections(ids, () => {});
+		const tracker = Effect.runSync(observeSections(ids, () => {}));
 		expect(sectionInView(ids, tracker.seen)).toBeUndefined();
 		tracker.stop();
 	});

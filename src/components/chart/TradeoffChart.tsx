@@ -1,4 +1,5 @@
 import { cn } from "cn";
+import * as Effect from "effect/Effect";
 import { useMemo } from "react";
 import type { TimedPoint } from "#/domain/tradeoffs";
 import type { BenchmarkView } from "#/lib/benchmarks";
@@ -93,7 +94,7 @@ export function TradeoffChart({
 					<TradeoffPoint
 						key={`${p.point.seriesId}/${p.point.benchmark.id}`}
 						scenePoint={p}
-						pricing={styleOf(pricings, p.point.pricing)}
+						pricing={Effect.runSync(styleOf(pricings, p.point.pricing))}
 						active={p === shown || p.point === details?.selected}
 						lit={lit}
 						onDetails={dispatch}
