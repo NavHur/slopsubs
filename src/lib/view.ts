@@ -1,4 +1,5 @@
 import * as Schema from "effect/Schema";
+import * as SchemaTransformation from "effect/SchemaTransformation";
 import { frontier, plans } from "#/data";
 import { BENCHMARK_IDS } from "#/domain/enums";
 import type { Effort, FamilyId, Frontier, PlanId } from "#/domain/model";
@@ -50,13 +51,30 @@ function knownSelection<T extends string>(known: readonly T[]) {
 	);
 }
 
+/** AA's index replaced Terminal-Bench 4.0 with 4.1, so a link to the 4.0
+ * tab opens its successor rather than the default benchmark. */
+const SupersededBenchmark = Schema.Literal("terminalbench-4-0").pipe(
+	Schema.decodeTo(
+		Schema.Literal("terminalbench-4-1"),
+		SchemaTransformation.transform({
+			decode: () => "terminalbench-4-1" as const,
+			encode: () => "terminalbench-4-0" as const,
+		}),
+	),
+);
+
+const Benchmark = Schema.Union([
+	Schema.Literals(BENCHMARK_IDS),
+	SupersededBenchmark,
+]);
+
 /**
  * Chart state, kept in the URL so every view is shareable. A value this
  * version does not know (a retired benchmark, a hand-edited link) falls back
  * to its default. The router validates search before passing it to the page.
  */
 const ViewSearch = Schema.Struct({
-	benchmark: withFallback(Schema.Literals(BENCHMARK_IDS), "intelligence"),
+	benchmark: withFallback(Benchmark, "intelligence"),
 	scale: withFallback(Schema.Literals(["log", "linear"]), "log"),
 	pareto: withFallback(Schema.Boolean, false),
 	api: withFallback(Schema.Boolean, true),
