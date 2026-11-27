@@ -9,6 +9,7 @@ import {
 	GENERATED_FILES,
 	summarizeDataChanges,
 } from "../src/domain/data-changes.ts";
+import { SUPERSEDED_AA_EVAL } from "../src/domain/enums.ts";
 import {
 	AaEvalsDataset,
 	BenchmarkDataset,
@@ -71,15 +72,36 @@ function readTexts<E>(read: (file: FileName) => Effect.Effect<string, E>) {
 	);
 }
 
+const renameSuperseded = (id: string) =>
+	id === SUPERSEDED_AA_EVAL.id ? SUPERSEDED_AA_EVAL.successor : id;
+
+/** `value` with every string, and object key, that is the superseded eval id
+ * renamed to its successor. */
+function renameSupersededEval(value: unknown): unknown {
+	if (typeof value === "string") return renameSuperseded(value);
+	if (Array.isArray(value)) return value.map(renameSupersededEval);
+	if (typeof value !== "object" || value === null) return value;
+	return Object.fromEntries(
+		Object.entries(value).map(([key, item]) => [
+			renameSuperseded(key),
+			renameSupersededEval(item),
+		]),
+	);
+}
+
+const keepAsWritten = (raw: unknown) => raw;
+
 function decodeDataset<S extends Schema.Constraint>(
 	schema: S,
 	path: string,
 	text: string,
+	upgrade: (raw: unknown) => unknown,
 ) {
 	return Effect.gen(function* () {
-		// The raw JSON also matters when comparing metadata the schema drops.
+		// The raw JSON also matters when comparing metadata the schema drops, so
+		// it stays as written; only what the schema decodes is upgraded.
 		const raw = yield* decodeJsonFile(Schema.Unknown, path, text);
-		const data = yield* decodeFileValue(schema, path, raw);
+		const data = yield* decodeFileValue(schema, path, upgrade(raw));
 		return { data, raw };
 	});
 }
@@ -87,6 +109,7 @@ function decodeDataset<S extends Schema.Constraint>(
 function decodeSnapshot(
 	texts: Texts,
 	label: (file: FileName) => string,
+	upgrade: (raw: unknown) => unknown,
 ): Effect.Effect<DataSnapshot, InvalidJsonFile> {
 	return Effect.gen(function* () {
 		const { benchmarks, aaEvals, frontierCode, chart, plans } =
@@ -95,23 +118,32 @@ function decodeSnapshot(
 					BenchmarkDataset,
 					label(GENERATED_FILES.benchmarks),
 					texts.benchmarks,
+					upgrade,
 				),
 				aaEvals: decodeDataset(
 					AaEvalsDataset,
 					label(GENERATED_FILES.aaEvals),
 					texts.aaEvals,
+					upgrade,
 				),
 				frontierCode: decodeDataset(
 					FrontierCodeDataset,
 					label(GENERATED_FILES.frontierCode),
 					texts.frontierCode,
+					upgrade,
 				),
 				chart: decodeDataset(
 					ChartData,
 					label(GENERATED_FILES.chart),
 					texts.chart,
+					upgrade,
 				),
-				plans: decodeDataset(Plans, label(GENERATED_FILES.plans), texts.plans),
+				plans: decodeDataset(
+					Plans,
+					label(GENERATED_FILES.plans),
+					texts.plans,
+					upgrade,
+				),
 			});
 		return {
 			benchmarks: benchmarks.data,
@@ -150,14 +182,23 @@ export function changesSince(ref: string) {
 	});
 }
 
-/** Decode errors name `ref:path` for the base copy and the path for current. */
+/**
+ * Decode errors name `ref:path` for the base copy and the path for current.
+ * The base may predate the Terminal-Bench 4.1 rename, so its copy decodes
+ * under the successor id; the current copy stays strict.
+ */
 export function compareTexts(ref: string, base: Texts, current: Texts) {
 	return Effect.gen(function* () {
 		const before = yield* decodeSnapshot(
 			base,
 			(file) => `${ref}:${DATA_DIR}${file}`,
+			renameSupersededEval,
 		);
-		const after = yield* decodeSnapshot(current, (file) => DATA_DIR + file);
+		const after = yield* decodeSnapshot(
+			current,
+			(file) => DATA_DIR + file,
+			keepAsWritten,
+		);
 		return summarizeDataChanges(before, after);
 	});
 }

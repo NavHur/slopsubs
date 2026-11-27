@@ -1,7 +1,7 @@
 import * as Schema from "effect/Schema";
 import * as SchemaTransformation from "effect/SchemaTransformation";
 import { frontier, plans } from "#/data";
-import { BENCHMARK_IDS } from "#/domain/enums";
+import { BENCHMARK_IDS, SUPERSEDED_AA_EVAL } from "#/domain/enums";
 import type { Effort, FamilyId, Frontier, PlanId } from "#/domain/model";
 import { FitSearch } from "./fit";
 import { knownItems, optionalValid, withFallback } from "./search-schema";
@@ -53,12 +53,12 @@ function knownSelection<T extends string>(known: readonly T[]) {
 
 /** AA's index replaced Terminal-Bench 4.0 with 4.1, so a link to the 4.0
  * tab opens its successor rather than the default benchmark. */
-const SupersededBenchmark = Schema.Literal("terminalbench-4-0").pipe(
+const SupersededBenchmark = Schema.Literal(SUPERSEDED_AA_EVAL.id).pipe(
 	Schema.decodeTo(
-		Schema.Literal("terminalbench-4-1"),
+		Schema.Literal(SUPERSEDED_AA_EVAL.successor),
 		SchemaTransformation.transform({
-			decode: () => "terminalbench-4-1" as const,
-			encode: () => "terminalbench-4-0" as const,
+			decode: () => SUPERSEDED_AA_EVAL.successor,
+			encode: () => SUPERSEDED_AA_EVAL.id,
 		}),
 	),
 );
