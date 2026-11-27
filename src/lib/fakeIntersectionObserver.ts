@@ -1,3 +1,4 @@
+import * as Schema from "effect/Schema";
 /** A vertical extent in viewport pixels. */
 export type Span = { top: number; bottom: number };
 
@@ -18,23 +19,29 @@ type Entry = {
 };
 type Init = { root?: FakeBox | null; rootMargin?: string };
 
-function marginPx(token: string | undefined, rootHeight: number): number {
-	if (token === undefined) throw new Error("rootMargin needs four values");
+const MarginToken = Schema.String.check(
+	Schema.isPattern(/^(?:[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:px|%)|0)$/),
+);
+const Margins = Schema.Tuple([
+	MarginToken,
+	MarginToken,
+	MarginToken,
+	MarginToken,
+]);
+const decodeMargins = Schema.decodeUnknownSync(Margins);
+
+function marginPx(token: string, rootHeight: number): number {
 	const value = Number.parseFloat(token);
-	if (token.endsWith("%")) return (value / 100) * rootHeight;
-	if (token.endsWith("px")) return value;
-	if (value === 0) return 0;
-	throw new Error(`rootMargin value ${token} needs a unit`);
+	return token.endsWith("%") ? (value / 100) * rootHeight : value;
 }
 
 /** The root box, grown by `rootMargin` (top and bottom of four CSS values). */
 function rootBox(root: Span, rootMargin: string): Span {
-	const tokens = rootMargin.split(/\s+/);
-	if (tokens.length !== 4) throw new Error("rootMargin needs four values");
+	const [top, , bottom] = decodeMargins(rootMargin.split(/\s+/));
 	const height = root.bottom - root.top;
 	return {
-		top: root.top - marginPx(tokens[0], height),
-		bottom: root.bottom + marginPx(tokens[2], height),
+		top: root.top - marginPx(top, height),
+		bottom: root.bottom + marginPx(bottom, height),
 	};
 }
 
